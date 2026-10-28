@@ -5,6 +5,7 @@
             "id": "wayne-ui",
             "name": "WayneUI",
             "kind": "interface layer (project 0)",
+            "tagline": "interface (project 0)",
             "role": "The interface layer: brand tokens, CSS, Vue, Blade and raw-PHP components, and a runnable accessibility gate. Four consumer paths that must agree: static HTML, raw PHP, Laravel with Blade, and Vue (SPA or Inertia).",
             "next_step": "Build every screen from its components; read its markup contract before writing markup by hand.",
             "contract": "contract/markup-contract.json"
@@ -13,6 +14,7 @@
             "id": "creed",
             "name": "CREED",
             "kind": "standards",
+            "tagline": "version policy and written standards",
             "role": "The handbook and policy.json (support dates per runtime). Every other project reads its policy; it is the one place that decides what state a version is in.",
             "next_step": "Read the handbook chapter for the area you are changing; use policy_lookup for dates."
         },
@@ -20,6 +22,7 @@
             "id": "proctor",
             "name": "PROCTOR",
             "kind": "check",
+            "tagline": "checks an app",
             "role": "One command that measures a PHP app against policy.json and prints a JSON, text or Code Quality report. It reports; CI decides.",
             "next_step": "Run run_proctor_check on the app, fix the failing checks, and keep `proctor check` in CI."
         },
@@ -27,6 +30,7 @@
             "id": "sesame",
             "name": "SESAME",
             "kind": "auth library",
+            "tagline": "sign-in inside the app",
             "role": "Protocol-neutral sign-in: drivers for CAS, a signed gateway assertion, SAML and OAuth2. It returns a verified identity and leaves the session to the app.",
             "next_step": "Pick the driver your platform supports and read its README before wiring routes."
         },
@@ -34,6 +38,7 @@
             "id": "helmet",
             "name": "HELMET",
             "kind": "baseline runtime",
+            "tagline": "runtime baseline",
             "role": "The runtime baseline: security headers, CSP, session hardening, trusted proxies, a health check and a version warning.",
             "next_step": "Add it as a dependency and start from its presets; it reads the same policy as PROCTOR."
         },
@@ -41,6 +46,7 @@
             "id": "sourdough",
             "name": "Sourdough",
             "kind": "starters",
+            "tagline": "starter",
             "role": "The starters: `sourdough new` for each permutation, already wired to CREED, PROCTOR, SESAME, HELMET, PREFLIGHT and Pinstripe.",
             "next_step": "Start new apps from it, and use its feed command to keep an existing app current."
         },
@@ -48,6 +54,7 @@
             "id": "preflight",
             "name": "PREFLIGHT",
             "kind": "CI templates",
+            "tagline": "CI components",
             "role": "CI templates for GitLab (components) and GitHub (reusable workflows): tests, PROCTOR, audit and accessibility, with `composer ci` as the one contract.",
             "next_step": "Include its components pinned to a tag; never track the latest."
         },
@@ -55,6 +62,7 @@
             "id": "pinstripe",
             "name": "Pinstripe",
             "kind": "coding standard",
+            "tagline": "coding standard",
             "role": "The coding standard: shared Pint and PHPStan presets, plus ESLint and Prettier configuration.",
             "next_step": "Point Pint and PHPStan at its presets; one formatter per repository."
         },
@@ -62,6 +70,7 @@
             "id": "booster",
             "name": "BOOSTER",
             "kind": "upgrade",
+            "tagline": "upgrades",
             "role": "The upgrade tool: Rector recipes and checks that move an app one PHP or Laravel version at a time.",
             "next_step": "Plan one hop at a time; call get_project_status to see whether BOOSTER is built yet."
         },
@@ -69,6 +78,7 @@
             "id": "rollcall",
             "name": "ROLLCALL",
             "kind": "fleet census",
+            "tagline": "fleet census",
             "role": "The fleet census: PHP, image, framework and PROCTOR result for every app, and the end-of-life burn-down.",
             "next_step": "Owners check their app's row; a missing row means the app is not registered."
         },
@@ -76,6 +86,7 @@
             "id": "drawbridge",
             "name": "DRAWBRIDGE",
             "kind": "auth gateway",
+            "tagline": "sign-in gateway",
             "role": "The Citadel auth gateway: one SAML service provider that hands each app a signed assertion for SESAME's gateway driver.",
             "next_step": "Apps on Citadel use SESAME's gateway driver; plan against the DRAWBRIDGE README."
         },
@@ -83,6 +94,7 @@
             "id": "squire",
             "name": "SQUIRE",
             "kind": "deploy kit",
+            "tagline": "deploy kit",
             "role": "The Citadel kit: the app-side release script, local parity with the platform, and upstream merge requests. Platform-specific deploy code lives here and nowhere else.",
             "next_step": "Use its release script for Citadel deploys; other platforms use their own targets."
         },
@@ -90,6 +102,7 @@
             "id": "advisor",
             "name": "ADVISOR",
             "kind": "MCP server",
+            "tagline": "MCP server",
             "role": "This server: orients a developer and gives their coding agent read-only tools into the stack. It sits beside Laravel Boost and does not replace it.",
             "next_step": "Run `advisor install` to wire your agent, then start with list_projects."
         },
@@ -97,6 +110,7 @@
             "id": "weld",
             "name": "WELD",
             "kind": "the stack, as one app",
+            "tagline": "the stack's name and its reference app",
             "role": "Wired, Everything, Linked, Deployed: one Laravel + Inertia/Vue app with every stack part already joined. A team clones it, renames it and deploys it.",
             "next_step": "Clone it for a new Laravel + Inertia/Vue app; its front page shows how the parts fit."
         }
