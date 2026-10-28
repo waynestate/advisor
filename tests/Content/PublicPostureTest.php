@@ -43,7 +43,7 @@ final class PublicPostureTest extends TestCase
             foreach ($lines as $number => $line) {
                 foreach (self::PUBLIC_PATTERNS as $pattern) {
                     if (preg_match($pattern, $line) === 1) {
-                        $hits[] = sprintf('data/%s:%d: %s — %s', $relative, $number + 1, $pattern, trim($line));
+                        $hits[] = sprintf('data/%s:%d: %s: %s', $relative, $number + 1, $pattern, trim($line));
                     }
                 }
             }
@@ -67,7 +67,7 @@ final class PublicPostureTest extends TestCase
             $lines = explode("\n", (string) file_get_contents($dir . '/' . $relative));
             foreach ($lines as $number => $line) {
                 foreach ($denylist->find($line) as $match) {
-                    $hits[] = sprintf('data/%s:%d: %s — %s', $relative, $number + 1, $match, trim($line));
+                    $hits[] = sprintf('data/%s:%d: %s: %s', $relative, $number + 1, $match, trim($line));
                 }
             }
         }
