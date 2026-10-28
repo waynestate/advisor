@@ -188,10 +188,10 @@ php vendor/bin/advisor doctor
 
 It checks the four things that keep a server from appearing, in plain words, and changes nothing:
 
-- **php** — the PHP on your machine satisfies ADVISOR's own `composer.json` (8.3 or newer).
-- **content** — the bundled `data/` still matches its manifest.
-- **client:claude**, **client:warriorgpt**, **client:cursor**, **client:vscode** — each client's MCP config: is the file there, does it have the `advisor` entry, and is the script it points at in the project? A missing file is a warning, not a failure — you only need the one client you use.
-- **mcp** — the server actually starts: doctor boots it in-process and asks for its tools.
+- **php**: the PHP on your machine satisfies ADVISOR's own `composer.json` (8.3 or newer).
+- **content**: the bundled `data/` still matches its manifest.
+- **client:claude**, **client:warriorgpt**, **client:cursor**, **client:vscode**: each client's MCP config: is the file there, does it have the `advisor` entry, and is the script it points at in the project? A missing file is a warning, not a failure; you only need the one client you use.
+- **mcp**: the server actually starts. Doctor boots it in-process and asks for its tools.
 
 A `fail` is something to fix; a `warn` is something you may not care about. The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
 
