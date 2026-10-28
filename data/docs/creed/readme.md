@@ -66,6 +66,17 @@ been one version ahead of everyone else, at least by his own account.
 
 The rules, chapter by chapter, live in [`handbook/`](handbook/README.md).
 
+## Keeping the patches fresh
+
+`bin/refresh-patches.php` re-reads the upstream feeds and rewrites the
+`latest_patch` fields in `policy/policy.json`. A scheduled CI job runs it every
+Monday and fails the pipeline when the policy is stale; a person then runs the
+tool and commits the result. CI never pushes — it only raises its hand.
+
+The schedule is a GitLab project setting, not a file in this repo: someone
+creates it under CI/CD > Schedules (weekly, Monday). The GitHub mirror runs the
+same check on a cron and on demand.
+
 ## Tests
 
 No PHP on the machine? Fine. Docker runs the suite:
