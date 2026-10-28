@@ -192,7 +192,8 @@
             "php": "^8.3",
             "next_step": "Clone it for a new Laravel + Inertia/Vue app; its front page shows how the parts fit.",
             "docs": [
-                "readme"
+                "readme",
+                "best-practices"
             ]
         }
     ]

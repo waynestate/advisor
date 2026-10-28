@@ -106,8 +106,12 @@
             "sha256": "6638ed2020c25a572203c6c4c40a6e3fec89301afe432d04b6b84592058b8c7e",
             "source": "wayne-ui/README.md"
         },
+        "docs/weld/best-practices.md": {
+            "sha256": "eac288d4fed74af58377133792f0cbeb7996929058a0beb0b7486ca9f099d831",
+            "source": "weld/BEST_PRACTICES.md"
+        },
         "docs/weld/readme.md": {
-            "sha256": "bbeb3e0f7d0e740b56b91ca368043f6704b3024992080925a4c830165b7ca5c2",
+            "sha256": "11e3ec81fb823ef214625c6cc985827892d9b43b7dd48233c17b28aa3101263e",
             "source": "weld/README.md"
         },
         "handbook/README.md": {
@@ -163,7 +167,7 @@
             "source": "creed/policy/policy.json"
         },
         "projects.json": {
-            "sha256": "8dd19cacf3a0bc748f520f16dce043a3425464c292baa6cabcebbd6fa08376e1",
+            "sha256": "014688af671648818354ee4b12de16a0925d559730d6b1364da29abb4922ebd9",
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {

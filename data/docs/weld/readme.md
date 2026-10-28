@@ -54,6 +54,8 @@ Until then, WELD runs on the starter kit plus these stack defaults:
   sign-in at `/login`, `/logout` and `/cas/*`, and `/login` answers 503 until SESAME is welded in
 - The license is MIT
 
+Best practices for building, running and deploying WELD live in [BEST_PRACTICES.md](BEST_PRACTICES.md).
+
 ## Run it locally
 
 The same commands work on Windows, macOS and Linux.
