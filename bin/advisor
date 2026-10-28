@@ -1,0 +1,32 @@
+#!/usr/bin/env php
+<?php
+
+use Symfony\Component\Console\Application;
+use Waynestate\Advisor\Advisor;
+use Waynestate\Advisor\Command\ContentGenerateCommand;
+use Waynestate\Advisor\Command\ContentVerifyCommand;
+use Waynestate\Advisor\Command\InstallCommand;
+use Waynestate\Advisor\Command\McpCommand;
+
+// Installed as a dependency this file lives in vendor/waynestate/advisor/bin; on its own it is bin/.
+$autoloads = [__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../../autoload.php'];
+foreach ($autoloads as $autoload) {
+    if (is_file($autoload)) {
+        require $autoload;
+        break;
+    }
+}
+if (!class_exists(Application::class)) {
+    fwrite(STDERR, "vendor/autoload.php not found. Run `composer install` first.\n");
+    exit(2);
+}
+
+$application = new Application('ADVISOR', Advisor::VERSION);
+$application->addCommands([
+    new McpCommand(),
+    new InstallCommand(),
+    new ContentGenerateCommand(),
+    new ContentVerifyCommand(),
+]);
+
+exit($application->run());

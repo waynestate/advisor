@@ -1,0 +1,1742 @@
+{
+  "$generated": "scripts/extract-contract.mjs",
+  "templates": {
+    "internal": {
+      "source": "apps/examples/static-html/index.html",
+      "classes": [
+        "wsu-accordion",
+        "wsu-accordion__icon",
+        "wsu-accordion__item",
+        "wsu-accordion__panel",
+        "wsu-accordion__summary",
+        "wsu-alert",
+        "wsu-alert--success",
+        "wsu-alert--warning",
+        "wsu-alert__body",
+        "wsu-alert__title",
+        "wsu-app-bar",
+        "wsu-app-bar--compact",
+        "wsu-app-bar__brand",
+        "wsu-app-bar__divider",
+        "wsu-app-bar__end",
+        "wsu-app-bar__inner",
+        "wsu-app-bar__item",
+        "wsu-app-bar__mark",
+        "wsu-app-bar__nav",
+        "wsu-app-bar__search",
+        "wsu-app-bar__search-field",
+        "wsu-app-bar__search-hint",
+        "wsu-app-bar__search-row",
+        "wsu-app-bar__search-toggle",
+        "wsu-app-bar__toggle",
+        "wsu-app-bar__toggle--nav",
+        "wsu-app-bar__user",
+        "wsu-avatar",
+        "wsu-avatar--sm",
+        "wsu-badge",
+        "wsu-badge--accent",
+        "wsu-badge--brand",
+        "wsu-badge--danger",
+        "wsu-badge--neutral",
+        "wsu-badge--success",
+        "wsu-breadcrumbs",
+        "wsu-breadcrumbs__item",
+        "wsu-breadcrumbs__link",
+        "wsu-breadcrumbs__list",
+        "wsu-breadcrumbs__separator",
+        "wsu-browser",
+        "wsu-browser__bar",
+        "wsu-browser__content",
+        "wsu-browser__dots",
+        "wsu-browser__url",
+        "wsu-btn",
+        "wsu-btn--accent",
+        "wsu-btn--danger",
+        "wsu-btn--ghost",
+        "wsu-btn--icon",
+        "wsu-btn--outline",
+        "wsu-btn--primary",
+        "wsu-btn--sm",
+        "wsu-card",
+        "wsu-card__footer",
+        "wsu-card__title",
+        "wsu-chat",
+        "wsu-chat__avatar",
+        "wsu-chat__bubble",
+        "wsu-chat__content",
+        "wsu-chat__header",
+        "wsu-chat__message",
+        "wsu-chat__message--sent",
+        "wsu-chat__name",
+        "wsu-chat__status",
+        "wsu-chat__time",
+        "wsu-checkbox",
+        "wsu-codeblock",
+        "wsu-codeblock__code",
+        "wsu-codeblock__copy",
+        "wsu-codeblock__copy-state",
+        "wsu-codeblock__head",
+        "wsu-codeblock__lang",
+        "wsu-codeblock__pre",
+        "wsu-codeblock__status",
+        "wsu-countdown",
+        "wsu-countdown__label",
+        "wsu-countdown__number",
+        "wsu-countdown__pause",
+        "wsu-countdown__pause-state",
+        "wsu-countdown__segment",
+        "wsu-countdown__status",
+        "wsu-countdown__unit",
+        "wsu-countdown__value",
+        "wsu-dialog",
+        "wsu-dialog__footer",
+        "wsu-dialog__header",
+        "wsu-divider",
+        "wsu-drawer-backdrop",
+        "wsu-empty",
+        "wsu-env-ribbon",
+        "wsu-error-summary",
+        "wsu-error-summary__list",
+        "wsu-field",
+        "wsu-field__error",
+        "wsu-field__label",
+        "wsu-field__required",
+        "wsu-footer",
+        "wsu-footer__inner",
+        "wsu-footer__links",
+        "wsu-footer__mark",
+        "wsu-footer__meta",
+        "wsu-icon",
+        "wsu-icon--lg",
+        "wsu-input",
+        "wsu-kbd",
+        "wsu-loading",
+        "wsu-loading--brand",
+        "wsu-loading__spinner",
+        "wsu-page-header",
+        "wsu-page-header__actions",
+        "wsu-page-header__subtitle",
+        "wsu-page-header__title",
+        "wsu-phone",
+        "wsu-phone__notch",
+        "wsu-phone__screen",
+        "wsu-progress",
+        "wsu-progress--brand",
+        "wsu-prose",
+        "wsu-radio",
+        "wsu-rotator",
+        "wsu-rotator__item",
+        "wsu-rotator__label",
+        "wsu-rotator__list",
+        "wsu-rotator__pause",
+        "wsu-rotator__pause-state",
+        "wsu-select",
+        "wsu-shell",
+        "wsu-shell--sidebar",
+        "wsu-shell__body",
+        "wsu-shell__main",
+        "wsu-sidebar",
+        "wsu-sidebar__close",
+        "wsu-sidebar__heading",
+        "wsu-sidebar__inner",
+        "wsu-sidebar__link",
+        "wsu-sidebar__list",
+        "wsu-sidebar__primary-nav",
+        "wsu-skeleton",
+        "wsu-skip-link",
+        "wsu-sr-only",
+        "wsu-stack",
+        "wsu-stat",
+        "wsu-stat__label",
+        "wsu-stat__value",
+        "wsu-status-dot",
+        "wsu-status-dot--success",
+        "wsu-status-dot__dot",
+        "wsu-table",
+        "wsu-table--zebra",
+        "wsu-table-wrap",
+        "wsu-table__sort",
+        "wsu-tabs",
+        "wsu-tabs__list",
+        "wsu-tabs__panel",
+        "wsu-tabs__tab",
+        "wsu-terminal",
+        "wsu-terminal__line",
+        "wsu-terminal__prompt",
+        "wsu-textarea",
+        "wsu-timeline",
+        "wsu-timeline__item",
+        "wsu-timeline__marker",
+        "wsu-timeline__time",
+        "wsu-timeline__title",
+        "wsu-toast",
+        "wsu-toasts",
+        "wsu-window",
+        "wsu-window__bar",
+        "wsu-window__content",
+        "wsu-window__dots",
+        "wsu-window__title"
+      ],
+      "dataAttributes": [
+        "data-wsu-codeblock",
+        "data-wsu-codeblock-copy",
+        "data-wsu-codeblock-label",
+        "data-wsu-codeblock-state",
+        "data-wsu-codeblock-status",
+        "data-wsu-countdown",
+        "data-wsu-countdown-days",
+        "data-wsu-countdown-hours",
+        "data-wsu-countdown-label",
+        "data-wsu-countdown-minutes",
+        "data-wsu-countdown-pause",
+        "data-wsu-countdown-pause-state",
+        "data-wsu-countdown-seconds",
+        "data-wsu-countdown-status",
+        "data-wsu-countdown-target",
+        "data-wsu-countdown-time",
+        "data-wsu-drawer-backdrop",
+        "data-wsu-drawer-close",
+        "data-wsu-drawer-toggle",
+        "data-wsu-error-summary",
+        "data-wsu-rotate",
+        "data-wsu-rotate-active",
+        "data-wsu-rotate-interval",
+        "data-wsu-rotate-pause",
+        "data-wsu-rotate-pause-state",
+        "data-wsu-search-hotkey",
+        "data-wsu-search-toggle",
+        "data-wsu-tabs",
+        "data-wsu-theme-icon",
+        "data-wsu-theme-toggle"
+      ],
+      "components": {
+        "wsu-shell": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1,
+          "links": {
+            "aria-labelledby": {
+              "ref": [
+                "caption"
+              ]
+            }
+          }
+        },
+        "wsu-app-bar": {
+          "tags": [
+            "header"
+          ],
+          "a11y": [],
+          "count": 1,
+          "links": {
+            "href": {
+              "external": [
+                "https://wayne.edu/"
+              ],
+              "route": true
+            },
+            "src": {
+              "route": true
+            },
+            "for": {
+              "ref": [
+                "input"
+              ]
+            }
+          }
+        },
+        "wsu-app-bar__search": {
+          "tags": [
+            "button",
+            "div",
+            "form",
+            "input",
+            "kbd"
+          ],
+          "a11y": [
+            "aria-describedby",
+            "aria-hidden",
+            "hidden",
+            "role"
+          ],
+          "count": 7,
+          "links": {
+            "aria-describedby": {
+              "ref": [
+                "span"
+              ]
+            }
+          }
+        },
+        "wsu-env-ribbon": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-sidebar": {
+          "tags": [
+            "nav"
+          ],
+          "a11y": [
+            "aria-label",
+            "hidden",
+            "tabindex"
+          ],
+          "count": 1,
+          "links": {
+            "href": {
+              "route": true
+            },
+            "aria-labelledby": {
+              "ref": [
+                "p"
+              ]
+            }
+          }
+        },
+        "wsu-breadcrumbs": {
+          "tags": [
+            "nav"
+          ],
+          "a11y": [
+            "aria-label"
+          ],
+          "count": 1,
+          "links": {
+            "href": {
+              "route": true
+            }
+          }
+        },
+        "wsu-page-header": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-footer": {
+          "tags": [
+            "footer"
+          ],
+          "a11y": [],
+          "count": 1,
+          "links": {
+            "href": {
+              "external": [
+                "https://tech.wayne.edu/",
+                "https://wayne.edu/",
+                "https://wayne.edu/accessibility/",
+                "https://wayne.edu/policies"
+              ]
+            }
+          }
+        },
+        "wsu-skip-link": {
+          "tags": [
+            "a"
+          ],
+          "a11y": [],
+          "count": 1,
+          "links": {
+            "href": {
+              "ref": [
+                "main"
+              ]
+            }
+          }
+        },
+        "wsu-table": {
+          "tags": [
+            "div",
+            "table"
+          ],
+          "a11y": [
+            "aria-labelledby",
+            "role",
+            "tabindex"
+          ],
+          "count": 2
+        },
+        "wsu-card": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1,
+          "links": {
+            "aria-labelledby": {
+              "ref": [
+                "h2"
+              ]
+            }
+          }
+        },
+        "wsu-alert": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "role"
+          ],
+          "count": 3
+        },
+        "wsu-badge": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [],
+          "count": 7
+        },
+        "wsu-status-dot": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-kbd": {
+          "tags": [
+            "kbd"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-divider": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-progress": {
+          "tags": [
+            "progress"
+          ],
+          "a11y": [
+            "aria-label"
+          ],
+          "count": 1
+        },
+        "wsu-loading": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-avatar": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [
+            "aria-label",
+            "role"
+          ],
+          "count": 3
+        },
+        "wsu-icon": {
+          "tags": [
+            "svg"
+          ],
+          "a11y": [
+            "aria-hidden",
+            "hidden"
+          ],
+          "count": 35,
+          "links": {
+            "href": {
+              "route": true
+            }
+          }
+        },
+        "wsu-btn": {
+          "tags": [
+            "button"
+          ],
+          "a11y": [],
+          "count": 24
+        },
+        "wsu-select": {
+          "tags": [
+            "select"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-checkbox": {
+          "tags": [
+            "label"
+          ],
+          "a11y": [],
+          "count": 4
+        },
+        "wsu-radio": {
+          "tags": [
+            "label"
+          ],
+          "a11y": [],
+          "count": 2
+        },
+        "wsu-dialog": {
+          "tags": [
+            "dialog"
+          ],
+          "a11y": [
+            "aria-labelledby"
+          ],
+          "count": 1,
+          "links": {
+            "aria-labelledby": {
+              "ref": [
+                "h2"
+              ]
+            }
+          }
+        },
+        "wsu-toasts": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "aria-label",
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-toast": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-skeleton": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [
+            "aria-hidden"
+          ],
+          "count": 1
+        },
+        "wsu-error-summary": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "tabindex"
+          ],
+          "count": 1,
+          "links": {
+            "href": {
+              "ref": [
+                "textarea"
+              ]
+            }
+          }
+        },
+        "wsu-timeline": {
+          "tags": [
+            "ol"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-timeline__item": {
+          "tags": [
+            "li"
+          ],
+          "a11y": [],
+          "count": 4
+        },
+        "wsu-timeline__time": {
+          "tags": [
+            "time"
+          ],
+          "a11y": [],
+          "count": 4
+        },
+        "wsu-accordion": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-accordion__item": {
+          "tags": [
+            "details"
+          ],
+          "a11y": [],
+          "count": 2
+        },
+        "wsu-accordion__summary": {
+          "tags": [
+            "summary"
+          ],
+          "a11y": [],
+          "count": 2
+        },
+        "wsu-chat": {
+          "tags": [
+            "ol"
+          ],
+          "a11y": [
+            "aria-label",
+            "aria-live"
+          ],
+          "count": 1
+        },
+        "wsu-chat__message": {
+          "tags": [
+            "li"
+          ],
+          "a11y": [],
+          "count": 2
+        },
+        "wsu-chat__time": {
+          "tags": [
+            "time"
+          ],
+          "a11y": [],
+          "count": 2
+        },
+        "wsu-codeblock": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-codeblock__copy": {
+          "tags": [
+            "button",
+            "span"
+          ],
+          "a11y": [
+            "hidden"
+          ],
+          "count": 4
+        },
+        "wsu-codeblock__copy-state": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [
+            "hidden"
+          ],
+          "count": 3
+        },
+        "wsu-codeblock__status": {
+          "tags": [
+            "p"
+          ],
+          "a11y": [
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-codeblock__pre": {
+          "tags": [
+            "pre"
+          ],
+          "a11y": [
+            "aria-label",
+            "role",
+            "tabindex"
+          ],
+          "count": 1
+        },
+        "wsu-codeblock__code": {
+          "tags": [
+            "code"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-browser": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-window": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-window__title": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-phone": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "aria-label",
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-terminal": {
+          "tags": [
+            "pre"
+          ],
+          "a11y": [
+            "aria-label",
+            "role",
+            "tabindex"
+          ],
+          "count": 1
+        },
+        "wsu-terminal__line": {
+          "tags": [
+            "code"
+          ],
+          "a11y": [],
+          "count": 3
+        },
+        "wsu-tabs": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-tabs__list": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "aria-label",
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-tabs__tab": {
+          "tags": [
+            "button"
+          ],
+          "a11y": [
+            "aria-controls",
+            "aria-selected",
+            "role",
+            "tabindex"
+          ],
+          "count": 3,
+          "links": {
+            "aria-controls": {
+              "ref": [
+                "div"
+              ]
+            }
+          }
+        },
+        "wsu-tabs__panel": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "aria-labelledby",
+            "hidden",
+            "role",
+            "tabindex"
+          ],
+          "count": 3,
+          "links": {
+            "aria-labelledby": {
+              "ref": [
+                "button"
+              ]
+            }
+          }
+        },
+        "wsu-field": {
+          "tags": [
+            "div",
+            "fieldset"
+          ],
+          "a11y": [
+            "tabindex"
+          ],
+          "count": 5,
+          "links": {
+            "for": {
+              "ref": [
+                "input",
+                "select",
+                "textarea"
+              ]
+            },
+            "aria-describedby": {
+              "ref": [
+                "p"
+              ]
+            }
+          }
+        },
+        "wsu-stat": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 4
+        },
+        "wsu-empty": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-countdown": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-countdown__value": {
+          "tags": [
+            "time"
+          ],
+          "a11y": [
+            "aria-labelledby",
+            "aria-live",
+            "role"
+          ],
+          "count": 1,
+          "links": {
+            "aria-labelledby": {
+              "ref": [
+                "p"
+              ]
+            }
+          }
+        },
+        "wsu-countdown__pause": {
+          "tags": [
+            "button",
+            "span"
+          ],
+          "a11y": [
+            "hidden"
+          ],
+          "count": 3
+        },
+        "wsu-rotator": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1,
+          "links": {
+            "aria-labelledby": {
+              "ref": [
+                "p"
+              ]
+            }
+          }
+        },
+        "wsu-rotator__item": {
+          "tags": [
+            "li"
+          ],
+          "a11y": [],
+          "count": 3
+        },
+        "wsu-rotator__pause": {
+          "tags": [
+            "button",
+            "span"
+          ],
+          "a11y": [
+            "hidden"
+          ],
+          "count": 3
+        }
+      },
+      "landmarks": {
+        "skipLink": true,
+        "main": true,
+        "mainFocusable": true,
+        "lang": true,
+        "navLabelled": true
+      }
+    },
+    "public": {
+      "source": "apps/examples/static-html/public-app.html",
+      "classes": [
+        "wsu-accordion",
+        "wsu-accordion__icon",
+        "wsu-accordion__item",
+        "wsu-accordion__panel",
+        "wsu-accordion__summary",
+        "wsu-app-bar",
+        "wsu-app-bar__brand",
+        "wsu-app-bar__end",
+        "wsu-app-bar__inner",
+        "wsu-app-bar__item",
+        "wsu-app-bar__nav",
+        "wsu-app-bar__search",
+        "wsu-app-bar__search--expandable",
+        "wsu-app-bar__search-field",
+        "wsu-app-bar__search-trigger",
+        "wsu-app-bar__toggle",
+        "wsu-app-bar__toggle--nav",
+        "wsu-avatar",
+        "wsu-avatar--sm",
+        "wsu-badge",
+        "wsu-badge--accent",
+        "wsu-badge--danger",
+        "wsu-badge--success",
+        "wsu-breadcrumbs",
+        "wsu-breadcrumbs__item",
+        "wsu-breadcrumbs__link",
+        "wsu-breadcrumbs__list",
+        "wsu-breadcrumbs__separator",
+        "wsu-browser",
+        "wsu-browser__bar",
+        "wsu-browser__content",
+        "wsu-browser__dots",
+        "wsu-browser__url",
+        "wsu-btn",
+        "wsu-btn--ghost",
+        "wsu-btn--icon",
+        "wsu-btn--outline",
+        "wsu-btn--primary",
+        "wsu-btn--sm",
+        "wsu-carousel",
+        "wsu-carousel__controls",
+        "wsu-carousel__dots",
+        "wsu-carousel__next",
+        "wsu-carousel__prev",
+        "wsu-carousel__slide",
+        "wsu-carousel__slides",
+        "wsu-carousel__status",
+        "wsu-carousel__tab",
+        "wsu-checkbox",
+        "wsu-codeblock",
+        "wsu-codeblock__code",
+        "wsu-codeblock__copy",
+        "wsu-codeblock__copy-state",
+        "wsu-codeblock__head",
+        "wsu-codeblock__lang",
+        "wsu-codeblock__pre",
+        "wsu-codeblock__status",
+        "wsu-countdown",
+        "wsu-countdown__label",
+        "wsu-countdown__number",
+        "wsu-countdown__pause",
+        "wsu-countdown__pause-state",
+        "wsu-countdown__segment",
+        "wsu-countdown__status",
+        "wsu-countdown__unit",
+        "wsu-countdown__value",
+        "wsu-divider",
+        "wsu-drawer-backdrop",
+        "wsu-env-ribbon",
+        "wsu-field",
+        "wsu-field__hint",
+        "wsu-field__label",
+        "wsu-icon",
+        "wsu-input",
+        "wsu-loading",
+        "wsu-loading--brand",
+        "wsu-loading__spinner",
+        "wsu-masthead",
+        "wsu-masthead__inner",
+        "wsu-masthead__link",
+        "wsu-masthead__utility",
+        "wsu-masthead__wordmark",
+        "wsu-page-header",
+        "wsu-page-header__actions",
+        "wsu-page-header__subtitle",
+        "wsu-page-header__title",
+        "wsu-pagination",
+        "wsu-pagination__link",
+        "wsu-pagination__list",
+        "wsu-phone",
+        "wsu-phone__notch",
+        "wsu-phone__screen",
+        "wsu-prose",
+        "wsu-rotator",
+        "wsu-rotator__item",
+        "wsu-rotator__label",
+        "wsu-rotator__list",
+        "wsu-rotator__pause",
+        "wsu-rotator__pause-state",
+        "wsu-select",
+        "wsu-shell",
+        "wsu-shell--sidebar",
+        "wsu-shell__body",
+        "wsu-shell__main",
+        "wsu-sidebar",
+        "wsu-sidebar__close",
+        "wsu-sidebar__heading",
+        "wsu-sidebar__inner",
+        "wsu-sidebar__link",
+        "wsu-sidebar__list",
+        "wsu-sidebar__primary-nav",
+        "wsu-skip-link",
+        "wsu-sr-only",
+        "wsu-status-dot",
+        "wsu-status-dot--success",
+        "wsu-status-dot__dot",
+        "wsu-table",
+        "wsu-table--zebra",
+        "wsu-table-wrap",
+        "wsu-table__sort",
+        "wsu-tabs",
+        "wsu-tabs__list",
+        "wsu-tabs__panel",
+        "wsu-tabs__tab",
+        "wsu-terminal",
+        "wsu-terminal__line",
+        "wsu-terminal__prompt",
+        "wsu-timeline",
+        "wsu-timeline__item",
+        "wsu-timeline__marker",
+        "wsu-timeline__time",
+        "wsu-timeline__title",
+        "wsu-university-footer",
+        "wsu-university-footer__address",
+        "wsu-university-footer__bottom",
+        "wsu-university-footer__copyright",
+        "wsu-university-footer__heading",
+        "wsu-university-footer__inner",
+        "wsu-university-footer__legal",
+        "wsu-university-footer__list",
+        "wsu-university-footer__mark",
+        "wsu-university-footer__top",
+        "wsu-window",
+        "wsu-window__bar",
+        "wsu-window__content",
+        "wsu-window__dots",
+        "wsu-window__title"
+      ],
+      "dataAttributes": [
+        "data-wsu-carousel",
+        "data-wsu-carousel-status",
+        "data-wsu-codeblock",
+        "data-wsu-codeblock-copy",
+        "data-wsu-codeblock-label",
+        "data-wsu-codeblock-state",
+        "data-wsu-codeblock-status",
+        "data-wsu-countdown",
+        "data-wsu-countdown-days",
+        "data-wsu-countdown-hours",
+        "data-wsu-countdown-label",
+        "data-wsu-countdown-minutes",
+        "data-wsu-countdown-pause",
+        "data-wsu-countdown-pause-state",
+        "data-wsu-countdown-seconds",
+        "data-wsu-countdown-status",
+        "data-wsu-countdown-target",
+        "data-wsu-countdown-time",
+        "data-wsu-drawer-backdrop",
+        "data-wsu-drawer-close",
+        "data-wsu-drawer-toggle",
+        "data-wsu-rotate",
+        "data-wsu-rotate-active",
+        "data-wsu-rotate-interval",
+        "data-wsu-rotate-pause",
+        "data-wsu-rotate-pause-state",
+        "data-wsu-search-expand",
+        "data-wsu-search-hotkey",
+        "data-wsu-tabs",
+        "data-wsu-theme-icon",
+        "data-wsu-theme-toggle"
+      ],
+      "components": {
+        "wsu-shell": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1,
+          "links": {
+            "href": {
+              "external": [
+                "https://login.wayne.edu",
+                "https://wayne.edu",
+                "https://wayne.edu/policies",
+                "https://wayne.edu/search",
+                "https://wayne.edu/warriorstrong"
+              ]
+            },
+            "aria-labelledby": {
+              "ref": [
+                "caption",
+                "title"
+              ]
+            },
+            "for": {
+              "ref": [
+                "input"
+              ]
+            }
+          }
+        },
+        "wsu-app-bar": {
+          "tags": [
+            "header"
+          ],
+          "a11y": [],
+          "count": 1,
+          "links": {
+            "href": {
+              "route": true
+            }
+          }
+        },
+        "wsu-app-bar__search": {
+          "tags": [
+            "button",
+            "form",
+            "input"
+          ],
+          "a11y": [
+            "aria-describedby",
+            "role"
+          ],
+          "count": 3,
+          "links": {
+            "for": {
+              "ref": [
+                "input"
+              ]
+            },
+            "aria-describedby": {
+              "ref": [
+                "span"
+              ]
+            }
+          }
+        },
+        "wsu-masthead": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "aria-label",
+            "role"
+          ],
+          "count": 1,
+          "links": {
+            "href": {
+              "external": [
+                "https://login.wayne.edu",
+                "https://wayne.edu/"
+              ]
+            },
+            "src": {
+              "route": true
+            }
+          }
+        },
+        "wsu-env-ribbon": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-sidebar": {
+          "tags": [
+            "nav"
+          ],
+          "a11y": [
+            "aria-label",
+            "hidden",
+            "tabindex"
+          ],
+          "count": 1,
+          "links": {
+            "href": {
+              "route": true
+            },
+            "aria-labelledby": {
+              "ref": [
+                "p"
+              ]
+            }
+          }
+        },
+        "wsu-breadcrumbs": {
+          "tags": [
+            "nav"
+          ],
+          "a11y": [
+            "aria-label"
+          ],
+          "count": 1,
+          "links": {
+            "href": {
+              "route": true
+            }
+          }
+        },
+        "wsu-page-header": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-university-footer": {
+          "tags": [
+            "footer"
+          ],
+          "a11y": [],
+          "count": 1,
+          "links": {
+            "href": {
+              "external": [
+                "https://academica.aws.wayne.edu/",
+                "https://wayne.edu/",
+                "https://wayne.edu/about/",
+                "https://wayne.edu/accessibility/"
+              ]
+            },
+            "src": {
+              "route": true
+            },
+            "aria-labelledby": {
+              "ref": [
+                "p"
+              ]
+            }
+          }
+        },
+        "wsu-skip-link": {
+          "tags": [
+            "a"
+          ],
+          "a11y": [],
+          "count": 1,
+          "links": {
+            "href": {
+              "ref": [
+                "main"
+              ]
+            }
+          }
+        },
+        "wsu-table": {
+          "tags": [
+            "div",
+            "table"
+          ],
+          "a11y": [
+            "aria-labelledby",
+            "role",
+            "tabindex"
+          ],
+          "count": 2
+        },
+        "wsu-badge": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [],
+          "count": 4
+        },
+        "wsu-status-dot": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-divider": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-loading": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-avatar": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [
+            "aria-label",
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-icon": {
+          "tags": [
+            "svg"
+          ],
+          "a11y": [
+            "aria-hidden",
+            "hidden"
+          ],
+          "count": 26,
+          "links": {
+            "href": {
+              "route": true
+            }
+          }
+        },
+        "wsu-btn": {
+          "tags": [
+            "button"
+          ],
+          "a11y": [],
+          "count": 8
+        },
+        "wsu-select": {
+          "tags": [
+            "select"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-checkbox": {
+          "tags": [
+            "label"
+          ],
+          "a11y": [],
+          "count": 3
+        },
+        "wsu-timeline": {
+          "tags": [
+            "ol"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-timeline__item": {
+          "tags": [
+            "li"
+          ],
+          "a11y": [],
+          "count": 3
+        },
+        "wsu-timeline__time": {
+          "tags": [
+            "time"
+          ],
+          "a11y": [],
+          "count": 3
+        },
+        "wsu-accordion": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-accordion__item": {
+          "tags": [
+            "details"
+          ],
+          "a11y": [],
+          "count": 2
+        },
+        "wsu-accordion__summary": {
+          "tags": [
+            "summary"
+          ],
+          "a11y": [],
+          "count": 2
+        },
+        "wsu-codeblock": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-codeblock__copy": {
+          "tags": [
+            "button",
+            "span"
+          ],
+          "a11y": [
+            "hidden"
+          ],
+          "count": 4
+        },
+        "wsu-codeblock__copy-state": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [
+            "hidden"
+          ],
+          "count": 3
+        },
+        "wsu-codeblock__status": {
+          "tags": [
+            "p"
+          ],
+          "a11y": [
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-codeblock__pre": {
+          "tags": [
+            "pre"
+          ],
+          "a11y": [
+            "aria-label",
+            "role",
+            "tabindex"
+          ],
+          "count": 1
+        },
+        "wsu-codeblock__code": {
+          "tags": [
+            "code"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-browser": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-window": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-window__title": {
+          "tags": [
+            "span"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-phone": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "aria-label",
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-terminal": {
+          "tags": [
+            "pre"
+          ],
+          "a11y": [
+            "aria-label",
+            "role",
+            "tabindex"
+          ],
+          "count": 1
+        },
+        "wsu-terminal__line": {
+          "tags": [
+            "code"
+          ],
+          "a11y": [],
+          "count": 3
+        },
+        "wsu-tabs": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-tabs__list": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "aria-label",
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-tabs__tab": {
+          "tags": [
+            "button"
+          ],
+          "a11y": [
+            "aria-controls",
+            "aria-selected",
+            "role",
+            "tabindex"
+          ],
+          "count": 3,
+          "links": {
+            "aria-controls": {
+              "ref": [
+                "div"
+              ]
+            }
+          }
+        },
+        "wsu-tabs__panel": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "aria-labelledby",
+            "hidden",
+            "role",
+            "tabindex"
+          ],
+          "count": 3,
+          "links": {
+            "aria-labelledby": {
+              "ref": [
+                "button"
+              ]
+            }
+          }
+        },
+        "wsu-carousel": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "aria-label",
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-carousel__slide": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "aria-labelledby",
+            "hidden",
+            "role",
+            "tabindex"
+          ],
+          "count": 3,
+          "links": {
+            "aria-labelledby": {
+              "ref": [
+                "button"
+              ]
+            }
+          }
+        },
+        "wsu-carousel__dots": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [
+            "aria-label",
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-carousel__tab": {
+          "tags": [
+            "button"
+          ],
+          "a11y": [
+            "aria-controls",
+            "aria-selected",
+            "role",
+            "tabindex"
+          ],
+          "count": 3,
+          "links": {
+            "aria-controls": {
+              "ref": [
+                "div"
+              ]
+            }
+          }
+        },
+        "wsu-carousel__prev": {
+          "tags": [
+            "button"
+          ],
+          "a11y": [
+            "aria-label"
+          ],
+          "count": 1
+        },
+        "wsu-carousel__next": {
+          "tags": [
+            "button"
+          ],
+          "a11y": [
+            "aria-label"
+          ],
+          "count": 1
+        },
+        "wsu-carousel__status": {
+          "tags": [
+            "p"
+          ],
+          "a11y": [
+            "role"
+          ],
+          "count": 1
+        },
+        "wsu-field": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 2,
+          "links": {
+            "for": {
+              "ref": [
+                "input",
+                "select"
+              ]
+            }
+          }
+        },
+        "wsu-pagination": {
+          "tags": [
+            "nav"
+          ],
+          "a11y": [
+            "aria-label"
+          ],
+          "count": 1,
+          "links": {
+            "href": {
+              "route": true
+            }
+          }
+        },
+        "wsu-countdown": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1
+        },
+        "wsu-countdown__value": {
+          "tags": [
+            "time"
+          ],
+          "a11y": [
+            "aria-labelledby",
+            "aria-live",
+            "role"
+          ],
+          "count": 1,
+          "links": {
+            "aria-labelledby": {
+              "ref": [
+                "p"
+              ]
+            }
+          }
+        },
+        "wsu-countdown__pause": {
+          "tags": [
+            "button",
+            "span"
+          ],
+          "a11y": [
+            "hidden"
+          ],
+          "count": 3
+        },
+        "wsu-rotator": {
+          "tags": [
+            "div"
+          ],
+          "a11y": [],
+          "count": 1,
+          "links": {
+            "aria-labelledby": {
+              "ref": [
+                "p"
+              ]
+            }
+          }
+        },
+        "wsu-rotator__item": {
+          "tags": [
+            "li"
+          ],
+          "a11y": [],
+          "count": 3
+        },
+        "wsu-rotator__pause": {
+          "tags": [
+            "button",
+            "span"
+          ],
+          "a11y": [
+            "hidden"
+          ],
+          "count": 3
+        }
+      },
+      "landmarks": {
+        "skipLink": true,
+        "main": true,
+        "mainFocusable": true,
+        "lang": true,
+        "navLabelled": true
+      }
+    }
+  },
+  "decisions": {
+    "internal": {
+      "chrome": "wsu-app-bar--compact",
+      "hasOfficialMasthead": false,
+      "search": "inline field in the bar, collapsing to a row below the medium breakpoint"
+    },
+    "public": {
+      "chrome": "official @waynestate/wsuheader and @waynestate/wsufooter",
+      "hasOfficialMasthead": true,
+      "search": "wsu-app-bar__search--expandable, because the masthead already has a wayne.edu field"
+    },
+    "note": "Both are APPLICATION templates. The difference is who can reach them, and therefore how much university identity they carry, not what they are for."
+  }
+}
