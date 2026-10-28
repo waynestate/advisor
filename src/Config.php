@@ -14,6 +14,8 @@ final class Config
 {
     public const DEFAULT_PROCTOR_TIMEOUT = 120;
 
+    public const DEFAULT_BOOSTER_TIMEOUT = 60;
+
     public const DEFAULT_MAX_CHARS = 20000;
 
     /**
@@ -26,6 +28,8 @@ final class Config
         public readonly bool $readOnly,
         public readonly array $groups,
         public readonly int $proctorTimeout,
+        public readonly int $boosterTimeout,
+        public readonly ?string $boosterBin,
         public readonly int $maxChars,
         public readonly ?string $auditLog,
         public readonly string $logLevel,
@@ -34,6 +38,9 @@ final class Config
     ) {
         if ($proctorTimeout < 1 || $proctorTimeout > 900) {
             throw new InvalidArgumentException('ADVISOR_PROCTOR_TIMEOUT must be between 1 and 900 seconds.');
+        }
+        if ($boosterTimeout < 1 || $boosterTimeout > 900) {
+            throw new InvalidArgumentException('ADVISOR_BOOSTER_TIMEOUT must be between 1 and 900 seconds.');
         }
         if ($maxChars < 1000 || $maxChars > 45000) {
             throw new InvalidArgumentException('ADVISOR_MAX_CHARS must be between 1000 and 45000.');
@@ -66,6 +73,8 @@ final class Config
             readOnly: !self::falsy($get('ADVISOR_READ_ONLY')),
             groups: $groups,
             proctorTimeout: self::int($get('ADVISOR_PROCTOR_TIMEOUT'), self::DEFAULT_PROCTOR_TIMEOUT, 'ADVISOR_PROCTOR_TIMEOUT'),
+            boosterTimeout: self::int($get('ADVISOR_BOOSTER_TIMEOUT'), self::DEFAULT_BOOSTER_TIMEOUT, 'ADVISOR_BOOSTER_TIMEOUT'),
+            boosterBin: $get('ADVISOR_BOOSTER_BIN'),
             maxChars: self::int($get('ADVISOR_MAX_CHARS'), self::DEFAULT_MAX_CHARS, 'ADVISOR_MAX_CHARS'),
             auditLog: $get('ADVISOR_AUDIT_LOG'),
             logLevel: strtolower($get('ADVISOR_LOG_LEVEL') ?? 'warning'),

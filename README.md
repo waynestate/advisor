@@ -121,6 +121,7 @@ Tools (all read-only; each says where its answer came from):
 | `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. |
 | `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
 | `run_proctor_check` | Runs the app's own `vendor/bin/proctor check` against the bundled policy and returns the findings. |
+| `upgrade_path` | Plans the app's PHP and/or Laravel upgrade, one supported hop at a time, via BOOSTER's read-only `plan`. |
 
 Resources: `advisor://policy` and one `advisor://creed/<chapter>` per handbook chapter.
 Prompts: `orient_me` and `plan_upgrade`.
@@ -151,6 +152,8 @@ ADVISOR reads the process environment only, never a file. The placeholders are i
 | `ADVISOR_READ_ONLY` | on | Set to `0` or `false` to allow tools that write. None exist in 0.1. Read-only wins over `ADVISOR_GROUPS`. |
 | `ADVISOR_GROUPS` | all | Comma list of tool groups to offer (`stack`, `proctor`). |
 | `ADVISOR_PROCTOR_TIMEOUT` | `120` | Seconds before a PROCTOR run is stopped (1 to 900). |
+| `ADVISOR_BOOSTER_TIMEOUT` | `60` | Seconds before a BOOSTER plan is stopped (1 to 900). A plan is local and fast, so the default is shorter than a PROCTOR run. |
+| `ADVISOR_BOOSTER_BIN` | none | Where `upgrade_path` finds BOOSTER when the app has no `vendor/bin/booster` of its own: the path to booster's `bin/booster` (or a `booster.phar`). The app's own `vendor/bin/booster` always wins. |
 | `ADVISOR_MAX_CHARS` | `20000` | Largest piece of text one doc call returns (1000 to 45000). |
 | `ADVISOR_AUDIT_LOG` | off | A file for a one-line-per-call audit log: time, tool, a hash of the arguments, outcome, duration. Arguments are hashed, never written. |
 | `ADVISOR_LOG_LEVEL` | `warning` | Log level on stderr (`debug` to `emergency`). |
@@ -253,6 +256,7 @@ Tests drive the real SDK server in-process with a small MCP client, snapshot `to
 - Read-only by default; no tool takes a command, a URL or a free path.
 - Every result is cleaned of invisible characters and labelled as data; secrets in PROCTOR output are redacted.
 - `run_proctor_check` runs one fixed program with an argument array and an allowlisted environment, never a shell.
+- `upgrade_path` runs BOOSTER's read-only `plan` the same way: one fixed program, an argument array, an allowlisted command, never a shell. It plans; it never runs a hop.
 - No network calls, and no model calls, from ADVISOR itself.
 
 See `BEST_PRACTICES.md`, and `OPEN_QUESTIONS.md` for what is decided, assumed and not yet built.

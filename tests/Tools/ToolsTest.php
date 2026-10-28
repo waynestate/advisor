@@ -142,6 +142,60 @@ final class ToolsTest extends TestCase
         $this->assertStringContainsString('proctor', strtolower($outcome->text));
     }
 
+    public function testUpgradePathGoesThroughTheAllowlistedRunner(): void
+    {
+        $root = $this->tempDir();
+        mkdir($root . '/vendor/bin', 0777, true);
+        file_put_contents($root . '/vendor/bin/booster', '<?php');
+        $plan = ['project' => ['path' => '/abs/app', 'app_type' => 'laravel', 'composer_json' => true, 'php' => '8.2', 'laravel' => '10', 'vue' => null, 'wayne_cas' => false], 'today' => '2026-10-28', 'policy' => '/adv/data/policy.json', 'target_php' => '8.4', 'target_laravel' => '11', 'steps' => [], 'warnings' => []];
+        $fake = new FakeProcessRunner(new ProcessOutput(0, (string) json_encode($plan), ''));
+        $booted = Boot::core(['ADVISOR_PROJECT_ROOT' => $root], $root, $fake);
+
+        $data = $this->data($this->call($booted, 'upgrade_path', ['to_php' => '8.4']));
+
+        $this->assertSame('booster', $data['tool']);
+        $this->assertCount(1, $fake->calls);
+        $this->assertSame('plan', $fake->calls[0]['argv'][2]);
+        $this->assertContains('--to-php=8.4', $fake->calls[0]['argv']);
+    }
+
+    public function testUpgradePathRefusesPathsOutsideTheRoot(): void
+    {
+        $root = $this->tempDir();
+        $fake = new FakeProcessRunner();
+        $booted = Boot::core(['ADVISOR_PROJECT_ROOT' => $root], $root, $fake);
+
+        $outcome = $this->call($booted, 'upgrade_path', ['path' => '../../']);
+
+        $this->assertTrue($outcome->isError);
+        $this->assertSame([], $fake->calls);
+    }
+
+    public function testUpgradePathSaysSoWhenBoosterIsNotConfigured(): void
+    {
+        $root = $this->tempDir();
+        $booted = Boot::core(['ADVISOR_PROJECT_ROOT' => $root], $root, new FakeProcessRunner());
+
+        $outcome = $this->call($booted, 'upgrade_path');
+
+        $this->assertTrue($outcome->isError);
+        $this->assertStringContainsString('booster', strtolower($outcome->text));
+    }
+
+    public function testUpgradePathTimesOut(): void
+    {
+        $root = $this->tempDir();
+        mkdir($root . '/vendor/bin', 0777, true);
+        file_put_contents($root . '/vendor/bin/booster', '<?php');
+        $fake = new FakeProcessRunner(new ProcessOutput(-1, '', 'timed out', true));
+        $booted = Boot::core(['ADVISOR_PROJECT_ROOT' => $root], $root, $fake);
+
+        $outcome = $this->call($booted, 'upgrade_path');
+
+        $this->assertTrue($outcome->isError);
+        $this->assertStringContainsString('ADVISOR_BOOSTER_TIMEOUT', $outcome->text);
+    }
+
     public function testHostileContentInAResultIsStrippedOfInvisibleText(): void
     {
         $booted = Boot::core();
