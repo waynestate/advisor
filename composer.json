@@ -13,6 +13,7 @@
         "ext-fileinfo": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
+        "composer/semver": "^3.0",
         "mcp/sdk": "0.9.0",
         "opis/json-schema": "^2.4",
         "psr/log": "^3.0",

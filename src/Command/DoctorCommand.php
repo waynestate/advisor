@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Waynestate\Advisor\Command;
 
+use Composer\Semver\Semver;
 use Mcp\Server\Transport\StdioTransport;
 use Psr\Log\NullLogger;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -18,7 +19,6 @@ use Waynestate\Advisor\Content\ContentBundle;
 use Waynestate\Advisor\Server\Runtime;
 use Waynestate\Advisor\Server\SdkServer;
 use Waynestate\Advisor\Support\Json;
-use Waynestate\Advisor\Support\VersionConstraint;
 
 /**
  * The one command to run when ADVISOR "doesn't show up" in the editor.
@@ -81,7 +81,7 @@ final class DoctorCommand extends Command
             if (!is_string($constraint) || $constraint === '') {
                 return $this->finding('php', 'fail', 'ADVISOR composer.json has no require.php constraint.');
             }
-            if (VersionConstraint::satisfies($constraint, PHP_VERSION)) {
+            if (Semver::satisfies(PHP_VERSION, $constraint)) {
                 return $this->finding('php', 'pass', 'PHP ' . PHP_VERSION . ' satisfies ' . $constraint);
             }
 
