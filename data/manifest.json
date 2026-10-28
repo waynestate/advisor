@@ -19,7 +19,7 @@
             "source": "booster/README.md"
         },
         "docs/creed/best-practices.md": {
-            "sha256": "f9dbb992ae3964c98d303d55b154cd67160fc10cd6ff0a29d4fa0663dced70c3",
+            "sha256": "c1029a023e1b80e3d36c6915b75853b67ebf7565bdf382af7708a823e750f380",
             "source": "creed/BEST_PRACTICES.md"
         },
         "docs/creed/readme.md": {
@@ -119,15 +119,15 @@
             "source": "creed/handbook/accessibility.md"
         },
         "handbook/auth.md": {
-            "sha256": "b6cf96ba4e917f4d93d7f4a2d4c078cdaca0e3b05a7cd5f8c2e2daf024e65227",
+            "sha256": "ee3c50677f18ddc227cebe56bc8cc919aecea06bf37d82b1b6437c61891bca2d",
             "source": "creed/handbook/auth.md"
         },
         "handbook/ci.md": {
-            "sha256": "4cca297a2dbaa1f463f108488bdb162d5c6af1ada8c0931bcd39ad8ffde05c48",
+            "sha256": "457e66ad931fdb0f12c049894118a577cdb88af30601333797f5b7b0935b7663",
             "source": "creed/handbook/ci.md"
         },
         "handbook/code.md": {
-            "sha256": "2b62f634303b8d81358bb9c84271a0acd72382ed28340f943dff7d0a83b1edae",
+            "sha256": "83290e59788cc6ba142c2f0b560111049a8bb6bc881699e67467adfc2f8c868f",
             "source": "creed/handbook/code.md"
         },
         "handbook/databases.md": {
@@ -135,27 +135,27 @@
             "source": "creed/handbook/databases.md"
         },
         "handbook/dependencies.md": {
-            "sha256": "d1bc7cf29ea3e6022e8922f1c2efea2b41eccb1a1528f46e858dcba761c04eaa",
+            "sha256": "28c4725ea9a47d26f44ed0539f541efb5c6e94bfc1f608b14c4e2128868508eb",
             "source": "creed/handbook/dependencies.md"
         },
         "handbook/deploy-gate.md": {
-            "sha256": "ae66649bb8b632b32eaa79de5047dc9b15a2cebf5e1405e3848ce37d649d36ac",
+            "sha256": "b8d234b9022e9df2f41981196dbe832ef3338e67f9696ad9344118a99a0ab10b",
             "source": "creed/handbook/deploy-gate.md"
         },
         "handbook/every-os.md": {
-            "sha256": "59c3444220f7fa65f956e06c735601bef68b0358d082a01a563844475c7c6a79",
+            "sha256": "73027659a47b2125ddf66ca96ed26611d591b07894471e851b4c481811be67b3",
             "source": "creed/handbook/every-os.md"
         },
         "handbook/overrides.md": {
-            "sha256": "43b7a84d23d060001698e4c613fc75881f067b5f91cb78e36cea2c3b754bcef3",
+            "sha256": "6456b3d36162d64e9a845b37dbe9ccab6670b5426067a981683dfef4e3644bd4",
             "source": "creed/handbook/overrides.md"
         },
         "handbook/runtime-and-headers.md": {
-            "sha256": "4e12e127f6e1196ce40f61554665e4d36815286cc31efe82176b91b6267d2d40",
+            "sha256": "43724ef8316cbbacdb766da2caedbd5f7855b03c7a45b552485b6579c889faf5",
             "source": "creed/handbook/runtime-and-headers.md"
         },
         "handbook/versions.md": {
-            "sha256": "98e6aae8abdf70aa3d139b1d3fd95782582d0042ec98f426bfb44d5e7fb251e4",
+            "sha256": "79a297ace7c663a38ea93f8338ab8210f49208047eb11c940dd8898ac3066a9c",
             "source": "creed/handbook/versions.md"
         },
         "policy.json": {
@@ -167,7 +167,7 @@
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {
-            "sha256": "c69c985a6c0a000513642d3e6134d05c9aa07c734d4c7478eb5fcb253036d5f6",
+            "sha256": "70f5d14f24d24b17beb091fd27867c2275068a332b6e989237f0ad6184aa6b2f",
             "source": "creed/handbook, creed/policy/policy.json"
         }
     }

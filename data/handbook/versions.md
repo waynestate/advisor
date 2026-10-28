@@ -1,6 +1,6 @@
 # Versions
 
-The policy states, from ADR-0003:
+The stack's version policy states:
 
 | State | Runtime (Baseline) | Check / CI | Platform |
 |---|---|---|---|
@@ -11,20 +11,20 @@ The policy states, from ADR-0003:
 
 - The dates live in `policy/policy.json`. Every tool derives a version's state
   from the date, through the CREED reader. No other code decides state
-  (ADR-0003).
-- The PHP floor is `^8.2`, the oldest non-EOL version today (ADR-0003). It
+  (the stack's version policy).
+- The PHP floor is `^8.2`, the oldest non-EOL version today (the stack's version policy). It
   moves to `^8.3` on 2027-01-01.
 - Stack packages raise their own `php` floor in a new major when a PHP version
-  reaches EOL, so security fixes require the upgrade (ADR-0003).
+  reaches EOL, so security fixes require the upgrade (the stack's version policy).
 - `policy.json` is a contract, versioned like WayneUI's `/v2/`. Older Check
-  versions must still read newer policy files (ADR-0003).
+  versions must still read newer policy files (the stack's version policy).
 
 ## Latest patches
 
 Each version can also carry a `latest_patch` — the newest patch release for
 that version as of a `latest_patch_checked` date. It is informational: a
 version's state (active, security-only, EOL) is still derived from the dates
-alone (ADR-0003); `latest_patch` only tells you how far behind the newest
+alone (the stack's version policy); `latest_patch` only tells you how far behind the newest
 patch you are. `bin/refresh-patches.php` keeps it current by reading the four
 upstream feeds (php.net's active releases, Packagist's `laravel/framework`,
 nodejs.org's dist index, and endoflife.date's PHP data) and writing

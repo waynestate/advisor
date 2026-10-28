@@ -1,13 +1,13 @@
 # Dependencies
 
 - No `dev-master`, `dev-*` or `*` constraints on runtime dependencies
-  (ADR-0003).
-- A lock file is required and must be committed (ADR-0003).
+  (the stack's version policy).
+- A lock file is required and must be committed (the stack's version policy).
 - `composer audit` must report no advisories at or above the policy's severity
-  threshold (ADR-0003).
+  threshold (the stack's version policy).
 - `composer.json` `require.php` must not allow an EOL version as its lowest
-  bound (ADR-0003).
+  bound (the stack's version policy).
 - Every project is a framework-free core plus thin adapters. `composer.json`
   requires only `php` and PSR packages; Laravel, Inertia and Vue are
-  `suggest` (ADR-0001).
-- Adapters call the core and never re-implement it (ADR-0001).
+  `suggest` (the stack's core-plus-adapters design).
+- Adapters call the core and never re-implement it (the stack's core-plus-adapters design).
