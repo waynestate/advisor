@@ -1,6 +1,6 @@
 # ADVISOR
 
-[![GitLab pipeline](https://gitlab.example/enterprise-apps/advisor/badges/main/pipeline.svg)](https://gitlab.example/enterprise-apps/advisor/-/pipelines) [![GitHub CI](https://github.com/waynestate/advisor/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/advisor/actions/workflows/ci.yml)
+[![GitHub CI](https://github.com/waynestate/advisor/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/advisor/actions/workflows/ci.yml)
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub). The badge addresses above are placeholders until the repositories exist.
 

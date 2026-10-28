@@ -12,7 +12,7 @@ could continue.
 | 3 | `policy.json` holds components and tools but no package choices. Should `policy_lookup` also answer "which package for X"? | CREED owner | A "which package" tool | `policy_lookup` covers runtimes, frameworks and tools only. `list_stack_rules` serves the handbook text for package guidance. |
 | 4 | `get_project_status` describes a stack project (state, package, PHP floor under today's policy), not the developer's own app. Is that the intended meaning? | Lead | An "inspect my app" tool | Stack project. For the user's own app, `run_proctor_check` is the tool. |
 | 5 | Should Laravel apps register ADVISOR by `php artisan mcp:start advisor` or by `php vendor/bin/advisor mcp`? | Lead | The `install` default for Laravel | `install` always writes the plain PHP command. The artisan route is available through the service provider. |
-| 6 | Where is ADVISOR published (Pantry, VCS repository, Packagist mirror), and who creates the repository on GitLab and the GitHub mirror? | Lead / platform | `composer require` instructions, real badge URLs | Install text says "until published, use a path or vcs repository". Badge URLs are placeholders. |
+| 6 | Where is ADVISOR published (Pantry, VCS repository, Packagist mirror), and who creates the GitLab repository and the GitHub mirror? | Lead / platform | `composer require` instructions, real badge URLs | Install text says "until published, use a path or vcs repository". Badge URLs are placeholders. |
 | 7 | Is the MCP Inspector wanted in CI (it needs Node)? | Lead | Best practice 6.1 | Not added. The in-process client, the `tools/list` snapshot and the stdio subprocess test cover the protocol with PHP only. |
 | 8 | The `advisor` entry in the project list reads "proposed" until the repository holds code; BOOSTER, ROLLCALL, DRAWBRIDGE and SQUIRE are also proposed. Regenerate once their repos merge. | Lead | Accurate state labels | State is computed from whether the sibling repo holds a `composer.json`/`package.json`. Run `content:generate` after each merge. |
 | 9 | `applies_to` on each handbook rule (which of the five app permutations it covers) is worked out from keywords. Should CREED tag rules itself? | CREED owner | Trusting the permutation filter | Keyword heuristic, stated in the tool description ("check the cited line before relying on it"). |
@@ -34,7 +34,7 @@ Nothing in 0.1 needs a secret, key, certificate, token or host. All of these are
 | `ADVISOR_AUDIT_LOG` | The developer | `/path/to/advisor-audit.log` |
 | `ADVISOR_STACK_DIR` | Maintainers running `content:generate` | `/path/to/stack` |
 | `ADVISOR_MODULES_FILE` | Maintainers adding modules | `/path/to/modules.json` |
-| GitLab and GitHub badge URLs in `README.md` | Whoever creates the repositories | `gitlab.example/enterprise-apps/advisor`, `github.com/waynestate/advisor` |
+| GitLab and GitHub badge URLs in `README.md` | Whoever creates the repositories | `github.com/waynestate/advisor` |
 | GitHub workflow pin | The first PREFLIGHT GitHub release | `waynestate/preflight` commit `65e5248...` (the comment in `ci.yml` says to replace it with a tag) |
 
 See `.env.example`.
