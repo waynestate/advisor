@@ -138,9 +138,29 @@ php vendor/bin/advisor mcp                          # serve over stdio (your cli
 php vendor/bin/advisor install [--client=claude] [--write] [--force] [--path=.]
 php vendor/bin/advisor content:verify               # check the bundled content against its manifest
 php vendor/bin/advisor content:generate [--sources=<dir>] [--check]
+php vendor/bin/advisor doctor [--json]              # check the install when the server does not show up
 ```
 
 Stdout carries only protocol messages. Logs, warnings and stray output go to stderr, so a client never sees garbage.
+
+## When it doesn't show up
+
+You added the config, opened the project, and the `advisor` server is not in the list. Run:
+
+```
+php vendor/bin/advisor doctor
+```
+
+It checks the four things that keep a server from appearing, in plain words, and changes nothing:
+
+- **php** — the PHP on your machine satisfies ADVISOR's own `composer.json` (8.3 or newer).
+- **content** — the bundled `data/` still matches its manifest.
+- **client:claude**, **client:warriorgpt**, **client:cursor**, **client:vscode** — each client's MCP config: is the file there, does it have the `advisor` entry, and is the script it points at in the project? A missing file is a warning, not a failure — you only need the one client you use.
+- **mcp** — the server actually starts: doctor boots it in-process and asks for its tools.
+
+A `fail` is something to fix; a `warn` is something you may not care about. The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
+
+The advisor will see you now.
 
 ## Served content
 

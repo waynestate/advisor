@@ -51,5 +51,4 @@ See `.env.example`.
 | Plan handles, `requestState` signing and elicitation | No tool needs state or a question to the user yet. |
 | Full-capture audit mode | Hashes only by default; an opt-in needs a retention decision. |
 | MCP Inspector in CI, native Windows and macOS CI | See questions 7 and 12. |
-| `advisor doctor` (check the install and the client config) | A convenience; `content:verify` and `install` cover the essentials. |
 | BOOSTER upgrade-path tool | BOOSTER is a proposal; `plan_upgrade` is a prompt that points at the policy and PROCTOR meanwhile. |
