@@ -77,8 +77,8 @@
   /* ---------------------------------------------------- 3. the map's places */
 
   // Positions are in the map's own units (viewBox 1200 x 700). Every place is
-  // a stack project from ADVISOR's data/projects.json; planned ones are the
-  // projects it lists as proposed.
+  // a stack project from ADVISOR's data/projects.json, and all fourteen are
+  // built at 0.1.
   var START = { x: 110, y: 612 };
   var HUB = { x: 560, y: 360 };
   var PLACES = {
@@ -91,10 +91,10 @@
     helmet:      { name: "HELMET",     alias: "The Gatehouse",    x: 420,  y: 625, label: "r", mark: "assets/marks/helmet.png" },
     weld:        { name: "WELD",       alias: "The Workshop",     x: 330,  y: 118, label: "r", mark: "assets/marks/weld.png" },
     sourdough:   { name: "Sourdough",  alias: "The Bakery",       x: 150,  y: 300, label: "r", mark: "assets/marks/sourdough.png" },
-    booster:     { name: "BOOSTER",    alias: "Launch Pad",       x: 1120, y: 110, label: "b", mark: "assets/marks/booster.png", planned: true },
-    rollcall:    { name: "ROLLCALL",   alias: "The Registrar",    x: 290,  y: 388, label: "l", mark: "assets/marks/rollcall.png", planned: true },
-    drawbridge:  { name: "DRAWBRIDGE", alias: "Castle Gate",      x: 120,  y: 470, label: "r", mark: "assets/marks/drawbridge.png", planned: true },
-    squire:      { name: "SQUIRE",     alias: "The Stables",      x: 1120, y: 580, label: "b", mark: "assets/marks/squire.png", planned: true }
+    booster:     { name: "BOOSTER",    alias: "Launch Pad",       x: 1120, y: 110, label: "b", mark: "assets/marks/booster.png" },
+    rollcall:    { name: "ROLLCALL",   alias: "The Registrar",    x: 290,  y: 388, label: "l", mark: "assets/marks/rollcall.png" },
+    drawbridge:  { name: "DRAWBRIDGE", alias: "Castle Gate",      x: 120,  y: 470, label: "r", mark: "assets/marks/drawbridge.png" },
+    squire:      { name: "SQUIRE",     alias: "The Stables",      x: 1120, y: 580, label: "b", mark: "assets/marks/squire.png" }
   };
 
   var map = document.getElementById("map");
@@ -238,9 +238,9 @@
     },
     upgrade: {
       keys: ["upgrade", "8.1", "8.2", "off php", "old php", "migrate", "outdated", "booster", "get off", "move to"],
-      steps: function () { return [{ prompt: "plan_upgrade" }, { tool: "policy_lookup", args: "component: php" }, { tool: "run_proctor_check" }]; },
-      dest: "proctor", detail: "your app's findings, the way off the old version",
-      answer: function () { return policyAnswer("php", "plan_upgrade walks the policy and your PROCTOR findings one hop at a time. BOOSTER, the upgrade tool, is planned to take over the heavy lifting."); }
+      steps: function () { return [{ prompt: "plan_upgrade" }, { tool: "policy_lookup", args: "component: php" }, { tool: "run_proctor_check", args: "checks: php-floor, unbounded-constraints" }, { tool: "read_project_docs", args: "project: booster" }]; },
+      dest: "booster", detail: "the upgrade tool, one hop at a time",
+      answer: function () { return policyAnswer("php", "plan_upgrade reads the policy, runs PROCTOR's php-floor and unbounded-constraints checks, then reads BOOSTER's README and proposes one hop at a time. BOOSTER does the hop: Rector rewrites the code, BOOSTER raises the constraints, and your tests must pass on the target PHP."); }
     },
     proctor: {
       keys: ["pass", "check", "standards", "standard", "proctor", "meet", "audit", "finding", "findings", "comply", "compliant"],
@@ -280,27 +280,27 @@
     },
     deploy: {
       keys: ["deploy", "deploying", "release", "ship", "hosting", "server"],
-      steps: function () { return [{ tool: "get_project_status", args: "project: squire" }]; },
-      dest: "squire", detail: "planned",
-      answer: function () { return { text: "SQUIRE, the deploy kit, is still proposed. get_project_status says so plainly and gives its next step, instead of inventing a deploy command that does not exist yet.", src: "Source: ADVISOR's project list." }; }
+      steps: function () { return [{ tool: "get_project_status", args: "project: squire" }, { tool: "read_project_docs", args: "project: squire" }]; },
+      dest: "squire", detail: "the deploy kit",
+      answer: function () { return { text: "SQUIRE, the deploy kit: the build script, the release script, the health check, and local parity on the real images. A knight never suits up alone.", src: "Source: SQUIRE's README, as bundled." }; }
     },
     census: {
       keys: ["fleet", "census", "inventory", "rollcall", "which apps"],
-      steps: function () { return [{ tool: "get_project_status", args: "project: rollcall" }]; },
-      dest: "rollcall", detail: "planned",
-      answer: function () { return { text: "ROLLCALL, the fleet census, is proposed. Its status and next step come back as written; nothing is made up to fill the gap.", src: "Source: ADVISOR's project list." }; }
+      steps: function () { return [{ tool: "read_project_docs", args: "project: rollcall" }]; },
+      dest: "rollcall", detail: "the fleet scanner",
+      answer: function () { return { text: "ROLLCALL scans the fleet: for every app, the PHP image, the declared PHP floor, the Laravel version, the auth package and the PROCTOR result, each checked against CREED's policy by date. Every app answers “present”.", src: "Source: ROLLCALL's README, as bundled." }; }
     },
     gateway: {
       keys: ["gateway", "drawbridge"],
-      steps: function () { return [{ tool: "get_project_status", args: "project: drawbridge" }]; },
-      dest: "drawbridge", detail: "planned",
-      answer: function () { return { text: "DRAWBRIDGE, the auth gateway, is proposed. Until it is lowered, SESAME's drivers are how an app signs people in.", src: "Source: ADVISOR's project list." }; }
+      steps: function () { return [{ tool: "read_project_docs", args: "project: drawbridge" }]; },
+      dest: "drawbridge", detail: "the auth gateway",
+      answer: function () { return { text: "DRAWBRIDGE is the auth gateway: one SAML service provider in front of the apps. It makes sure the visitor has a session, drops any identity header they tried to bring, and hands the app a short-lived signed assertion that SESAME's gateway driver verifies.", src: "Source: DRAWBRIDGE's README, as bundled." }; }
     },
     stack: {
       keys: ["projects", "stack", "parts", "list", "what's in", "what is in", "starter", "sourdough"],
       steps: function () { return [{ tool: "list_projects" }]; },
       dest: "wayne-ui", detail: "first on the list, always",
-      answer: function () { return { text: "Fourteen projects, WayneUI first, each marked built or proposed: nine built today, five proposed. ADVISOR modestly lists itself as proposed until its own data is regenerated.", src: "Source: ADVISOR's data/projects.json." }; }
+      answer: function () { return { text: "Fourteen projects, WayneUI first, each with its role, its package and its state. All fourteen are built at 0.1, ADVISOR included; it no longer lists itself as proposed.", src: "Source: ADVISOR's data/projects.json." }; }
     },
     start: {
       keys: ["new", "start", "begin", "orient", "where", "help", "first", "onboard", "onboarding", "hello"],
@@ -439,8 +439,11 @@
         // Draw leg by leg; each waypoint lights as the pencil reaches it.
         var at = 120;
         litLegs(0);
+        // Long routes walk faster: the whole plot stays near three seconds.
+        var total = segs.reduce(function (t, s) { return t + Math.max(420, Math.min(1100, s.len * 2.1)) + 140; }, 0);
+        var pace = Math.min(1, 3200 / total);
         segs.forEach(function (s, k) {
-          var dur = Math.max(420, Math.min(1100, s.len * 2.1));
+          var dur = Math.max(420, Math.min(1100, s.len * 2.1)) * pace;
           later(function () {
             s.mask.style.setProperty("--dur", dur + "ms");
             s.mask.getBoundingClientRect();
