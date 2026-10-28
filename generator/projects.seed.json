@@ -1,5 +1,5 @@
 {
-    "_comment": "The parts list. Hand-written roles and next steps; the generator adds state, package and PHP floor from each sibling repository. Wording follows design/portfolio.md in the coordination repo.",
+    "_comment": "The parts list. Hand-written roles and next steps; the generator adds state, package and PHP floor from each sibling repository.",
     "projects": [
         {
             "id": "wayne-ui",

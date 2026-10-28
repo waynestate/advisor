@@ -12,7 +12,7 @@ use Waynestate\Advisor\Support\Json;
  * Runs PROCTOR's own read-only `check` command and returns its report.
  *
  * It reports; it never gates. The exit code that decides a release stays
- * with `vendor/bin/proctor` in CI (ADR-0007). The binary is found only in the
+ * with `vendor/bin/proctor` in CI. The binary is found only in the
  * project's own vendor/bin, so a model cannot point ADVISOR at another program.
  */
 final class ProctorRunner

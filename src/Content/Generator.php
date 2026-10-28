@@ -28,29 +28,41 @@ final class Generator
      * names. The sources are being cleaned for public release; until they are,
      * the bundle step replaces what is left with neutral wording. Each rule
      * names the source case it covers, and the public-posture test fails on
-     * anything a rule misses.
+     * anything a rule misses. Private strings (hostnames, people) are loaded
+     * from the file named by the ADVISOR_PRIVATE_DENYLIST environment variable.
      *
      * @var list<array{0: string, 1: string}> pattern, replacement
      */
     private const SANITIZATIONS = [
-        // [text](../design/ADR/...) -> text (helmet/BEST_PRACTICES.md, the ADR-0011 link)
+        // [text](../design/ADR/...) -> text
         ['#\[(?<text>[^\]]+)\]\(((?:\.\./)*)design/ADR/[^)\s]+\)#', '$1'],
-        // `design/instance-runner-case.md` -> `instance-runner case document` (preflight/BEST_PRACTICES.md)
-        ['#`design/instance-runner-case\.md`#', '`instance-runner case document`'],
-        // design/instance-runner-case.md without backticks (preflight/BEST_PRACTICES.md)
-        ['#design/instance-runner-case\.md#', 'instance-runner case document'],
-        // [name@wayne.edu](mailto:...) -> the WayneUI maintainers (wayne-ui/README.md)
+        // `design/<name>.md` -> `a design document`
+        ['#`design/[a-z-]+\.md`#', '`a design document`'],
+        // design/<name>.md without backticks
+        ['#design/[a-z-]+\.md#', 'a design document'],
+        // [name@wayne.edu](mailto:...) -> the WayneUI maintainers
         ['#\[[^\]]+@wayne\.edu\]\(mailto:[^)]+\)#', 'the WayneUI maintainers'],
-        // "the coordination repo[itory]" -> "the stack's design documents" (booster, advisor BEST_PRACTICES.md)
+        // (D-xxx) -> removed
+        ['#\s*\(\bD-\d{3}\b\)#', ''],
+        // D-xxx -> an open stack question
+        ['#\bD-\d{3}\b#', 'an open stack question'],
+        // ADR-xxxx -> an ADR
+        ['#\bADR-\d{4}\b#', 'an ADR'],
+        // "the coordination repo[itory]" -> "the stack's design documents"
         ['#\b(?:the )?coordination repo(?:sitory)?#', "the stack's design documents"],
     ];
+
+    private readonly Denylist $denylist;
 
     public function __construct(
         private readonly string $sourcesDir,
         private readonly string $outDir,
         private readonly string $seedFile,
         private readonly Clock $clock,
-    ) {}
+        ?Denylist $denylist = null,
+    ) {
+        $this->denylist = $denylist ?? Denylist::fromEnv();
+    }
 
     /**
      * What the sources produce today, as relative path => [content, source].
@@ -273,11 +285,14 @@ final class Generator
         return rtrim($text, "\n") . "\n";
     }
 
-    /** Replaces the internal names the sources still carry (see SANITIZATIONS). */
+    /** Replaces the internal names the sources still carry (see SANITIZATIONS and the private denylist). */
     private function sanitize(string $text): string
     {
         foreach (self::SANITIZATIONS as [$pattern, $replacement]) {
             $text = (string) preg_replace($pattern, $replacement, $text);
+        }
+        if (!$this->denylist->isEmpty()) {
+            $text = $this->denylist->replace($text);
         }
 
         return $text;

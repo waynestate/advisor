@@ -7,6 +7,7 @@ namespace Waynestate\Advisor\Tests\Content;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Waynestate\Advisor\Content\ContentBundle;
+use Waynestate\Advisor\Content\Denylist;
 use Waynestate\Advisor\Content\Generator;
 use Waynestate\Advisor\Support\FixedClock;
 use Waynestate\Advisor\Tests\Support\TempDir;
@@ -47,9 +48,9 @@ final class GeneratorTest extends TestCase
         ]]));
     }
 
-    private function generator(string $date = '2026-10-28'): Generator
+    private function generator(string $date = '2026-10-28', ?Denylist $denylist = null): Generator
     {
-        return new Generator($this->sources, $this->out, $this->seed, new FixedClock($date));
+        return new Generator($this->sources, $this->out, $this->seed, new FixedClock($date), $denylist);
     }
 
     public function testBuildsAVerifiableBundle(): void
@@ -140,17 +141,22 @@ final class GeneratorTest extends TestCase
 
     public function testInternalNamesAreReplacedWithNeutralWordingOnTheWayIn(): void
     {
-        $this->put($this->sources . '/proctor/README.md', "# PROCTOR\n\nSee `design/instance-runner-case.md` and [ADR-0011 (metrics speak Prometheus)](../design/ADR/ADR-0011-metrics-speak-prometheus.md).\nQuestions go to [someone@wayne.edu](mailto:someone@wayne.edu) in the coordination repository.\n");
-        $this->generator()->generate();
+        $denylistFile = $this->tempDir() . '/denylist.txt';
+        file_put_contents($denylistFile, "someone@example.edu\nci.internal.example\n");
+        $denylist = Denylist::fromFile($denylistFile);
+
+        $this->put($this->sources . '/proctor/README.md', "# PROCTOR\n\nSee `design/case-note.md` and [ADR-9999 (metrics speak Prometheus)](../design/ADR/ADR-9999-metrics-speak-prometheus.md).\nQuestions go to someone@example.edu in the coordination repository.\nThe CI runner is at ci.internal.example.\n");
+        $this->generator('2026-10-28', $denylist)->generate();
         $readme = (string) (new ContentBundle($this->out))->doc('proctor', 'readme');
 
         $this->assertStringNotContainsString('design/ADR', $readme);
-        $this->assertStringNotContainsString('design/instance-runner', $readme);
-        $this->assertStringNotContainsString('wayne.edu', $readme);
+        $this->assertStringNotContainsString('design/case-note', $readme);
+        $this->assertStringNotContainsString('example.edu', $readme);
         $this->assertStringNotContainsString('coordination repo', $readme);
-        $this->assertStringContainsString('instance-runner case document', $readme);
-        $this->assertStringContainsString('ADR-0011 (metrics speak Prometheus)', $readme);
-        $this->assertStringContainsString('the WayneUI maintainers', $readme);
+        $this->assertStringNotContainsString('ci.internal.example', $readme);
+        $this->assertStringNotContainsString('someone@example.edu', $readme);
+        $this->assertStringContainsString('a design document', $readme);
+        $this->assertStringContainsString('an ADR', $readme);
         $this->assertStringContainsString("the stack's design documents", $readme);
     }
 
