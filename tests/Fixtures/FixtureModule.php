@@ -36,7 +36,7 @@ final class FixtureModule implements Module
                 title: 'Greet',
                 description: 'Greets by name. Read-only fixture.',
                 inputSchema: $schema,
-                handler: static fn (array $args): array => ['greeting' => 'hello ' . $args['name']],
+                handler: static fn(array $args): array => ['greeting' => 'hello ' . $args['name']],
                 group: 'fixture',
             ),
             new ToolDefinition(
@@ -58,11 +58,11 @@ final class FixtureModule implements Module
 
     public function resources(): array
     {
-        return [new ResourceDefinition('advisor://fixture/note', 'fixture-note', 'Fixture note', 'A note.', 'text/plain', static fn (): string => 'note')];
+        return [new ResourceDefinition('advisor://fixture/note', 'fixture-note', 'Fixture note', 'A note.', 'text/plain', static fn(): string => 'note')];
     }
 
     public function prompts(): array
     {
-        return [new PromptDefinition('fixture_prompt', 'Fixture prompt', 'A prompt.', [], static fn (array $a): string => 'do the fixture thing')];
+        return [new PromptDefinition('fixture_prompt', 'Fixture prompt', 'A prompt.', [], static fn(array $a): string => 'do the fixture thing')];
     }
 }

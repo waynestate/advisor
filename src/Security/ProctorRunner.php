@@ -119,7 +119,7 @@ final class ProctorRunner
             ];
         }
 
-        $failed = array_filter($findings, static fn (array $f): bool => $f['status'] === 'fail');
+        $failed = array_filter($findings, static fn(array $f): bool => $f['status'] === 'fail');
 
         return [
             'tool' => 'proctor',

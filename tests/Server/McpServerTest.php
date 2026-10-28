@@ -86,7 +86,7 @@ final class McpServerTest extends TestCase
 
         $uris = array_column($responses[$list]['result']['resources'], 'uri');
         $this->assertContains('advisor://policy', $uris);
-        $this->assertNotEmpty(array_filter($uris, static fn (string $u): bool => str_starts_with($u, 'advisor://creed/')));
+        $this->assertNotEmpty(array_filter($uris, static fn(string $u): bool => str_starts_with($u, 'advisor://creed/')));
         $this->assertStringContainsString('components', $responses[$read]['result']['contents'][0]['text']);
         $this->assertArrayHasKey('error', $responses[$unknown]);
     }
@@ -121,7 +121,7 @@ final class McpServerTest extends TestCase
     public function testToolsListMatchesTheSnapshot(): void
     {
         $tools = $this->harness()->call('tools/list')['result']['tools'];
-        usort($tools, static fn (array $a, array $b): int => $a['name'] <=> $b['name']);
+        usort($tools, static fn(array $a, array $b): int => $a['name'] <=> $b['name']);
         $actual = json_encode($tools, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR) . "\n";
         $file = dirname(__DIR__) . '/snapshots/tools-list.json';
 

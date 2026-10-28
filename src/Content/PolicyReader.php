@@ -160,7 +160,7 @@ final class PolicyReader
                 $supported[] = $version;
             }
         }
-        usort($supported, static fn (string $a, string $b): int => version_compare($a, $b));
+        usort($supported, static fn(string $a, string $b): int => version_compare($a, $b));
 
         return $supported[0] ?? null;
     }

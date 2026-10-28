@@ -14,7 +14,7 @@ final class ListStackRules
 {
     public static function definition(ModuleContext $context): ToolDefinition
     {
-        $chapters = array_map(static fn (array $c): string => $c['id'], $context->content->handbookChapters());
+        $chapters = array_map(static fn(array $c): string => $c['id'], $context->content->handbookChapters());
         $pageChars = $context->config->maxChars;
 
         return new ToolDefinition(

@@ -219,10 +219,10 @@ final class Generator
             'package' => $package,
             'php' => $php,
             'next_step' => (string) $seed['next_step'],
-            'docs' => array_values(array_map(
-                static fn (string $path): string => pathinfo($path, PATHINFO_FILENAME),
+            'docs' => array_map(
+                static fn(string $path): string => pathinfo($path, PATHINFO_FILENAME),
                 array_keys($docs),
-            )),
+            ),
         ];
 
         return [$entry, $docs];

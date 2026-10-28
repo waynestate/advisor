@@ -55,7 +55,7 @@ final class ModuleLoader
         }
         $data = Json::decodeFile($manifestFile);
         $classes = $data['modules'] ?? null;
-        if (!is_array($classes) || array_filter($classes, static fn (mixed $c): bool => !is_string($c)) !== []) {
+        if (!is_array($classes) || array_filter($classes, static fn(mixed $c): bool => !is_string($c)) !== []) {
             throw new RuntimeException('The module manifest must hold a "modules" list of class names.');
         }
 

@@ -25,7 +25,7 @@ final class CorePrompt extends Prompt
     public function arguments(): array
     {
         return array_map(
-            static fn (array $a): Argument => new Argument($a['name'], $a['description'], $a['required']),
+            static fn(array $a): Argument => new Argument($a['name'], $a['description'], $a['required']),
             $this->definition->arguments,
         );
     }
@@ -34,7 +34,7 @@ final class CorePrompt extends Prompt
     {
         $strings = [];
         foreach ($request->all() as $key => $value) {
-            if (is_string($key) && is_string($value)) {
+            if (is_string($value)) {
                 $strings[$key] = $value;
             }
         }

@@ -171,7 +171,7 @@ final class ContentBundle
      */
     public function projectIds(): array
     {
-        return array_map(static fn (array $p): string => (string) $p['id'], $this->projects());
+        return array_map(static fn(array $p): string => (string) $p['id'], $this->projects());
     }
 
     /**

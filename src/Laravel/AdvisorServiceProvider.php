@@ -28,16 +28,16 @@ final class AdvisorServiceProvider extends ServiceProvider
 
         $this->app->singleton(Config::class, function (Application $app): Config {
             $env = [];
-            foreach ((array) $app['config']->get('advisor.env', []) as $name => $value) {
+            foreach ((array) $app->make('config')->get('advisor.env', []) as $name => $value) {
                 // env() turns "true" into a boolean; Config reads strings.
                 $env[(string) $name] = is_bool($value) ? ($value ? '1' : '0') : (is_scalar($value) ? (string) $value : null);
             }
-            $env['APP_ENV'] = $app->environment();
+            $env['APP_ENV'] = (string) $app->environment();
 
             return Config::fromEnv($env, $app->basePath());
         });
 
-        $this->app->singleton(Booted::class, fn (Application $app): Booted => Runtime::boot(
+        $this->app->singleton(Booted::class, fn(Application $app): Booted => Runtime::boot(
             $app->make(Config::class),
             $app->make(LoggerInterface::class),
         ));

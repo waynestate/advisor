@@ -30,6 +30,7 @@ final class RuleExtractor
         $rules = [];
         $heading = '';
         $inFence = false;
+        /** @var array{heading: string, text: string, line: int}|null $current */
         $current = null;
         $lines = explode("\n", str_replace("\r\n", "\n", $markdown));
 
@@ -91,7 +92,7 @@ final class RuleExtractor
             // A rule that names raw PHP next to Laravel is a contrast, not a restriction.
             return $set;
         }
-        $keep = static fn (array $allowed): array => array_values(array_intersect($set, $allowed));
+        $keep = static fn(array $allowed): array => array_values(array_intersect($set, $allowed));
 
         if (preg_match('/\b(inertia)\b/i', $text)) {
             $set = $keep(['laravel-inertia-vue']);

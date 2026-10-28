@@ -70,18 +70,18 @@ final class CatalogTest extends TestCase
 
     public function testToolDefinitionsRefuseUnsafeMetadata(): void
     {
-        $make = static fn (string $name, string $description, array $schema): ToolDefinition => new ToolDefinition($name, 'T', $description, $schema, static fn (): array => []);
+        $make = static fn(string $name, string $description, array $schema): ToolDefinition => new ToolDefinition($name, 'T', $description, $schema, static fn(): array => []);
         $object = ['type' => 'object', 'additionalProperties' => false];
 
         $this->assertInstanceOf(ToolDefinition::class, $make('ok_tool', 'Fine.', $object));
 
         foreach ([
-            'bad name' => static fn () => $make('Run-Command', 'x', $object),
-            'long name' => static fn () => $make(str_repeat('a', 65), 'x', $object),
-            'no description' => static fn () => $make('a_tool', '', $object),
-            'huge description' => static fn () => $make('a_tool', str_repeat('x', 1300), $object),
-            'open schema' => static fn () => $make('a_tool', 'x', ['type' => 'object']),
-            'hidden text' => static fn () => $make('a_tool', "Reads files.\u{E0049}\u{E0047}", $object),
+            'bad name' => static fn() => $make('Run-Command', 'x', $object),
+            'long name' => static fn() => $make(str_repeat('a', 65), 'x', $object),
+            'no description' => static fn() => $make('a_tool', '', $object),
+            'huge description' => static fn() => $make('a_tool', str_repeat('x', 1300), $object),
+            'open schema' => static fn() => $make('a_tool', 'x', ['type' => 'object']),
+            'hidden text' => static fn() => $make('a_tool', "Reads files.\u{E0049}\u{E0047}", $object),
         ] as $label => $attempt) {
             try {
                 $attempt();

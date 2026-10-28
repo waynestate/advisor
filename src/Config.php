@@ -56,7 +56,7 @@ final class Config
         $groups = array_values(array_filter(array_map(
             'trim',
             explode(',', $get('ADVISOR_GROUPS') ?? ''),
-        ), static fn (string $g): bool => $g !== ''));
+        ), static fn(string $g): bool => $g !== ''));
 
         return new self(
             enabled: self::truthy($get('ADVISOR_ENABLED')),

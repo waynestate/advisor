@@ -49,7 +49,7 @@ final class CoreModule implements Module
                 title: 'CREED policy.json',
                 description: 'Support dates for PHP, Laravel, Node, MySQL, Vue and Inertia, from CREED, as bundled with ADVISOR.',
                 mimeType: 'application/json',
-                read: static fn (): string => (string) file_get_contents($content->policyFile()),
+                read: static fn(): string => (string) file_get_contents($content->policyFile()),
             ),
         ];
         foreach ($content->handbookChapters() as $chapter) {
@@ -60,7 +60,7 @@ final class CoreModule implements Module
                 title: 'CREED handbook: ' . $chapter['title'],
                 description: 'The CREED handbook chapter "' . $chapter['title'] . '", from ' . $content->source('handbook/' . $id . '.md') . '.',
                 mimeType: 'text/markdown',
-                read: static fn (): string => $content->handbook($id) ?? '',
+                read: static fn(): string => $content->handbook($id) ?? '',
             );
         }
 
@@ -75,7 +75,7 @@ final class CoreModule implements Module
                 title: 'Orient me in the WSU stack',
                 description: 'Walks through which stack projects exist, which CREED rules apply to your stack, whether your versions are supported and what to do next.',
                 arguments: [['name' => 'permutation', 'description' => 'One of ' . implode(', ', RuleExtractor::PERMUTATIONS) . '. Default: all.', 'required' => false]],
-                render: static fn (array $args): string => self::template('orient-me', [
+                render: static fn(array $args): string => self::template('orient-me', [
                     'permutation' => in_array($args['permutation'] ?? '', RuleExtractor::PERMUTATIONS, true) ? $args['permutation'] : 'not stated (ask the developer, or look at composer.json and package.json)',
                 ]),
             ),
@@ -84,7 +84,7 @@ final class CoreModule implements Module
                 title: 'Plan the next upgrade hop',
                 description: 'Plans a PHP or Laravel upgrade one supported hop at a time, using the policy, PROCTOR and the upgrade tool.',
                 arguments: [['name' => 'target', 'description' => 'Target version, for example 8.4. Default: the next supported one.', 'required' => false]],
-                render: static fn (array $args): string => self::template('plan-upgrade', [
+                render: static fn(array $args): string => self::template('plan-upgrade', [
                     'target' => preg_match('/^[0-9]{1,3}(\.[0-9]{1,3}){0,2}$/', $args['target'] ?? '') ? $args['target'] : 'the next supported version',
                 ]),
             ),

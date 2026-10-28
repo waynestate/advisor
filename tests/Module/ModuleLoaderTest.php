@@ -31,7 +31,7 @@ final class ModuleLoaderTest extends TestCase
 
         $modules = (new ModuleLoader())->load([$this->manifest(CoreModule::class, FixtureModule::class)], $context);
 
-        $this->assertSame(['core', 'fixture'], array_map(static fn ($m): string => $m->id(), $modules));
+        $this->assertSame(['core', 'fixture'], array_map(static fn($m): string => $m->id(), $modules));
     }
 
     public function testTheShippedManifestLoadsTheCoreModule(): void

@@ -81,7 +81,7 @@ final class SdkServer
             $prompt->title,
             $prompt->description,
             array_map(
-                static fn (array $a): PromptArgument => new PromptArgument($a['name'], $a['description'], $a['required']),
+                static fn(array $a): PromptArgument => new PromptArgument($a['name'], $a['description'], $a['required']),
                 $prompt->arguments,
             ),
         );
@@ -120,11 +120,14 @@ final class SdkPromptHandler implements PromptHandlerInterface
 {
     public function __construct(private readonly PromptDefinition $prompt) {}
 
+    /**
+     * @return array<string, string>
+     */
     public function get(array $arguments, ClientGateway $gateway): array
     {
         $strings = [];
         foreach ($arguments as $key => $value) {
-            if (is_string($key) && is_string($value)) {
+            if (is_string($value)) {
                 $strings[$key] = $value;
             }
         }

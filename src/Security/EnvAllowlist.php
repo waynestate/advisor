@@ -56,7 +56,7 @@ final class EnvAllowlist
     {
         return array_filter(
             self::forProcess($current),
-            static fn (string|false $value): bool => $value !== false,
+            static fn(string|false $value): bool => $value !== false,
         );
     }
 }

@@ -31,7 +31,7 @@ final class Redactor
         foreach (self::PATTERNS as $pattern) {
             $replaced = preg_replace_callback(
                 $pattern,
-                static fn (array $m): string => ($m[1] ?? '') . self::MARK,
+                static fn(array $m): string => ($m[1] ?? '') . self::MARK,
                 $out,
             );
             $out = $replaced ?? $out;
