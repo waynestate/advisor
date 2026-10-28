@@ -1,7 +1,7 @@
 # ADVISOR best practices
 
 The short version, for people who use ADVISOR and people who add to it. The full guide, with sources, is
-`design/best-practices/advisor.md` in the stack's design documents. Tags: Enforced (code or CI stops the bad outcome),
+kept with the stack's design notes. Tags: Enforced (code or CI stops the bad outcome),
 Documented (written down only), Not yet (a gap).
 
 ## Using it
