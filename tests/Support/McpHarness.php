@@ -73,8 +73,10 @@ final class McpHarness
     public function run(): array
     {
         $input = fopen('php://temp', 'w+');
-        $output = fopen('php://temp', 'w+');
-        if ($input === false || $output === false) {
+        // The transport closes its streams at end of input, so the output goes to a file we read back by name.
+        $outFile = tempnam(sys_get_temp_dir(), 'advisor-out');
+        $output = $outFile === false ? false : fopen($outFile, 'w+');
+        if ($input === false || $output === false || $outFile === false) {
             throw new \RuntimeException('Cannot open memory streams.');
         }
         fwrite($input, implode("\n", $this->lines) . "\n");
@@ -83,8 +85,8 @@ final class McpHarness
         $logger = new NullLogger();
         SdkServer::build($this->booted, $logger)->run(new StdioTransport($input, $output, $logger));
 
-        rewind($output);
-        $this->raw = (string) stream_get_contents($output);
+        $this->raw = (string) file_get_contents($outFile);
+        unlink($outFile);
         $this->responses = [];
         foreach (explode("\n", trim($this->raw)) as $line) {
             if ($line === '') {

@@ -120,7 +120,7 @@ final class SdkPromptHandler implements PromptHandlerInterface
 {
     public function __construct(private readonly PromptDefinition $prompt) {}
 
-    public function get(array $arguments, ClientGateway $gateway): string
+    public function get(array $arguments, ClientGateway $gateway): array
     {
         $strings = [];
         foreach ($arguments as $key => $value) {
@@ -129,6 +129,7 @@ final class SdkPromptHandler implements PromptHandlerInterface
             }
         }
 
-        return ($this->prompt->render)($strings);
+        // The SDK wants messages, not bare text; one user message carries the prompt.
+        return ['user' => ($this->prompt->render)($strings)];
     }
 }

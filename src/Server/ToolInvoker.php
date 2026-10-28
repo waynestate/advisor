@@ -88,7 +88,7 @@ final class ToolInvoker
             return null;
         }
         $error = $result->error();
-        $messages = $error === null ? [] : (new ErrorFormatter())->flatten($error);
+        $messages = $error === null ? [] : (new ErrorFormatter())->formatFlat($error);
 
         return 'Invalid arguments for ' . $tool->name . ': ' . self::clean(implode('; ', array_slice($messages, 0, 3)));
     }
