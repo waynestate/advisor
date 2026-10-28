@@ -5,6 +5,8 @@
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
+Front page: [`site/index.html`](site/index.html), a static page you can open in a browser or serve from `site/`.
+
 One command, two clouds, zero excuses — higher.
 
 ![Singer of the band Creed in a white tank top and black leather pants on a stage with a red backdrop, one arm stretched out over a cheering crowd](https://media.giphy.com/media/BsQ4hGk3leUxGVCS5X/giphy.gif)

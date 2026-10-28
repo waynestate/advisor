@@ -1,10 +1,29 @@
 # WELD
 
+[![GitHub CI](https://github.com/waynestate/weld/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/weld/actions/workflows/ci.yml)
+
 **W**ired, **E**verything, **L**inked, **D**eployed. Many parts, one piece.
 
 WELD is the whole Wayne State app stack joined into one application. Install it, deploy it, and every part is already
 hooked up: sign-in, security headers, checks, coding standards, CI and the WayneUI interface. Think of it as the
 Megazord, except it comes with a deploy script and nobody has to shout to make it combine.
+
+## Get it
+
+WELD is an app you start from, not a library you require — the Megazord ships in a repo, not a box.
+Clone it and it is yours to rename:
+
+```
+git clone https://github.com/waynestate/weld.git my-app
+cd my-app
+composer install
+npm ci
+# Windows (PowerShell):
+Copy-Item .env.example .env
+# Linux/macOS:
+cp .env.example .env
+php artisan key:generate
+```
 
 ## What is welded in
 

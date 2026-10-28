@@ -2,6 +2,8 @@
 
 [![GitHub CI](https://github.com/waynestate/advisor/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/advisor/actions/workflows/ci.yml)
 
+Front page: [`site/index.html`](site/index.html), a static field map of the stack (open it in a browser).
+
 Checks: `composer ci` (the same command runs on GitLab and GitHub). The badge addresses above are placeholders until the repositories exist.
 
 > Every WSU student has an advisor. Now every WSU app does too, and this one answers email.
@@ -124,6 +126,7 @@ ADVISOR reads the process environment only, never a file. The placeholders are i
 | `ADVISOR_AUDIT_LOG` | off | A file for a one-line-per-call audit log: time, tool, a hash of the arguments, outcome, duration. Arguments are hashed, never written. |
 | `ADVISOR_LOG_LEVEL` | `warning` | Log level on stderr (`debug` to `emergency`). |
 | `ADVISOR_STACK_DIR` | none | Folder holding the sibling stack repos; used only by `content:generate`. |
+| `ADVISOR_PRIVATE_DENYLIST` | none | A file (kept outside the repo) with private strings to strip from the bundle; used by `content:generate` and the public-posture test. See "Releasing". |
 | `ADVISOR_MODULES_FILE` | none | An extra module manifest (see "Modules"). |
 
 A bad value stops the server with a message on stderr. It does not guess.
@@ -154,6 +157,23 @@ php vendor/bin/advisor content:generate --sources=/path/to/stack --check   # exi
 ```
 
 CI cannot see the sibling repositories, so `composer ci` runs `content:verify`, which needs none of them.
+
+## Releasing
+
+ADVISOR is a public repository, so the bundle must not carry internal names. The public-posture test always checks
+generic shapes (ADR numbers, open-question numbers, design-doc paths, the stack's design documents). Private strings
+(hostnames, people) are loaded from the file named by `ADVISOR_PRIVATE_DENYLIST` and checked only when the file is
+present.
+
+To release:
+
+1. Set `ADVISOR_PRIVATE_DENYLIST` to a file kept outside the repository (one literal or `regex:` pattern per line,
+   `#` comments).
+2. In GitLab CI, the file comes from a masked file-type CI variable.
+3. Regenerate the bundle with the file present: `php vendor/bin/advisor content:generate --sources=/path/to/stack`.
+4. Run `composer ci` to confirm the public-posture test passes.
+
+The file is never committed. The bundle is regenerated with the file present before every release.
 
 ## Modules
 
