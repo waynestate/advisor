@@ -1,0 +1,13 @@
+# Runtime and headers
+
+To be decided. No ADR decides the runtime and header rules yet, so this
+chapter states no rules.
+
+What is known:
+
+- The runtime (Baseline) is enforcement point (a): it warns, and refuses only
+  for unsafe config (ADR-0002).
+- The HELMET header work is to be decided.
+
+When the rules are decided, they will land here, with the ADR number that
+decided them.

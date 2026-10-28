@@ -1,0 +1,82 @@
+{
+    "name": "waynestate/advisor",
+    "description": "Wayne State's own MCP server: orients a developer and gives their coding agent read-only tools into every project of the app stack.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Wayne State University, Enterprise Applications"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "ext-fileinfo": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "mcp/sdk": "0.9.0",
+        "opis/json-schema": "^2.4",
+        "psr/log": "^3.0",
+        "symfony/console": "^7.4",
+        "symfony/process": "^7.4"
+    },
+    "require-dev": {
+        "laravel/mcp": "1.1.2",
+        "laravel/pint": "^1.32",
+        "orchestra/testbench": "^10.0",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^11.5"
+    },
+    "suggest": {
+        "laravel/mcp": "For the Laravel adapter (1.1.2): ADVISOR then runs beside Laravel Boost with `php artisan mcp:start advisor`"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
+        },
+        "platform": {
+            "php": "8.3.0"
+        },
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit",
+        "lint": "pint --test",
+        "fix": "pint",
+        "analyse": "phpstan analyse --memory-limit=1G",
+        "content:generate": "@php bin/advisor content:generate",
+        "content:verify": "@php bin/advisor content:verify",
+        "ci": [
+            "@composer validate --strict",
+            "@php bin/advisor content:verify",
+            "phpunit",
+            "pint --test",
+            "phpstan analyse --memory-limit=1G",
+            "@composer audit"
+        ]
+    },
+    "scripts-descriptions": {
+        "ci": "Run every CI check: manifest, bundled content, tests, style, static analysis, audit"
+    },
+    "bin": [
+        "bin/advisor"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Waynestate\\Advisor\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Waynestate\\Advisor\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Waynestate\\Advisor\\Laravel\\AdvisorServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
