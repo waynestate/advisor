@@ -877,3 +877,13 @@ code, pre { font-family: var(--wsu-font-family-mono); }
 .leg .leg__sym:not(.leg__sym--start) { transition: background-color 0.3s, color 0.3s; }
 .leg.is-lit .leg__sym:not(.leg__sym--start):not(.leg__sym--finish) { background: var(--adv-gold); color: var(--adv-green-deep); border-color: var(--adv-maroon); }
 .leg.is-lit .leg__sym--finish { background: var(--adv-gold); }
+
+/* Part names in the stack list link to each part's own front page. They keep
+   this page's colours; the underline is the only new thing. */
+.part-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .18em;
+}
+.part-link:hover { text-decoration-thickness: 2px; }
