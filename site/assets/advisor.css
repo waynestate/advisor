@@ -763,10 +763,19 @@ code, pre { font-family: var(--wsu-font-family-mono); }
   .you-are-here { right: -4%; font-size: 0.85rem; }
   /* At phone width the map is small, so the lettering steps aside: places keep
      their marks, the plotted route keeps its labels, and the card says the rest. */
-  .place__label, .map__hill, .map__scale { display: none; }
+  .place__label, .map__hill, .map__scale, .map__water { display: none; }
   .ctrl__tag { display: none; }
+  /* Symbols grow so they read at a third of their size. */
+  .place__bob { transform: scale(1.55); }
+  .place:hover .place__bob { transform: scale(1.55); }
+  .place__finish { r: 54px; }
+  .hub__in { transform: scale(1.3); }
+  .start__in { transform: scale(1.6); }
+  .ctrl__in { transform: scale(1.7); }
+  .route { stroke-width: 8; stroke-dasharray: 0.1 18; }
+  .hub__label { transform: translateY(16px); }
   .hub__name { font-size: 30px; }
-  .start__label { font-size: 28px; }
+  .start__label { font-size: 28px; transform: translate(10px, 14px); }
   .turn { grid-template-columns: 44px minmax(0, 1fr); gap: var(--wsu-space-4); }
   .turn__num { width: 44px; height: 44px; font-size: 1.2rem; }
   .turn:not(:last-child)::before { left: 21px; top: 52px; }

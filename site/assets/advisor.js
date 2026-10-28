@@ -92,7 +92,7 @@
     weld:        { name: "WELD",       alias: "The Workshop",     x: 330,  y: 118, label: "r", mark: "assets/marks/weld.png" },
     sourdough:   { name: "Sourdough",  alias: "The Bakery",       x: 150,  y: 300, label: "r", mark: "assets/marks/sourdough.png" },
     booster:     { name: "BOOSTER",    alias: "Launch Pad",       x: 1120, y: 110, label: "b", mark: "assets/marks/booster.png", planned: true },
-    rollcall:    { name: "ROLLCALL",   alias: "The Registrar",    x: 290,  y: 388, label: "r", mark: "assets/marks/rollcall.png", planned: true },
+    rollcall:    { name: "ROLLCALL",   alias: "The Registrar",    x: 290,  y: 388, label: "l", mark: "assets/marks/rollcall.png", planned: true },
     drawbridge:  { name: "DRAWBRIDGE", alias: "Castle Gate",      x: 120,  y: 470, label: "r", mark: "assets/marks/drawbridge.png", planned: true },
     squire:      { name: "SQUIRE",     alias: "The Stables",      x: 1120, y: 580, label: "b", mark: "assets/marks/squire.png", planned: true }
   };
@@ -140,11 +140,12 @@
 
     // The advising office, with its door open.
     hubNode = svgEl("g", { "class": "hub", transform: "translate(" + HUB.x + " " + HUB.y + ")" }, placesLayer);
-    svgEl("circle", { "class": "hub__halo", r: 54 }, hubNode);
-    svgEl("circle", { "class": "hub__flare", r: 48 }, hubNode);
-    svgEl("circle", { "class": "hub__ring", r: 47 }, hubNode);
-    svgEl("image", { href: "brand/advisor-avatar-256.png", x: -38, y: -38, width: 76, height: 76, "clip-path": "url(#clip-hub)" }, hubNode);
-    var hl = svgEl("g", {}, hubNode);
+    var hubIn = svgEl("g", { "class": "hub__in" }, hubNode);
+    svgEl("circle", { "class": "hub__halo", r: 54 }, hubIn);
+    svgEl("circle", { "class": "hub__flare", r: 48 }, hubIn);
+    svgEl("circle", { "class": "hub__ring", r: 47 }, hubIn);
+    svgEl("image", { href: "brand/advisor-avatar-256.png", x: -38, y: -38, width: 76, height: 76, "clip-path": "url(#clip-hub)" }, hubIn);
+    var hl = svgEl("g", { "class": "hub__label" }, hubNode);
     var plate = svgEl("rect", { "class": "place__plate", x: -84, y: 54, width: 168, height: 46, rx: 4 }, hl);
     plate.setAttribute("class", "place__plate");
     svgEl("text", { "class": "hub__name", x: 0, y: 76, "text-anchor": "middle" }, hl).textContent = "ADVISOR";
@@ -152,9 +153,10 @@
 
     // You are here: an orienteering start triangle, with a gold dot.
     var st = svgEl("g", { "class": "start", transform: "translate(" + START.x + " " + START.y + ")" }, placesLayer);
-    svgEl("circle", { "class": "start__pulse", r: 20 }, st);
-    svgEl("path", { "class": "start__tri", d: "M0 -24 L21 13 L-21 13 Z" }, st);
-    svgEl("circle", { "class": "start__dot", r: 6 }, st);
+    var stIn = svgEl("g", { "class": "start__in" }, st);
+    svgEl("circle", { "class": "start__pulse", r: 20 }, stIn);
+    svgEl("path", { "class": "start__tri", d: "M0 -24 L21 13 L-21 13 Z" }, stIn);
+    svgEl("circle", { "class": "start__dot", r: 6 }, stIn);
     svgEl("text", { "class": "start__label", x: 32, y: 34 }, st).textContent = "You are here";
   }
 
@@ -330,6 +332,7 @@
 
   /* ----------------------------------------------- 5. plotting a route */
 
+  var narrow = window.matchMedia ? window.matchMedia("(max-width: 640px)") : null;
   var timers = [];
   var plotCount = 0;
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
@@ -372,6 +375,9 @@
     clearTimers();
     plotCount++;
 
+    // The card first: the whole answer in words, announced politely.
+    renderCard(question, chosen, route, steps, destP);
+
     // --- the map
     if (routesLayer) {
       while (routesLayer.firstChild) routesLayer.removeChild(routesLayer.firstChild);
@@ -382,9 +388,11 @@
       defs.querySelectorAll(".route-mask-def").forEach(function (n) { n.remove(); });
 
       var ctrls = controlsAlong(destP, steps.length);
-      var nodes = [{ p: START, r: 30 }, { p: HUB, r: 58 }];
-      ctrls.forEach(function (c) { nodes.push({ p: c, r: 24 }); });
-      nodes.push({ p: destP, r: 46 });
+      // Symbols are drawn larger at phone width, so the gaps grow with them.
+      var k = narrow && narrow.matches ? 1.6 : 1;
+      var nodes = [{ p: START, r: 30 * k }, { p: HUB, r: 58 * k }];
+      ctrls.forEach(function (c) { nodes.push({ p: c, r: 24 * k }); });
+      nodes.push({ p: destP, r: 46 * k });
 
       var segs = [];
       for (var i = 0; i < nodes.length - 1; i++) {
@@ -402,9 +410,10 @@
       // Controls: numbered circles with the tool's name on a maroon tag.
       var ctrlEls = ctrls.map(function (c, k) {
         var g = svgEl("g", { "class": "ctrl" + (motion ? "" : " is-lit"), transform: "translate(" + c.x.toFixed(1) + " " + c.y.toFixed(1) + ")" }, routesLayer);
-        svgEl("circle", { "class": "ctrl__flare", r: 18 }, g);
-        svgEl("circle", { "class": "ctrl__ring", r: 17 }, g);
-        svgEl("text", { "class": "ctrl__num", x: 0, y: 1 }, g).textContent = String(k + 2);
+        var gi = svgEl("g", { "class": "ctrl__in" }, g);
+        svgEl("circle", { "class": "ctrl__flare", r: 18 }, gi);
+        svgEl("circle", { "class": "ctrl__ring", r: 17 }, gi);
+        svgEl("text", { "class": "ctrl__num", x: 0, y: 1 }, gi).textContent = String(k + 2);
         var name = steps[k].tool || steps[k].prompt;
         var tag = svgEl("g", { "class": "ctrl__tag" }, g);
         var w = name.length * 8.6 + 18;
@@ -448,9 +457,6 @@
         });
       }
     }
-
-    // --- the card (the whole answer in words; announced politely)
-    renderCard(question, chosen, route, steps, destP);
   }
 
   function litLegs(n) {
@@ -530,6 +536,9 @@
     // First route: drawn instantly at load, plotted with motion when the map
     // first scrolls into view.
     plot(input.value, { instant: true });
+    if (narrow && narrow.addEventListener) {
+      narrow.addEventListener("change", function () { plot(input.value, { instant: true }); });
+    }
     if (motion && "IntersectionObserver" in window) {
       var mapSeen = false;
       var io = new IntersectionObserver(function (entries) {
