@@ -5,6 +5,7 @@ use Symfony\Component\Console\Application;
 use Waynestate\Advisor\Advisor;
 use Waynestate\Advisor\Command\ContentGenerateCommand;
 use Waynestate\Advisor\Command\ContentVerifyCommand;
+use Waynestate\Advisor\Command\DoctorCommand;
 use Waynestate\Advisor\Command\InstallCommand;
 use Waynestate\Advisor\Command\McpCommand;
 
@@ -27,6 +28,7 @@ $application->addCommands([
     new InstallCommand(),
     new ContentGenerateCommand(),
     new ContentVerifyCommand(),
+    new DoctorCommand(),
 ]);
 
 exit($application->run());
