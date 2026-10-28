@@ -1,0 +1,15 @@
+# Extend gitleaks' default rules; do not replace them.
+title = "ADVISOR gitleaks config"
+
+[extend]
+useDefault = true
+
+# These two test files hold deliberate fake secrets (an AWS-shaped key id and a
+# token=... value) so the redaction tests can prove they get blanked. They are
+# not real credentials. Allowlisted by path, and nothing else is.
+[[allowlists]]
+description = "Fake secrets used as redaction test fixtures"
+paths = [
+  '''tests/Security/EnvAndRedactionTest\.php''',
+  '''tests/Security/ProctorRunnerTest\.php''',
+]
