@@ -6,8 +6,8 @@ Items marked "(second pass)" were added or changed in the second pass; see the s
 ## What this covers
 
 PROCTOR is the stack's one command for measuring a PHP app against the WSU policy file (`policy.json` from CREED):
-`vendor/bin/proctor check`. It looks at the PHP floor, unbounded Composer constraints, a committed lock file,
-`composer audit` results and dated overrides. It prints text, JSON or GitLab Code Quality.
+`vendor/bin/proctor check`. It looks at the PHP floor, patch currency, unbounded Composer constraints, a committed
+lock file, `composer audit` results and dated overrides. It prints text, JSON or GitLab Code Quality.
 
 This guide is for two groups:
 
@@ -64,13 +64,13 @@ so an app can change both. The plan is for PROCTOR to bundle CREED's policy once
 A checker should accept a policy file with a newer minor schema or extra fields and ignore what it does not know.
 Rejecting any other version breaks every pinned older checker on the day the policy gains a field.
 
-Why: ADR-0003 says older checkers must still read newer policy files.
+Why: the stack's version policy says older checkers must still read newer policy files.
 
 Sources: the stack's version-policy decision; [GitLab Code Quality format: only the listed fields are processed](https://docs.gitlab.com/ci/testing/code_quality/)
 (an example of a reader that ignores extras).
 
 **How the stack holds it: Not yet.** `JsonFilePolicySource` fails with "unsupported schema_version" unless the value is
-exactly `1`. That is the opposite of what ADR-0003 asks for.
+exactly `1`. That is the opposite of what the stack's version policy asks for.
 
 ### 1.4 Read the banned-constraint list from the policy
 The policy has `rules.banned_constraints`. The check must use it, so a change to the rule needs no PROCTOR release.
@@ -141,7 +141,7 @@ Why: declared and actual versions drift.
 
 Sources: [PHP supported versions](https://www.php.net/supported-versions.php); the stack's deploy-gate decision.
 
-**How the stack holds it: Documented.** ADR-0006 proposes `proctor gate` against the target image tag. The command does
+**How the stack holds it: Documented.** The stack's deploy-gate decision proposes `proctor gate` against the target image tag. The command does
 not exist yet. The gate is platform-neutral: on Citadel it runs from SQUIRE's `citadel` target, whose hook is not
 agreed yet, and other hosts run the same gate as a CI job.
 
@@ -203,7 +203,7 @@ Why: both make the lock file unreproducible or unsafe.
 
 Sources: [Composer config: secure-http](https://getcomposer.org/doc/06-config.md); the stack's one-repo-per-project decision.
 
-**How the stack holds it: Not yet.** ADR-0008 says Check flags committed `path` repositories. No such check exists.
+**How the stack holds it: Not yet.** The stack's one-repo-per-project decision says Check flags committed `path` repositories. No such check exists.
 
 ### 3.4 Commit `composer.lock` and install from it
 Applications and libraries both commit the lock so everyone installs the same versions.
@@ -225,7 +225,7 @@ Sources: [Composer CLI: validate and install](https://getcomposer.org/doc/03-cli
 [Composer basic usage](https://getcomposer.org/doc/01-basic-usage.md).
 
 **How the stack holds it: Not yet.** PROCTOR checks only that the file exists. `composer validate --check-lock` does the
-real test. ADR-0006 lists "present and matches" as a gate rule. (Second pass: the Composer 2.11.0-RC1 changelog,
+real test. The stack's deploy-gate decision lists "present and matches" as a gate rule. (Second pass: the Composer 2.11.0-RC1 changelog,
 dated 2026-10-22, says a change to the `policy` config now marks the lock as outdated. So a lock-in-sync check will
 start to report that case once apps move to Composer 2.11. RC1 is not a stable release.)
 
@@ -252,6 +252,21 @@ Sources: [Packagist: an update on Composer and Packagist supply chain security, 
 
 **How the stack holds it: Not yet.** The PREFLIGHT `proctor` component runs `composer install`, so it uses the lock.
 Nothing stops a custom job from running `update`, and PROCTOR cannot see the pipeline.
+
+### 3.8 Keep locked components on the latest patch
+A locked component that is behind the policy's `latest_patch` for its version line is a warning, not a failure: a
+patch may not be urgent, and the owner decides when to move. The policy carries `latest_patch` and
+`latest_patch_checked` per version line, so currency is a policy decision, not a hard-coded one.
+
+Why: a patch release usually carries security fixes, and a lock that lags the latest patch is a known, bounded risk.
+Warning (not failing) keeps the gate from blocking on a patch that is not yet urgent.
+
+Sources: the stack's version-policy decision.
+
+**How the stack holds it: Checked.** `unpatched` reads laravel from composer.lock (`laravel/framework`), vue and
+inertia from package-lock.json (`vue`, `@inertiajs/vue3`), and the PHP runtime from `--php-runtime`, and warns when a
+locked version is below the policy's `latest_patch` for its major.minor line. No finding when the component, its
+version line, or `latest_patch` is absent from the policy.
 
 ---
 
@@ -484,7 +499,7 @@ Why: a far-future date is a permanent override with extra steps.
 
 Sources: the stack's deploy-gate decision.
 
-**How the stack holds it: Documented.** ADR-0006 states the rule for the deploy gate. `OverrideFile` accepts any
+**How the stack holds it: Documented.** The stack's deploy-gate decision states the rule for the deploy gate. `OverrideFile` accepts any
 valid date.
 
 ### 5.6 Do not let an override waive the override check, and reject unknown check names
@@ -504,7 +519,7 @@ Why: an approval that nobody checks is a note.
 
 Sources: [GitLab protected branches: Code Owner approval is Premium or Ultimate](https://docs.gitlab.com/user/project/repository/branches/protected/).
 
-**How the stack holds it: Not yet.** ADR-0006 moves override storage to the platform admins for the deploy gate
+**How the stack holds it: Not yet.** The stack's deploy-gate decision moves override storage to the platform admins for the deploy gate
 (Citadel's admins today, through SQUIRE's `citadel` target). In CI there
 is no check that the approver exists or differs from the author, and git.wayne.edu runs GitLab Community Edition, which
 has no code owner approval. (Second pass: the GitLab protected-branches page still lists Code Owner approval as
@@ -591,7 +606,11 @@ Why: other platforms and editors read SARIF.
 
 Sources: [OASIS SARIF v2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html).
 
-**How the stack holds it: Not yet.** Low priority. Add it only when a consumer asks.
+**How the stack holds it: Enforced.** `SarifWriter` writes a SARIF 2.1.0 log: one run, one rule per distinct check id,
+and one result per non-pass finding, with `fail` mapped to `error`, `warning` to `warning` and `info` to `note`.
+`SarifShapeTest` checks the shape. GitHub code scanning reads it through `github/codeql-action/upload-sarif`.
+PROCTOR now files the mark sheet in the format the head office already reads — no more translating the exam results
+by hand.
 
 ### 6.6 Make runs reproducible
 The date is injectable so a test gives the same answer on any day.
@@ -643,7 +662,7 @@ Why: blocking all old violations on day one freezes the fixes that would clear t
 Sources: [Semgrep: diff-aware scanning and baseline commit](https://docs.semgrep.dev/semgrep-ci/configuring-blocking-and-errors-in-ci);
 [PHPStan: baseline](https://phpstan.org/user-guide/baseline).
 
-**How the stack holds it: Documented.** ADR-0006 describes the ratchet and the stages `report`, `warn` and `block`.
+**How the stack holds it: Documented.** The stack's deploy-gate decision describes the ratchet and the stages `report`, `warn` and `block`.
 PROCTOR v0.1.0 has no ratchet and no stage field.
 
 ### 7.2 Keep gate mode small, offline and fast, and let a checker bug fail open
@@ -777,29 +796,28 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 22. 8.5: Tag, sign and publish provenance for releases.
 23. 7.1 and 7.2: Build `proctor gate` with the ratchet, stages and fail-open exit.
 24. 2.5: Check the target image tag once the gate exists.
-25. 6.5: Add SARIF output if another consumer needs it.
-26. 8.4 (tagged Checked, but the audit path is untested): Add a fixture and test that produces a real `composer audit`
+25. 8.4 (tagged Checked, but the audit path is untested): Add a fixture and test that produces a real `composer audit`
     result.
 
 Added in the second pass (2026-10-27):
 
-27. 4.8: Set a minimum Composer version (2.10.3, or 2.2.30 on the LTS line) and fail below it. PROCTOR hands Composer
+26. 4.8: Set a minimum Composer version (2.10.3, or 2.2.30 on the LTS line) and fail below it. PROCTOR hands Composer
     files the app controls, and three Composer command-injection CVEs were fixed in 2026. High value, small change.
-28. 4.10 and 4.5: Compare Composer's exit code with the parsed result, and read the abandoned and malware parts of the
+27. 4.10 and 4.5: Compare Composer's exit code with the parsed result, and read the abandoned and malware parts of the
     output. Abandoned packages fail `composer audit` by default, so PROCTOR can pass what Composer fails.
-29. 6.4 (raise priority): Write a valid report on exit 2. GitLab uploads the report even when the job fails, so the
+28. 6.4 (raise priority): Write a valid report on exit 2. GitLab uploads the report even when the job fails, so the
     empty file is parsed.
-30. 4.9: Flag `config.policy: false`, a disabled malware or advisory policy, and `COMPOSER_NO_BLOCKING` or
+29. 4.9: Flag `config.policy: false`, a disabled malware or advisory policy, and `COMPOSER_NO_BLOCKING` or
     `COMPOSER_NO_AUDIT` in the job environment.
-31. 8.6: Run Composer with `--no-plugins --no-interaction` and an explicit environment.
-32. 6.8: Escape app-supplied strings before printing, and add a test with a tag-like package name.
-33. 5.8: Warn on an override that matches nothing and on one close to expiry.
-34. 2.7: Put the security-end date and days left in the security-only warning.
-35. 3.7: Document "install from the lock, never update" in the PREFLIGHT guide, and ask authors not to re-tag.
-36. 4.12: Decide in the policy whether `require-dev` packages count, then pass `--no-dev` or not.
-37. 8.7: Name a minimum patched GitLab version in the PREFLIGHT guide.
-38. 4.11: Re-read the Composer cooldown policy once 2.11 is stable, and decide whether to ask for it.
-39. 6.7 (tagged Enforced by construction): Add a test that the text output contains no ANSI escape codes.
+30. 8.6: Run Composer with `--no-plugins --no-interaction` and an explicit environment.
+31. 6.8: Escape app-supplied strings before printing, and add a test with a tag-like package name.
+32. 5.8: Warn on an override that matches nothing and on one close to expiry.
+33. 2.7: Put the security-end date and days left in the security-only warning.
+34. 3.7: Document "install from the lock, never update" in the PREFLIGHT guide, and ask authors not to re-tag.
+35. 4.12: Decide in the policy whether `require-dev` packages count, then pass `--no-dev` or not.
+36. 8.7: Name a minimum patched GitLab version in the PREFLIGHT guide.
+37. 4.11: Re-read the Composer cooldown policy once 2.11 is stable, and decide whether to ask for it.
+38. 6.7 (tagged Enforced by construction): Add a test that the text output contains no ANSI escape codes.
 
 ## Second pass (2026-10-27)
 
@@ -887,7 +905,7 @@ Pages from the first pass that were re-read in the second pass: PHP supported ve
 Composer 2.10 release, GitLab Code Quality, GitLab CI/CD YAML reference, GitLab protected branches, PHPStan baseline,
 Semgrep blocking and errors, OpenSSF Scorecard checks, SLSA v1.0 levels.
 
-Internal design documents used for tagging: ADR-0002, ADR-0003, ADR-0006, ADR-0008, the PROCTOR repo, and the PREFLIGHT repo.
+Stack design decisions used for tagging: the stack's enforcement-points decision, the stack's version-policy decision, the stack's deploy-gate decision, the stack's one-repo-per-project decision, the PROCTOR repo, and the PREFLIGHT repo.
 
 ## Platform assumptions
 
@@ -897,3 +915,19 @@ An app must run on Citadel, OpenShift, Coolify or raw Docker, so platform facts 
 **How the stack holds it: Checked.** The `portability` check warns on absolute host paths, hard-coded proxy
 addresses, sessions on local disk, and `php_value` or `php_flag` lines in `.htaccess` (they do nothing under
 php-fpm). It reports warnings, not failures, while the stack stages the rule.
+
+## CI pipelines
+
+### The ci-pipelines check
+Every stack repo runs `composer ci` on both GitLab and GitHub (the stack's public-mirror publishing decision), so for stack packages the two
+pipeline files are part of the contract, and a reusable workflow must be pinned to a commit SHA so the contract
+cannot move out from under the pipeline. Other projects are not part of the stack contract: a GitLab pipeline that
+runs `composer ci` is still expected, but a missing or incomplete one is a warning, and a GitHub workflow is
+optional.
+
+**How the stack holds it: Enforced.** For stack packages (composer.json `name` starting with `waynestate/`), the
+`ci-pipelines` check fails when `.gitlab-ci.yml` or `.github/workflows/ci.yml` is missing, unparseable, or runs no
+`composer ci`. For other projects the same rules are warnings, and a missing `.github/workflows/ci.yml` is no
+finding at all. A GitHub `uses:` ref that is not a 40-hex commit SHA is a warning either way.
+`CiPipelinesCheckTest` pins the fixture outcomes for stack packages and other projects alike, and
+`CheckCommandTest` runs the good app and the acme apps through the whole CLI.

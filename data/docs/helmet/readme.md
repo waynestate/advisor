@@ -3,7 +3,7 @@
 ![Three members of the band Helmet, two guitarists and a drummer at a Tama kit, tinted blue against a hazy orange and gold backdrop](https://media.tenor.com/WmJKjN9NQqoAAAAM/helmet-band.gif)
 <sub>GIF via [Tenor](https://tenor.com/view/helmet-band-wilmas-rainbow-helmet-band-music-gif-25658120)</sub>
 
-[![GitLab pipeline](https://gitlab.example/enterprise-apps/helmet/badges/main/pipeline.svg)](https://gitlab.example/enterprise-apps/helmet/-/pipelines)
+[![CI](https://github.com/waynestate/helmet/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/helmet/actions/workflows/ci.yml)
 [![GitHub CI](https://github.com/waynestate/helmet/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/helmet/actions/workflows/ci.yml)
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 Two mirrors, one command — the only thing in this repo that plays both sides is the CI.
@@ -209,6 +209,8 @@ The `/up` health route is Laravel's own: keep `health: '/up'` in
 | `HELMET_HSTS_INCLUDE_SUBDOMAINS` | `helmet.hsts_include_subdomains` | `true` | Set `false` to omit the HSTS `includeSubDomains` directive. |
 | `HELMET_RIBBON` | `helmet.ribbon` | `true` | Set `false` to switch the ribbon off everywhere. |
 | `HELMET_DEV_ORIGIN` | `helmet.dev_origin` | none | The Vite dev server origin, used in `local` only when the dev server is running. Must be `http` or `https` on `localhost`, `127.0.0.1` or `[::1]`. Overrides the hot file. |
+| `HELMET_CSP_REPORT_URI` | `helmet.csp_report_uri` | none | The URL browsers POST CSP violation reports to. Adds `report-uri` and `report-to` to the policy and a `Reporting-Endpoints` header. Must be `https`. |
+| `HELMET_CSP_REPORT_ONLY` | `helmet.csp_report_only` | `false` | Set `true` to send the policy as `Content-Security-Policy-Report-Only` (observe violations without blocking them). |
 
 #### Customizing the CSP in Laravel
 
@@ -318,6 +320,8 @@ like this:
 | CSP overrides | `csp` | `HELMET_CSP` / `helmet.csp`, same merge, `null` removes |
 | HSTS max-age | `hsts_max_age` | `HELMET_HSTS_MAX_AGE` / `helmet.hsts` |
 | HSTS subdomains | `hsts_include_subdomains` | `HELMET_HSTS_INCLUDE_SUBDOMAINS` / `helmet.hsts_include_subdomains`, default `true` |
+| CSP report URI | `csp_report_uri` | `HELMET_CSP_REPORT_URI` / `helmet.csp_report_uri` |
+| CSP report-only | `csp_report_only` | `HELMET_CSP_REPORT_ONLY` / `helmet.csp_report_only`, default `false` |
 | Nonce | `$helmet['nonce']` | `request()->attributes->get('helmet.csp_nonce')` |
 | Health check | `health_path`, answered by `helmet_boot()` | Laravel's `health: '/up'` |
 | Session hardening, JSON logs | applied by `helmet_boot()` | not applied by the adapter; Laravel's session and logging config apply |
@@ -384,6 +388,58 @@ $helmet = helmet_boot([
 ]);
 ```
 
+### CSP reports
+
+By default the policy is enforced: a violation is blocked. To see what would
+be blocked before you enforce it, or to keep collecting reports after you do,
+point the policy at a report endpoint.
+
+Set `csp_report_uri` (raw PHP) or `HELMET_CSP_REPORT_URI` (Laravel) to the URL
+browsers POST reports to. It must be `https`. HELMET then adds `report-uri` and
+`report-to` to the policy and sends a `Reporting-Endpoints` header naming the
+endpoint. Set `csp_report_only` (or `HELMET_CSP_REPORT_ONLY`) to `true` to send
+the policy as `Content-Security-Policy-Report-Only`, which observes violations
+without blocking them.
+
+```php
+$helmet = helmet_boot([
+    'preset' => 'citadel',
+    'csp_report_uri' => 'https://app.example.edu/csp-report',
+    'csp_report_only' => true,
+]);
+```
+
+An invalid URI (not `https`, no host, or a value carrying whitespace or a
+quote) throws at boot, so a typo fails loudly instead of pointing the browser
+at a destination it cannot reach.
+
+Laravel ships an opt-in endpoint that receives the reports and logs one line
+per violation — the violated directive, the blocked URI's host, and the
+document path — and nothing else. It accepts both report formats: the legacy
+`application/csp-report` object, and the Reporting API's
+`application/reports+json` array, from which it logs the `csp-violation`
+entries (at most 20 per POST — browsers batch other report types into the
+same request, and those are ignored). The route is off until you register it:
+
+```php
+// routes/web.php
+Route::cspReport();                 // POST /csp-report
+Route::cspReport('/reports/csp');   // or your own path
+```
+
+The endpoint caps the body at 16 KiB, returns `204`, and carries no
+authentication of its own; wrap it in your own middleware if you want to keep
+it private. Browsers POST reports without a CSRF token, so the route excludes
+the `web` group's CSRF middleware. Because the endpoint is public and its
+input is attacker-influenced, it is throttled by default to 60 reports a
+minute per IP (`throttle:60,1`); pass a second argument to use a different
+throttle, or `null` to disable it:
+
+```php
+Route::cspReport('/reports/csp', 'throttle:120,1'); // your own limit
+Route::cspReport('/reports/csp', null);             // no throttle
+```
+
 ## HTTPS, and why the proxy list matters
 
 Citadel sits behind HA-Proxy, so the PHP process sees the proxy's address, not
@@ -401,6 +457,65 @@ forged `X-Forwarded-Proto` walks in and gets nowhere.
 starts: strict mode, cookies only, `HttpOnly`, and `SameSite=Lax`. It turns on
 `Secure` when the request is HTTPS. It refuses to run once a session is
 active, because changing those values mid-session does nothing.
+
+## Metrics
+
+HELMET can expose a Prometheus metrics endpoint. It is off by default and
+stays off until you turn it on. No Prometheus scraper is wired yet; the
+endpoint is there for when one is.
+
+### Enable it
+
+Set `HELMET_METRICS_ENABLED=true` and choose at least one way to prove who is
+asking:
+
+| Variable | What it does |
+| --- | --- |
+| `HELMET_METRICS_TOKEN` | A bearer token. The scraper sends `Authorization: Bearer <token>`. Compared with `hash_equals`. |
+| `HELMET_METRICS_ALLOW` | Comma-separated IPs or CIDR ranges allowed to scrape without a token. |
+
+With neither set the endpoint returns `404` and logs a warning, so a
+misconfigured app does not hand its metrics to the whole network.
+
+### Laravel
+
+The provider registers a `Route::helmetMetrics()` macro. The route is not
+created until you call it:
+
+```php
+// routes/web.php
+Route::helmetMetrics();                          // GET /metrics, throttle:60,1
+Route::helmetMetrics('/metrics', 'throttle:120,1'); // your own throttle
+Route::helmetMetrics('/metrics', null);           // no throttle
+```
+
+The controller reads `helmet.metrics` from the published config, resolves the
+client IP through the same trusted-proxy list the headers use, and renders
+`text/plain; version=0.0.4`.
+
+### Raw PHP
+
+```php
+use function Waynestate\Helmet\helmet_metrics;
+
+$result = helmet_metrics([
+    'enabled'         => true,
+    'token'           => 's3cret',
+    'allow'           => ['10.0.0.0/8'],
+    'trusted_proxies' => ['172.18.0.1'],
+]);
+
+http_response_code($result['status']);
+header('Content-Type: ' . $result['content_type']);
+echo $result['body'];
+```
+
+The response carries a `helmet_info` gauge with the PHP and HELMET versions,
+and a `helmet_php_version_status` gauge when a `PolicySource` is available.
+No personal data in labels; labels stay low-cardinality.
+
+The endpoint is the only place in HELMET that says "I am still here" without
+saying "here is your page". A lullaby, in a way.
 
 ## Tests
 

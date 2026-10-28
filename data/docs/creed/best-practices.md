@@ -38,8 +38,9 @@ Why: two tools with two copies of a date will eventually disagree, and a develop
 Sources: [endoflife.date MySQL page](https://endoflife.date/mysql) (a public example of one table feeding many readers),
 [JSON Schema introduction](https://json-schema.org/understanding-json-schema/about).
 
-How the stack holds it: `Documented`. `Waynestate\Creed\Policy` is the only implementation, and ADR-0003 says no other
-code decides state. Nothing stops another repo from re-implementing it. PROCTOR is meant to depend on the reader.
+How the stack holds it: `Documented`. `Waynestate\Creed\Policy` is the only implementation, and the stack's version
+policy says no other code decides state. Nothing stops another repo from re-implementing it. PROCTOR is meant to
+depend on the reader.
 
 ### 2. Validate the policy file against a schema in CI
 
@@ -93,8 +94,7 @@ grace, and no override applies.
 
 Why: everyone must get the same answer on the same day, including on the boundary.
 
-Sources: [PHP supported versions](https://www.php.net/supported-versions.php) (states end dates as days),
-ADR-0003 (version policy).
+Sources: [PHP supported versions](https://www.php.net/supported-versions.php) (states end dates as days).
 
 How the stack holds it: `Enforced`. `PolicyStateTest` checks the PHP 8.2 boundary days and the oldest supported
 version on 2026-10-27 and 2027-01-01.
@@ -168,7 +168,8 @@ Why: tools ship on different days, and apps run old tool versions.
 
 Sources: [Semantic Versioning 2.0.0](https://semver.org/).
 
-How the stack holds it: `Documented`. ADR-0003 and `versions.md` state it. The schema pins `schema_version` to `1` and
+How the stack holds it: `Documented`. The stack's version policy and `versions.md` state it. The schema pins
+`schema_version` to `1` and
 the reader ignores unknown keys, but no test runs an older reader against a newer file.
 
 Second pass: the schema sets `additionalProperties: false` at the top level, on each component, on each version entry and
@@ -193,7 +194,8 @@ on outdated components, so this is a general reference; the OWASP Top 10:2025 ca
 Failures", is the closer fit: [OWASP Top 10:2025](https://top10.owasp.org/2025)).
 
 How the stack holds it: `Checked`. PROCTOR `php-floor` fails when the lowest bound of `composer.json` `require.php` is
-EOL by policy. Stack packages hold it at install time through their own `php` constraint (dependency floor, ADR-0002).
+EOL by policy. Stack packages hold it at install time through their own `php` constraint (dependency floor, one of
+the stack's enforcement points).
 
 ### 12. Treat security-only as a countdown, not a resting place
 
@@ -209,7 +211,7 @@ security fixes), [GOV.UK Publishing manual, keeping software current](https://do
 [PHP 2026 news archive](https://www.php.net/archive/2026.php).
 
 How the stack holds it: `Checked`. `php-floor` reports a WARN for a security-only floor. The runtime ribbon and log
-line in ADR-0003 wait for HELMET.
+line in the stack's version policy wait for HELMET.
 
 ### 13. Raise the floor on the day the old version ends
 
@@ -245,8 +247,8 @@ Why: an EOL framework is the largest unpatched surface in a typical app.
 Sources: [Laravel release notes](https://laravel.com/docs/13.x/releases).
 
 How the stack holds it: `Not yet`. The reader can classify Laravel 10, 11, 12 and 13 (second pass: 13 was added after
-the first pass), but no PROCTOR v0.1 check reads `composer.lock` for the framework. ADR-0006 plans it for the deploy
-gate. A supported branch is not enough on its own: see practice 38 for the October 2026 Laravel advisory.
+the first pass), but no PROCTOR v0.1 check reads `composer.lock` for the framework. The planned deploy gate will
+check it. A supported branch is not enough on its own: see practice 38 for the October 2026 Laravel advisory.
 
 ### 16. Use a Node release that is in LTS or maintenance
 
@@ -273,7 +275,7 @@ Why: a database that no longer gets fixes holds everything above it back.
 Sources: [endoflife.date MySQL](https://endoflife.date/mysql).
 
 How the stack holds it: `Not yet`. `policy.json` lists MySQL 5.6, 5.7, 8.0, 8.4 and 9.7 (second pass: 9.7 was added after
-the first pass), and the platform's own MySQL timeline is an open decision (D-008). Nothing checks it. The shared MySQL
+the first pass), and the platform's own MySQL timeline is still an open question. Nothing checks it. The shared MySQL
 5.6 is below the minimum that Laravel itself documents: see practice 46.
 
 ## 3. Dependencies
@@ -287,8 +289,8 @@ Why: without a lock, a build next week is a different build.
 
 Sources: [Composer basic usage](https://getcomposer.org/doc/01-basic-usage.md).
 
-How the stack holds it: `Checked`. PROCTOR `lock-committed` fails when `composer.lock` is missing. ADR-0006 adds a
-check that the lock matches `composer.json` at deploy time, which is not built.
+How the stack holds it: `Checked`. PROCTOR `lock-committed` fails when `composer.lock` is missing. The deploy gate
+adds a check that the lock matches `composer.json` at deploy time, which is not built.
 
 ### 19. Ban open-ended constraints
 
@@ -348,10 +350,12 @@ core and never re-implement it.
 
 Why: one rule in one place reaches every permutation, and an app is never forced onto a framework.
 
-Sources: none outside the stack; this is ADR-0001. The [Composer versions article](https://getcomposer.org/doc/articles/versions.md)
+Sources: none outside the stack. This is the stack's own core-plus-adapters rule.
+The [Composer versions article](https://getcomposer.org/doc/articles/versions.md)
 explains the `^` constraints that make a PSR-only floor workable.
 
-How the stack holds it: `Documented`. ADR-0001 and `dependencies.md` state it. The planned contract tests and example
+How the stack holds it: `Documented`. The stack's core-plus-adapters design and `dependencies.md` state it. The
+planned contract tests and example
 apps are not built yet.
 
 ### 23. Pin CI components to a tag or SHA
@@ -420,7 +424,7 @@ Sources: [University of Oregon applications and systems lifecycle procedure](htt
 way forward; the owner stays responsible for keeping the app current).
 
 Second pass: the first pass also cited the GOV.UK manual here. As read on 2026-10-27, that page says nothing about named,
-dated exceptions, so the citation was removed. The practice itself is the stack's own design (ADR-0003).
+dated exceptions, so the citation was removed. The practice itself is the stack's own design (the version policy).
 
 How the stack holds it: `Checked`. PROCTOR `overrides` prints every override and fails an expired one. ROLLCALL is
 meant to list them across apps and is not built.
@@ -432,12 +436,12 @@ things worse always passes.
 
 Why: blocking every non-compliant app on day one blocks the fixes too.
 
-Sources: ADR-0006 (Citadel deploy gate). Second pass: the first pass also cited the GOV.UK manual here. That page says
+Sources: none outside the stack. Second pass: the first pass also cited the GOV.UK manual here. That page says
 security patches take priority and that teams should upgrade before EOL, but as read it does not describe `report`,
 `warn` and `block` stages, so the citation was removed and the staging is the stack's own design.
 
-How the stack holds it: `Documented`. ADR-0006 is Proposed and needs the Citadel team. The schema has no field for
-stage dates.
+How the stack holds it: `Documented`. The deploy gate is proposed and needs the Citadel team. The schema has no field
+for stage dates.
 
 ### 29. Name where each rule is enforced
 
@@ -448,7 +452,8 @@ Why: a rule that nothing runs is only a wish.
 
 Sources: [OWASP ASVS](https://asvs.owasp.org/).
 
-How the stack holds it: `Documented`. ADR-0002 defines the five points. The handbook chapters do not tag each rule
+How the stack holds it: `Documented`. The stack's enforcement design defines the five points. The handbook chapters do
+not tag each rule
 with its point or its PROCTOR check name.
 
 ## 6. Writing the handbook
@@ -492,9 +497,10 @@ No gate depends on a language model's opinion. A model may explain a failure; it
 
 Why: a gate must give the same answer twice.
 
-Sources: none outside the stack; this is ADR-0007.
+Sources: none outside the stack; this is the stack's rule on language models.
 
-How the stack holds it: `Documented`. ADR-0007 and `ci.md` state it. The checks are deterministic by design.
+How the stack holds it: `Documented`. The stack's rule on language models and `ci.md` state it. The checks are
+deterministic by design.
 
 ### 34. Keep every developer tool usable on Windows, macOS and Linux
 
@@ -503,9 +509,10 @@ Scripts ship as a `.ps1` and `.sh` pair, or as one PHP command. Every repo carri
 
 Why: developers work on all three, and Citadel needs LF.
 
-Sources: none outside the stack; this is ADR-0009.
+Sources: none outside the stack; this is the stack's every-OS design.
 
-How the stack holds it: `Documented`. ADR-0009 and `every-os.md` state it, and CREED has the `.gitattributes`.
+How the stack holds it: `Documented`. The stack's every-OS design and `every-os.md` state it, and CREED has the
+`.gitattributes`.
 PROCTOR checks for CRLF in server files and case collisions are planned, not in v0.1.
 
 ### 35. Run the test suite on every supported PHP version
@@ -551,9 +558,11 @@ Sources: [PHP 2026 news archive](https://www.php.net/archive/2026.php),
 [endoflife.date PHP API](https://endoflife.date/api/v1/products/php/) (lists the latest patch per branch, all dated
 2026-10-21).
 
-How the stack holds it: `Not yet`. `policy.json` lists branches only and has no minimum patch version. PROCTOR `php-floor`
-reads the lowest bound in `composer.json`, which says nothing about the patch level of the running image. This pass did
-not verify whether Citadel's PHP images were rebuilt after 2026-10-21.
+How the stack holds it: `Documented`. `policy.json` now carries a `latest_patch` and a `latest_patch_checked` date for
+each PHP version (and for Laravel and Node), and `bin/refresh-patches.php` keeps them current from php.net, Packagist,
+nodejs.org and endoflife.date (handbook: `versions.md`, "Latest patches"). It is informational: a version's state is
+still derived from the dates alone, and no PROCTOR check fails an image that is behind the latest patch yet. This pass
+did not verify whether Citadel's PHP images were rebuilt after 2026-10-21.
 
 ### 38. Patch the framework inside a stated window, not only to a supported branch
 
@@ -715,8 +724,8 @@ the platform owns.
 
 Sources: [Laravel 13 database docs](https://laravel.com/docs/13.x/database), [endoflife.date MySQL](https://endoflife.date/mysql).
 
-How the stack holds it: `Not yet`. The policy records no database minimum per Laravel release, and the platform's MySQL
-timeline is the open decision D-008.
+How the stack holds it: `Not yet`. The policy records no database minimum per Laravel release, and the platform's
+MySQL timeline is still an open question.
 
 ### 47. Plan the MySQL move around authentication and LTS lines
 
@@ -842,7 +851,8 @@ These are places where a source disagrees with the repository or with an earlier
   2028-03-17 (the page still shows bug fixes as "Q3 2027", and the policy holds 2027-09-17, which the page does not
   state; see the open item below). Node 26: LTS from 2026-10-28, maintenance from 2027-10-20, end of life 2029-04-30.
   endoflife.date shows 2027-10-27 for the same field ([endoflife.date Node API](https://endoflife.date/api/v1/products/nodejs/)).
-  MySQL 9.7: Premier to 2031-04-30 and Extended to 2034-04-30 on endoflife.date. ADR-0003 says "Q1 2028" for Laravel 13;
+  MySQL 9.7: Premier to 2031-04-30 and Extended to 2034-04-30 on endoflife.date. The stack's version policy says
+"Q1 2028" for Laravel 13;
   the page gives the day.
 - **Open item: Laravel 13 `active_until` is 2027-09-17 in `policy.json`.** The Laravel release page gives "Q3 2027" for
   bug fixes and no day. The first pass said not to store a date a project has not published (practice 3). Either the date

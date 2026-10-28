@@ -1,6 +1,6 @@
 # CREED
 
-[![GitLab GitLab pipeline](https://gitlab.example/enterprise-apps/creed/badges/main/pipeline.svg)](https://gitlab.example/enterprise-apps/creed/-/pipelines)
+[![CI](https://github.com/waynestate/creed/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/creed/actions/workflows/ci.yml)
 [![GitHub Actions](https://github.com/waynestate/creed/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/creed/actions/workflows/ci.yml)
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).

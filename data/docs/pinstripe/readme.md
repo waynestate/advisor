@@ -4,7 +4,7 @@ The coding standard for the Wayne State app stack: shared presets for Pint, PHPS
 and ESLint with Prettier. Your app points at them and adds only its own exceptions. Pinstripe is to code what a good
 suit is to a job interview: nobody notices it, everybody notices when it's missing.
 
-[![GitLab GitLab pipeline](https://gitlab.example/enterprise-apps/pinstripe/badges/main/pipeline.svg)](https://gitlab.example/enterprise-apps/pinstripe/-/pipelines)
+[![GitHub CI](https://github.com/waynestate/pinstripe/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/pinstripe/actions/workflows/ci.yml)
 [![GitHub Actions](https://github.com/waynestate/pinstripe/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/pinstripe/actions/workflows/ci.yml)
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
@@ -55,6 +55,10 @@ plugin (`config.allow-plugins` in your `composer.json`). Your `phpstan.neon` inc
 `vendor/waynestate/pinstripe/phpstan/laravel.neon` and nothing else: there is no Larastan line to add, and the
 scripts point at `vendor/waynestate/pinstripe/pint/laravel.json`.
 
+Proven on Laravel: `composer ci` lints a minimal Laravel 13 app (`tests/fixtures/laravel-app`) with
+`pint/laravel.json` and analyses it with `phpstan/laravel.neon` on every run, and fails if the app stops
+passing.
+
 ## Use it for Vue
 
 Add Pinstripe as a dev dependency:
@@ -95,6 +99,31 @@ Add scripts that run on every OS:
 `npm run lint` fails on style and accessibility. `npm run format` fixes the layout. The preset is the off-the-rack
 suit: it fits every app, and you only add your own cufflinks.
 
+## Use it for Rector
+
+Rector modernises code for the PHP version your app already supports. Add it as a dev dependency:
+
+```
+composer require --dev rector/rector
+```
+
+Create `rector.php` and use the Pinstripe preset, adding only your own paths:
+
+```php
+<?php
+
+$base = require __DIR__ . '/vendor/waynestate/pinstripe/rector/base.php';
+
+return $base->withPaths([__DIR__ . '/src']);
+```
+
+The preset reads the PHP floor from your app's own `composer.json`, so it cannot drift out of step with the version
+the app actually runs on. Check with `vendor/bin/rector process --dry-run` and apply with `vendor/bin/rector process`.
+
+Proven on fixtures: `composer ci` runs the preset against a modern app (`tests/fixtures/rector-clean`) and an
+old-style one (`tests/fixtures/rector-old`) on every run, and fails if the clean one changes or the old one is left
+alone. Rector is the tailor's press: it smooths old code to the standard without changing the cut.
+
 ## Adopting on an existing app
 
 Generate a baseline with `phpstan analyse --generate-baseline`, include it in your `phpstan.neon`, and only ever
@@ -107,6 +136,7 @@ release you take it in, never let it out.
 - PHPStan 2.3.3
 - PHPStan extension-installer 1.4.3
 - Larastan 3.13.2
+- Rector 2.8.1
 - ESLint 10.13.0
 - Prettier 3.9.10
 - eslint-plugin-vue 10.12.0
@@ -116,4 +146,4 @@ release you take it in, never let it out.
 
 ## Coming next
 
-Rector, PREFLIGHT jobs, and reading the PHP floor from CREED.
+PREFLIGHT jobs, and reading the PHP floor from CREED.

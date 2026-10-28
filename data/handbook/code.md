@@ -2,30 +2,31 @@
 
 ## PHP style
 
-- Laravel apps use Pint's `laravel` preset (ADR-0013).
+- Laravel apps use Pint's `laravel` preset (the stack's coding standard).
 - Raw PHP apps and the stack's own packages use the `per` preset, PER Coding
-  Style 3.1 (ADR-0013).
-- One formatter per repo, never two (ADR-0013).
+  Style 3.1 (the stack's coding standard).
+- One formatter per repo, never two (the stack's coding standard).
 - An app points Pint at the preset in `vendor/waynestate/pinstripe/pint/`
-  with `--config` (ADR-0013).
-- Files are UTF-8 without a BOM, with LF line endings (ADR-0009).
+  with `--config` (the stack's coding standard).
+- Files are UTF-8 without a BOM, with LF line endings (the stack's
+  every-OS design).
 
 ## Static analysis
 
 - PHPStan level 8 for new code: the stack's own packages and every app
-  Sourdough generates (ADR-0013).
-- Larastan loads only where Laravel is present (ADR-0013).
+  Sourdough generates (the stack's coding standard).
+- Larastan loads only where Laravel is present (the stack's coding standard).
 - Every inline ignore carries an identifier and a reason; configs set
-  `reportIgnoresWithoutComments` (ADR-0013).
-- PHPStan's `phpVersion` follows the policy's PHP floor (ADR-0013).
+  `reportIgnoresWithoutComments` (the stack's coding standard).
+- PHPStan's `phpVersion` follows the policy's PHP floor (the stack's coding standard).
 - Existing apps start at the highest level they pass, with a committed
   baseline that may only shrink, then raise the level one step at a time
-  (ADR-0013). Like the band says, the only way is Higher.
-- New packages have no baseline (ADR-0013).
+  (the stack's coding standard). Like the band says, the only way is Higher.
+- New packages have no baseline (the stack's coding standard).
 - Two reasons for level 8:
-  - The starters begin clean, so new apps pass from day one (ADR-0013).
+  - The starters begin clean, so new apps pass from day one (the stack's coding standard).
   - Null handling is the class of bug level 8 adds; in the stack's auth and
-    header code, a null bug is a security bug (ADR-0013).
+    header code, a null bug is a security bug (the stack's coding standard).
 
 ## Banned patterns
 
@@ -43,30 +44,30 @@ for plain bans, and a custom rule only when neither fits.
 
 ## Vue and JavaScript
 
-- ESLint flat config (ADR-0013).
-- `eslint-plugin-vue` `flat/recommended` (ADR-0013).
-- Prettier for formatting (ADR-0013).
-- `eslint-plugin-vuejs-accessibility` (ADR-0013).
-- Both JavaScript and TypeScript are linted (ADR-0013).
+- ESLint flat config (the stack's coding standard).
+- `eslint-plugin-vue` `flat/recommended` (the stack's coding standard).
+- Prettier for formatting (the stack's coding standard).
+- `eslint-plugin-vuejs-accessibility` (the stack's coding standard).
+- Both JavaScript and TypeScript are linted (the stack's coding standard).
 - The stack's Vue starters use TypeScript; plain JavaScript stays fully
-  supported (ADR-0013).
-- Node 22.13 or newer for the lint tools (ADR-0013).
+  supported (the stack's coding standard).
+- Node 22.13 or newer for the lint tools (the stack's coding standard).
 
 ## Security analysis
 
-- The stack's GitLab instances (GitLab and git.wayne.edu) run the Free tier,
-  so nothing relies on GitLab SAST (ADR-0013).
+- The stack's GitLab instances run the Free tier,
+  so nothing relies on GitLab SAST (the stack's coding standard).
 - The open tools instead: Larastan's env rule, `phpstan-disallowed-calls`,
-  and a Psalm taint-analysis pilot on one app (ADR-0013).
+  and a Psalm taint-analysis pilot on one app (the stack's coding standard).
 
 ## How it is enforced
 
 - Pint, PHPStan, Rector dry-runs and ESLint run in CI through PREFLIGHT
-  components, not in the deploy gate (ADR-0013). The PREFLIGHT components
+  components, not in the deploy gate (the stack's coding standard). The PREFLIGHT components
   are Planned.
 - New rules arrive as warnings and become errors on a stated date, the same
-  staging as PHP versions (ADR-0002).
-- PROCTOR reports whether an app uses the presets (ADR-0013). The PROCTOR
+  staging as PHP versions (the stack's enforcement design).
+- PROCTOR reports whether an app uses the presets (the stack's coding standard). The PROCTOR
   report is Planned.
 
 ## Which preset enforces each rule
@@ -85,19 +86,18 @@ for plain bans, and a custom rule only when neither fits.
 ## Not adopted
 
 - Mago and PHP_CodeSniffer 4 are not adopted; Pint is the only formatter
-  (ADR-0013).
-- Mago is looked at again before Pinstripe 1.0 (ADR-0013).
+  (the stack's coding standard).
+- Mago is looked at again before Pinstripe 1.0 (the stack's coding standard).
 
 ## To be decided
 
 - `declare(strict_types=1)` in every file. The sources recommend it, but
-  ADR-0013 does not decide it.
-- `phpstan-strict-rules` for the stack's packages (ADR-0013).
-- Where the ESLint package is published (ADR-0013).
+  the stack's coding standard does not decide it.
+- `phpstan-strict-rules` for the stack's packages (the stack's coding standard).
+- Where the ESLint package is published (the stack's coding standard).
 
 ## Sources
 
-- ADR-0013: Pinstripe's standards
 - PER Coding Style 3.1: https://www.php-fig.org/per/coding-style/
 - PSR-1 Basic Coding Standard: https://www.php-fig.org/psr/psr-1/
 - Laravel Pint, 13.x docs: https://laravel.com/docs/13.x/pint

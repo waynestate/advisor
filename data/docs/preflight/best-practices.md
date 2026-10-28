@@ -2,13 +2,13 @@
 
 Status: draft, checked against sources on 2026-10-27, with a second research pass the same day (see "Second pass
 (2026-10-27)" near the end). Applies to the PREFLIGHT components `proctor`, `php-test` and `composer-audit` at the state
-of the repo on that date (no release tagged yet).
+of the repo on that date (tag 0.1.0 exists; the components added after it arrive in the next tag).
 
 ## What this covers
 
 PREFLIGHT is a set of GitLab CI/CD components that every stack project and WSU app includes with
-`include: component:`. Today it has three: `php-test` (PHP versions through `parallel:matrix`), `composer-audit` and
-`proctor`. Accessibility and contract suites come later.
+`include: component:`. Today it has seven: `php-test` (PHP versions through `parallel:matrix`), `composer-audit`,
+`proctor`, `sbom`, `pint`, `phpstan` and `eslint`. Accessibility and contract suites come later.
 
 This guide is for two groups:
 
@@ -65,7 +65,7 @@ Sources: [GitLab: CI/CD components, versions](https://docs.gitlab.com/ci/compone
 [GitLab: pipeline security, includes](https://docs.gitlab.com/ci/pipeline_security/);
 [OpenSSF Scorecard: Pinned-Dependencies](https://github.com/ossf/scorecard/blob/main/docs/checks.md).
 
-**How the stack holds it: Documented.** The README says to pin a SHA until `0.1.0` is cut. PROCTOR's own
+**How the stack holds it: Documented.** The README pins `proctor` to `0.1.0`, the first tag. PROCTOR's own
 `.gitlab-ci.yml` pins a full SHA, with a comment against `~latest`. Nothing checks an app's includes.
 
 ### 1.2 Protect the component project's default branch and release tags
@@ -95,8 +95,8 @@ Why: the catalog gives typed discovery and lets consumers pin an exact or partia
 
 Sources: [GitLab: components, publishing](https://docs.gitlab.com/ci/components/).
 
-**How the stack holds it: Not yet.** The layout is right (`templates/<name>/template.yml`, a README). There is no
-`release` job in `.gitlab-ci.yml` and no tag. The README examples use `@0.1.0`, which does not resolve yet.
+**How the stack holds it: Not yet.** The layout is right (`templates/<name>/template.yml`, a README). Tag `0.1.0` exists; the `release` job is still to be confirmed.
+The README examples pin `@0.1.0` for the components in that tag and a full commit SHA for the rest.
 
 ### 1.4 Keep inputs and job names stable inside a major version
 Do not rename an input, change its type, or rename a job in a minor release.
@@ -118,7 +118,7 @@ Why: it decides where PREFLIGHT and the apps that use it must live.
 Sources: [GitLab: components, cross-instance access](https://docs.gitlab.com/ci/components/).
 
 **How the stack holds it: Documented.** The README has a "Same instance only" section. Until git.wayne.edu has an
-instance runner, PREFLIGHT and each app must be on or mirrored to GitLab. See `design/instance-runner-case.md`.
+instance runner, PREFLIGHT and each app must be on or mirrored to the GitLab instance that has a runner.
 
 ### 1.6 Assume a tag can move, and give consumers the SHA
 Publish the commit SHA next to every release tag in the release notes. Tell apps to pin the SHA and use the tag only as a
@@ -136,8 +136,8 @@ Sources: [StepSecurity: tj-actions breach](https://www.stepsecurity.io/blog/when
 The tj-actions details above come from search summaries of these pages and the NVD record could not be read in this
 pass, so treat the exact counts and dates as unverified.
 
-**How the stack holds it: Not yet.** The README says to pin a SHA until `0.1.0` exists, but no release note format
-records the SHA, and nothing says what to do after `0.1.0` is cut.
+**How the stack holds it: Not yet.** Tag `0.1.0` exists, but no release note format records the SHA a consumer pins,
+and nothing yet says what to do when the next tag is cut.
 
 ### 1.7 Give consumers a reviewed way to bump their pins
 A pin that nobody updates freezes security fixes. Offer a scheduled merge request or a bot that proposes new SHAs and new
@@ -180,7 +180,7 @@ Sources: [GitLab: CI/CD inputs](https://docs.gitlab.com/ci/inputs/);
 [GitLab: component examples](https://docs.gitlab.com/ci/components/examples/).
 
 **How the stack holds it: Enforced.** All three templates use `spec:inputs` with types, descriptions and defaults.
-GitLab rejects a wrong type or an unknown input at pipeline creation. The first pipeline on GitLab passed all six jobs
+GitLab rejects a wrong type or an unknown input at pipeline creation. The first pipeline passed all six jobs
 with the array input.
 
 Second pass, limits to design around: GitLab's inputs page says a pipeline can take up to 20 inputs (it does not say
@@ -628,6 +628,56 @@ search summaries only, so details are unverified.
 
 **How the stack holds it: Documented.** README.md "Shared conventions" records the rule. PREFLIGHT has no JavaScript component yet, so nothing runs it.
 
+### 4.13 Generate a CycloneDX SBOM and validate it
+Produce a software bill of materials for every release, and fail the build on an invalid one.
+
+Why: an SBOM is the manifest of what your app ships. Without it, a dependency audit is a guess, and a supply chain
+incident is a surprise.
+
+Sources: [CycloneDX: Composer generator](https://github.com/CycloneDX/cyclonedx-php-composer);
+[OWASP: Software Bill of Materials](https://owasp.org/www-project-software-bill-of-materials/).
+
+**How the stack holds it: Enforced.** The `sbom` component runs `composer CycloneDX:make-sbom --validate`, which fails
+the job on an invalid SBOM, and publishes the file as an artifact. Like every component, an app can skip the include,
+so the enforcement is "when included". The SBOM is the passenger manifest; without it, a stowaway is a mystery.
+
+### 4.14 Check code style with the app's own Pint
+Run the app's own Laravel Pint in test mode and fail the pipeline on style errors.
+
+Why: a shared style gate keeps every app's PHP readable and consistent, and running the app's own config means the
+standard is the one the app already agreed to, not one imposed by the template.
+
+Sources: [Laravel Pint](https://laravel.com/docs/12.x/pint).
+
+**How the stack holds it: Enforced.** The `pint` component installs the app's dependencies and runs
+`vendor/bin/pint --test` against the app's own `pint.json`. Like every component, an app can skip the include, so the
+enforcement is "when included".
+
+### 4.15 Catch static analysis errors with the app's own PHPStan
+Run the app's own PHPStan and fail the pipeline on static analysis errors, publishing a Code Quality report.
+
+Why: static analysis finds bugs before they run, and a Code Quality report gives reviewers a per-file, per-line view
+of what to fix. Running the app's own config means the level and paths are the ones the app already agreed to.
+
+Sources: [PHPStan](https://phpstan.org/); [GitLab: Code Quality](https://docs.gitlab.com/ci/testing/code_quality/).
+
+**How the stack holds it: Enforced.** The `phpstan` component installs the app's dependencies and runs
+`vendor/bin/phpstan analyse --error-format=gitlab` against the app's own `phpstan.neon`, publishing the report. Like
+every component, an app can skip the include, so the enforcement is "when included".
+
+### 4.16 Lint JavaScript with the app's own ESLint and Prettier
+Run the app's own ESLint (and Prettier) and fail the pipeline on lint or format errors.
+
+Why: a shared lint gate keeps every app's JavaScript readable and consistent, and running the app's own config means
+the standard is the one the app already agreed to, not one imposed by the template.
+
+Sources: [ESLint](https://eslint.org/); [Prettier](https://prettier.io/).
+
+**How the stack holds it: Enforced.** The `eslint` component installs the app's dependencies with
+`npm ci --ignore-scripts` and runs `npx --no-install eslint` and `npx --no-install prettier --check` against the
+app's own config. Like every component, an app can skip the include, so the enforcement is "when included". ESLint is
+the preflight checklist for your JavaScript.
+
 ---
 
 ## 5. Secrets, tokens and runners
@@ -682,7 +732,7 @@ Why: any Developer can run code on a shared runner, and a non-ephemeral one can 
 Sources: [GitLab Runner: security](https://docs.gitlab.com/runner/security/);
 [CISA and NSA: Defending CI/CD environments](https://cisa.gov/news-events/alerts/2023/06/28/cisa-and-nsa-release-joint-guidance-defending-continuous-integrationcontinuous-delivery-cicd).
 
-**How the stack holds it: Documented.** `design/instance-runner-case.md` expects a Docker executor and leaves capacity,
+**How the stack holds it: Documented.** `instance-runner case document` expects a Docker executor and leaves capacity,
 maintenance and limits to ops. Nothing states "non-privileged" or "ephemeral".
 
 Second pass, concrete settings from the GitLab Runner security page, to put in the runner request:
@@ -776,7 +826,7 @@ Why: a constraint of `^8.2` is a promise about 8.2, 8.3, 8.4 and 8.5.
 
 Sources: [GitLab: CI/CD YAML, `parallel:matrix`](https://docs.gitlab.com/ci/yaml/).
 
-**How the stack holds it: Checked.** `php-test` creates one job per entry through `parallel:matrix`. The first GitLab
+**How the stack holds it: Checked.** `php-test` creates one job per entry through `parallel:matrix`. The first
 pipeline ran it on 8.2, 8.3, 8.4 and 8.5.
 
 The matrix limit of 200 permutations was re-checked in the GitLab YAML reference and is correct.
@@ -879,7 +929,7 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 3. 3.3: Add a check or ROLLCALL report for apps that skip, unpin or weaken PREFLIGHT.
 4. 4.1: Pin images by digest and update the pins through reviewed merge requests.
 5. 4.4: Run PROCTOR without installing the app, and pass `--no-plugins --no-scripts` where jobs only inspect.
-6. 1.3: Add the `release` job, tag `0.1.0`, publish to the Catalog, and fix README examples.
+6. 1.3: Confirm the `release` job, publish the Catalog entry for `0.1.0`, and tag the next release with the components added after it.
 7. 1.2: Record and check the project's branch and tag protection.
 8. 6.2: Derive the PHP matrix from the policy, and drop 8.2 by 2027-01-01.
 9. 4.9: Pin the Composer version the installer fetches and the `composer-audit` image.
@@ -990,7 +1040,7 @@ CLI and the Packagist Composer 2.10 post. The GitLab includes page shows example
 advice, which is why 1.1 relies on the pipeline security and components pages instead. Not read: the NVD records for the
 Composer and tj-actions CVEs, the Federal Register text of the DOJ rule, and any GitLab Runner release notes.
 
-Internal design documents used for tagging: ADR-0002, `design/instance-runner-case.md`, `design/objectives.md`,
+Internal design documents used for tagging: ADR-0002, `instance-runner case document`, `design/objectives.md`,
 `design/first-repos.md`, `research/gitlab-ci-components.md`, the PREFLIGHT repo and the PROCTOR repo.
 
 ## Second pass (2026-10-27)

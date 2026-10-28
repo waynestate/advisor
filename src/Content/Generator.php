@@ -23,6 +23,28 @@ final class Generator
 {
     private const MAX_FILE_BYTES = 1_000_000;
 
+    /**
+     * ADVISOR is a public repository, so the bundle must not carry internal
+     * names. The sources are being cleaned for public release; until they are,
+     * the bundle step replaces what is left with neutral wording. Each rule
+     * names the source case it covers, and the public-posture test fails on
+     * anything a rule misses.
+     *
+     * @var list<array{0: string, 1: string}> pattern, replacement
+     */
+    private const SANITIZATIONS = [
+        // [text](../design/ADR/...) -> text (helmet/BEST_PRACTICES.md, the ADR-0011 link)
+        ['#\[(?<text>[^\]]+)\]\(((?:\.\./)*)design/ADR/[^)\s]+\)#', '$1'],
+        // `design/instance-runner-case.md` -> `instance-runner case document` (preflight/BEST_PRACTICES.md)
+        ['#`design/instance-runner-case\.md`#', '`instance-runner case document`'],
+        // design/instance-runner-case.md without backticks (preflight/BEST_PRACTICES.md)
+        ['#design/instance-runner-case\.md#', 'instance-runner case document'],
+        // [name@wayne.edu](mailto:...) -> the WayneUI maintainers (wayne-ui/README.md)
+        ['#\[[^\]]+@wayne\.edu\]\(mailto:[^)]+\)#', 'the WayneUI maintainers'],
+        // "the coordination repo[itory]" -> "the stack's design documents" (booster, advisor BEST_PRACTICES.md)
+        ['#\b(?:the )?coordination repo(?:sitory)?#', "the stack's design documents"],
+    ];
+
     public function __construct(
         private readonly string $sourcesDir,
         private readonly string $outDir,
@@ -238,16 +260,27 @@ final class Generator
         return $this->clean((string) file_get_contents($path));
     }
 
-    /** LF line endings, one final newline, no invisible characters, a size cap. */
+    /** LF line endings, one final newline, no invisible characters, no internal names, a size cap. */
     private function clean(string $text): string
     {
         $text = str_replace(["\r\n", "\r"], "\n", $text);
         $text = Invisible::strip($text);
+        $text = $this->sanitize($text);
         if (strlen($text) > self::MAX_FILE_BYTES) {
             throw new RuntimeException('A source file is larger than 1 MB; refusing to bundle it.');
         }
 
         return rtrim($text, "\n") . "\n";
+    }
+
+    /** Replaces the internal names the sources still carry (see SANITIZATIONS). */
+    private function sanitize(string $text): string
+    {
+        foreach (self::SANITIZATIONS as [$pattern, $replacement]) {
+            $text = (string) preg_replace($pattern, $replacement, $text);
+        }
+
+        return $text;
     }
 
     /**

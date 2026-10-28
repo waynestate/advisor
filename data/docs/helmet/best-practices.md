@@ -4,7 +4,7 @@ Checked against primary sources on 2026-10-27. A second pass the same day added 
 
 ## What this covers
 
-HELMET is the baseline runtime for PHP apps on Citadel, WSU's Docker platform. It covers six areas: response headers and the Content-Security-Policy (CSP), HTTPS and proxy trust, session hardening, the health check, logging and errors, and environment and config. This guide is for WSU developers who install HELMET and for the people who maintain it. It lists what good practice looks like in each area, what the research says, and whether the stack holds each practice today.
+HELMET is the baseline runtime for PHP apps on Citadel, WSU's Docker platform. It covers seven areas: response headers and the Content-Security-Policy (CSP), HTTPS and proxy trust, session hardening, the health check, logging and errors, environment and config, and metrics. This guide is for WSU developers who install HELMET and for the people who maintain it. It lists what good practice looks like in each area, what the research says, and whether the stack holds each practice today.
 
 The platform matters for every item below. Citadel terminates TLS at an HA-Proxy in front of the app, the proxy appends `X-Forwarded-For` and `X-Forwarded-Proto` and strips nothing, and the shared `php.ini` leaves `session.use_strict_mode` at 0, `session.cookie_httponly` empty and `expose_php` On. HELMET exists to close the gaps that app code can close.
 
@@ -66,7 +66,7 @@ HELMET is at its first scaffold step. The Laravel adapter, the environment ribbo
 - **Practice:** Send a stricter policy as `Content-Security-Policy-Report-Only` first, collect violation reports, then enforce it. Declare the endpoint in a `Reporting-Endpoints` header, point the policy at it with `report-to`, and keep `report-uri` beside it as a fallback.
 - **Why:** It shows what a tighter policy would break before users see it. Both OWASP and MDN now call `report-uri` deprecated and `report-to` the current directive. MDN lists `Reporting-Endpoints` as Baseline "Newly available" since September 2024. (A secondary page read during the second pass said March 2026. MDN, the primary source, says September 2024, so that is the date used here.) Reports arrive as a `POST` with `Content-Type: application/reports+json`, so the endpoint must accept that type.
 - **Sources:** [web.dev strict CSP](https://web.dev/articles/strict-csp), [OWASP CSP](https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html), [MDN CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP), [MDN Reporting-Endpoints](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Reporting-Endpoints)
-- **Stack:** `Not yet`. `SecurityHeaders::build()` has no Report-Only mode and no report endpoint setting. The `csp-builder` README shows `report-only`, `report-uri` and `report-to` config keys, so the library can carry the CSP side. Whether it also emits the `Reporting-Endpoints` header was not confirmed, and HELMET would need to send that header itself if it does not.
+- **Stack:** `Enforced`. `SecurityHeaders::build()` takes a report URI and a report-only flag. With a URI it adds `report-uri` and `report-to` to the policy and sends a `Reporting-Endpoints` header; with report-only on it sends the policy as `Content-Security-Policy-Report-Only`. The URI is validated (`https`, a host, no whitespace or quote) and an invalid one throws `InvalidCspReportUriException` at boot. The Laravel adapter reads `helmet.csp_report_uri` and `helmet.csp_report_only` and ships an opt-in `Route::cspReport()` endpoint that caps the body, accepts the two report content types, and logs one line per violation. `testReportOnlyModeSendsTheReportOnlyHeader`, `testReportUriSendsReportingEndpointsAndDirectives`, `testBootAcceptsReportUriAndReportOnly`, `testReportEndpointAcceptsCspReport` and `testReportEndpointRejectsOversizedBody` cover it.
 
 ### H8. Do not cache pages that carry a nonce
 - **Practice:** Do not let a proxy, CDN or the app cache HTML that includes a nonce. For static or cached pages, use hashes instead.
@@ -90,7 +90,7 @@ HELMET is at its first scaffold step. The Laravel adapter, the environment ribbo
 - **Practice:** On pages that run Vue or other client code, try `Content-Security-Policy-Report-Only: require-trusted-types-for 'script'` and a `trusted-types` allowlist of policy names. Fix what the reports show before enforcing.
 - **Why:** Trusted Types stops strings from reaching DOM XSS sinks such as `innerHTML`. web.dev says it "complements strict CSP very well" and covers some of its limits. MDN lists `require-trusted-types-for` as Baseline "Newly available" since February 2026. Vue's security guide adds that you should never use untrusted content as a component template and should never mount Vue on nodes holding server-rendered, user-supplied content. It does not mention CSP, so whether Vue needs `'unsafe-eval'` was not confirmed from the sources read.
 - **Sources:** [MDN require-trusted-types-for](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/require-trusted-types-for), [web.dev strict CSP](https://web.dev/articles/strict-csp), [Vue security guide](https://vuejs.org/guide/best-practices/security.html)
-- **Stack:** `Not yet`. It depends on Report-Only mode and a report endpoint (H7), which HELMET lacks. Only JS-framework apps need it.
+- **Stack:** `Not yet`. The Report-Only mode and report endpoint it depends on (H7) are now built, but HELMET does not send a `require-trusted-types-for` policy or a `trusted-types` allowlist. Only JS-framework apps need it.
 
 ---
 
@@ -416,6 +416,16 @@ HELMET is at its first scaffold step. The Laravel adapter, the environment ribbo
 
 ---
 
+## 11. Metrics
+
+### H59. Expose Prometheus metrics behind authentication, off by default
+- **Practice:** Offer a `/metrics` endpoint in Prometheus exposition format (`text/plain; version=0.0.4`), disabled by default. When enabled, require a bearer token or an IP allowlist before serving data. Keep labels low-cardinality and free of personal data.
+- **Why:** A metrics endpoint that is open by default leaks version numbers, uptime and request counts to anyone who finds the URL. The Prometheus exposition format is the de facto standard for PHP scrapers. The stack's metrics rule requires Prometheus format only, off by default, protected by a token or allowlist, with no personal data in labels.
+- **Sources:** [Prometheus exposition format](https://prometheus.io/docs/instrumenting/exposition_formats/)
+- **Stack:** `Enforced`. `Metrics::render()` produces the exposition format. `MetricsGate` returns `404` when disabled, `403` when unauthorized, and `404` plus a logged warning when enabled with neither token nor allowlist. The Laravel route is opt-in via `Route::helmetMetrics()`. The raw PHP helper `helmet_metrics()` applies the same gate. `MetricsGateTest`, `MetricsTest`, `FunctionsMetricsTest` and `Laravel\MetricsTest` cover the decision matrix.
+
+---
+
 ## Gaps for the backlog
 
 ### Problems in the current code
@@ -429,7 +439,7 @@ Each of these follows from the research above. Items marked "inferred" depend on
 5. `src/Session/SessionHardening.php:36-44`: `ini_set` results are not checked, so a refused setting goes unnoticed.
 6. `src/Proxy/TrustedProxies.php:92-94`: a `/0` range is accepted and trusts every IPv4 address. Reject prefixes shorter than a chosen minimum.
 7. `src/Proxy/TrustedProxies.php:34` and `:41`: invalid exact entries (`*`, IPv6, typos) are stored or skipped without error. Validate them with `filter_var` and throw.
-8. Done: the README examples use the exact address `172.18.0.1` and warn against broad ranges such as `10.0.0.0/8`. Confirmed read-only on 2026-10-27: apps sit on the Docker network (gateway `172.18.0.1`) and HA-Proxy reaches them through `127.0.0.1` and docker-proxy, so the app sees `172.18.0.1`. On other hosts the address is a setting (ADR-0010).
+8. Done: the README examples use the exact address `172.18.0.1` and warn against broad ranges such as `10.0.0.0/8`. That is the Docker bridge gateway the `citadel` preset trusts; on other hosts the address is a setting.
 9. `src/Proxy/HttpsDetector.php:47-50`: exact comparison of a possibly multi-value header. Take the last element.
 10. `src/functions.php:74` and `src/Headers/SecurityHeadersMiddleware.php:24-28`: a custom `csp` replaces the default. Offer merge-by-default.
 11. `composer.json:13` (was cited as `:9`; the file has changed): `akrabat/ip-address-middleware` is required and unused. Use it for the client-IP function, or remove it.
