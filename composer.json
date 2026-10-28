@@ -49,6 +49,7 @@
         "ci": [
             "@composer validate --strict",
             "@php bin/advisor content:verify",
+            "@php bin/advisor stack-parts --check=README.md",
             "phpunit",
             "pint --test",
             "phpstan analyse --memory-limit=1G",

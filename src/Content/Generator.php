@@ -248,6 +248,7 @@ final class Generator
             'id' => $id,
             'name' => (string) $seed['name'],
             'kind' => (string) $seed['kind'],
+            'tagline' => (string) $seed['tagline'],
             'role' => (string) $seed['role'],
             'state' => $built ? 'built' : 'proposed',
             'package' => $package,

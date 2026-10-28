@@ -42,9 +42,9 @@ final class GeneratorTest extends TestCase
         $this->put($this->sources . '/wayne-ui/contract/markup-contract.json', '{"contract":true}');
         $this->put($this->sources . '/wayne-ui/package.json', '{}');
         $this->put($this->seed, (string) json_encode(['projects' => [
-            ['id' => 'proctor', 'name' => 'PROCTOR', 'kind' => 'check', 'role' => 'Checks.', 'next_step' => 'Run it.'],
-            ['id' => 'wayne-ui', 'name' => 'WayneUI', 'kind' => 'ui', 'role' => 'UI.', 'next_step' => 'Use it.', 'contract' => 'contract/markup-contract.json'],
-            ['id' => 'later', 'name' => 'LATER', 'kind' => 'x', 'role' => 'Not yet.', 'next_step' => 'Wait.'],
+            ['id' => 'proctor', 'name' => 'PROCTOR', 'kind' => 'check', 'tagline' => 'checks an app', 'role' => 'Checks.', 'next_step' => 'Run it.'],
+            ['id' => 'wayne-ui', 'name' => 'WayneUI', 'kind' => 'ui', 'tagline' => 'interface', 'role' => 'UI.', 'next_step' => 'Use it.', 'contract' => 'contract/markup-contract.json'],
+            ['id' => 'later', 'name' => 'LATER', 'kind' => 'x', 'tagline' => 'later', 'role' => 'Not yet.', 'next_step' => 'Wait.'],
         ]]));
     }
 

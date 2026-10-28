@@ -8,6 +8,7 @@ use Waynestate\Advisor\Command\ContentVerifyCommand;
 use Waynestate\Advisor\Command\DoctorCommand;
 use Waynestate\Advisor\Command\InstallCommand;
 use Waynestate\Advisor\Command\McpCommand;
+use Waynestate\Advisor\Command\StackPartsCommand;
 
 // Installed as a dependency this file lives in vendor/waynestate/advisor/bin; on its own it is bin/.
 $autoloads = [__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../../autoload.php'];
@@ -29,6 +30,7 @@ $application->addCommands([
     new ContentGenerateCommand(),
     new ContentVerifyCommand(),
     new DoctorCommand(),
+    new StackPartsCommand(),
 ]);
 
 exit($application->run());
