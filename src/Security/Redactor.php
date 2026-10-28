@@ -15,7 +15,7 @@ final class Redactor
 
     private const PATTERNS = [
         // KEY=value or "key": "value" for names that smell like credentials
-        '/((?:api[_-]?key|secret|token|passwd|password|private[_-]?key|authorization|client[_-]?secret)["\']?\s*[:=]\s*["\']?)[^\s"\',;]{4,}/i',
+        '/((?:api[_-]?key|secret|token|passwd|password|private[_-]?key|authorization|client[_-]?secret)["\']?\s*[:=]\s*["\']?)(?:(?:Bearer|Basic)\s+)?[^\s"\',;]{4,}/i',
         // Bearer tokens
         '/(Bearer\s+)[A-Za-z0-9._~+\/=-]{8,}/',
         // PEM blocks

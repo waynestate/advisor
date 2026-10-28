@@ -89,6 +89,6 @@ final class Invisible
         $clean = mb_convert_encoding($text, 'UTF-8', 'UTF-8'); // replaces invalid bytes with "?"
         $points = mb_str_split($clean, 1, 'UTF-8');
 
-        return array_map(static fn (string $char): int => mb_ord($char, 'UTF-8') ?: 0xFFFD, $points);
+        return array_map(static fn (string $char): int => mb_ord($char, 'UTF-8') ?: ($char === "\0" ? 0 : 0xFFFD), $points);
     }
 }

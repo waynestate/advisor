@@ -154,6 +154,7 @@ final class PolicyReader
     {
         $supported = [];
         foreach (array_keys($this->versions($component)) as $version) {
+            $version = (string) $version;
             $state = $this->stateOf($component, $version, $on);
             if ($state === State::Active || $state === State::Security) {
                 $supported[] = $version;
