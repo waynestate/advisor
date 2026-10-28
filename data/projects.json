@@ -108,7 +108,8 @@
             "php": "^8.3",
             "next_step": "Point Pint and PHPStan at its presets; one formatter per repository.",
             "docs": [
-                "readme"
+                "readme",
+                "best-practices"
             ]
         },
         {
@@ -116,12 +117,13 @@
             "name": "BOOSTER",
             "kind": "upgrade",
             "role": "The upgrade tool: Rector recipes and checks that move an app one PHP or Laravel version at a time.",
-            "state": "proposed",
-            "package": null,
-            "php": null,
+            "state": "built",
+            "package": "waynestate/booster",
+            "php": "^8.3",
             "next_step": "Plan one hop at a time; call get_project_status to see whether BOOSTER is built yet.",
             "docs": [
-                "readme"
+                "readme",
+                "best-practices"
             ]
         },
         {
@@ -129,12 +131,13 @@
             "name": "ROLLCALL",
             "kind": "fleet census",
             "role": "The fleet census: PHP, image, framework and PROCTOR result for every app, and the end-of-life burn-down.",
-            "state": "proposed",
-            "package": null,
-            "php": null,
+            "state": "built",
+            "package": "waynestate/rollcall",
+            "php": "^8.3",
             "next_step": "Owners check their app's row; a missing row means the app is not registered.",
             "docs": [
-                "readme"
+                "readme",
+                "best-practices"
             ]
         },
         {
@@ -142,12 +145,13 @@
             "name": "DRAWBRIDGE",
             "kind": "auth gateway",
             "role": "The Citadel auth gateway: one SAML service provider that hands each app a signed assertion for SESAME's gateway driver.",
-            "state": "proposed",
-            "package": null,
-            "php": null,
+            "state": "built",
+            "package": "waynestate/drawbridge",
+            "php": "^8.3",
             "next_step": "Apps on Citadel use SESAME's gateway driver; plan against the DRAWBRIDGE README.",
             "docs": [
-                "readme"
+                "readme",
+                "best-practices"
             ]
         },
         {
@@ -155,12 +159,13 @@
             "name": "SQUIRE",
             "kind": "deploy kit",
             "role": "The Citadel kit: the app-side release script, local parity with the platform, and upstream merge requests. Platform-specific deploy code lives here and nowhere else.",
-            "state": "proposed",
-            "package": null,
-            "php": null,
+            "state": "built",
+            "package": "waynestate/squire",
+            "php": "^8.3",
             "next_step": "Use its release script for Citadel deploys; other platforms use their own targets.",
             "docs": [
-                "readme"
+                "readme",
+                "best-practices"
             ]
         },
         {
@@ -168,12 +173,13 @@
             "name": "ADVISOR",
             "kind": "MCP server",
             "role": "This server: orients a developer and gives their coding agent read-only tools into the stack. It sits beside Laravel Boost and does not replace it.",
-            "state": "proposed",
-            "package": null,
-            "php": null,
+            "state": "built",
+            "package": "waynestate/advisor",
+            "php": "^8.3",
             "next_step": "Run `advisor install` to wire your agent, then start with list_projects.",
             "docs": [
-                "readme"
+                "readme",
+                "best-practices"
             ]
         },
         {

@@ -54,7 +54,7 @@ for plain bans, and a custom rule only when neither fits.
 
 ## Security analysis
 
-- The stack's GitLab instances (GitLab and git.wayne.edu) run the Free tier,
+- The stack's GitLab instances run the Free tier,
   so nothing relies on GitLab SAST (ADR-0013).
 - The open tools instead: Larastan's env rule, `phpstan-disallowed-calls`,
   and a Psalm taint-analysis pilot on one app (ADR-0013).

@@ -19,6 +19,21 @@ The policy states, from ADR-0003:
 - `policy.json` is a contract, versioned like WayneUI's `/v2/`. Older Check
   versions must still read newer policy files (ADR-0003).
 
+## Latest patches
+
+Each version can also carry a `latest_patch` — the newest patch release for
+that version as of a `latest_patch_checked` date. It is informational: a
+version's state (active, security-only, EOL) is still derived from the dates
+alone (ADR-0003); `latest_patch` only tells you how far behind the newest
+patch you are. `bin/refresh-patches.php` keeps it current by reading the four
+upstream feeds (php.net's active releases, Packagist's `laravel/framework`,
+nodejs.org's dist index, and endoflife.date's PHP data) and writing
+`latest_patch` and `latest_patch_checked` for every version the feeds cover; a
+version the feeds do not cover (an EOL branch, for instance) is left as-is
+with a warning, and a php.net / endoflife.date disagreement is reported but
+never fails the run. Run it with `--dry-run` to preview, or `--offline <dir>`
+to test against saved feeds.
+
 ## Tool minimums
 
 The `tools` block sets a minimum version for a developer tool. Each key is a

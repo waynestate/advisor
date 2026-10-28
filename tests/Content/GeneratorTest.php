@@ -138,6 +138,22 @@ final class GeneratorTest extends TestCase
         $this->assertContains('removed: docs/proctor/readme.md', $this->generator()->check());
     }
 
+    public function testInternalNamesAreReplacedWithNeutralWordingOnTheWayIn(): void
+    {
+        $this->put($this->sources . '/proctor/README.md', "# PROCTOR\n\nSee `design/instance-runner-case.md` and [ADR-0011 (metrics speak Prometheus)](../design/ADR/ADR-0011-metrics-speak-prometheus.md).\nQuestions go to [someone@wayne.edu](mailto:someone@wayne.edu) in the coordination repository.\n");
+        $this->generator()->generate();
+        $readme = (string) (new ContentBundle($this->out))->doc('proctor', 'readme');
+
+        $this->assertStringNotContainsString('design/ADR', $readme);
+        $this->assertStringNotContainsString('design/instance-runner', $readme);
+        $this->assertStringNotContainsString('wayne.edu', $readme);
+        $this->assertStringNotContainsString('coordination repo', $readme);
+        $this->assertStringContainsString('instance-runner case document', $readme);
+        $this->assertStringContainsString('ADR-0011 (metrics speak Prometheus)', $readme);
+        $this->assertStringContainsString('the WayneUI maintainers', $readme);
+        $this->assertStringContainsString("the stack's design documents", $readme);
+    }
+
     public function testMissingSourcesAreAnErrorNotAnEmptyBundle(): void
     {
         $this->expectException(RuntimeException::class);

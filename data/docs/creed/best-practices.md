@@ -551,9 +551,11 @@ Sources: [PHP 2026 news archive](https://www.php.net/archive/2026.php),
 [endoflife.date PHP API](https://endoflife.date/api/v1/products/php/) (lists the latest patch per branch, all dated
 2026-10-21).
 
-How the stack holds it: `Not yet`. `policy.json` lists branches only and has no minimum patch version. PROCTOR `php-floor`
-reads the lowest bound in `composer.json`, which says nothing about the patch level of the running image. This pass did
-not verify whether Citadel's PHP images were rebuilt after 2026-10-21.
+How the stack holds it: `Documented`. `policy.json` now carries a `latest_patch` and a `latest_patch_checked` date for
+each PHP version (and for Laravel and Node), and `bin/refresh-patches.php` keeps them current from php.net, Packagist,
+nodejs.org and endoflife.date (handbook: `versions.md`, "Latest patches"). It is informational: a version's state is
+still derived from the dates alone, and no PROCTOR check fails an image that is behind the latest patch yet. This pass
+did not verify whether Citadel's PHP images were rebuilt after 2026-10-21.
 
 ### 38. Patch the framework inside a stated window, not only to a supported branch
 

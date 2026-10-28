@@ -1,8 +1,8 @@
 # PREFLIGHT
 
 PREFLIGHT is a set of GitLab CI/CD components that give every WSU app the
-same checks: PROCTOR, PHP tests on each supported version, and Composer
-audit.
+same checks: PROCTOR, PHP tests on each supported version, Composer audit,
+an SBOM, Pint, PHPStan and ESLint.
 
 Components are GA on the Free tier since GitLab 17.0. They work only within
 the same GitLab instance that hosts this project.
@@ -20,8 +20,6 @@ include:
     inputs:
       proctor_command: vendor/bin/proctor check --format=codequality
 ```
-
-`@0.1.0` is the first tag and is not cut yet. Until it is, pin a full commit SHA instead.
 
 | Input | Type | Default | What it does |
 |-------|------|---------|--------------|
@@ -43,8 +41,6 @@ include:
       test_command: vendor/bin/phpunit
 ```
 
-`@0.1.0` is the first tag and is not cut yet. Until it is, pin a full commit SHA instead.
-
 | Input | Type | Default | What it does |
 |-------|------|---------|--------------|
 | `stage` | string | `test` | Pipeline stage for the jobs. |
@@ -64,13 +60,94 @@ include:
       working_dir: .
 ```
 
-`@0.1.0` is the first tag and is not cut yet. Until it is, pin a full commit SHA instead.
-
 | Input | Type | Default | What it does |
 |-------|------|---------|--------------|
 | `stage` | string | `test` | Pipeline stage for the job. |
 | `image` | string | `composer:2@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc` | Docker image for the job. |
 | `working_dir` | string | `.` | Directory to run composer audit in, relative to the project root. |
+
+### sbom
+
+Generates a CycloneDX SBOM with `cyclonedx/cyclonedx-php-composer`, validates it, and publishes it as an artifact. The plugin is installed globally, so the app's `composer.json` is never touched.
+
+```yaml
+include:
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@<full-commit-sha>
+    inputs:
+      output: sbom.cdx.json
+```
+
+This component is not in `0.1.0`; it arrives in the next tag. Until then, pin a full commit SHA instead.
+
+| Input | Type | Default | What it does |
+|-------|------|---------|--------------|
+| `stage` | string | `test` | Pipeline stage for the job. |
+| `image` | string | `composer:2.10.3@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc` | Docker image for the job. |
+| `omit_dev` | boolean | `true` | Whether to omit dev dependencies from the SBOM. |
+| `output` | string | `sbom.cdx.json` | Path of the SBOM file to publish, relative to the project root. |
+
+### pint
+
+Runs the app's own [Laravel Pint](https://laravel.com/docs/12.x/pint) in test mode and fails the pipeline on style errors. The app must require `laravel/pint` as a dev dependency and ship a `pint.json` (or point `config` at its own file).
+
+```yaml
+include:
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@<full-commit-sha>
+    inputs:
+      config: pint.json
+```
+
+This component is not in `0.1.0`; it arrives in the next tag. Until then, pin a full commit SHA instead.
+
+| Input | Type | Default | What it does |
+|-------|------|---------|--------------|
+| `stage` | string | `test` | Pipeline stage for the job. |
+| `image` | string | `composer:2.10.3@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc` | Docker image for the job. |
+| `config` | string | `pint.json` | Path to the app's Pint config file. |
+| `working_dir` | string | `.` | Directory to run Pint in, relative to the project root. |
+
+### phpstan
+
+Runs the app's own [PHPStan](https://phpstan.org/) and fails the pipeline on static analysis errors, writing a GitLab Code Quality report. The app must require `phpstan/phpstan` as a dev dependency and ship a `phpstan.neon` (or point `config` at its own file).
+
+```yaml
+include:
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@<full-commit-sha>
+    inputs:
+      config: phpstan.neon
+      memory_limit: 1G
+```
+
+This component is not in `0.1.0`; it arrives in the next tag. Until then, pin a full commit SHA instead.
+
+| Input | Type | Default | What it does |
+|-------|------|---------|--------------|
+| `stage` | string | `test` | Pipeline stage for the job. |
+| `image` | string | `composer:2.10.3@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc` | Docker image for the job. |
+| `config` | string | `phpstan.neon` | Path to the app's PHPStan config file. |
+| `memory_limit` | string | `1G` | Memory limit passed to PHPStan. |
+| `working_dir` | string | `.` | Directory to run PHPStan in, relative to the project root. |
+
+### eslint
+
+Runs the app's own [ESLint](https://eslint.org/) (and [Prettier](https://prettier.io/)) and fails the pipeline on lint or format errors. The app must require `@waynestate/pinstripe`, `eslint` and `prettier` as dev dependencies and ship an `eslint.config.js` (or point `eslint_args` at its own files).
+
+```yaml
+include:
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@<full-commit-sha>
+    inputs:
+      eslint_args: .
+```
+
+This component is not in `0.1.0`; it arrives in the next tag. Until then, pin a full commit SHA instead.
+
+| Input | Type | Default | What it does |
+|-------|------|---------|--------------|
+| `stage` | string | `test` | Pipeline stage for the job. |
+| `image` | string | `node:22.13-alpine@sha256:e2b39f7b64281324929257d0f8004fb6cb4bf0fdfb9aa8cedb235a766aec31da` | Docker image for the job. |
+| `working_dir` | string | `.` | Directory to run the commands in, relative to the project root. |
+| `eslint_args` | string | `.` | Arguments passed to eslint. |
+| `prettier` | boolean | `true` | Whether to also run `prettier --check`. |
 
 ## Same instance only
 
@@ -102,11 +179,11 @@ on:
 
 jobs:
   ci:
-    uses: waynestate/preflight/.github/workflows/php-package.yml@0.1.0
+    uses: waynestate/preflight/.github/workflows/php-package.yml@<full-commit-sha>
 ```
 
-`@0.1.0` is the first tag and is not cut yet. Until it is, pin a full commit
-SHA instead, the same rule as the components above.
+This workflow is not in `0.1.0`; it arrives in the next tag. Until then, pin a
+full commit SHA instead.
 
 | Input | Type | Default | What it does |
 |-------|------|---------|--------------|
@@ -134,6 +211,10 @@ include:
   - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@0.1.0
   - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@0.1.0
   - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@0.1.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@<full-commit-sha>
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@<full-commit-sha>
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@<full-commit-sha>
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@<full-commit-sha>
 ```
 
 The `workflow:rules` block must live in the app's own file. A component
@@ -160,16 +241,15 @@ Three project settings make the gates harder to skip. All three work on GitLab C
 
 ## Strongly recommended: a git.wayne.edu instance runner.
 
-Until git.wayne.edu has a runner, CI runs on GitLab, and PREFLIGHT and each
-app must live on or be mirrored to GitLab. See
-`design/instance-runner-case.md` in the stack coordination repo.
+Until git.wayne.edu has a runner, CI runs on the GitLab instance that has one, and PREFLIGHT and each
+app must live on or be mirrored to it. A git.wayne.edu instance runner is strongly recommended.
 
 ## Shared conventions
 
 - Composer vendor: `waynestate/`
 - Licence: MIT
 - PHP floor: `^8.3`
-- JavaScript components (none yet) install with `npm ci --ignore-scripts`. A package that needs its install script is named in the component's inputs, and the job carries no token beyond `CI_JOB_TOKEN` (BEST_PRACTICES.md 4.12).
+- JavaScript components install with `npm ci --ignore-scripts`. The job carries no token beyond `CI_JOB_TOKEN` (BEST_PRACTICES.md 4.12).
 
 ## Updating image pins
 

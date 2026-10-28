@@ -148,7 +148,7 @@ change the tokens rather than a component.
 Open an issue for anything reproducible, so the next person to hit it finds the
 answer already there. For adopting WayneUI in an application, a component that
 does not exist yet, or an accessibility finding you would rather not file in
-public, write to [ck7939@wayne.edu](mailto:ck7939@wayne.edu).
+public, write to the WayneUI maintainers.
 
 ## License
 

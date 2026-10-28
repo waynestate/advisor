@@ -484,7 +484,7 @@
             "id": "code-24",
             "chapter": "code",
             "heading": "Security analysis",
-            "text": "The stack's GitLab instances (GitLab and git.wayne.edu) run the Free tier, so nothing relies on GitLab SAST (ADR-0013).",
+            "text": "The stack's GitLab instances run the Free tier, so nothing relies on GitLab SAST (ADR-0013).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",

@@ -1,6 +1,6 @@
 # SESAME best practices
 
-This guide covers authentication and session handling for PHP apps that use SESAME, `waynestate/sesame`. It is for WSU developers who add login to an app, and for the people who maintain SESAME. It follows the design in ADR-0004: SESAME returns a verified identity, and the app owns the session. Every driver (`cas`, `gateway`, `saml`, `oauth2`, `fake`) ends in the app's `findOrImportUser(Identity)`.
+This guide covers authentication and session handling for PHP apps that use SESAME, `waynestate/sesame`. It is for WSU developers who add login to an app, and for the people who maintain SESAME. It follows the stack's auth design: SESAME returns a verified identity, and the app owns the session. Every driver (`cas`, `gateway`, `saml`, `oauth2`, `fake`) ends in the app's `findOrImportUser(Identity)`.
 
 Each practice has a short statement, one sentence of why, the sources, and how the stack holds it. The tags are:
 
@@ -9,7 +9,7 @@ Each practice has a short statement, one sentence of why, the sources, and how t
 - `Documented`: written down only.
 - `Not yet`: a gap.
 
-The tags describe the repo as it stands on 2026-10-27. Only the `fake` and `cas` drivers exist. `gateway`, `saml` and `oauth2` are design only, so their practices are tagged by what is written down, not by what runs.
+The tags describe the repo as it stands on 2026-10-28. The `fake`, `cas` and `gateway` drivers exist; `saml` and `oauth2` are design only, so their practices are tagged by what is written down, not by what runs.
 
 ## 1. Sessions
 
@@ -184,13 +184,13 @@ How the stack holds it: `Not yet`. SESAME has no logger or event hook. The CAS f
 ### S28. The fake driver cannot run in production
 It throws when the environment is production. It never falls back silently.
 Why: a fake login in production is an open door.
-Sources: none specific. This is a project rule from ADR-0004.
+Sources: none specific. This is a project rule from the stack's auth design.
 How the stack holds it: `Enforced`. `FakeDriver` throws `FakeDriverInProduction` (`src/Drivers/FakeDriver.php:32-34`), tested by `FakeDriverTest::testRefusesProduction`. The test is an exact match on the word `production`, so an environment named `prod` or `live` boots it (see the gap list).
 
 ### S29. Required settings have no defaults
 `driver`, `environment`, `cas.base_url` and `cas.service_url` must be set. There is no built-in default for the IdP address.
 Why: a silent default points real users at a server the app owner never chose.
-Sources: none specific. This is a project rule from ADR-0004 and the scaffold design.
+Sources: none specific. This is a project rule from the stack's auth design and the scaffold design.
 How the stack holds it: `Enforced`. `Config::fromArray()` throws `InvalidConfig` on a missing or empty value (`src/Config.php:30-92`). Tests in `ConfigTest`.
 
 ## 5. Drivers still to build
@@ -199,19 +199,19 @@ How the stack holds it: `Enforced`. `Config::fromArray()` throws `InvalidConfig`
 Never read a bare identity header. Verify a signature from the gateway, and do not use the sender's IP as proof. Read one configured header that holds a signed token. Never read `Remote-User`, `X-Remote-User`, `HTTP_REMOTE_USER` or any underscore variant.
 Why: Citadel's proxy strips no client headers, and app containers likely share one network, so a plain header can come from anywhere. A proxy that strips `Remote-User` does not stop a client from sending `Remote_User`, and PHP maps both to the same variable.
 Sources: [Google IAP signed headers](https://docs.cloud.google.com/iap/docs/signed-headers-howto), [Cloudflare Access JWT validation](https://developers.cloudflare.com/cloudflare-one/identity/authorization-cookie/validating-json/), [Pomerium identity verification](https://www.pomerium.com/docs/capabilities/getting-users-identity), [oauth2-proxy configuration](https://oauth2-proxy.github.io/oauth2-proxy/configuration/overview/), [oauth2-proxy CVE-2025-64484](https://www.tenable.com/cve/CVE-2025-64484) (fixed in 7.13.0 by ignoring case and `_`/`-` when stripping), [Caddy CVE-2026-52845](https://corgea.com/advisories/vulnerabilities/CVE-2026-52845) (`php_fastcgi` turns `-` to `_`, so `Remote_Groups` survives the strip; fixed in Caddy 2.11.4).
-How the stack holds it: `Enforced`. `GatewayDriver` reads only the one configured header (`src/Drivers/GatewayDriver.php:155-166`) and never a plain identity header, and it requires the direct peer (`REMOTE_ADDR`) to match a configured CIDR range before it looks at the assertion (`src/Drivers/GatewayDriver.php:130-145`). Tested by `GatewayDriverTest::testIgnoresPlainIdentityHeadersWhenThereIsNoSignedAssertion`, `testPlainIdentityHeadersAreIgnoredInFavorOfTheSignedAssertion`, `testRejectsAnUntrustedPeer` and `testRejectsARequestWithNoSourceAddress`.
+How the stack holds it: `Enforced`. `GatewayDriver` reads only the one configured header (`src/Drivers/GatewayDriver.php:185-196`) and never a plain identity header, and it requires the direct peer (`REMOTE_ADDR`) to match a configured CIDR range before it looks at the assertion (`src/Drivers/GatewayDriver.php:160-175`). Tested by `GatewayDriverTest::testIgnoresPlainIdentityHeadersWhenThereIsNoSignedAssertion`, `testPlainIdentityHeadersAreIgnoredInFavorOfTheSignedAssertion`, `testRejectsAnUntrustedPeer` and `testRejectsARequestWithNoSourceAddress`.
 
 ### S31. Check audience, expiry and replay on every assertion
 Require the app's host as audience, an expiry of 60 seconds or less, and an issued-at time. Reject expired, wrong-audience, unsigned and replayed assertions.
 Why: a captured assertion must not work against another app or later.
 Sources: [RFC 8725 (JWT best practices)](https://www.rfc-editor.org/rfc/rfc8725.html), [ASVS 5.0 V9.2.1 and V9.2.3](https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x18-V9-Self-contained-Tokens.md), [NIST SP 800-63C-4 (audience and replay)](https://pages.nist.gov/800-63-4/sp800-63c.html).
-How the stack holds it: `Partly enforced`. `GatewayDriver` checks the audience (`PermittedFor`), the issuer (`IssuedBy`) and the time claims `iat`, `nbf` and `exp` with a configured leeway (`LooseValidAt`) (`src/Drivers/GatewayDriver.php:205-221`), and it requires `sub`, `iat` and `exp` to be present (`src/Drivers/GatewayDriver.php:231-258`). Tested by `GatewayDriverTest::testRejectsAWrongAudience`, `testRejectsAWrongIssuer`, `testRejectsAnExpiredToken`, `testRejectsATokenNotYetValid`, `testRejectsATokenIssuedInTheFuture` and the missing-claim tests. Not yet: replay. The driver has no `jti` or nonce check, so a captured assertion still works within its validity window, and the expiry is whatever the gateway sets — the driver does not cap it at 60 seconds.
+How the stack holds it: `Enforced`. `GatewayDriver` checks the audience (`PermittedFor`), the issuer (`IssuedBy`) and the time claims `iat`, `nbf` and `exp` with a configured leeway (`LooseValidAt`) (`src/Drivers/GatewayDriver.php:235-251`), and it requires `sub`, `iat` and `exp` to be present (`src/Drivers/GatewayDriver.php:264-295`). Every assertion is single-use: the driver requires a `jti` claim, caps the assertion's lifetime at `gateway.max_lifetime` seconds (default 300; set it to 60 or less for the strictest window), and remembers each used `jti` in a replay guard, so a captured assertion is refused on its second use (`src/Drivers/GatewayDriver.php:312-342`). The guard is a PSR-16 cache (`Psr16ReplayGuard`), wired up by the Laravel adapter and passed by a raw PHP app. Tested by `GatewayDriverTest::testRejectsAWrongAudience`, `testRejectsAWrongIssuer`, `testRejectsAnExpiredToken`, `testRejectsATokenNotYetValid`, `testRejectsATokenIssuedInTheFuture`, the missing-claim tests, `testRejectsAReplayedAssertion`, `testRejectsAMissingJtiClaim`, `testRejectsALifetimeOverTheMaximum` and `Psr16ReplayGuardTest`.
 
 ### S32. Pin the algorithm and the key source
 Accept one named algorithm per key. Never accept `none`. Take keys only from configuration, never from a URL named inside the token.
 Why: attackers pick weak algorithms, or point the verifier at their own key.
 Sources: [RFC 8725 sections 3.1 and 3.2](https://www.rfc-editor.org/rfc/rfc8725.html), [ASVS 5.0 V9.1.2 and V9.1.3](https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x18-V9-Self-contained-Tokens.md).
-How the stack holds it: `Enforced`. The library is `lcobucci/jwt` 5.6.1, and the driver uses the gateway's public key (asymmetric), not a shared HMAC key, so the D-002 choice is resolved. `GatewayDriver` pins the algorithm from config (`src/Drivers/GatewayDriver.php:340-352`) and verifies with `SignedWith`, which checks the token's `alg` header against the pinned signer before it looks at the signature (`src/Drivers/GatewayDriver.php:205-221`), so a token that claims another algorithm or `none` is refused — the same failure mode the `web-token/jwt-framework` [June 2026 advisory](https://github.com/web-token/jwt-framework/security/advisories) describes. The key comes only from config (`src/Drivers/GatewayDriver.php:358-369`), never from a URL named inside the token. Tested by `GatewayDriverTest::testRejectsAnAlgNoneToken`, `testRejectsAWrongAlgorithm` and `testRejectsABadSignature`.
+How the stack holds it: `Enforced`. The library is `lcobucci/jwt` 5.6.1, and the driver uses the gateway's public key (asymmetric), not a shared HMAC key, so the open question about the gateway's signing scheme is resolved. `GatewayDriver` pins the algorithm from config (`src/Drivers/GatewayDriver.php:470-482`) and verifies with `SignedWith`, which checks the token's `alg` header against the pinned signer before it looks at the signature (`src/Drivers/GatewayDriver.php:235-251`), so a token that claims another algorithm or `none` is refused — the same failure mode the `web-token/jwt-framework` [June 2026 advisory](https://github.com/web-token/jwt-framework/security/advisories) describes. The key comes only from config (`src/Drivers/GatewayDriver.php:488-499`), never from a URL named inside the token. Tested by `GatewayDriverTest::testRejectsAnAlgNoneToken`, `testRejectsAWrongAlgorithm` and `testRejectsABadSignature`.
 
 ### S33. Keep token types apart
 Mark each token kind with its own `typ`, audience or key, so a gateway assertion cannot be accepted as an OAuth2 bearer token, or the reverse.
@@ -241,14 +241,14 @@ How the stack holds it: `Not yet`. Add: a SAML POST response is a cross-site POS
 Check signature, issuer, audience, expiry and scopes. That list is for JWT access tokens (RFC 9068). Read the token from the `Authorization` header, never from a query string. Reject tokens meant for another service. If the server issues opaque tokens, verify them by introspection (RFC 7662): authenticate to the endpoint over TLS, and never cache a result past its `exp`. Make the cache lifetime a config value, defaulting to 60 seconds or less.
 Why: a token valid somewhere else is not valid here.
 Sources: [RFC 9700 (OAuth 2.0 Security BCP)](https://www.rfc-editor.org/rfc/rfc9700.html) (published January 2025 as BCP 240; checked second pass: exact redirect URI matching; PKCE with S256; access tokens restricted to one resource server; sender-constrained tokens, for example DPoP or mTLS, as a SHOULD; clients that use several authorization servers must defend against mix-up attacks, with the RFC 9207 `iss` response parameter as one defence), [RFC 9068](https://www.rfc-editor.org/rfc/rfc9068.html), [RFC 8725](https://www.rfc-editor.org/rfc/rfc8725.html), [RFC 7662 (OAuth 2.0 Token Introspection)](https://www.rfc-editor.org/rfc/rfc7662.html), [ASVS 5.0 V9](https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x18-V9-Self-contained-Tokens.md).
-How the stack holds it: `Documented`. ADR-0004 decision 3 lists the checks. The header-only rule is not written down, and the scopes and flows that Academica offers are open (D-004). The `oauth2` driver is a resource-server check (bearer tokens in, identity out), so the client-side items (PKCE, redirect URIs, mix-up) apply only if SESAME ever starts a login itself. Decide that scope in the ADR.
+How the stack holds it: `Documented`. The stack's auth design lists the checks. The header-only rule is not written down, and the scopes and flows that Academica offers are still an open question. The `oauth2` driver is a resource-server check (bearer tokens in, identity out), so the client-side items (PKCE, redirect URIs, mix-up) apply only if SESAME ever starts a login itself. Decide that scope in the stack's auth design.
 
 ## 6. Build and supply chain
 
 ### S37. Support only PHP versions that are not end of life
 The library requires PHP 8.3 or later.
 Why: EOL PHP gets no security fixes, and session and crypto fixes are part of that.
-Sources: [PHP supported versions](https://www.php.net/supported-versions.php) (checked second pass: 8.2 security support ends 2026-12-31; 8.3 on 2027-12-31; 8.4 on 2028-12-31; 8.5, released 2025-11-20, on 2029-12-31). The version rule is ADR-0003 and ADR-0004.
+Sources: [PHP supported versions](https://www.php.net/supported-versions.php) (checked second pass: 8.2 security support ends 2026-12-31; 8.3 on 2027-12-31; 8.4 on 2028-12-31; 8.5, released 2025-11-20, on 2029-12-31). The version rule is the stack's version policy and the stack's auth design.
 How the stack holds it: `Checked`. `composer.json` requires `^8.3`, and PROCTOR's PHP floor check compares an app's floor with `policy.json`. The first pass dates are right: 8.2 loses security support two months from this check, so the 2027-01-01 floor of 8.3 matches php.net.
 
 ### S38. Audit dependencies for known vulnerabilities
@@ -267,7 +267,7 @@ How the stack holds it: `Checked`. `.gitlab-ci.yml` passes `php_versions: ["8.3"
 The planned wayne-cas and simplecas shims map old method names onto the core. They must not restore unencoded tickets, forwarded-header trust or sessions with no logout.
 Why: the old clients have these faults, and a shim that copies behaviour copies the faults.
 Sources: [ASVS 5.0 V6.8](https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x15-V6-Authentication.md).
-How the stack holds it: `Documented`. ADR-0004 says the shims are thin adapters with no rules. They are not built.
+How the stack holds it: `Documented`. The stack's auth design says the shims are thin adapters with no rules. They are not built.
 
 ## 7. Added in the second pass (2026-10-27)
 
@@ -349,13 +349,13 @@ Missing practices:
 - A logging hook (PSR-3) for authentication events.
 - A written rule for the user key (driver plus ID) and for what the resolver must do on a deny.
 - A documented lifetime table for each app, covering app, SESAME and IdP sessions.
-- Tests: XXE payload, null resolver result, replayed gateway assertion once that driver exists.
-- Choose the signing scheme for `gateway`, and the SAML library for `saml` (D-001, D-002).
+- Tests: XXE payload, null resolver result.
+- Choose the signing scheme for `gateway`, and the SAML library for `saml` (both still open questions).
 - Questions for the IdP owner: SAML single logout, signed assertions, released attributes, and `/p3/serviceValidate` attribute release. Add: does Academica release `authenticationDate`, `isFromNewLogin` and `longTermAuthenticationRequestTokenUsed`, and does it support `renew` (S19). Answered: Academica does not send single logout POSTs (S20).
 - Decide the SameSite value for every cookie in the login flow, and write it in the README and in HELMET (S41).
 - A cache and `Clear-Site-Data` rule for logout (S44).
 - A written rule for who may add a Composer audit ignore, since Composer 2.9 blocks advisory-hit versions by default (S38).
-- Scope of the `oauth2` driver in ADR-0004: resource server only, or also a client that starts logins (S36).
+- Scope of the `oauth2` driver in the stack's auth design: resource server only, or also a client that starts logins (S36).
 - A test for the `saml` library choice: feed it a document with a second signature, a DOCTYPE and a namespace trick, and expect rejection (S34, S47).
 - Check whether the CERT Polska CVE-2026-15243 advisory affects any PHP CAS client the old `wayne-cas` package or its shim wraps. The advisory names only the Java and Jasig clients.
 

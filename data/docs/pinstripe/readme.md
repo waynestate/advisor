@@ -4,7 +4,7 @@ The coding standard for the Wayne State app stack: shared presets for Pint, PHPS
 and ESLint with Prettier. Your app points at them and adds only its own exceptions. Pinstripe is to code what a good
 suit is to a job interview: nobody notices it, everybody notices when it's missing.
 
-[![GitLab GitLab pipeline](https://gitlab.example/enterprise-apps/pinstripe/badges/main/pipeline.svg)](https://gitlab.example/enterprise-apps/pinstripe/-/pipelines)
+[![GitHub CI](https://github.com/waynestate/pinstripe/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/pinstripe/actions/workflows/ci.yml)
 [![GitHub Actions](https://github.com/waynestate/pinstripe/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/pinstripe/actions/workflows/ci.yml)
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
@@ -54,6 +54,10 @@ Pinstripe pulls in `phpstan/extension-installer`, which registers Larastan for y
 plugin (`config.allow-plugins` in your `composer.json`). Your `phpstan.neon` includes
 `vendor/waynestate/pinstripe/phpstan/laravel.neon` and nothing else: there is no Larastan line to add, and the
 scripts point at `vendor/waynestate/pinstripe/pint/laravel.json`.
+
+Proven on Laravel: `composer ci` lints a minimal Laravel 13 app (`tests/fixtures/laravel-app`) with
+`pint/laravel.json` and analyses it with `phpstan/laravel.neon` on every run, and fails if the app stops
+passing.
 
 ## Use it for Vue
 
