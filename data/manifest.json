@@ -43,11 +43,11 @@
             "source": "helmet/README.md"
         },
         "docs/pinstripe/best-practices.md": {
-            "sha256": "b286c9414fc5751ad6dda14319261c0e46f58f07a52f8545d17d99ab327aea42",
+            "sha256": "155c043f6f400ce421df09a19eaa3dd77f0a381294695c10d5a0faf82c0c974f",
             "source": "pinstripe/BEST_PRACTICES.md"
         },
         "docs/pinstripe/readme.md": {
-            "sha256": "a4e5e5ce39f0635c8df7c11930f1ed289a8c0fb4c33f493d5a17f6688264bc1a",
+            "sha256": "e3f5768fb0a9665b0ab48b0bb0dfb95014fb14a271cd8ca68662f24a5b2d3d84",
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
