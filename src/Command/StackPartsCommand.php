@@ -61,6 +61,7 @@ final class StackPartsCommand extends Command
             $output->writeln('Updated the stack-parts block in ' . $path . '.');
         }
 
+        /** @var list<string> $check */
         $stale = PartsTable::check($check, $projects);
         if ($stale !== []) {
             $output->writeln('<error>The stack-parts block is stale:</error>');
