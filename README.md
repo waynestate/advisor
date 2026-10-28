@@ -2,6 +2,8 @@
 
 [![GitHub CI](https://github.com/waynestate/advisor/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/advisor/actions/workflows/ci.yml)
 
+Front page: [`site/index.html`](site/index.html), a static field map of the stack (open it in a browser).
+
 Checks: `composer ci` (the same command runs on GitLab and GitHub). The badge addresses above are placeholders until the repositories exist.
 
 > Every WSU student has an advisor. Now every WSU app does too, and this one answers email.

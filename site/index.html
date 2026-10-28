@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en" data-theme="wsu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADVISOR — What applies, and what's next.</title>
+<meta name="description" content="ADVISOR is the Wayne State app stack's own MCP server: it orients your coding agent and gives it read-only tools into the stack's standards, versions, docs and checks.">
+<meta name="theme-color" content="#f4f1ea">
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png">
+<link rel="apple-touch-icon" href="brand/advisor-avatar-256.png">
+<!--
+  WayneUI 2.0.8, copied from its documented static path
+  (wayne-ui/apps/site/public/v2) so this page works offline. It gives the
+  tokens, Lato, the container, buttons, skip link and focus ring. Fraunces
+  (SIL OFL, assets/fonts/) is ADVISOR's own display face: the italic serif
+  that old survey maps letter their hills and ponds in.
+-->
+<link rel="preload" href="assets/fonts/fraunces-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/wayne-ui/wayne-ui.css">
+<link rel="stylesheet" href="assets/advisor.css">
+<script>
+  /* Plot routes with motion only for people who are happy with motion.
+     Everyone else gets the finished map: every label inked, every route drawn. */
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
+    document.documentElement.classList.add("motion");
+  }
+</script>
+</head>
+<body>
+<a class="wsu-skip-link" href="#main">Skip to content</a>
+
+<header class="sheet-head">
+  <div class="wsu-container sheet-head__row">
+    <a class="brand" href="#main">
+      <img src="brand/advisor-avatar-256.png" width="34" height="34" alt="">
+      <span class="brand__name">ADVISOR</span>
+    </a>
+    <nav class="sheet-nav" aria-label="On this page">
+      <a href="#ask">Ask the map</a>
+      <a href="#legend">Legend</a>
+      <a href="#directions">Directions</a>
+      <a href="#neighbours">Neighbours</a>
+    </nav>
+    <p class="sheet-head__meta"><span class="sheet-head__label">Sheet</span> 0.1</p>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ================================================================ hero -->
+  <section class="hero" aria-labelledby="hero-title">
+    <!-- Grid references along the sheet edge, like a printed map. Decorative. -->
+    <div class="grid-ref grid-ref--top" aria-hidden="true"><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span></div>
+    <div class="grid-ref grid-ref--side" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+
+    <div class="wsu-container hero__grid">
+      <div class="hero__copy">
+        <p class="eyebrow">The Wayne State app stack, surveyed</p>
+        <h1 class="hero__title" id="hero-title">ADVISOR</h1>
+
+        <!-- The acronym, set as one even line in the map's lettering. Screen
+             readers get the sentence once; the copy that inks itself in word by
+             word is hidden from them. -->
+        <p class="acro">
+          <span class="wsu-sr-only">ADVISOR stands for Answers, Directions, Versions, Integrations, Standards, Onboarding and Resources.</span>
+          <span class="acro__line" aria-hidden="true"><span class="acro__word" style="--i:0">Answers,</span> <span class="acro__word" style="--i:1">Directions,</span> <span class="acro__word" style="--i:2">Versions,</span> <span class="acro__word" style="--i:3">Integrations,</span> <span class="acro__word" style="--i:4">Standards,</span> <span class="acro__word" style="--i:5">Onboarding</span> <span class="acro__word" style="--i:6">&amp;&nbsp;Resources.</span></span>
+        </p>
+
+        <p class="hero__tagline">What applies, and what's next.</p>
+        <p class="hero__blurb">The stack's own MCP server, like Laravel Boost for Wayne State. It orients your coding agent and hands it
+          read-only tools into every stack project: the standards, the supported versions, the docs and the checks. Ask
+          “which PHP can I build on?” and it answers from the policy file, with the date and the source, instead of from
+          whatever the model remembers.</p>
+
+        <div class="quickstart">
+          <code class="quickstart__code" id="quickstart-cmd"><span class="t-dim" aria-hidden="true">$ </span>composer require --dev waynestate/advisor</code>
+          <button class="copy-btn" type="button" data-copy="composer require --dev waynestate/advisor">
+            <span class="copy-btn__label">Copy</span>
+          </button>
+        </div>
+        <p class="hero__note">PHP 8.3 or newer. Until the package is published, install it from a clone with a Composer
+          <code>path</code> or <code>vcs</code> repository.</p>
+
+        <p class="hero__cta">
+          <a class="wsu-btn wsu-btn--primary wsu-btn--lg" href="#ask">Ask the map</a>
+          <a class="hero__link" href="#directions">Get directions</a>
+        </p>
+      </div>
+
+      <!-- The mark lands like a pin on the sheet; the compass bezel swings and
+           settles on north; the contour rings ripple out from where it landed. -->
+      <div class="hero__art" aria-hidden="true">
+        <svg class="rose" viewBox="-200 -200 400 400" focusable="false">
+          <g class="rose__ripples">
+            <circle r="150"/><circle r="172"/><circle r="194"/>
+          </g>
+          <g class="rose__bezel">
+            <circle class="rose__ring" r="132"/>
+            <circle class="rose__ring rose__ring--inner" r="116"/>
+            <g class="rose__ticks"></g>
+            <text class="rose__n" x="0" y="-146">N</text>
+            <text class="rose__l" x="152" y="5">E</text>
+            <text class="rose__l" x="0" y="160">S</text>
+            <text class="rose__l" x="-152" y="5">W</text>
+            <path class="rose__star" d="M0 -112 L14 -14 L112 0 L14 14 L0 112 L-14 14 L-112 0 L-14 -14 Z"/>
+            <path class="rose__star rose__star--minor" d="M79 -79 L10 -4 L-79 79 L-10 4 Z M-79 -79 L-4 -10 L79 79 L4 10 Z"/>
+          </g>
+        </svg>
+        <div class="hero__pin">
+          <img class="hero__mark" src="brand/advisor-avatar-512.png" width="512" height="512" alt="">
+          <span class="hero__shadow"></span>
+        </div>
+        <p class="you-are-here"><span class="you-are-here__dot"></span>You are here</p>
+      </div>
+      <!-- The mark's description, for anyone who cannot see the art. -->
+      <p class="wsu-sr-only">The ADVISOR mark: a speech bubble holding a gold compass needle.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ the map -->
+  <section class="section section--ask" id="ask" aria-labelledby="ask-title">
+    <div class="wsu-container">
+      <div class="section__head">
+        <p class="eyebrow">The magic trick, minus the magic</p>
+        <h2 id="ask-title">Ask the map</h2>
+        <p>Type the kind of question you would ask your coding agent. The map plots the route ADVISOR takes: from your app,
+          through the advising office, past the tool that answers, to the stack project the answer comes from.</p>
+      </div>
+
+      <form class="ask" id="ask-form" autocomplete="off">
+        <label class="ask__label" for="ask-input">Your question</label>
+        <div class="ask__row">
+          <input class="ask__input" id="ask-input" name="q" type="text" maxlength="140"
+                 value="Which PHP can I build on?" spellcheck="false">
+          <button class="wsu-btn wsu-btn--accent ask__go" type="submit">Plot the route</button>
+        </div>
+        <div class="ask__try">
+          <span class="ask__try-label" id="try-label">Or try:</span>
+          <ul class="ask__chips" aria-labelledby="try-label">
+            <li><button type="button" class="chip-q" data-q="Does my app meet the standards?">Does my app meet the standards?</button></li>
+            <li><button type="button" class="chip-q" data-q="What markup does a WayneUI button need?">What markup does a button need?</button></li>
+            <li><button type="button" class="chip-q" data-q="How do I sign users in with CAS?">How do I sign users in?</button></li>
+            <li><button type="button" class="chip-q" data-q="Which security headers do I need?">Which security headers?</button></li>
+            <li><button type="button" class="chip-q" data-q="How do I get off PHP 8.2?">How do I get off PHP 8.2?</button></li>
+            <li><button type="button" class="chip-q" data-q="I'm new here. Where do I start?">I'm new. Where do I start?</button></li>
+          </ul>
+        </div>
+      </form>
+
+      <div class="atlas">
+        <figure class="map-frame">
+          <svg class="map" id="map" viewBox="0 0 1200 700" role="img" aria-labelledby="map-title map-desc" focusable="false">
+            <title id="map-title">Field map of the stack</title>
+            <desc id="map-desc">Every stack project is a place on the map, with ADVISOR's advising office in the middle and your
+              app at the bottom left. The plotted route is written out in the control card beside the map.</desc>
+            <defs>
+              <clipPath id="clip-mark"><rect x="-23" y="-23" width="46" height="46" rx="11"/></clipPath>
+              <clipPath id="clip-hub"><rect x="-38" y="-38" width="76" height="76" rx="18"/></clipPath>
+            </defs>
+            <image href="assets/terrain-map.svg" x="0" y="0" width="1200" height="700" preserveAspectRatio="none"/>
+            <text class="map__water" x="250" y="566" text-anchor="middle">Office Hours Pond</text>
+            <text class="map__hill" x="770" y="54" text-anchor="middle">Prerequisite Ridge</text>
+            <text class="map__hill" x="930" y="680" text-anchor="middle">Elective Hill</text>
+            <g class="map__routes" id="map-routes"></g>
+            <g class="map__places" id="map-places"></g>
+            <!-- Compass rose and scale bar, the two things every sheet owes you. -->
+            <g class="map__north" transform="translate(52 66)">
+              <circle r="26"/><path d="M0 -22 L7 4 L0 0 L-7 4 Z"/><text y="-30" text-anchor="middle">N</text>
+            </g>
+            <g class="map__scale" transform="translate(880 44)">
+              <path d="M0 0 H200 M0 -6 V6 M100 -4 V4 M200 -6 V6"/>
+              <text x="0" y="-12">0</text><text x="100" y="-12" text-anchor="middle">1</text><text x="200" y="-12" text-anchor="end">2 tool calls</text>
+            </g>
+          </svg>
+          <figcaption class="map-frame__cap">An illustration of how your agent uses ADVISOR's tools. This page calls nothing;
+            the real server runs on your machine, beside your app.</figcaption>
+        </figure>
+
+        <!-- The written route: an orienteering control card. It is the whole
+             answer in text, and it is announced when a new route is plotted. -->
+        <aside class="card" aria-labelledby="card-title">
+          <p class="card__eyebrow">Control descriptions</p>
+          <h3 class="card__title" id="card-title">Route card</h3>
+          <div id="card-body" aria-live="polite" aria-atomic="true">
+            <p class="card__q">“Which PHP can I build on?”</p>
+            <ol class="legs">
+              <li class="leg"><span class="leg__sym leg__sym--start" aria-hidden="true"></span><span class="leg__text"><strong>Start:</strong> your app, where your coding agent is working</span></li>
+              <li class="leg"><span class="leg__sym" aria-hidden="true">1</span><span class="leg__text"><strong>ADVISOR</strong> takes the question</span></li>
+              <li class="leg"><span class="leg__sym" aria-hidden="true">2</span><span class="leg__text">Tool <code>policy_lookup</code> with <code>component: php</code></span></li>
+              <li class="leg"><span class="leg__sym leg__sym--finish" aria-hidden="true"></span><span class="leg__text"><strong>Finish:</strong> CREED, <code>policy.json</code></span></li>
+            </ol>
+            <div class="answer">
+              <p class="answer__label">Answer, as reference data</p>
+              <p class="answer__text">PHP 8.4 and 8.5 are in active support, 8.2 and 8.3 get security fixes only, and 8.1 is past its end of life.</p>
+              <p class="answer__src">Source: CREED <code>policy.json</code>, worked out for today.</p>
+            </div>
+          </div>
+          <p class="card__foot">Climb: 0 m. Everything on this route is read-only.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= legend -->
+  <section class="section section--legend" id="legend" aria-labelledby="legend-title">
+    <div class="wsu-container">
+      <div class="legend-sheet">
+        <div class="section__head section__head--left">
+          <p class="eyebrow">Read this before you set off</p>
+          <h2 id="legend-title">Legend</h2>
+          <p>Six tools, two prompts and a shelf of resources. Every tool is read-only and every answer says where it came from.</p>
+        </div>
+
+        <h3 class="legend__group">Tools</h3>
+        <dl class="legend">
+          <div class="legend__item">
+            <dt><span class="sym sym--list" aria-hidden="true"></span><code>list_projects</code></dt>
+            <dd>The stack's projects, WayneUI first, each marked built or proposed.</dd>
+          </div>
+          <div class="legend__item">
+            <dt><span class="sym sym--flag" aria-hidden="true"></span><code>get_project_status</code></dt>
+            <dd>One project: its state, package, PHP constraint, its floor under today's policy, and its next step.</dd>
+          </div>
+          <div class="legend__item">
+            <dt><span class="sym sym--book" aria-hidden="true"></span><code>read_project_docs</code></dt>
+            <dd>A project's README or best practices, paged. For WayneUI, its markup contract too.</dd>
+          </div>
+          <div class="legend__item">
+            <dt><span class="sym sym--clock" aria-hidden="true"></span><code>policy_lookup</code></dt>
+            <dd>Support state for PHP, Laravel, Node, MySQL, Vue, Inertia or Composer from CREED, as of today.</dd>
+          </div>
+          <div class="legend__item">
+            <dt><span class="sym sym--rule" aria-hidden="true"></span><code>list_stack_rules</code></dt>
+            <dd>CREED handbook rules with their file and line, filtered by your app's shape and by chapter.</dd>
+          </div>
+          <div class="legend__item">
+            <dt><span class="sym sym--check" aria-hidden="true"></span><code>run_proctor_check</code></dt>
+            <dd>Runs your app's own <code>vendor/bin/proctor check</code> against the bundled policy and returns the findings.</dd>
+          </div>
+        </dl>
+
+        <div class="legend__extras">
+          <div>
+            <h3 class="legend__group">Prompts</h3>
+            <ul class="legend__plain">
+              <li><code>orient_me</code> <span>a first walk round the stack, ending in three next steps</span></li>
+              <li><code>plan_upgrade</code> <span>the way off an old version, via the policy and PROCTOR</span></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="legend__group">Resources</h3>
+            <ul class="legend__plain">
+              <li><code>advisor://policy</code> <span>CREED's policy file</span></li>
+              <li><code>advisor://creed/&lt;chapter&gt;</code> <span>one per handbook chapter</span></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="legend__group">Map symbols</h3>
+            <ul class="legend__symbols">
+              <li><span class="msym msym--start" aria-hidden="true"></span> your app</li>
+              <li><span class="msym msym--control" aria-hidden="true">2</span> a tool call</li>
+              <li><span class="msym msym--finish" aria-hidden="true"></span> where the answer lives</li>
+              <li><span class="msym msym--planned" aria-hidden="true"></span> planned, not yet surveyed</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="legend__boost"><strong>Boost knows Laravel; ADVISOR knows Wayne State.</strong> They do not overlap, so run both.
+          In a Laravel app the same server also runs as <code>php artisan mcp:start advisor</code>, right beside Boost.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= directions -->
+  <section class="section section--directions" id="directions" aria-labelledby="dir-title">
+    <div class="wsu-container">
+      <div class="section__head section__head--left">
+        <p class="eyebrow">Turn-by-turn</p>
+        <h2 id="dir-title">Directions</h2>
+        <p>Three turns from a fresh clone to an agent that knows the stack. It is one PHP command, so it is the same on
+          Windows, macOS and Linux: no shell script to pick.</p>
+      </div>
+
+      <ol class="turns">
+        <li class="turn">
+          <span class="turn__num" aria-hidden="true">1</span>
+          <div class="turn__body">
+            <h3>Add it to your app</h3>
+            <p>As a dev dependency. It refuses to run in production anyway.</p>
+            <pre class="cmd"><code>composer require --dev waynestate/advisor</code></pre>
+          </div>
+        </li>
+        <li class="turn">
+          <span class="turn__num" aria-hidden="true">2</span>
+          <div class="turn__body">
+            <h3>Print the client config, and read it</h3>
+            <p>Nothing is written yet. Pick your client: <code>claude</code>, <code>cursor</code> or <code>vscode</code>.
+              For <code>codex</code> it prints TOML to paste into <code>~/.codex/config.toml</code>.</p>
+            <pre class="cmd"><code>php vendor/bin/advisor install --client=claude</code></pre>
+            <pre class="cmd cmd--out" aria-label="What it prints"><code>{"mcpServers":{"advisor":{"command":"php","args":["vendor/bin/advisor","mcp"],"env":{"ADVISOR_ENABLED":"1"}}}}</code></pre>
+          </div>
+        </li>
+        <li class="turn">
+          <span class="turn__num" aria-hidden="true">3</span>
+          <div class="turn__body">
+            <h3>Write it, then approve it by name</h3>
+            <p>Open the project in your client and approve the <code>advisor</code> server when it asks. Keep the generated
+              file out of git: it starts a program on whoever opens the project, and <code>install</code> warns you if it
+              is not ignored.</p>
+            <pre class="cmd"><code>php vendor/bin/advisor install --client=claude --write</code></pre>
+          </div>
+        </li>
+      </ol>
+
+      <div class="dir-extras">
+        <div class="dir-box">
+          <h3>Other commands</h3>
+<pre class="cmd cmd--multi"><code><span class="t-dim"># serve over stdio (your client starts this)</span>
+php vendor/bin/advisor mcp
+
+<span class="t-dim"># check the bundled content against its manifest</span>
+php vendor/bin/advisor content:verify
+
+<span class="t-dim"># every check, in the advisor repo itself</span>
+composer ci</code></pre>
+        </div>
+        <div class="dir-box">
+          <h3>Laravel apps</h3>
+          <p>The adapter on <code>laravel/mcp</code> is auto-discovered. Publish the config if you want it in the app:</p>
+          <pre class="cmd"><code>php artisan vendor:publish --tag=advisor-config</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================== out of bounds -->
+  <section class="section section--bounds" aria-labelledby="bounds-title">
+    <div class="wsu-container">
+      <div class="bounds">
+        <div class="bounds__head">
+          <p class="eyebrow">Hatched on the map, for a reason</p>
+          <h2 id="bounds-title">Out of bounds</h2>
+          <p>An advisor can tell you what's required. It cannot sit the exam for you, and this one cannot touch your files.</p>
+        </div>
+        <ul class="bounds__list">
+          <li><strong>Off unless you turn it on.</strong> No <code>ADVISOR_ENABLED</code>, no server. <code>production</code> always refuses.</li>
+          <li><strong>Read-only.</strong> No tool takes a command, a URL or a free path. None writes a file in 0.1.</li>
+          <li><strong>No network, no model calls.</strong> It serves a bundled copy of the stack's docs, so it works offline.</li>
+          <li><strong>Verified content.</strong> Every bundled file is checked against a SHA-256 manifest at start-up; a mismatch stops the server.</li>
+          <li><strong>Answers are data.</strong> Every result is labelled as reference text and cleaned of invisible characters. PROCTOR in CI decides pass or fail, not ADVISOR.</li>
+          <li><strong>One safe program.</strong> <code>run_proctor_check</code> starts only your app's own PROCTOR, with an argument array, an allowlisted environment, a timeout, and no shell.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= neighbours -->
+  <section class="section section--neighbours" id="neighbours" aria-labelledby="nb-title">
+    <div class="wsu-container">
+      <div class="section__head">
+        <p class="eyebrow">Adjoining sheets</p>
+        <h2 id="nb-title">The neighbourhood</h2>
+        <p>ADVISOR serves what every part of the stack publishes. Here is who lives where.</p>
+      </div>
+
+      <ul class="hood">
+        <li class="hood__item"><span class="hood__mark hood__mark--tile"><img src="assets/marks/wayneui.svg" width="40" height="40" alt=""></span><span class="hood__name">WayneUI</span><span class="hood__role">the interface, project 0</span></li>
+        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/creed.png" width="56" height="56" alt=""></span><span class="hood__name">CREED</span><span class="hood__role">the standards and policy</span></li>
+        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/proctor.png" width="56" height="56" alt=""></span><span class="hood__name">PROCTOR</span><span class="hood__role">checks an app</span></li>
+        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/preflight.png" width="56" height="56" alt=""></span><span class="hood__name">PREFLIGHT</span><span class="hood__role">shared CI</span></li>
+        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/pinstripe.png" width="56" height="56" alt=""></span><span class="hood__name">Pinstripe</span><span class="hood__role">the coding standard</span></li>
+        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/sesame.png" width="56" height="56" alt=""></span><span class="hood__name">SESAME</span><span class="hood__role">sign-in</span></li>
+        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/helmet.png" width="56" height="56" alt=""></span><span class="hood__name">HELMET</span><span class="hood__role">the runtime baseline</span></li>
+        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/sourdough.png" width="56" height="56" alt=""></span><span class="hood__name">Sourdough</span><span class="hood__role">the starters</span></li>
+        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/weld.png" width="56" height="56" alt=""></span><span class="hood__name">WELD</span><span class="hood__role">the stack as one app</span></li>
+        <li class="hood__item hood__item--here"><span class="hood__mark"><img src="brand/advisor-avatar-256.png" width="56" height="56" alt=""></span><span class="hood__name">ADVISOR</span><span class="hood__role">you are here</span></li>
+        <li class="hood__item hood__item--planned"><span class="hood__mark"><img src="assets/marks/booster.png" width="56" height="56" alt=""></span><span class="hood__name">BOOSTER</span><span class="hood__role">upgrades, planned</span></li>
+        <li class="hood__item hood__item--planned"><span class="hood__mark"><img src="assets/marks/rollcall.png" width="56" height="56" alt=""></span><span class="hood__name">ROLLCALL</span><span class="hood__role">the census, planned</span></li>
+        <li class="hood__item hood__item--planned"><span class="hood__mark"><img src="assets/marks/drawbridge.png" width="56" height="56" alt=""></span><span class="hood__name">DRAWBRIDGE</span><span class="hood__role">the auth gateway, planned</span></li>
+        <li class="hood__item hood__item--planned"><span class="hood__mark"><img src="assets/marks/squire.png" width="56" height="56" alt=""></span><span class="hood__name">SQUIRE</span><span class="hood__role">the deploy kit, planned</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================================================== not surveyed -->
+  <section class="section section--uncharted" aria-labelledby="unch-title">
+    <div class="wsu-container">
+      <div class="uncharted">
+        <div class="section__head section__head--left">
+          <p class="eyebrow">Here be roadmaps</p>
+          <h2 id="unch-title">Not yet surveyed</h2>
+          <p>Honest edges of the map. None of these exist in 0.1, so none of them gets a command.</p>
+        </div>
+        <ul class="unch">
+          <li><span class="chip chip--soon">Coming soon</span><h3>Ask ADVISOR on the web</h3><p>A chat page. It needs a model, a data decision and an accessibility pass of its own.</p></li>
+          <li><span class="chip chip--soon">Coming soon</span><h3>Tools that write</h3><p>Scaffold with Sourdough, apply a BOOSTER step. The read-only switch and tool groups are built so they can arrive safely.</p></li>
+          <li><span class="chip chip--soon">Coming soon</span><h3>Modules from each project</h3><p>The loader exists and is tested; projects ship their own tools through a manifest when they are ready.</p></li>
+          <li><span class="chip chip--soon">Coming soon</span><h3>HTTP transport</h3><p>stdio first. Remote needs a threat model before it needs a port.</p></li>
+          <li><span class="chip chip--soon">Coming soon</span><h3><code>advisor doctor</code></h3><p>A check of the install and the client config, for now covered by <code>content:verify</code> and <code>install</code>.</p></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="sheet-foot">
+  <div class="wsu-container sheet-foot__row">
+    <p class="sheet-foot__joke">Office hours: whenever your client starts it. Walk-ins welcome.</p>
+    <p class="sheet-foot__scale" aria-hidden="true"><span class="sheet-foot__bar"></span> Scale 1 : 1 app</p>
+    <p class="sheet-foot__org">Wayne State University · Enterprise Applications · MIT licence</p>
+  </div>
+</footer>
+
+<div class="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/advisor.js" defer></script>
+</body>
+</html>
