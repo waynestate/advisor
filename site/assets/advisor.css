@@ -116,7 +116,7 @@ code, pre { font-family: var(--wsu-font-family-mono); }
   color: var(--adv-maroon);
 }
 
-.section { padding-block: clamp(4rem, 8vw, 7rem); position: relative; }
+.section { padding-block: clamp(3rem, 5.5vw, 5rem); position: relative; }
 
 .section__head { max-width: 46rem; margin: 0 auto var(--wsu-space-8); text-align: center; }
 .section__head--left { margin-inline: 0; text-align: left; }
@@ -645,6 +645,28 @@ code, pre { font-family: var(--wsu-font-family-mono); }
 }
 .cmd--out { background: rgba(16, 32, 29, 0.55); color: var(--adv-code-dim); font-size: 0.8125rem; }
 .cmd--multi { white-space: pre-wrap; }
+.dir-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+.signpost { position: relative; margin: 0; padding-top: var(--wsu-space-2); }
+.signpost__cap { margin-bottom: var(--wsu-space-4); font-family: var(--adv-display); font-style: italic; font-size: 1.125rem; color: var(--adv-gold); }
+.signpost__arms { position: relative; z-index: 1; margin: 0; padding: 0; list-style: none; display: grid; gap: 0.7rem; }
+.signpost__pole { position: absolute; left: calc(50% - 7px); top: 3.2rem; bottom: 7.5rem; width: 14px; border-radius: 4px; background: linear-gradient(90deg, #c9a86a, #a8844a); }
+.arm {
+  position: relative;
+  display: flex; flex-direction: column;
+  width: 84%;
+  padding: 0.55rem 1.4rem 0.6rem;
+  background: var(--adv-paper);
+  color: var(--adv-green-deep);
+  box-shadow: 0 10px 18px -12px rgba(0, 0, 0, 0.6);
+  transition: translate 0.35s var(--adv-ease-spring), rotate 0.35s var(--adv-ease-spring);
+}
+.arm--r { margin-left: 8%; clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%); rotate: -1.5deg; }
+.arm--l { margin-left: 8%; padding-left: 2rem; clip-path: polygon(22px 0, 100% 0, 100% 100%, 22px 100%, 0 50%); rotate: 1.5deg; }
+.arm--r:hover { translate: 6px 0; rotate: -3deg; }
+.arm--l:hover { translate: -6px 0; rotate: 3deg; }
+.arm__name { font-family: var(--adv-display); font-weight: 800; font-size: 1.2rem; }
+.arm code { background: none !important; padding: 0 !important; color: var(--adv-maroon) !important; font-size: 0.875rem; }
+.signpost__note { position: relative; z-index: 1; margin: var(--wsu-space-6) 0 0; padding: var(--wsu-space-4); border-radius: 10px; background: rgba(16, 32, 29, 0.6); color: rgba(244, 241, 234, 0.92); line-height: 1.55; font-size: 0.9375rem; }
 .dir-extras { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--wsu-space-6); margin-top: var(--wsu-space-4); }
 .dir-box { min-width: 0; padding: var(--wsu-space-5); border: 1.5px dashed rgba(255, 204, 51, 0.55); border-radius: 10px; }
 .dir-box h3 { margin: 0 0 var(--wsu-space-3); font-family: var(--adv-display); font-weight: 600; font-size: 1.25rem; color: #fbf9f4; }
@@ -715,7 +737,7 @@ code, pre { font-family: var(--wsu-font-family-mono); }
     radial-gradient(circle at 85% 20%, rgba(12, 84, 73, 0.07), transparent 40%),
     var(--adv-paper-deep);
 }
-.unch { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--wsu-space-4); margin: 0; padding: 0; list-style: none; }
+.unch { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: var(--wsu-space-4); margin: 0; padding: 0; list-style: none; }
 .unch li { padding: var(--wsu-space-5); border-radius: 10px; background: rgba(251, 249, 244, 0.9); border: 1px solid var(--adv-line); }
 .unch h3 { margin: var(--wsu-space-3) 0 0.35rem; font-family: var(--adv-display); font-weight: 600; font-size: 1.2rem; color: var(--adv-green-deep); }
 .unch p { margin: 0; color: var(--adv-ink-muted); line-height: 1.55; font-size: 0.9375rem; }
@@ -751,7 +773,8 @@ code, pre { font-family: var(--wsu-font-family-mono); }
   .legend { grid-template-columns: minmax(0, 1fr); }
   .legend__extras { grid-template-columns: minmax(0, 1fr); }
   .bounds { grid-template-columns: minmax(0, 1fr); }
-  .dir-extras { grid-template-columns: minmax(0, 1fr); }
+  .dir-extras, .dir-grid { grid-template-columns: minmax(0, 1fr); }
+  .signpost { max-width: 26rem; }
   .sheet-nav { display: none; }
   .sheet-head__meta { margin-left: auto; }
 }

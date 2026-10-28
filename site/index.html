@@ -159,7 +159,7 @@
               <clipPath id="clip-hub"><rect x="-38" y="-38" width="76" height="76" rx="18"/></clipPath>
             </defs>
             <image href="assets/terrain-map.svg" x="0" y="0" width="1200" height="700" preserveAspectRatio="none"/>
-            <text class="map__water" x="250" y="566" text-anchor="middle">Office Hours Pond</text>
+            <text class="map__water" x="262" y="590" text-anchor="middle">Office Hours Pond</text>
             <text class="map__hill" x="770" y="54" text-anchor="middle">Prerequisite Ridge</text>
             <text class="map__hill" x="930" y="680" text-anchor="middle">Elective Hill</text>
             <g class="map__routes" id="map-routes"></g>
@@ -282,6 +282,7 @@
           Windows, macOS and Linux: no shell script to pick.</p>
       </div>
 
+      <div class="dir-grid">
       <ol class="turns">
         <li class="turn">
           <span class="turn__num" aria-hidden="true">1</span>
@@ -312,6 +313,21 @@
           </div>
         </li>
       </ol>
+
+      <!-- A trail signpost: where install writes for each client
+           (src/Command/ClientConfig.php). -->
+      <figure class="signpost">
+        <figcaption class="signpost__cap">Where <code>install --write</code> puts it</figcaption>
+        <ul class="signpost__arms">
+          <li class="arm arm--r"><span class="arm__name">claude</span><code>.mcp.json</code></li>
+          <li class="arm arm--l"><span class="arm__name">cursor</span><code>.cursor/mcp.json</code></li>
+          <li class="arm arm--r"><span class="arm__name">vscode</span><code>.vscode/mcp.json</code></li>
+          <li class="arm arm--l"><span class="arm__name">codex</span><code>printed only (TOML)</code></li>
+        </ul>
+        <span class="signpost__pole" aria-hidden="true"></span>
+        <p class="signpost__note">Every one starts the same fixed command, <code>php vendor/bin/advisor mcp</code>. Run your client from the folder that holds <code>vendor/</code>, or set <code>ADVISOR_PROJECT_ROOT</code>.</p>
+      </figure>
+      </div>
 
       <div class="dir-extras">
         <div class="dir-box">
@@ -365,7 +381,7 @@ composer ci</code></pre>
       </div>
 
       <ul class="hood">
-        <li class="hood__item"><span class="hood__mark hood__mark--tile"><img src="assets/marks/wayneui.svg" width="40" height="40" alt=""></span><span class="hood__name">WayneUI</span><span class="hood__role">the interface, project 0</span></li>
+        <li class="hood__item"><span class="hood__mark hood__mark--tile"><img src="assets/marks/wayneui.svg" width="40" height="40" alt=""></span><span class="hood__name">WayneUI</span><span class="hood__role">the interface, project&nbsp;0</span></li>
         <li class="hood__item"><span class="hood__mark"><img src="assets/marks/creed.png" width="56" height="56" alt=""></span><span class="hood__name">CREED</span><span class="hood__role">the standards and policy</span></li>
         <li class="hood__item"><span class="hood__mark"><img src="assets/marks/proctor.png" width="56" height="56" alt=""></span><span class="hood__name">PROCTOR</span><span class="hood__role">checks an app</span></li>
         <li class="hood__item"><span class="hood__mark"><img src="assets/marks/preflight.png" width="56" height="56" alt=""></span><span class="hood__name">PREFLIGHT</span><span class="hood__role">shared CI</span></li>

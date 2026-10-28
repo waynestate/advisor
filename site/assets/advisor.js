@@ -239,8 +239,8 @@
     upgrade: {
       keys: ["upgrade", "8.1", "8.2", "off php", "old php", "migrate", "outdated", "booster", "get off", "move to"],
       steps: function () { return [{ prompt: "plan_upgrade" }, { tool: "policy_lookup", args: "component: php" }, { tool: "run_proctor_check" }]; },
-      dest: "booster", detail: "planned; the prompt points at the policy and PROCTOR meanwhile",
-      answer: function () { return policyAnswer("php", "BOOSTER, the upgrade tool, is still planned, so plan_upgrade walks the policy and your PROCTOR findings instead."); }
+      dest: "proctor", detail: "your app's findings, the way off the old version",
+      answer: function () { return policyAnswer("php", "plan_upgrade walks the policy and your PROCTOR findings one hop at a time. BOOSTER, the upgrade tool, is planned to take over the heavy lifting."); }
     },
     proctor: {
       keys: ["pass", "check", "standards", "standard", "proctor", "meet", "audit", "finding", "findings", "comply", "compliant"],
@@ -553,7 +553,7 @@
   /* --------------------------------------------- 6. reveals, small delights */
 
   if (motion && "IntersectionObserver" in window) {
-    var targets = document.querySelectorAll(".section__head, .legend-sheet, .turn, .dir-box, .bounds, .hood__item, .uncharted, .unch li");
+    var targets = document.querySelectorAll(".section__head, .legend-sheet, .turn, .dir-box, .signpost, .bounds, .hood__item, .uncharted, .unch li");
     var counters = new Map();
     targets.forEach(function (t) {
       var parent = t.parentElement;
