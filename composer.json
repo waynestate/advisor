@@ -1,6 +1,10 @@
 {
     "name": "waynestate/advisor",
     "description": "Wayne State's own MCP server: orients a developer and gives their coding agent read-only tools into every project of the app stack.",
+    "homepage": "https://advisor.apps.wayne.edu/",
+    "support": {
+        "source": "https://github.com/waynestate/advisor"
+    },
     "type": "library",
     "license": "MIT",
     "authors": [
