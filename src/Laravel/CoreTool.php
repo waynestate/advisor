@@ -42,7 +42,15 @@ final class CoreTool extends Tool
     /**
      * Use the definition's JSON Schema as it is, instead of laravel/mcp's builder.
      *
-     * @return array<string, mixed>
+     * @return array{
+     *     name: string,
+     *     title?: string|null,
+     *     description?: string|null,
+     *     inputSchema?: array<string, mixed>,
+     *     outputSchema?: array<string, mixed>,
+     *     annotations?: array<string, mixed>,
+     *     _meta?: array<string, mixed>
+     * }
      */
     public function toArray(): array
     {
