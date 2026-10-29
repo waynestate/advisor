@@ -1,0 +1,150 @@
+{
+    "_comment": "Who owns what in the stack. One row per topic: the project that owns it, what it does with it, and the projects that help around it. Hand-written; content:verify checks the shape and that every named project is known.",
+    "topics": [
+        {
+            "topic": "composer audit",
+            "owner": "PROCTOR",
+            "role": "runs it (the composer-audit check)",
+            "also": [
+                {
+                    "project": "PREFLIGHT",
+                    "role": "CI job that calls PROCTOR"
+                },
+                {
+                    "project": "CREED",
+                    "role": "states the rule"
+                }
+            ]
+        },
+        {
+            "topic": "supported PHP, Laravel and Node versions",
+            "owner": "CREED",
+            "role": "states the policy (policy.json support dates)",
+            "also": [
+                {
+                    "project": "PROCTOR",
+                    "role": "checks an app against it"
+                },
+                {
+                    "project": "ADVISOR",
+                    "role": "answers from it via policy_lookup"
+                }
+            ]
+        },
+        {
+            "topic": "security headers and CSP",
+            "owner": "HELMET",
+            "role": "sets the security headers and the CSP on the response",
+            "also": [
+                {
+                    "project": "CREED",
+                    "role": "states the rule (runtime-and-headers chapter)"
+                }
+            ]
+        },
+        {
+            "topic": "sign-in",
+            "owner": "SESAME",
+            "role": "sign-in inside the app (CAS, gateway assertion, SAML and OAuth2 drivers)",
+            "also": [
+                {
+                    "project": "DRAWBRIDGE",
+                    "role": "the gateway in front of the app"
+                }
+            ]
+        },
+        {
+            "topic": "SAML and OIDC gateway",
+            "owner": "DRAWBRIDGE",
+            "role": "the sign-in gateway (Microsoft Entra ID over OpenID Connect, signed assertions only)",
+            "also": [
+                {
+                    "project": "SESAME",
+                    "role": "verifies the signed assertion (gateway driver)"
+                }
+            ]
+        },
+        {
+            "topic": "coding standard",
+            "owner": "Pinstripe",
+            "role": "the coding standard: shared Pint and PHPStan presets, plus ESLint and Prettier configuration",
+            "also": []
+        },
+        {
+            "topic": "CI templates",
+            "owner": "PREFLIGHT",
+            "role": "the CI templates for GitLab and GitHub (tests, PROCTOR, audit and accessibility)",
+            "also": [
+                {
+                    "project": "PROCTOR",
+                    "role": "the check the CI job runs"
+                }
+            ]
+        },
+        {
+            "topic": "Citadel deploy kit and release scripts",
+            "owner": "SQUIRE",
+            "role": "the deploy kit and release scripts, with the Citadel target",
+            "also": []
+        },
+        {
+            "topic": "upgrades",
+            "owner": "BOOSTER",
+            "role": "plans and runs PHP and Laravel upgrades, one supported hop at a time",
+            "also": [
+                {
+                    "project": "ADVISOR",
+                    "role": "shows the plan via upgrade_path"
+                }
+            ]
+        },
+        {
+            "topic": "fleet census",
+            "owner": "ROLLCALL",
+            "role": "the fleet census: what runs where, and on what PHP",
+            "also": []
+        },
+        {
+            "topic": "starter app",
+            "owner": "WELD",
+            "role": "the reference app the stack is named for",
+            "also": []
+        },
+        {
+            "topic": "app generator",
+            "owner": "Sourdough",
+            "role": "generates a new app from a starter, already wired to the stack",
+            "also": []
+        },
+        {
+            "topic": "written standards",
+            "owner": "CREED",
+            "role": "the handbook: the written standards for the stack",
+            "also": []
+        },
+        {
+            "topic": "people lookup",
+            "owner": "Rolodex",
+            "role": "people lookup",
+            "also": []
+        },
+        {
+            "topic": "Banner read access",
+            "owner": "TELLER",
+            "role": "read-only Banner and Oracle data access",
+            "also": []
+        },
+        {
+            "topic": "interface components",
+            "owner": "WayneUI",
+            "role": "the interface layer: brand tokens and components on four consumer paths",
+            "also": []
+        },
+        {
+            "topic": "the MCP server itself",
+            "owner": "ADVISOR",
+            "role": "the MCP server: this project",
+            "also": []
+        }
+    ]
+}

@@ -162,6 +162,10 @@
             "sha256": "3e6f4bcfea1e73aafbb5ef0fed7508c9a5be9ccd58f6522f14803a51f4db593f",
             "source": "creed/handbook/versions.md"
         },
+        "ownership.json": {
+            "sha256": "bb932552941bbd4a6610ecab934b99ccbe4bc50077190ef50202b12940f24397",
+            "source": "generator/ownership.json"
+        },
         "policy.json": {
             "sha256": "5b6e1e4752a01fc99a8cf6dcbda15a9e33c635e367ea3f6408be880ca8b1e072",
             "source": "creed/policy/policy.json"

@@ -125,6 +125,10 @@ final class Generator
         }
         $files['projects.json'] = ['content' => Json::encode(['projects' => $projects]), 'source' => 'generator/projects.seed.json plus each project repository'];
 
+        // ADVISOR's own data, hand-written like the project seed: who owns what in the stack.
+        $ownershipSource = dirname($this->seedFile) . '/ownership.json';
+        $files['ownership.json'] = ['content' => Json::encode(Json::decodeFile($ownershipSource)), 'source' => 'generator/ownership.json'];
+
         ksort($files);
 
         return $files;

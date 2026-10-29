@@ -22,6 +22,13 @@ final class ContentBundle
 
     public const DOCS = ['readme' => 'md', 'best-practices' => 'md', 'contract' => 'json'];
 
+    /**
+     * Approved stack names that have no repository in the parts list yet. An
+     * ownership row may name one of them as owner; every other owner and
+     * "also" project must be a project from projects.json.
+     */
+    private const PROPOSED_OWNERS = ['rolodex', 'teller'];
+
     private bool $verified = false;
 
     /** @var array<mixed>|null */
@@ -99,7 +106,113 @@ final class ContentBundle
             }
         }
 
+        return array_merge($problems, $this->ownershipProblems());
+    }
+
+    /**
+     * Shape check for data/ownership.json: every row needs a topic, an owner
+     * and a role; the owner (and every "also" project) must be a known
+     * project; topics must not repeat.
+     *
+     * @return list<string> one line per problem; empty means the table is sound
+     */
+    private function ownershipProblems(): array
+    {
+        $path = $this->dir . '/ownership.json';
+        if (!is_file($path)) {
+            return []; // a missing file is already reported by the manifest check
+        }
+
+        try {
+            $data = Json::decodeFile($path);
+        } catch (\RuntimeException $e) {
+            return [$e->getMessage()];
+        }
+        $topics = $data['topics'] ?? null;
+        if (!is_array($topics) || $topics === []) {
+            return ['ownership.json has no topics list.'];
+        }
+
+        $known = $this->knownProjectNames();
+        $seen = [];
+        $problems = [];
+        foreach ($topics as $i => $row) {
+            $label = 'ownership.json topic ' . $i;
+            if (!is_array($row)) {
+                $problems[] = "{$label} is not an object.";
+                continue;
+            }
+            foreach (['topic', 'owner', 'role'] as $key) {
+                if (!is_string($row[$key] ?? null) || trim((string) $row[$key]) === '') {
+                    $problems[] = "{$label} needs a non-empty {$key}.";
+                }
+            }
+            if (is_string($row['owner'] ?? null) && trim((string) $row['owner']) !== '' && !$this->isKnownProject((string) $row['owner'], $known)) {
+                $problems[] = "{$label} is owned by an unknown project: {$row['owner']}.";
+            }
+            $also = $row['also'] ?? [];
+            if (!is_array($also)) {
+                $problems[] = "{$label} also must be a list.";
+            } else {
+                foreach ($also as $j => $entry) {
+                    if (!is_array($entry) || !is_string($entry['project'] ?? null) || trim((string) $entry['project']) === ''
+                        || !is_string($entry['role'] ?? null) || trim((string) $entry['role']) === '') {
+                        $problems[] = "{$label} also[{$j}] needs a project and a role.";
+                    } elseif (!$this->isKnownProject((string) $entry['project'], $known)) {
+                        $problems[] = "{$label} also[{$j}] names an unknown project: {$entry['project']}.";
+                    }
+                }
+            }
+            if (is_string($row['topic'] ?? null) && trim((string) $row['topic']) !== '') {
+                $key = strtolower(trim((string) $row['topic']));
+                if (isset($seen[$key])) {
+                    $problems[] = "ownership.json repeats the topic '{$row['topic']}'.";
+                }
+                $seen[$key] = true;
+            }
+        }
+
         return $problems;
+    }
+
+    /**
+     * Every name an ownership row may use: the ids and names from
+     * projects.json, plus the approved proposed names. Read straight from
+     * disk so this works inside problems(), before the bundle is verified.
+     *
+     * @return list<string> lower-cased names
+     */
+    private function knownProjectNames(): array
+    {
+        $names = self::PROPOSED_OWNERS;
+        $path = $this->dir . '/projects.json';
+        if (is_file($path)) {
+            try {
+                $data = Json::decodeFile($path);
+            } catch (\RuntimeException) {
+                return $names;
+            }
+            foreach (is_array($data['projects'] ?? null) ? $data['projects'] : [] as $project) {
+                if (!is_array($project)) {
+                    continue;
+                }
+                foreach (['id', 'name'] as $key) {
+                    if (is_string($project[$key] ?? null) && trim((string) $project[$key]) !== '') {
+                        $names[] = strtolower(trim((string) $project[$key]));
+                    }
+                }
+            }
+        }
+
+        return array_values(array_unique($names));
+    }
+
+    /**
+     * @param list<string> $known lower-cased names
+     */
+    private function isKnownProject(string $name, array $known): bool
+    {
+        return in_array(strtolower(trim($name)), $known, true);
     }
 
     /**
@@ -199,6 +312,25 @@ final class ContentBundle
             $data = Json::decodeFile($this->dir . '/rules.json');
             $cached = is_array($data['rules'] ?? null) ? array_values($data['rules']) : [];
             $this->cache['rules'] = $cached;
+        }
+
+        /** @var list<array<string, mixed>> $cached */
+        return $cached;
+    }
+
+    /**
+     * The ownership table: who owns what in the stack (topic, owner, role, also).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function ownership(): array
+    {
+        $this->ensureVerified();
+        $cached = $this->cache['ownership'] ?? null;
+        if (!is_array($cached)) {
+            $data = Json::decodeFile($this->dir . '/ownership.json');
+            $cached = is_array($data['topics'] ?? null) ? array_values($data['topics']) : [];
+            $this->cache['ownership'] = $cached;
         }
 
         /** @var list<array<string, mixed>> $cached */
