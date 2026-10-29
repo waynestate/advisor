@@ -35,7 +35,7 @@ Nothing in 0.1 needs a secret, key, certificate, token or host. All of these are
 | `ADVISOR_STACK_DIR` | Maintainers running `content:generate` | `/path/to/stack` |
 | `ADVISOR_MODULES_FILE` | Maintainers adding modules | `/path/to/modules.json` |
 | GitLab and GitHub badge URLs in `README.md` | Whoever creates the repositories | `github.com/waynestate/advisor` |
-| GitHub workflow pin | The first PREFLIGHT GitHub release | `waynestate/preflight` commit `65e5248...` (the comment in `ci.yml` says to replace it with a tag) |
+| GitHub workflow pin | The first Preflight GitHub release | `waynestate/preflight` commit `65e5248...` (the comment in `ci.yml` says to replace it with a tag) |
 
 See `.env.example`.
 
@@ -45,7 +45,7 @@ See `.env.example`.
 |---|---|
 | "Ask ADVISOR" web chat | Needs a model, an open stack question and an accessibility pass of its own. |
 | HTTP transport and OAuth | stdio first (best practice 1.7); remote needs a threat model. |
-| Tools that write (scaffold with Sourdough, apply a BOOSTER step) | Approved list is read-only; the read-only switch and tool groups are built so they can arrive safely. |
+| Tools that write (scaffold with Sourdough, apply a Booster step) | Approved list is read-only; the read-only switch and tool groups are built so they can arrive safely. |
 | Per-project modules in their own repositories | The loader and `Module` interface exist and are tested; the other projects have not published modules. |
 | WarriorGPT-backed features | No model calls until an open stack question is settled. |
 | Plan handles, `requestState` signing and elicitation | No tool needs state or a question to the user yet. |
