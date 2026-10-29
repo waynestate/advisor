@@ -2,6 +2,8 @@
   <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="WELD's front page: the headline WELD, 'Wired, Everything, Linked, Deployed. Many parts, one piece.', the composer create-project command, and the welder's-helmet mark on a green tile."></a>
 </div>
 
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a SQUIRE kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+
 # WELD
 
 <p>
@@ -47,6 +49,7 @@ php artisan key:generate
 | PROCTOR | The checks, run in CI and as the deploy gate |
 | SESAME | Sign-in, with CAS today and the auth gateway later, and app-native sessions |
 | HELMET | The baseline runtime: security headers and CSP, sessions, trusted proxies, `/up` |
+| Ziggy | Route names as URLs: the route list ships inside the Vite bundle, so `route()` works in Vue without an inline script |
 
 <div align="center">
   <img src="docs/readme/journey.svg" width="100%" alt="WELD's journey, one request and six stops joined by a gold seam: HELMET sets security headers, SESAME signs the user in, WayneUI renders the page, PROCTOR checks the code, PREFLIGHT runs CI, SQUIRE deploys.">
@@ -111,6 +114,8 @@ Deploying somewhere other than a laptop? [Running WELD off Citadel](docs/running
 Coolify and plain Docker, with Citadel for comparison.
 
 ## Check your setup
+
+Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
 
 `weld:doctor` strikes an arc across the whole setup and reports every joint: the PHP version, the
 app key, debug in production, secure session cookies, writable storage, the database and pending

@@ -235,7 +235,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 
 The Laravel base has landed; the gaps below are the stack packages and the deploy path that have not.
 
-- The stack packages are not dependencies yet. SESAME (W1), HELMET (W17, W28), PROCTOR (most `Checked` targets), PREFLIGHT portability (W8, W10, W12, W13, W16, W24), Pinstripe (W2, W32), CREED (W25) and WayneUI (W2) each wait on their own package landing.
+- The stack packages are dependencies now: SESAME and HELMET in `require`, CREED and PROCTOR in `require-dev`, all from Packagist. The items that waited on them (SESAME W1, HELMET W17 and W28, PROCTOR's `Checked` targets, CREED W25) can be checked against the installed packages. PREFLIGHT portability (W8, W10, W12, W13, W16, W24), Pinstripe (W2, W32) and WayneUI (W2) are not wired into WELD yet.
 - There is no Dockerfile, entrypoint or release script yet, so the whole container contract (W8, W10, W12, W13, W16, W22, W24) and the deploy-time queue/scheduler work (W19, W21, W23) are plans.
 - The JS side of the coding standard (W32) is configured but not in CI.
 - Unverified: OpenShift arbitrary-UID text on a primary Red Hat page; `serversideup/php` behaviour under a random UID; Pest 4's PHP floor; `spatie/laravel-health` scheduler and queue checks; whether Laravel's health route runs before `TrustHosts`; whether the old CSRF middleware name is still an alias.

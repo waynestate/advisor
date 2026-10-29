@@ -16,6 +16,7 @@ Checks: `composer ci` (the same command runs on GitLab and GitHub).
 > Every app answers "present". The ones on PHP 7.4 answer from the back row.
 
 Front page: [`site/index.html`](site/index.html) (static, no build step; see `site/README.md`).
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a SQUIRE kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
 ROLLCALL is the fleet scanner. For every app it answers one question: what is it running, and where does that stand
 against the policy? It reports the PHP image, the declared PHP floor, the Laravel version, the auth package and its
@@ -44,7 +45,7 @@ WELD is Wayne State's application stack. ROLLCALL is the roll book for the whole
 | PREFLIGHT | CI templates |
 | SESAME | Protocol-neutral auth; ROLLCALL reports which auth package each app uses |
 | HELMET | Baseline runtime and its own optional `/metrics` |
-| Pinstripe | The coding standard behind this repo's Pint and PHPStan settings |
+| Pinstripe | The coding standard this repo includes for its Pint and PHPStan settings |
 | Sourdough | Starters |
 | ROLLCALL | The fleet census and EOL burn-down |
 
@@ -76,11 +77,10 @@ Everything is read-only toward every source. The only thing ROLLCALL writes is i
 ## Install
 
 ```
-composer require waynestate/rollcall:dev-main
+composer require waynestate/rollcall
 ```
 
-ROLLCALL is on Packagist with no tagged release yet, so ask for `dev-main` for now; once 0.1.0 is tagged, plain
-`composer require waynestate/rollcall` does it. No extra repository needed. Requires PHP `^8.3`. The CLI is `vendor/bin/rollcall`.
+ROLLCALL 0.1.0 is on Packagist. No extra repository needed. Requires PHP `^8.3`. The CLI is `vendor/bin/rollcall`.
 
 ## Quick start
 
@@ -206,6 +206,8 @@ The `/metrics` route is registered on its own path; if your app already serves `
 on a separate app or leave metrics off.
 
 ## Run the checks
+
+Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
 
 `composer ci` is the contract: manifest, tests, Pint, PHPStan and `composer audit`. PHP is not needed on the host:
 

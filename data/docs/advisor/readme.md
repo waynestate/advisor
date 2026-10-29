@@ -15,6 +15,8 @@
 
 Front page: [`site/index.html`](site/index.html), a static field map of the stack (open it in a browser).
 
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a SQUIRE kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
 Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
@@ -71,8 +73,7 @@ composer require --dev waynestate/advisor
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP
 command and not a shell script.
 
-ADVISOR is on Packagist with no tagged release yet, so until 0.1.0 is tagged, ask for the main branch:
-`composer require --dev waynestate/advisor:dev-main`. No extra repository needed.
+ADVISOR 0.1.0 is on Packagist: `composer require --dev waynestate/advisor:^0.1`. No extra repository needed.
 
 ## Quick start
 
@@ -238,12 +239,14 @@ the `Waynestate\` namespace, and only if they implement the `Module` interface. 
 
 ## Running the checks
 
+Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
+
 ```
 composer ci
 ```
 
-That runs `composer validate --strict`, `content:verify`, PHPUnit, Pint, PHPStan (level 8, Pinstripe settings) and
-`composer audit`. No PHP on your machine? Use Docker:
+That runs `composer validate --strict`, `content:verify`, PHPUnit, Pint, PHPStan (level 8, Pinstripe's raw preset,
+included from `vendor/waynestate/pinstripe`) and `composer audit`. No PHP on your machine? Use Docker:
 
 ```
 docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
