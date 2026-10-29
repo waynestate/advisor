@@ -31,7 +31,7 @@
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "43c2d392ac09cc3a41b6de33d64629eb09adb2cf3655d0c198d3193a03a77348",
+            "sha256": "cd97e4d07c591591d2ce2fe782f52d04d0f1290fe28c24b1bca9bbd27129fc58",
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
@@ -51,7 +51,7 @@
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
-            "sha256": "2ae88f52486f179f6fa092f3f4009105f2af8cc5d89222465fd5149e8ee078f8",
+            "sha256": "e8430ebaf524997428a28907ea1c765d9cf9a62d0db707c4c254e6f59bf40e39",
             "source": "preflight/BEST_PRACTICES.md"
         },
         "docs/preflight/readme.md": {
@@ -75,7 +75,7 @@
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "ed52768e4a6187d04a7cebcb115a34c979830144b0da3a322d4903248cbe163a",
+            "sha256": "846acbf32d1d51a176509cf61667d516e2e23ded3decd63cb115fdf478882e2e",
             "source": "sesame/BEST_PRACTICES.md"
         },
         "docs/sesame/readme.md": {
@@ -123,7 +123,7 @@
             "source": "creed/handbook/accessibility.md"
         },
         "handbook/auth.md": {
-            "sha256": "db928f4398e3b1bbfb9b14d334d36839496402c32133fe987353db49cceebe76",
+            "sha256": "8d311e95968e40c900cbee60e4ab3ffcefef501547c7126b0c899057d9feb70c",
             "source": "creed/handbook/auth.md"
         },
         "handbook/ci.md": {
@@ -171,7 +171,7 @@
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {
-            "sha256": "a65fad25351bbae4335f8933e38ea2fe26cf9d321f7d444e61b4d0d4ded5d107",
+            "sha256": "aa57e6f12d8233decbc84c40ee44424bb1e8505d1c9a756be209426c96e4adad",
             "source": "creed/handbook, creed/policy/policy.json"
         }
     }

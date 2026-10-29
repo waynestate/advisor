@@ -88,7 +88,7 @@
             "id": "auth-6",
             "chapter": "auth",
             "heading": "Auth",
-            "text": "To be decided: the gateway's position and key distribution, and the SAML library choice (the stack's auth design).",
+            "text": "To be decided: the gateway's key distribution and rotation, and the SAML library choice if a `saml` driver is built (the stack's auth design).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
