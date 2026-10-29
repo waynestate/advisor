@@ -14,7 +14,7 @@
 **The way in. One lock, any key.** Single Entry, Sessions App-Managed Everywhere: keys cut while you wait, and no
 key ever gets to keep the door.
 
-Checks: `composer ci` (the same command runs on GitLab and GitHub). Both pipelines run the same three checks, so a green build means the same thing on both sides.
+Checks: `composer ci` (the same command runs on GitLab and GitHub). Both pipelines run the same five checks (manifest, tests, Pint, PHPStan, audit), so a green build means the same thing on both sides.
 
 Our CI is the same script on both sides, so when it fails, nobody gets to blame the other platform.
 
@@ -25,6 +25,7 @@ the session. Switching driver is a config change with no code change. Open
 sesame.
 
 Front page: [`site/index.html`](site/index.html), a static page you can open in a browser or serve from `site/`.
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a SQUIRE kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
 This repository is published from Wayne State University's internal GitLab and
 mirrored here. Changes land there first; Wayne State developers open issues
@@ -578,6 +579,8 @@ once and leaves the 2FA to the app.
 
 ## Tests
 
+Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
+
 No PHP on the machine? Fine. Docker runs the suite:
 
 ```
@@ -587,10 +590,11 @@ docker run --rm -v "${PWD}:/app" -w /app php:8.4-cli vendor/bin/phpunit
 docker run --rm -v "${PWD}:/app" -w /app php:8.5-cli vendor/bin/phpunit
 ```
 
-Static analysis is PHPStan at level 8 plus the Pinstripe strict preset
-(`phpstan/phpstan-strict-rules`): no `empty()`, no mixed in conditions, no
-useless casts, no dynamic calls to static methods. `composer ci` runs the
-whole gate, validate through tests, Pint and PHPStan:
+Static analysis is PHPStan at level 8 from Pinstripe's strict preset
+(`vendor/waynestate/pinstripe/phpstan/strict.neon`, included through the
+`waynestate/pinstripe` dev dependency): strict rules stay on, and a call to
+a deprecated method fails the build. `composer ci` runs the whole gate,
+validate through tests, Pint and PHPStan:
 
 ```
 docker run --rm -v "${PWD}:/app" -w /app composer:2 composer ci

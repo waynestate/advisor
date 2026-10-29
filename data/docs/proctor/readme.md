@@ -22,6 +22,7 @@ come from the stack's version policy decision and from the policy file
 passed with `--policy`; PROCTOR itself holds no policy of its own.
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub). Front page: [`site/index.html`](site/index.html).
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a SQUIRE kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
 > [!NOTE]
 > This repository is published from Wayne State University's internal GitLab and mirrored here. Changes land there
@@ -61,7 +62,7 @@ vendor/bin/proctor check [--path=.] [--format=text|json|codequality|sarif] [--po
 
 - `--path`: path to the application to check (default `.`).
 - `--format`: output format: `text` (default), `json`, `codequality`, or `sarif`.
-- `--policy`: path to the CREED-format policy file (required).
+- `--policy`: path to the CREED-format policy file. Optional: without it, PROCTOR resolves the policy from the `PROCTOR_POLICY` environment variable, then the app's `vendor/waynestate/creed/policy/policy.json`, then the copy bundled with PROCTOR (see [Policy](#policy)).
 - `--today`: override today's date (YYYY-MM-DD) so runs are deterministic.
 - `--php-runtime`: the PHP version that will serve the app (X.Y.Z), used by the `unpatched` check. CI should pass the deploy image's PHP, not the runner's.
 
@@ -70,9 +71,9 @@ vendor/bin/proctor check [--path=.] [--format=text|json|codequality|sarif] [--po
 <div align="center">
   <img src="docs/readme/report.svg" width="100%" alt="Nine real lines from PROCTOR's text report, one per check: FAIL php-floor, WARN unpatched, FAIL unbounded-constraints, PASS lock-committed, WARN portability, WARN mysql56, WARN ci-pipelines, PASS composer-audit, FAIL overrides. Each line is written in words; colour only repeats what the word says.">
 </div>
-<div align="center"><sub>Nine questions, asked in this order on every run. The lines are real output from the test fixtures.</sub></div>
+<div align="center"><sub>The nine questions shown, asked in this order on every run; `policy-age` stays silent while the policy is fresh. The lines are real output from the test fixtures.</sub></div>
 
-- `php-floor`: fails when the lowest PHP version allowed by `require.php` is past security support plus the grace window, or when composer.json has no usable php constraint.
+- `php-floor`: fails when the lowest PHP version allowed by `require.php` is past security support plus the grace window, when composer.json has no usable php constraint, or when there is no composer.json at all.
 - `unpatched`: warns when a locked component is behind the policy's `latest_patch` for its version line, and passes when it is current. Reads laravel from composer.lock (`laravel/framework`), vue and inertia from package-lock.json (`vue`, `@inertiajs/vue3`), and the PHP runtime from `--php-runtime`. No finding when the component, its version line, or `latest_patch` is absent from the policy.
 - `unbounded-constraints`: fails for every runtime constraint that is `*` or names a dev- branch.
 - `lock-committed`: fails when composer.lock is missing from the app path.
@@ -84,12 +85,13 @@ vendor/bin/proctor check [--path=.] [--format=text|json|codequality|sarif] [--po
 - `composer-version`: fails when the Composer on PATH carries the command-injection holes CVE-2024-35241 and CVE-2024-35242 (2.2.x below 2.2.24, or any other 2.x below 2.7.7) or is Composer 1, which is end of life; warns when composer cannot be run. The invigilator checks its own pen: [GHSA-47f6-5gq3-vx9c](https://github.com/advisories/GHSA-47f6-5gq3-vx9c) and [GHSA-v9qv-c7wm-wgmf](https://github.com/advisories/GHSA-v9qv-c7wm-wgmf).
 - `repo-url-credentials`: warns when a credential is written into a package source URL: a deploy token in the userinfo of a composer.json repository URL or a composer.lock source/dist URL (`https://gitlab+deploy-token-12:***@host/group/lib.git`), a bare token user of 20+ characters, a `private_token`, `access_token`, `token` or `password` query parameter, or a `.npmrc` line that sets `_authToken`, `_auth` or `_password` to a literal value (`${SOME_VAR}` is fine). The secret is masked as `***` in the message, so the report itself is safe to hand back. Warning, not failure: about sixteen production apps carry such URLs today. Fix by moving the token to `auth.json`, which is gitignored, or a CI variable, and using one registry URL without credentials. The proctor spots the answer key taped inside the desk before the student does.
 - `overrides`: fails for every expired entry in policy-overrides.json.
+- `policy-age`: warns when the policy in use is more than 60 days old (its `refreshed_on` date is more than 60 days before `--today`), or when a non-bundled policy has no `refreshed_on` date. Warning only: an old policy never fails a run, and the bundled policy may omit the date. It exists so a stopped CREED refresh robot is visible instead of silent.
 
 ## Exit codes
 
 - `0`: pass (warnings allowed)
 - `1`: one or more failures
-- `2`: tool error (bad options, unreadable policy, malformed composer.json or overrides file)
+- `2`: tool error (bad options, unreadable policy, a present but malformed or unreadable composer.json, or an unreadable overrides file). A missing composer.json is not a tool error: the app gets a verdict, with php-floor failing.
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'fontFamily':'Helvetica, Arial, sans-serif','primaryColor':'#F4F1EA','primaryTextColor':'#1f2a33','primaryBorderColor':'#0C5449','lineColor':'#8A9A94'}}}%%
@@ -115,8 +117,8 @@ flowchart LR
 
 ## Formats
 
-- `text`: a header line with the tool and the versions of the external tools used (composer), then one line per finding, then one line per override, then a RESULT line.
-- `json`: one machine-readable object with tool, version, path, today, result, exit, tools, findings and overrides.
+- `text`: a header line with the tool and the versions of the external tools used (composer), then one line naming the policy in use (origin, path, refresh date), then one line per finding, then one line per override, then a RESULT line.
+- `json`: one machine-readable object with tool, version, path, today, result, exit, tools, policy (origin, path, refreshed_on, age_days), findings and overrides.
 - `codequality`: GitLab's Code Quality JSON: a single array of findings, so a merge request shows them.
 - `sarif`: a SARIF 2.1.0 log: one run, one rule per check, one result per non-pass finding, so GitHub code scanning and other SARIF viewers show them.
 
@@ -177,6 +179,7 @@ The full set, grouped by check:
 | `composer-version` | `proctor/composer-version/not-found` |
 | `composer-version` | `proctor/composer-version/could-not-determine` |
 | `repo-url-credentials` | `proctor/repo-url-credentials` |
+| `policy-age` | `proctor/policy-age` |
 
 `tests/RuleIdContractTest.php` keeps this table in step with the checks: a rule
 id that is emitted but not listed here fails the suite.
@@ -236,13 +239,60 @@ versions with released, active_until and security_until dates, and rules
 (audit_severity_threshold, banned_constraints, eol_grace_days). The
 policy-file wiring to `waynestate/creed` follows its v0.1.0 tag.
 
+Without `--policy`, PROCTOR resolves the policy in this order (first match
+wins):
+
+1. the `PROCTOR_POLICY` environment variable, naming a policy file;
+2. `<app>/vendor/waynestate/creed/policy/policy.json`, when it exists and is
+   at least as fresh as the bundled copy (same or newer `refreshed_on`);
+3. the policy bundled with PROCTOR (`src/Creed/policy.json`).
+
+An app that installs CREED gets its policy automatically:
+
+    composer require waynestate/creed --dev
+
+A vendor copy that cannot be read or parsed is skipped with a note on stderr
+and the run continues with the next source; a vendor copy older than the
+bundled one is skipped the same way. An explicit source (`--policy` or
+`PROCTOR_POLICY`) that points at a missing or invalid file is still an error
+(exit 2).
+
+Every report names the policy it used: origin (`option`, `env`, `vendor` or
+`bundled`), path, `refreshed_on` and the age in days. The `policy-age` check
+warns when the policy is more than 60 days old, or when a non-bundled policy
+has no `refreshed_on` date, so a stopped CREED refresh is visible instead of
+silent.
+
 PROCTOR carries a generated copy of the CREED reader under `src/Creed/`
 (namespace `Waynestate\Proctor\Creed`), so it never depends on the CREED
 package at runtime. `composer creed-copy:check` verifies the copy against the
 CREED checkout named by `CREED_PATH` (default `../creed`); refresh it by
 running CREED's `bin/export.php` against `src/Creed/`.
 
+## Proof
+
+**82 Wayne State applications run through PROCTOR on 2026-10-28: 0 passed, 81 flagged, 1 tool error.**
+
+Each app was copied with `.git`, `auth.json` and every `.env` removed and checked inside `php:8.4-cli`, with Wayne
+State's servers out of reach, using `proctor check --format=json --policy=<CREED policy> --today=2026-10-28`.
+Flagged means exit 1 with a report naming each problem: PROCTOR doing its job.
+
+| Sitting | Flagged | Tool errors |
+|---|---:|---:|
+| First (0.2.0, the day before its tag) | 51 | 31 |
+| Retake (0.2.0 plus "apps without composer.json get a verdict") | 81 | 1 |
+
+The first sitting found 31 plain PHP apps PROCTOR refused with exit 2; that was fixed with a fixture test and every
+app sat again. Most common fails on the retake: `php-floor` (76 apps), `lock-committed` (30), `composer-audit`
+(20), `unbounded-constraints` (13). The one tool error is the PHP parser running out of the default 128 MB on a very
+large tree; the fix is queued with a test. The apps are counted, never named. The breakdown, the command and what
+the run does not prove: [`site/proof.html`](site/proof.html).
+
+Eighty-one papers handed back in red. The proctor saw that.
+
 ## Running the tests in Docker
+
+Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
 
 No PHP is needed on the host:
 

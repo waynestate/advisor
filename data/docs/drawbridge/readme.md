@@ -268,9 +268,15 @@ Run as `php bin/drawbridge <command>` (or `vendor/bin/drawbridge` when installed
 
 ## Run the checks
 
+Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
+
 ```sh
 composer ci          # manifest, unit tests, Pint, PHPStan level 8, composer audit
 ```
+
+The PHPStan and Pint settings come from Pinstripe, the stack's coding standard: `phpstan.neon` includes the raw
+PHP cut, and `pint.json` uses the same `per` preset as Pinstripe's `pint/per.json`. This repository adds only its
+own paths, PHP version range and excludes.
 
 In Docker, with no local PHP:
 
@@ -352,6 +358,8 @@ store, PHP's share-nothing model cannot see across processes.
 - `OPEN_QUESTIONS.md`: what is unanswered, what is missing, what is not built yet.
 - `CHANGELOG.md`: what changed.
 - `site/`: the front page, a static sheet set for the gatehouse (`site/index.html`; see `site/README.md`).
+
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a SQUIRE kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
 <details>
 <summary><b>Sheets</b>: three windows onto the gatehouse</summary>

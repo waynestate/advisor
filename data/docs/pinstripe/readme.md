@@ -22,6 +22,7 @@ Checks: `composer ci` (the same command runs on GitLab and GitHub).
 Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
 
 Front page: [`site/index.html`](site/index.html), a static tailor's shop you can open in a browser or serve from `site/`.
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a SQUIRE kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
 <div align="center">
   <img src="docs/readme/tape.svg" width="100%" alt="A yellow tape measure unrolls across a green card with seven marks, one per preset: The cut, Pint, presets per and laravel; The inseam, PHPStan, level 8; The lining, Larastan; The press, Rector, with dead code, code quality, type declarations and early return; The buttonholes, ESLint, javascript and typescript with vue and accessibility; The hem, Prettier, 100 columns, single quotes, semicolons, trailing commas; The chalk line, baseline.">
@@ -45,11 +46,10 @@ Front page: [`site/index.html`](site/index.html), a static tailor's shop you can
 Add Pinstripe as a dev dependency:
 
 ```
-composer require --dev waynestate/pinstripe:dev-main
+composer require --dev waynestate/pinstripe:^0.1
 ```
 
-Pinstripe is on Packagist with no tagged release yet, so ask for `dev-main` until 0.1.0 is tagged. The npm package,
-`@waynestate/pinstripe`, is at 0.1.0 already.
+Pinstripe 0.1.0 is on Packagist, and the npm package, `@waynestate/pinstripe`, is at 0.1.0 too.
 
 Point PHPStan at the raw config. `phpstan.neon`:
 
@@ -85,7 +85,7 @@ The tailor flags the old cut before the fabric is retired.
 Same, with the Laravel parts:
 
 ```
-composer require --dev waynestate/pinstripe:dev-main larastan/larastan
+composer require --dev waynestate/pinstripe:^0.1 larastan/larastan
 ```
 
 Pinstripe pulls in `phpstan/extension-installer`, which registers Larastan for you. When Composer asks, allow the
@@ -205,6 +205,8 @@ A baseline is a tailor's chalk line, and this command is the tape measure: it fa
 gets longer.
 
 ## Tested with
+
+Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
 
 - Pint 1.32.1
 - PHPStan 2.3.3

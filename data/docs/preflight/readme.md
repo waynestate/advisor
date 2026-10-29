@@ -17,6 +17,7 @@ same checks: PROCTOR, PHP tests on each supported version, Composer audit,
 an SBOM, Pint, PHPStan and ESLint.
 
 Front page: [`site/index.html`](site/index.html), a static page; see [`site/README.md`](site/README.md).
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a SQUIRE kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
 Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
 
@@ -220,6 +221,31 @@ This component is not in `0.1.0`; it arrives in the next tag. Until then, pin a 
 
 Protect your release tags.
 
+### renovate
+
+Runs [Renovate](https://docs.renovatebot.com/) as a scheduled or manual job
+that bumps image tags, CI component pins, GitHub action SHAs and package
+versions across the group's repositories, and merges the green ones itself.
+Majors open a merge request and wait for a person. See
+[Renovate](#renovate) for what auto-merges and what waits.
+
+```yaml
+include:
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@<full-commit-sha>
+    inputs:
+      git_author: "Preflight Bot <preflight-bot@example.com>"
+```
+
+This component is not in `0.1.0`; it arrives in the next tag. Until then, pin a
+full commit SHA instead.
+
+| Input | Type | Default | What it does |
+|-------|------|---------|--------------|
+| `image` | string | `renovate/renovate:44.192.2@sha256:37960a62ba1faa9079a7c4eead9b3f4470748a64ecd207e06c09fd8858673e17` | Docker image for the job. |
+| `autodiscover_filter` | string | `$CI_PROJECT_NAMESPACE/*` | Glob limiting which projects Renovate discovers, relative to the runner project's namespace. |
+| `dry_run` | string | `"null"` | Dry run mode: `null` (disabled), `lookup` or `full`. |
+| `git_author` | string | none | Author of the commits and merge requests Renovate creates, in the form `Name <email>`. Required. |
+
 ## Same instance only
 
 Components work only inside the GitLab instance that hosts this project.
@@ -265,6 +291,61 @@ full commit SHA instead.
 The workflow is committed to this repo (and so to GitLab) but only runs on the
 GitHub mirror; GitLab ignores `.github/workflows`. A release tag is not done
 until it is green on both sides. Two cockpits, one checklist.
+
+## Renovate
+
+PREFLIGHT owns the stack's version automation (an ADR): the shared preset
+[`renovate/default.json`](renovate/default.json) and the
+[`renovate` component](#renovate) that runs it. A private runner project
+includes the component on a schedule; Renovate discovers every repository in
+the filter, opens merge requests for outdated versions, and GitLab's native
+auto-merge takes in the ones whose pipeline is green.
+
+Every stack repository carries a `renovate.json` that extends the shared
+preset, so the rules change in one place:
+
+```json
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["local>enterprise-apps/preflight//renovate/default"]
+}
+```
+
+### What auto-merges
+
+Digest updates, pin and pinDigest updates, and patch and minor version bumps
+auto-merge when the pipeline is green. Lock file maintenance runs weekly and
+auto-merges the same way. Every merge request carries the `auto-deps` label.
+
+### What waits
+
+Major version bumps never auto-merge. The merge request carries the `major`
+label and waits for a person.
+
+### Why MySQL and HA-Proxy get digests only
+
+The `mysql` and `haproxy` images mirror the versions Citadel actually runs,
+not the newest releases in the world. Bumping their tags would drift the apps
+away from production, so only digest updates are enabled for them: the same
+tag, the exact image. `citadel/php-apache` is disabled entirely, because
+SQUIRE's own data owns that image.
+
+### The runner project
+
+The runner project must stay private. It holds `RENOVATE_TOKEN`, a token that
+can open and merge merge requests across the group, and this repository is
+mirrored to public GitHub. Use a group bot account for the token, not a
+person's: the bot outlives any one maintainer, and the commits keep one
+stable author.
+
+| Variable | Required | What it does |
+|----------|----------|--------------|
+| `RENOVATE_TOKEN` | yes | Masked CI variable the component passes through as `RENOVATE_TOKEN`. A project access token with Developer, or Maintainer where only Maintainers may merge. |
+| `GITHUB_COM_TOKEN` | no | Masked CI variable passed through as `GITHUB_COM_TOKEN`, so lookups against github.com do not hit anonymous rate limits. |
+
+The component writes its `config.js` at job time, so the `registryAliases`
+entry for the GitLab instance comes from the predefined `CI_SERVER_FQDN`
+variable. No hostname is stored in this repository.
 
 ## When the components run
 
@@ -364,7 +445,32 @@ Known warnings can be allowlisted in `lint-allow.yml`. Each entry needs `file`,
 `rule` and `reason`; the reason is required so an allowlist entry is a reviewed
 decision, not a silence. The preflight checklist checks the checklist.
 
+## Proof
+
+**82 Wayne State applications run through PREFLIGHT on 2026-10-28: 0 cleared, 81 held at the gate, 1 tool error.**
+
+Each app was copied with `.git`, `auth.json` and every `.env` removed, then run inside `php:8.4-cli` with Wayne
+State's servers out of reach through the commands the 0.1.0 components run. Held means a component ended with the
+exit code that fails the pipeline: PREFLIGHT doing its job, not a verdict on the app.
+
+| Check | Apps |
+|---|---:|
+| The three-component include an app would add lints clean with PREFLIGHT's template lint | 82 of 82 |
+| `proctor`: a valid GitLab Code Quality report, PROCTOR found something to fix | 81 |
+| `composer-audit`: passed / advisories or abandoned packages / no `composer.lock` | 27 / 24 / 31 |
+| `php-test` (17 apps with tests): dependencies would not install on 8.4 with the default image / tests failed | 15 / 2 |
+| Tool error: PROCTOR ran out of PHP's default 128 MB on one very large tree | 1 |
+
+Of the 15 installs that stopped, 12 had a lock written for an older PHP and 11 needed an extension the default image
+lacks (mostly `oci8`); the `image` input is there for that. The PROCTOR memory fix is queued with a test. The apps
+are counted, never named. The breakdown, the command and what the run does not prove:
+[`site/proof.html`](site/proof.html).
+
+Zero cleared for takeoff. Nobody left with the fuel cap off.
+
 ## Local checks
+
+Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
 
 Run the template lint and the fixture tests with Docker:
 
