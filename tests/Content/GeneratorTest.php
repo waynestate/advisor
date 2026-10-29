@@ -46,6 +46,10 @@ final class GeneratorTest extends TestCase
             ['id' => 'wayne-ui', 'name' => 'WayneUI', 'kind' => 'ui', 'tagline' => 'interface', 'role' => 'UI.', 'next_step' => 'Use it.', 'contract' => 'contract/markup-contract.json'],
             ['id' => 'later', 'name' => 'LATER', 'kind' => 'x', 'tagline' => 'later', 'role' => 'Not yet.', 'next_step' => 'Wait.'],
         ]]));
+        // The ownership table lives beside the project seed, like in the real repository.
+        $this->put($base . '/ownership.json', (string) json_encode(['topics' => [
+            ['topic' => 'checks', 'owner' => 'PROCTOR', 'role' => 'Runs the checks.', 'also' => []],
+        ]]));
     }
 
     private function generator(string $date = '2026-10-28', ?Denylist $denylist = null): Generator

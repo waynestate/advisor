@@ -9,13 +9,14 @@ use Waynestate\Advisor\Content\RuleExtractor;
 use Waynestate\Advisor\Tools\GetProjectStatus;
 use Waynestate\Advisor\Tools\ListProjects;
 use Waynestate\Advisor\Tools\ListStackRules;
+use Waynestate\Advisor\Tools\OwnerOf;
 use Waynestate\Advisor\Tools\PolicyLookup;
 use Waynestate\Advisor\Tools\ReadProjectDocs;
 use Waynestate\Advisor\Tools\RunProctorCheck;
 use Waynestate\Advisor\Tools\UpgradePath;
 
 /**
- * ADVISOR's own module: the seven read-only tools of 0.1, the CREED handbook
+ * ADVISOR's own module: the eight read-only tools of 0.1, the CREED handbook
  * and policy as resources, and two prompts. Per-project modules (PROCTOR's
  * own tools, BOOSTER's upgrade planner) arrive through the manifest.
  */
@@ -34,6 +35,7 @@ final class CoreModule implements Module
             GetProjectStatus::definition($this->context),
             ListProjects::definition($this->context),
             ListStackRules::definition($this->context),
+            OwnerOf::definition($this->context),
             PolicyLookup::definition($this->context),
             ReadProjectDocs::definition($this->context),
             RunProctorCheck::definition($this->context),

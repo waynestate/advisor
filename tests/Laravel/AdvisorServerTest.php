@@ -36,13 +36,13 @@ final class AdvisorServerTest extends TestCase
         $booted = $this->app->make(Booted::class);
 
         $this->assertInstanceOf(Booted::class, $booted);
-        $this->assertCount(7, $booted->catalog->tools());
+        $this->assertCount(8, $booted->catalog->tools());
     }
 
-    public function testTheServerOffersTheSameSevenTools(): void
+    public function testTheServerOffersTheSameEightTools(): void
     {
         $this->assertSame(
-            ['get_project_status', 'list_projects', 'list_stack_rules', 'policy_lookup', 'read_project_docs', 'run_proctor_check', 'upgrade_path'],
+            ['get_project_status', 'list_projects', 'list_stack_rules', 'owner_of', 'policy_lookup', 'read_project_docs', 'run_proctor_check', 'upgrade_path'],
             array_map(static fn(array $tool): string => $tool['name'], $this->listed()),
         );
     }
