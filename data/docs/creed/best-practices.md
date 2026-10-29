@@ -316,7 +316,7 @@ Why: known advisories are the cheapest attacks to run.
 Sources: [Composer CLI reference, `audit`](https://getcomposer.org/doc/03-cli.md),
 [OWASP ASVS](https://asvs.owasp.org/), [GOV.UK Publishing manual](https://docs.publishing.service.gov.uk/manual/keeping-software-current.html).
 
-How the stack holds it: `Checked`. The PREFLIGHT `composer-audit` component runs in CI and PROCTOR `composer-audit`
+How the stack holds it: `Checked`. The Preflight `composer-audit` component runs in CI and PROCTOR `composer-audit`
 reports against `audit_severity_threshold`. Note: Composer's own pages disagree on exit codes (see "Checks against the
 web"), so wrappers should read the JSON output and not rely on the exit code alone.
 
@@ -429,7 +429,7 @@ way forward; the owner stays responsible for keeping the app current).
 Second pass: the first pass also cited the GOV.UK manual here. As read on 2026-10-27, that page says nothing about named,
 dated exceptions, so the citation was removed. The practice itself is the stack's own design (the version policy).
 
-How the stack holds it: `Checked`. PROCTOR `overrides` prints every override and fails an expired one. ROLLCALL is
+How the stack holds it: `Checked`. PROCTOR `overrides` prints every override and fails an expired one. Rollcall is
 meant to list them across apps and is not built.
 
 ### 28. Roll a new rule out in stages, with dates
@@ -602,7 +602,7 @@ Sources: [Packagist: Composer 2.9.6 Perforce fixes](https://blog.packagist.com/c
 [Composer config reference](https://getcomposer.org/doc/06-config.md#audit).
 
 How the stack holds it: `Not yet`. CREED's README tells developers to run the floating `composer:2` image, and no repo
-records or pins a Composer version. This pass did not read the PREFLIGHT components, so what they install is unknown.
+records or pins a Composer version. This pass did not read the Preflight components, so what they install is unknown.
 
 ### 40. Treat a brand-new package version as untrusted for a short time
 
@@ -642,7 +642,7 @@ Why: build tools run with your credentials and your source (practice 16), and th
 Sources: [npm config](https://docs.npmjs.com/cli/v11/using-npm/config),
 [Composer config, `policy`](https://getcomposer.org/doc/06-config.md#policy).
 
-How the stack holds it: `Not yet`. PREFLIGHT has `proctor`, `php-test` and `composer-audit` only, so nothing audits
+How the stack holds it: `Not yet`. Preflight has `proctor`, `php-test` and `composer-audit` only, so nothing audits
 `package-lock.json`. The `audit_severity_threshold` rule is read by the Composer audit alone.
 
 ### 42. Gate on tools that work on every GitLab tier
@@ -832,7 +832,7 @@ WayneUI's own gate is outside CREED and was not reviewed in this pass.
 
 Sources: [GitLab accessibility testing](https://docs.gitlab.com/ci/testing/accessibility_testing/).
 
-How the stack holds it: `Not yet`. PREFLIGHT has no accessibility component.
+How the stack holds it: `Not yet`. Preflight has no accessibility component.
 
 ### 54. Aim at WCAG 2.2 AA
 
@@ -890,7 +890,7 @@ These are places where a source disagrees with the repository or with an earlier
 7. Add a PROCTOR check for the Node version in `.nvmrc` or `package.json` engines (practice 16).
 8. Add a MySQL check or report once the platform timeline is known (practice 17).
 9. Add an abandoned-package setting to `rules` and apply it in the audit check (practice 21).
-10. Add a secrets chapter, and a secret-scanning job in PREFLIGHT (practice 24).
+10. Add a secrets chapter, and a secret-scanning job in Preflight (practice 24).
 11. Add a PHPStan rule for `env()` outside `config/` and put the rule in Pinstripe (practice 25).
 12. Add a `config` check that `APP_DEBUG` is false in production, and write the runtime and headers chapter (practice 26).
 13. Put the PROCTOR check ID next to every handbook rule (practices 29 and 32).
@@ -909,7 +909,7 @@ Added in the second pass (2026-10-27):
 21. Record a Composer version in CI and in the README commands, and decide between the legacy `audit` keys and
     `config.policy` (practices 21 and 39).
 22. Evaluate Composer's cooldown policy once it is in a stable release, and decide the period (practice 40).
-23. Add an npm check (`audit-level`, `ignore-scripts`, `min-release-age`) to PREFLIGHT, with a severity word map between
+23. Add an npm check (`audit-level`, `ignore-scripts`, `min-release-age`) to Preflight, with a severity word map between
     Composer and npm (practice 41).
 24. Write down "gates must run on any GitLab tier" and confirm the tier of git.wayne.edu (practice 42).
 25. Add a secrets chapter section on `APP_KEY`: rotation, the session driver, and a scan that works on Windows, macOS and
@@ -928,7 +928,7 @@ Added in the second pass (2026-10-27):
     (practice 51; extends item 14).
 34. Ask WSU's accessibility office and counsel which Title II dates apply, then write the chapter's target level
     (practices 52 and 54).
-35. Add an accessibility job to PREFLIGHT, using Pa11y or another deterministic tool (practice 53).
+35. Add an accessibility job to Preflight, using Pa11y or another deterministic tool (practice 53).
 36. Resolve the Laravel 13 `active_until` date (2027-09-17): find its source or remove it (Checks against the web).
 37. Make `security_until` required in the schema, so the schema and the reader agree (practice 2). Do this together with
     item 3, because lines with no published end date (Vue 3) need another way to be modelled.

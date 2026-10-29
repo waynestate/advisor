@@ -4,7 +4,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 
 - CI is enforcement point (c): a red pipeline before merge (the stack's
   enforcement design).
-- The CI components are PREFLIGHT's: `proctor`, `php-test` and
+- The CI components are Preflight's: `proctor`, `php-test` and
   `composer-audit`, included with `include: component:` (first-repos).
 - CI judges with deterministic commands, never with a model. No gate depends
   on a model's opinion (the stack's rule on language models).

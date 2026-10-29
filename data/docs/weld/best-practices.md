@@ -6,7 +6,7 @@ Checked against the code on 2026-10-28. The Laravel base has landed since the re
 
 WELD is the whole Wayne State app stack joined into one Laravel 13 + Inertia/Vue application. It covers five areas: app structure, the container contract, queues and scheduling, security, and build and supply chain. This guide is for WSU developers who start from WELD and for the people who maintain it. It lists what good practice looks like in each area, what the research says, and whether the stack holds each practice today.
 
-WELD wires SESAME (sign-in), HELMET (headers and the runtime baseline), PROCTOR (checks), PREFLIGHT (CI), Pinstripe (coding standard) and WayneUI (interface). It must run on Citadel and on OpenShift, Coolify or raw Docker.
+WELD wires SESAME (sign-in), HELMET (headers and the runtime baseline), PROCTOR (checks), Preflight (CI), Pinstripe (coding standard) and WayneUI (interface). It must run on Citadel and on OpenShift, Coolify or raw Docker.
 
 ### How to read the tags
 
@@ -19,7 +19,7 @@ Each practice ends with exactly one tag.
 | `Documented` | Written down in the README or a config file, with no check behind it. |
 | `Not yet` | A gap. |
 
-The tags describe the repo as it stands on 2026-10-28. The Laravel base has landed: the starter kit is in, the password auth (register, login, password reset, two-factor) is removed on purpose, CI runs on both GitLab and GitHub from the same `composer ci` contract, and the stack defaults (PHP floor, stderr logging, database sessions and cache, the 191-character index cap) are set. The stack packages (SESAME, HELMET, PROCTOR, PREFLIGHT, Pinstripe, CREED and WayneUI) are not yet Composer or npm dependencies, so the practices that depend on them are `Not yet` and say which package they wait on. The `Stack:` line on each entry says what the tag should become and which tool owns it.
+The tags describe the repo as it stands on 2026-10-28. The Laravel base has landed: the starter kit is in, the password auth (register, login, password reset, two-factor) is removed on purpose, CI runs on both GitLab and GitHub from the same `composer ci` contract, and the stack defaults (PHP floor, stderr logging, database sessions and cache, the 191-character index cap) are set. The stack packages (SESAME, HELMET, PROCTOR, Preflight, Pinstripe, CREED and WayneUI) are not yet Composer or npm dependencies, so the practices that depend on them are `Not yet` and say which package they wait on. The `Stack:` line on each entry says what the tag should become and which tool owns it.
 
 ---
 
@@ -71,7 +71,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Build one image. Run it as `web`, `worker` and `scheduler` by changing the command only (plus `ssr` when Inertia SSR is on). On Compose these are services; on OpenShift a Deployment, a Deployment and a CronJob.
 - **Why:** One build means one tested artifact, and the process types stay identical in code.
 - **Sources:** [Laravel queues](https://laravel.com/docs/13.x/queues), [scheduling](https://laravel.com/docs/13.x/scheduling), [Inertia SSR](https://laravel.com/docs/13.x/starter-kits).
-- **Stack:** `Not yet`. There is no Dockerfile yet. Target `Checked`: PREFLIGHT portability boots the image with each command.
+- **Stack:** `Not yet`. There is no Dockerfile yet. Target `Checked`: Preflight portability boots the image with each command.
 
 ## 2. The container contract
 
@@ -97,13 +97,13 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Put a `HEALTHCHECK` in the Dockerfile that calls `/up` with a tool the image has (`curl` or `wget`). On Coolify a Dockerfile `HEALTHCHECK` takes precedence over the dashboard check, and a dashboard check needs `curl` or `wget` inside the container.
 - **Why:** Traefik will not route to an unhealthy container, and a missing tool makes a healthy app look dead.
 - **Sources:** [Coolify health checks](https://coolify.io/docs/knowledge-base/health-checks).
-- **Stack:** `Not yet`. There is no Dockerfile yet. Target `Checked`: PREFLIGHT portability runs `docker inspect` for a health status of `healthy`.
+- **Stack:** `Not yet`. There is no Dockerfile yet. Target `Checked`: Preflight portability runs `docker inspect` for a health status of `healthy`.
 
 ### W13. Non-root, arbitrary UID in group 0, listen on 8080
 - **Practice:** Declare a non-root `USER`. Make writable paths group 0 and group-writable (`chgrp -R 0`, `chmod -R g=u`) for `storage/` and `bootstrap/cache/`. Do not depend on a `www-data` entry. Honour `PORT`.
 - **Why:** OpenShift runs a random UID in group 0 with all capabilities dropped.
 - **Sources:** [serversideup/php](https://serversideup.net/open-source/docker-php) (8080 and non-root). The OpenShift arbitrary-UID text on a primary Red Hat page was not verified in this pass.
-- **Stack:** `Not yet`. There is no Dockerfile yet. Target `Checked`: PREFLIGHT portability starts the image with a UID that has no `/etc/passwd` entry, `cap_drop: ALL`, `no-new-privileges` and a read-only root filesystem.
+- **Stack:** `Not yet`. There is no Dockerfile yet. Target `Checked`: Preflight portability starts the image with a UID that has no `/etc/passwd` entry, `cap_drop: ALL`, `no-new-privileges` and a read-only root filesystem.
 
 ### W14. Logs go to stderr; the app writes only where it may
 - **Practice:** Set `LOG_CHANNEL=stderr`. Nothing under `storage/logs`. Writes go to `storage/`, `bootstrap/cache/`, `/tmp` and declared volumes. Uploads go to object storage.
@@ -179,7 +179,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Require `laravel/framework` at or above the latest patched release, run `composer audit` in CI, and let CREED's `policy.json` name the minimum patch level. A critical TokenGuard authentication bypass was published on 2026-10-19 (fixed in 13.29.0 and 12.68.0).
 - **Why:** Framework advisories arrive several times a year.
 - **Sources:** [laravel/framework advisories](https://github.com/laravel/framework/security/advisories), [GHSA-f9x3-7vq9-cph6](https://github.com/laravel/framework/security/advisories/GHSA-f9x3-7vq9-cph6).
-- **Stack:** `Checked`. `composer.json:14` pins `laravel/framework: ^13.29` (at or above the patched release), `composer.json:51` runs `@composer audit` inside the `ci` script, and `.gitlab-ci.yml:9` includes the PREFLIGHT `composer-audit` component, so the audit runs in CI. CREED's `policy.json` is not a dependency yet, so the named floor is not read from it.
+- **Stack:** `Checked`. `composer.json:14` pins `laravel/framework: ^13.29` (at or above the patched release), `composer.json:51` runs `@composer audit` inside the `ci` script, and `.gitlab-ci.yml:9` includes the Preflight `composer-audit` component, so the audit runs in CI. CREED's `policy.json` is not a dependency yet, so the named floor is not read from it.
 
 ### W26. Debug is off outside local
 - **Practice:** `APP_DEBUG=false` in production. The debug page has had an XSS advisory (Low, 2026-09-10).
@@ -226,16 +226,16 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Stack:** `Checked`, for the PHP side. `composer.json:43` runs `pint --test`, `composer.json:45` runs `phpstan analyse`, and both are in the `ci` script (`composer.json:46-52`), which CI runs; `pint.json:2` uses the `laravel` preset and `phpstan.neon:8` sets `level: 8`. The JS side is configured but not yet in the CI pipeline: `eslint.config.js` (flat config) and `.prettierrc` exist, but no CI job runs `npm run lint` or `npm run format:check`. Pinstripe is not a dependency yet, so the presets are copied, not included.
 
 ### W33. Pin shared CI components to a commit
-- **Practice:** PREFLIGHT components are referenced by commit SHA or a fixed tag, not a moving branch.
+- **Practice:** Preflight components are referenced by commit SHA or a fixed tag, not a moving branch.
 - **Why:** A moved branch changes your pipeline without a review.
 - **Sources:** [GitLab CI/CD include](https://docs.gitlab.com/ci/yaml/include/).
-- **Stack:** `Documented`. `.gitlab-ci.yml:6` pins the `php-test` component to `@0.1.0` and `.github/workflows/ci.yml:16` pins the reusable workflow to a commit SHA, with a comment "Pinned to PREFLIGHT 0.1.0. Never use ~latest." There is no check that flags an unpinned include. Target `Checked`: PROCTOR flags `include:` entries without a SHA.
+- **Stack:** `Documented`. `.gitlab-ci.yml:6` pins the `php-test` component to `@0.1.0` and `.github/workflows/ci.yml:16` pins the reusable workflow to a commit SHA, with a comment "Pinned to Preflight 0.1.0. Never use ~latest." There is no check that flags an unpinned include. Target `Checked`: PROCTOR flags `include:` entries without a SHA.
 
 ## Gaps for the backlog
 
 The Laravel base has landed; the gaps below are the stack packages and the deploy path that have not.
 
-- The stack packages are dependencies now: SESAME and HELMET in `require`, CREED and PROCTOR in `require-dev`, all from Packagist. The items that waited on them (SESAME W1, HELMET W17 and W28, PROCTOR's `Checked` targets, CREED W25) can be checked against the installed packages. PREFLIGHT portability (W8, W10, W12, W13, W16, W24), Pinstripe (W2, W32) and WayneUI (W2) are not wired into WELD yet.
+- The stack packages are dependencies now: SESAME and HELMET in `require`, CREED and PROCTOR in `require-dev`, all from Packagist. The items that waited on them (SESAME W1, HELMET W17 and W28, PROCTOR's `Checked` targets, CREED W25) can be checked against the installed packages. Preflight portability (W8, W10, W12, W13, W16, W24), Pinstripe (W2, W32) and WayneUI (W2) are not wired into WELD yet.
 - There is no Dockerfile, entrypoint or release script yet, so the whole container contract (W8, W10, W12, W13, W16, W22, W24) and the deploy-time queue/scheduler work (W19, W21, W23) are plans.
 - The JS side of the coding standard (W32) is configured but not in CI.
 - Unverified: OpenShift arbitrary-UID text on a primary Red Hat page; `serversideup/php` behaviour under a random UID; Pest 4's PHP floor; `spatie/laravel-health` scheduler and queue checks; whether Laravel's health route runs before `TrustHosts`; whether the old CSRF middleware name is still an alias.

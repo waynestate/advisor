@@ -40,4 +40,4 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 
 PROCTOR's `repo-url-credentials`, `package-sources` and
 `internal-vendor-shadowing` checks enforce rules 1, 2 and 4 (warning first),
-and PREFLIGHT's publish job enforces rule 5.
+and Preflight's publish job enforces rule 5.

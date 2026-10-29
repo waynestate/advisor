@@ -15,7 +15,7 @@
 
 Front page: [`site/index.html`](site/index.html), a static field map of the stack (open it in a browser).
 
-On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a SQUIRE kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
@@ -29,7 +29,7 @@ the WayneUI markup contract, SESAME and HELMET guidance, and the parts list. Ask
 answers from the policy file, with the date and the source, instead of from whatever the model remembers.
 
 It is read-only in 0.1. It cannot write a file, run a shell command, or call out to the network. The two things it
-can start are the app's own `vendor/bin/proctor` and BOOSTER's read-only `plan`, both with a fixed argument shape.
+can start are the app's own `vendor/bin/proctor` and Booster's read-only `plan`, both with a fixed argument shape.
 
 ## Where it sits in WELD
 
@@ -125,12 +125,12 @@ Tools (all read-only; each says where its answer came from):
 | `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. |
 | `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
 | `owner_of` | Answers "which project owns X?" from the bundled ownership table, with a fuzzy topic match. |
-| `playbook_lookup` | A shared value by key, or every key: an environment variable of the same name wins, then PLAYBOOK; secret-looking keys are refused. |
+| `playbook_lookup` | A shared value by key, or every key: an environment variable of the same name wins, then Playbook; secret-looking keys are refused. |
 | `run_proctor_check` | Runs the app's own `vendor/bin/proctor check` against the bundled policy and returns the findings. |
-| `upgrade_path` | Plans the app's PHP and/or Laravel upgrade, one supported hop at a time, via BOOSTER's read-only `plan`. |
+| `upgrade_path` | Plans the app's PHP and/or Laravel upgrade, one supported hop at a time, via Booster's read-only `plan`. |
 
 The groups split by what they may start: `stack` never starts a program, `proctor` starts the app's own
-`vendor/bin/proctor`, and `booster` starts BOOSTER's read-only `plan` (never `run`). Set `ADVISOR_GROUPS=stack`
+`vendor/bin/proctor`, and `booster` starts Booster's read-only `plan` (never `run`). Set `ADVISOR_GROUPS=stack`
 when you want ADVISOR as pure reference material.
 
 Resources: `advisor://policy` and one `advisor://creed/<chapter>` per handbook chapter.
@@ -139,7 +139,7 @@ Prompts: `orient_me` and `plan_upgrade`.
 Here is what that looks like when you ask. Each numbered control point is one of the tools above, with the arguments the
 front page's own route table sends:
 
-<div align="center"><img src="docs/readme/route.svg" width="100%" alt="A topographic field map of the stack. Three questions are plotted from 'your app' through the ADVISOR advising office to the project that answers. 'Which PHP can I build on?' goes through policy_lookup (component: php) to CREED's policy.json. 'Which security headers do I need?' goes through list_stack_rules (chapter: runtime-and-headers) and read_project_docs (project: helmet) to HELMET. 'How do I get off PHP 8.2?' goes through the plan_upgrade prompt, policy_lookup, run_proctor_check and read_project_docs (project: booster) to BOOSTER."></div>
+<div align="center"><img src="docs/readme/route.svg" width="100%" alt="A topographic field map of the stack. Three questions are plotted from 'your app' through the ADVISOR advising office to the project that answers. 'Which PHP can I build on?' goes through policy_lookup (component: php) to CREED's policy.json. 'Which security headers do I need?' goes through list_stack_rules (chapter: runtime-and-headers) and read_project_docs (project: helmet) to HELMET. 'How do I get off PHP 8.2?' goes through the plan_upgrade prompt, policy_lookup, run_proctor_check and read_project_docs (project: booster) to Booster."></div>
 <div align="center"><sub>Ask the map: three questions, three routes. Every control point is a real ADVISOR tool or prompt, and the whole trip is read-only.</sub></div>
 
 <details>
@@ -162,8 +162,8 @@ ADVISOR reads the process environment only, never a file. The placeholders are i
 | `ADVISOR_READ_ONLY` | on | Set to `0` or `false` to allow tools that write. None exist in 0.1. Read-only wins over `ADVISOR_GROUPS`. |
 | `ADVISOR_GROUPS` | all | Comma list of tool groups to offer (`stack`, `proctor`, `booster`). See below for what each group may start. |
 | `ADVISOR_PROCTOR_TIMEOUT` | `120` | Seconds before a PROCTOR run is stopped (1 to 900). |
-| `ADVISOR_BOOSTER_TIMEOUT` | `60` | Seconds before a BOOSTER plan is stopped (1 to 900). A plan is local and fast, so the default is shorter than a PROCTOR run. |
-| `ADVISOR_BOOSTER_BIN` | none | Where `upgrade_path` finds BOOSTER when the app has no `vendor/bin/booster` of its own: the path to booster's `bin/booster` (or a `booster.phar`). The app's own `vendor/bin/booster` always wins. |
+| `ADVISOR_BOOSTER_TIMEOUT` | `60` | Seconds before a Booster plan is stopped (1 to 900). A plan is local and fast, so the default is shorter than a PROCTOR run. |
+| `ADVISOR_BOOSTER_BIN` | none | Where `upgrade_path` finds Booster when the app has no `vendor/bin/booster` of its own: the path to booster's `bin/booster` (or a `booster.phar`). The app's own `vendor/bin/booster` always wins. |
 | `ADVISOR_MAX_CHARS` | `20000` | Largest piece of text one doc call returns (1000 to 45000). |
 | `ADVISOR_AUDIT_LOG` | off | A file for a one-line-per-call audit log: time, tool, a hash of the arguments, outcome, duration. Arguments are hashed, never written. |
 | `ADVISOR_LOG_LEVEL` | `warning` | Log level on stderr (`debug` to `emergency`). |
@@ -268,7 +268,7 @@ Tests drive the real SDK server in-process with a small MCP client, snapshot `to
 - Read-only by default; no tool takes a command, a URL or a free path.
 - Every result is cleaned of invisible characters and labelled as data; secrets in PROCTOR output are redacted.
 - `run_proctor_check` runs one fixed program with an argument array and an allowlisted environment, never a shell.
-- `upgrade_path` runs BOOSTER's read-only `plan` the same way: one fixed program, an argument array, an allowlisted command, never a shell. It plans; it never runs a hop.
+- `upgrade_path` runs Booster's read-only `plan` the same way: one fixed program, an argument array, an allowlisted command, never a shell. It plans; it never runs a hop.
 - No network calls, and no model calls, from ADVISOR itself.
 
 See `BEST_PRACTICES.md`, and `OPEN_QUESTIONS.md` for what is decided, assumed and not yet built.
@@ -297,12 +297,12 @@ MIT. Copyright Wayne State University.
   <a href="https://github.com/waynestate/sesame" title="SESAME"><img src="docs/readme/cast/sesame.png" width="40" alt="SESAME"></a>
   <a href="https://github.com/waynestate/helmet" title="HELMET"><img src="docs/readme/cast/helmet.png" width="40" alt="HELMET"></a>
   <a href="https://github.com/waynestate/sourdough" title="Sourdough"><img src="docs/readme/cast/sourdough.png" width="40" alt="Sourdough"></a>
-  <a href="https://github.com/waynestate/squire" title="SQUIRE"><img src="docs/readme/cast/squire.png" width="40" alt="SQUIRE"></a>
-  <a href="https://github.com/waynestate/preflight" title="PREFLIGHT"><img src="docs/readme/cast/preflight.png" width="40" alt="PREFLIGHT"></a>
+  <a href="https://github.com/waynestate/squire" title="Squire"><img src="docs/readme/cast/squire.png" width="40" alt="Squire"></a>
+  <a href="https://github.com/waynestate/preflight" title="Preflight"><img src="docs/readme/cast/preflight.png" width="40" alt="Preflight"></a>
   <a href="https://github.com/waynestate/pinstripe" title="Pinstripe"><img src="docs/readme/cast/pinstripe.png" width="40" alt="Pinstripe"></a>
-  <a href="https://github.com/waynestate/booster" title="BOOSTER"><img src="docs/readme/cast/booster.png" width="40" alt="BOOSTER"></a>
-  <a href="https://github.com/waynestate/rollcall" title="ROLLCALL"><img src="docs/readme/cast/rollcall.png" width="40" alt="ROLLCALL"></a>
-  <a href="https://github.com/waynestate/drawbridge" title="DRAWBRIDGE"><img src="docs/readme/cast/drawbridge.png" width="40" alt="DRAWBRIDGE"></a>
+  <a href="https://github.com/waynestate/booster" title="Booster"><img src="docs/readme/cast/booster.png" width="40" alt="Booster"></a>
+  <a href="https://github.com/waynestate/rollcall" title="Rollcall"><img src="docs/readme/cast/rollcall.png" width="40" alt="Rollcall"></a>
+  <a href="https://github.com/waynestate/drawbridge" title="Drawbridge"><img src="docs/readme/cast/drawbridge.png" width="40" alt="Drawbridge"></a>
   <a href="https://github.com/waynestate/advisor" title="ADVISOR"><img src="docs/readme/cast/advisor.png" width="40" alt="ADVISOR"></a>
   <a href="https://github.com/waynestate/weld" title="WELD"><img src="docs/readme/cast/weld.png" width="40" alt="WELD"></a>
 </div>

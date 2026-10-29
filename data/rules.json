@@ -116,7 +116,7 @@
             "id": "ci-2",
             "chapter": "ci",
             "heading": "CI",
-            "text": "The CI components are PREFLIGHT's: `proctor`, `php-test` and `composer-audit`, included with `include: component:` (first-repos).",
+            "text": "The CI components are Preflight's: `proctor`, `php-test` and `composer-audit`, included with `include: component:` (first-repos).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -510,7 +510,7 @@
             "id": "code-26",
             "chapter": "code",
             "heading": "How it is enforced",
-            "text": "Pint, PHPStan, Rector dry-runs and ESLint run in CI through PREFLIGHT components, not in the deploy gate (the stack's coding standard). The PREFLIGHT components are Planned.",
+            "text": "Pint, PHPStan, Rector dry-runs and ESLint run in CI through Preflight components, not in the deploy gate (the stack's coding standard). The Preflight components are Planned.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1702,7 +1702,7 @@
             "id": "deploy-gate-7",
             "chapter": "deploy-gate",
             "heading": "Elsewhere",
-            "text": "The same gate runs as a CI job through PREFLIGHT's `proctor` component, wherever the pipeline runs (first-repos).",
+            "text": "The same gate runs as a CI job through Preflight's `proctor` component, wherever the pipeline runs (first-repos).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1716,7 +1716,7 @@
             "id": "deploy-gate-8",
             "chapter": "deploy-gate",
             "heading": "Elsewhere",
-            "text": "SQUIRE's `docker` target will run the gate before it ships an image, and so will its later `openshift` and `coolify` targets (the stack's rule that packages run on any container platform).",
+            "text": "Squire's `docker` target will run the gate before it ships an image, and so will its later `openshift` and `coolify` targets (the stack's rule that packages run on any container platform).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",

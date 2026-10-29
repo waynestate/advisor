@@ -64,8 +64,8 @@ for plain bans, and a custom rule only when neither fits.
 
 ## How it is enforced
 
-- Pint, PHPStan, Rector dry-runs and ESLint run in CI through PREFLIGHT
-  components, not in the deploy gate (the stack's coding standard). The PREFLIGHT components
+- Pint, PHPStan, Rector dry-runs and ESLint run in CI through Preflight
+  components, not in the deploy gate (the stack's coding standard). The Preflight components
   are Planned.
 - New rules arrive as warnings and become errors on a stated date, the same
   staging as PHP versions (the stack's enforcement design).

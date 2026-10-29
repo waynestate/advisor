@@ -26,8 +26,8 @@ released, and refuses EOL PHP (the stack's deploy-gate decision).
 
 ## Elsewhere
 
-- The same gate runs as a CI job through PREFLIGHT's `proctor` component,
+- The same gate runs as a CI job through Preflight's `proctor` component,
   wherever the pipeline runs (first-repos).
-- SQUIRE's `docker` target will run the gate before it ships an image, and so
+- Squire's `docker` target will run the gate before it ships an image, and so
   will its later `openshift` and `coolify` targets (the stack's rule that
   packages run on any container platform).
