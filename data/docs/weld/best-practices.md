@@ -29,7 +29,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Remove the Laravel starter kit's Fortify routes and actions (`/login`, `/register`, `/forgot-password`, 2FA). SESAME's `findOrImportUser(Identity)` is the only way in.
 - **Why:** Two login systems mean two session rules and two audit trails, and the kit's Fortify registers its routes automatically.
 - **Sources:** [Laravel starter kits](https://laravel.com/docs/13.x/starter-kits) ("All starter kits use Laravel Fortify").
-- **Stack:** `Not yet`. The Fortify removal is already in place and guarded: `routes/auth.php:17` answers `/login` with a 503 placeholder, and `tests/Feature/AuthRoutesTest.php` fails if WELD ever grows its own auth routes (register, password reset, two-factor, email verification, password confirmation) or if a Fortify controller sneaks back in. What is missing is SESAME itself: it is not a dependency yet, so `/login`, `/logout` and `/cas/*` are not owned by it. Target `Checked`: a PROCTOR check and a feature test over `php artisan route:list --json` fail on any auth route not owned by SESAME.
+- **Stack:** `Documented`. SESAME is a dependency (`composer.json:22`), the starter kit's Fortify routes are removed, and `tests/Feature/AuthRoutesTest.php` fails if WELD grows its own auth routes. Target `Checked`: a PROCTOR check and a feature test over `php artisan route:list --json`.
 
 ### W2. WayneUI is the only component source
 - **Practice:** Pages use WayneUI components and tokens. Do not keep the kit's shadcn-vue components or Tailwind theme as a second design system.
@@ -65,7 +65,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Sail runs on Windows "via WSL2". The stack rule is that Windows needs no bash and no WSL. Ship `weld.ps1` and `weld.sh` (or one PHP command) over a plain `compose.yaml`; Sail stays an unsupported convenience.
 - **Why:** Every developer OS gets its own native path.
 - **Sources:** [Laravel Sail](https://laravel.com/docs/13.x/sail).
-- **Stack:** `Not yet`. There is no `compose.yaml` and no `weld.ps1`/`weld.sh` yet. Target `Checked`: a pair-parity test (same subcommands in both scripts).
+- **Stack:** `Documented`. `compose.yaml` and the `bin/weld.ps1` / `bin/weld.sh` pair exist. Target `Checked`: a pair-parity test.
 
 ### W8. One image, several process types
 - **Practice:** Build one image. Run it as `web`, `worker` and `scheduler` by changing the command only (plus `ssr` when Inertia SSR is on). On Compose these are services; on OpenShift a Deployment, a Deployment and a CronJob.
@@ -179,7 +179,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Require `laravel/framework` at or above the latest patched release, run `composer audit` in CI, and let CREED's `policy.json` name the minimum patch level. A critical TokenGuard authentication bypass was published on 2026-10-19 (fixed in 13.29.0 and 12.68.0).
 - **Why:** Framework advisories arrive several times a year.
 - **Sources:** [laravel/framework advisories](https://github.com/laravel/framework/security/advisories), [GHSA-f9x3-7vq9-cph6](https://github.com/laravel/framework/security/advisories/GHSA-f9x3-7vq9-cph6).
-- **Stack:** `Checked`. `composer.json:14` pins `laravel/framework: ^13.29` (at or above the patched release), `composer.json:51` runs `@composer audit` inside the `ci` script, and `.gitlab-ci.yml:9` includes the Preflight `composer-audit` component, so the audit runs in CI. CREED's `policy.json` is not a dependency yet, so the named floor is not read from it.
+- **Stack:** `Checked`. `composer.json:14` pins `laravel/framework: ^13.29` (at or above the patched release), `composer.json:51` runs `@composer audit` inside the `ci` script, and `.gitlab-ci.yml:9` includes the Preflight `composer-audit` component, so the audit runs in CI. CREED's `policy.json` is a dependency and PROCTOR measures against it.
 
 ### W26. Debug is off outside local
 - **Practice:** `APP_DEBUG=false` in production. The debug page has had an XSS advisory (Low, 2026-09-10).
@@ -197,7 +197,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** HELMET sets the CSP header and calls `Vite::useCspNonce()`; Laravel then adds the nonce to the tags `@vite` emits. Inertia 3 puts initial page data in a JSON script element. Run the policy in report-only first.
 - **Why:** Laravel has no first-party CSP config, and a policy that blocks the app's own bundle is worse than none.
 - **Sources:** [Inertia v3 upgrade guide](https://inertiajs.com/docs/v3/getting-started/upgrade-guide.md) (JSON script element); the nonce behaviour is from search results, not the Laravel page, so treat as unverified.
-- **Stack:** `Not yet`. HELMET is not a dependency and no CSP is sent yet. Target `Checked`: a browser test loads three Inertia pages under an enforced CSP and fails on any violation.
+- **Stack:** `Documented`. HELMET `^0.2` is a dependency and its security headers and CSP middleware run in the global chain. Target `Checked`: a browser test under an enforced CSP.
 
 ### W29. Agent tooling stays out of production
 - **Practice:** Laravel Boost is `require-dev`. Its MCP server can write rules to disk and run database queries; its docs tool sends queries to a hosted service. Production images are built with `composer install --no-dev`; guard any `post-update-cmd` that calls `boost:update`.

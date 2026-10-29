@@ -47,7 +47,7 @@ php artisan key:generate
 | Pinstripe | The coding standard: Pint, PHPStan level 8, ESLint and Prettier |
 | Preflight | The CI pipeline, from GitLab CI/CD components |
 | PROCTOR | The checks, run in CI and as the deploy gate |
-| SESAME | Sign-in, with CAS today and the auth gateway later, and app-native sessions |
+| SESAME | Sign-in: CAS, Entra ID (OpenID Connect) and the auth gateway driver, and app-native sessions |
 | HELMET | The baseline runtime: security headers and CSP, sessions, trusted proxies, `/up` |
 | Ziggy | Route names as URLs: the route list ships inside the Vite bundle, so `route()` works in Vue without an inline script |
 

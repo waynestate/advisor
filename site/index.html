@@ -341,6 +341,9 @@ php vendor/bin/advisor mcp
 <span class="t-dim"># check the bundled content against its manifest</span>
 php vendor/bin/advisor content:verify
 
+<span class="t-dim"># a check of the install and the client config</span>
+php vendor/bin/advisor doctor
+
 <span class="t-dim"># every check, in the advisor repo itself</span>
 composer ci</code></pre>
         </div>
@@ -409,14 +412,13 @@ composer ci</code></pre>
         <div class="section__head section__head--left">
           <p class="eyebrow">Here be roadmaps</p>
           <h2 id="unch-title">Not yet surveyed</h2>
-          <p>Honest edges of the map. None of these exist in 0.1, so none of them gets a command.</p>
+          <p>Honest edges of the map. None of these exist in 0.1 except where marked, so none of them gets a command.</p>
         </div>
         <ul class="unch">
           <li><span class="chip chip--soon">Coming soon</span><h3>Ask ADVISOR on the web</h3><p>A chat page. It needs a model, a data decision and an accessibility pass of its own.</p></li>
           <li><span class="chip chip--soon">Coming soon</span><h3>Tools that write</h3><p>Scaffold with Sourdough, apply a Booster step. The read-only switch and tool groups are built so they can arrive safely.</p></li>
           <li><span class="chip chip--soon">Coming soon</span><h3>Modules from each project</h3><p>The loader exists and is tested; projects ship their own tools through a manifest when they are ready.</p></li>
           <li><span class="chip chip--soon">Coming soon</span><h3>HTTP transport</h3><p>stdio first. Remote needs a threat model before it needs a port.</p></li>
-          <li><span class="chip chip--soon">Coming soon</span><h3><code>advisor doctor</code></h3><p>A check of the install and the client config, for now covered by <code>content:verify</code> and <code>install</code>.</p></li>
         </ul>
       </div>
     </div>

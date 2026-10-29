@@ -48,12 +48,12 @@ coding agent.
 | **SESAME** | sign-in inside the app |
 | **HELMET** | runtime baseline |
 | **Sourdough** | starter |
-| **PREFLIGHT** | CI components |
+| **Preflight** | CI components |
 | **Pinstripe** | coding standard |
-| **BOOSTER** | upgrades |
-| **ROLLCALL** | fleet census |
-| **DRAWBRIDGE** | sign-in gateway |
-| **SQUIRE** | deploy kit |
+| **Booster** | upgrades |
+| **Rollcall** | fleet census |
+| **Drawbridge** | sign-in gateway |
+| **Squire** | deploy kit |
 | **ADVISOR** | MCP server |
 | **WELD** | the stack's name and its reference app |
 
@@ -73,7 +73,7 @@ composer require --dev waynestate/advisor
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP
 command and not a shell script.
 
-ADVISOR 0.1.0 is on Packagist: `composer require --dev waynestate/advisor:^0.1`. No extra repository needed.
+ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.1`. No extra repository needed.
 
 ## Quick start
 
