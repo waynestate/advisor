@@ -23,18 +23,20 @@ Development happens on Wayne State's GitLab; this repository is a release mirror
 
 > Every WSU student has an advisor. Now every WSU app does too, and this one answers email.
 
-ADVISOR is WELD's own MCP server, like Laravel Boost for WSU. It orients a developer who is new to the stack and gives
-their coding agent read-only tools into it: the CREED standards and policy, PROCTOR results, the upgrade path,
-the WayneUI markup contract, SESAME and HELMET guidance, and the parts list. Ask it "which PHP can I build on?" and it
-answers from the policy file, with the date and the source, instead of from whatever the model remembers.
+ADVISOR is an MCP server for the Wayne State application stack, a bit like Laravel Boost but for WSU. It orients a
+developer who is new to the stack and gives their coding agent nine read-only tools into it: the CREED standards and
+policy, PROCTOR results, the upgrade path, the WayneUI markup contract, SESAME and HELMET guidance, and the parts list.
+Ask it "which PHP can I build on?" and it answers from the policy file, with the date and the source, instead of from
+whatever the model remembers.
 
 It is read-only in 0.1. It cannot write a file, run a shell command, or call out to the network. The two things it
 can start are the app's own `vendor/bin/proctor` and Booster's read-only `plan`, both with a fixed argument shape.
 
 ## Where it sits in WELD
 
-WELD is the Wayne State application stack: Wired, Everything, Linked, Deployed. ADVISOR is the part that talks to your
-coding agent.
+The stack is the Wayne State application stack. WELD, Wired, Everything, Linked, Deployed, is its Laravel starter app.
+You can add ADVISOR to a WELD app or to any other Wayne State PHP app, and in either case it is the part of the stack
+that talks to your coding agent.
 
 <!-- stack-parts:start -->
 
@@ -55,7 +57,7 @@ coding agent.
 | **Drawbridge** | sign-in gateway |
 | **Squire** | deploy kit |
 | **ADVISOR** | MCP server |
-| **WELD** | the stack's name and its reference app |
+| **WELD** | the Laravel starter app |
 
 <!-- stack-parts:end -->
 
@@ -115,7 +117,7 @@ Settings come from the same `ADVISOR_*` variables, read through `config/advisor.
 
 ## What it offers
 
-Tools (all read-only; each says where its answer came from):
+Nine tools, all read-only. Each one says where its answer came from:
 
 | Tool | Does |
 |---|---|

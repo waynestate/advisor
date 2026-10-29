@@ -110,7 +110,7 @@
             "id": "weld",
             "name": "WELD",
             "kind": "the stack, as one app",
-            "tagline": "the stack's name and its reference app",
+            "tagline": "the Laravel starter app",
             "role": "Wired, Everything, Linked, Deployed: one Laravel + Inertia/Vue app with every stack part already joined. A team clones it, renames it and deploys it.",
             "next_step": "Clone it for a new Laravel + Inertia/Vue app; its front page shows how the parts fit."
         }
