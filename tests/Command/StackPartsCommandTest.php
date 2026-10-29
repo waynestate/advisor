@@ -28,7 +28,7 @@ final class StackPartsCommandTest extends TestCase
         $display = $tester->getDisplay();
         $this->assertStringStartsWith("| Part | What it is |\n|---|---|\n", $display);
         $this->assertStringContainsString("| **WayneUI** | interface (project 0) |", $display);
-        $this->assertStringContainsString("| **WELD** | the stack's name and its reference app |", $display);
+        $this->assertStringContainsString("| **WELD** | the Laravel starter app |", $display);
         $this->assertSame(16, substr_count($display, "\n"), 'The table is a header, a separator and fourteen rows.');
     }
 
