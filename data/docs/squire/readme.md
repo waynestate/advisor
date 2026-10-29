@@ -22,7 +22,7 @@ Squire is the Citadel kit: build.sh, the release script, the health check, and l
 Front page: [`site/index.html`](site/index.html), a static page you can serve from anywhere.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Status: 0.2.1, tagged and on Packagist. This repository is published from Wayne State University's internal GitLab and mirrored to GitHub.
+Status: 0.3.0, tagged and on Packagist. This repository is published from Wayne State University's internal GitLab and mirrored to GitHub.
 
 <details>
 <summary>Open the bag: two more cuts of the front page</summary>
@@ -85,7 +85,28 @@ A Vue/Inertia app is a layer on `raw`, `laravel` or `static`, not a fourth targe
 Every app, Vue or not, gets the one common `scripts/release.sh`, which installs the frontend from the lock file and runs
 the `build` script whenever there is a `package.json`.
 
-A static site is a target of its own: `--target=static` writes everything the `raw` target writes plus a front
+A raw PHP app (`--target=raw`, the default without an `artisan` file) gets a front controller, `public/index.php`, and an
+`.htaccess` that sends every request to it. The front controller has three answers:
+
+- a real file in `public/` (CSS, images, fonts, an HTML page) is served with its type, an ETag and an hour of cache,
+  with HELMET's headers when HELMET is installed, and HELMET's CSP nonce on every `<script>` of an HTML page;
+- a 404 for a dot file (`.htaccess`, `.git`), a NUL byte, a path that climbs out of `public/`, any `.php` or `.phar`
+  other than the front controller, and any file that is not a site asset (a `.sql` dump, a `.bak`, a `.md` with no
+  `.html` beside it);
+- everything else goes to the app's entry: `app.php` beside `public/`, or the file `SQUIRE_APP_ENTRY` names (relative to
+  the app directory, for example `src/bootstrap.php`). A `POST`, `PUT` or `DELETE` always goes to the entry.
+
+The entry is the only PHP file the front controller runs, and it must sit inside the app directory and end in `.php`;
+anything else is a plain 500 that names `SQUIRE_APP_ENTRY` and no path. The entry boots its own HELMET with its own
+settings: the front controller boots HELMET (citadel preset) only for the answers it gives itself, never before the
+entry, so HELMET is never booted twice. `public/up.php` answers on its own, because the `.htaccess` lets Apache run it
+directly. The path checks and the MIME map are the static target's, and the tests keep the two in step.
+
+An app that already has its own `public/index.php` or `public/.htaccess` keeps it: `init` reports the file as
+`app-owned`, never records or overwrites it (not even with `--force`), and `init --check` does not count it as drift.
+Delete your copy and run `init` to take Squire's. A front controller Squire wrote is tracked like any other file.
+
+A static site is a target of its own: `--target=static` writes everything the `raw` target writes, with its own front
 controller, `public/index.php`, and an `.htaccess` that routes every request that is not a real file to it. The site
 itself is plain files you commit; the front controller serves them with HELMET's headers, injects the CSP nonce into the
 HTML, and caches the assets. The site folder is `../../site` by default (the app lives in `deploy/` beside it); point
@@ -105,8 +126,8 @@ diff, and a file Squire did not write is never touched. A squire polishes the ar
 | `scripts/release.sh` | The idempotent release: preconditions, `composer install --no-dev` from the lock file, audit, Laravel `migrate --force` and `optimize`, PROCTOR (a report by default, a gate with `SQUIRE_PROCTOR=enforce`), `/up` smoke test. Use it as the Quick Update post-script as well. |
 | `health.php` | Citadel's health check (`["php","health.php"]`): one HTTP request to `/up`, never boots the framework. |
 | `public/up.php` | Raw PHP and static: the endpoint that answers `ok`. Laravel has `/up` built in. |
-| `public/index.php` | Static target only: the front controller that serves the committed site with HELMET's headers. |
-| `public/.htaccess` | Static target only: routes every request that is not a real file to the front controller. |
+| `public/index.php` | Raw: the front controller that serves `public/` files safely and hands the rest to the app's entry. Static: the one that serves the committed site with HELMET's headers. Never written over an app's own. |
+| `public/.htaccess` | Raw: sends every request but `index.php` and `up.php` to the front controller. Static: routes every request that is not a real file to it. |
 | `.npmrc` | Vue layer only: sets `min-release-age=1` for the frontend install. |
 | Vue `docker-compose.squire.yml` | Vue layer only: the common parity compose plus a Node 22 service for frontend tooling. |
 | `docker-compose.squire.yml`, `.squire/`, `.env.squire.example`, `scripts/parity.sh`, `scripts/parity.ps1` | Local parity. |
@@ -123,8 +144,7 @@ Every shell script uses `set -euo pipefail` (`build.sh` uses `set -eu`, because 
 
 Sourdough carries a generated copy of Squire's deploy templates instead of writing its own. The copy began when its
 apps could not `composer require` Squire from an internal repository (no internal URLs may be committed). Squire is
-on Packagist now (`0.2.1`), so the copy can become a real requirement; until Sourdough switches, the
-copy stays. Squire owns the templates; the copy is checked in and verified, never hand-edited.
+on Packagist now, and Sourdough requires it as a dev dependency and regenerates its copy from the package. Squire owns the templates; the copy is checked in and verified, never hand-edited.
 
 ```
 php bin/export-templates.php --to=templates/squire            # write the copy
@@ -202,6 +222,9 @@ Release script (`scripts/release.sh`):
 | `SQUIRE_SMOKE_RETRIES` | `5` | Attempts. |
 | `SQUIRE_SMOKE_DELAY` | `2` | Seconds between attempts. |
 
+Front controller (raw `public/index.php`): `SQUIRE_APP_ENTRY` (`app.php`), the app's entry, relative to the app
+directory. Static `public/index.php`: `SQUIRE_STATIC_ROOT` (`../../site`).
+
 Health check (`health.php`): `SQUIRE_HEALTH_PATH`, `SQUIRE_HEALTH_PORT` (80), `SQUIRE_HEALTH_TIMEOUT` (5, at most 14, inside
 Citadel's 15), `SQUIRE_HEALTH_VENDOR` (`1` also requires `vendor/autoload.php`).
 
@@ -237,7 +260,7 @@ The shell templates are linted with shellcheck in Docker (`scripts/lint-shell.sh
 Windows) and the PowerShell with PSScriptAnalyzer (`scripts/lint-powershell.ps1`). The tests run the real shell templates
 against stub `composer`, `curl`, `npm`, `corepack` and `proctor` programs, and start a PHP server to test `health.php`.
 
-## Known limits in 0.2
+## Known limits
 
 See [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md). The big ones: the local `php.ini` holds safe defaults rather than the
 platform's file, the Citadel image has no digest to pin, and a full Update may not refresh `vendor/`. PROCTOR can now

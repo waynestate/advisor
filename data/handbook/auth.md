@@ -10,8 +10,8 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 - The `gateway` driver accepts only a signed assertion, never a bare header:
   user, attributes, issued-at, audience, an expiry of 60 seconds or less, and
   a signature the gateway and app share (the stack's auth design).
-- Drivers: `cas` (the default today), `gateway`, `saml`, `oauth2`, and `fake`
-  for local development and tests (the stack's auth design).
+- Drivers: `cas` (the default today), `gateway`, `oidc`, `oauth2`, `saml` (not
+  built yet), and `fake` for local development and tests (the stack's auth design).
 - Non-EOL PHP only, with no exceptions (the stack's auth design).
 - To be decided: the gateway's key distribution and rotation, and the SAML
   library choice if a `saml` driver is built (the stack's auth design).
