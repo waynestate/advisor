@@ -9,7 +9,7 @@ use Waynestate\Advisor\Support\Invisible;
 use Waynestate\Advisor\Support\Json;
 
 /**
- * Runs BOOSTER's read-only `plan` command and returns the ordered upgrade hops.
+ * Runs Booster's read-only `plan` command and returns the ordered upgrade hops.
  *
  * It plans; it never runs a hop. The command that edits files is `booster run`,
  * and this runner is only ever allowed to call `plan` (see CommandAllowlist).

@@ -49,8 +49,8 @@ step.
 
 ## CI
 
-- **GitLab:** PREFLIGHT's `php-test` (PHP 8.3, 8.4, 8.5) and `composer-audit` components, plus a `composer-ci` job.
-- **GitHub:** `.github/workflows/ci.yml` calls PREFLIGHT's reusable workflow with `composer ci`.
+- **GitLab:** Preflight's `php-test` (PHP 8.3, 8.4, 8.5) and `composer-audit` components, plus a `composer-ci` job.
+- **GitHub:** `.github/workflows/ci.yml` calls Preflight's reusable workflow with `composer ci`.
 - Green means `composer ci` passed on all three PHP versions on both.
 
 ## Keeping the content fresh
@@ -82,7 +82,7 @@ CI, a masked file-type variable). See "Releasing" in the README.
 ## The front page
 
 `site/` is the static front page, for `https://advisor.apps.wayne.edu/` on Citadel, served through a small raw-PHP
-`deploy/` layer generated with SQUIRE.
+`deploy/` layer generated with Squire.
 
 ## Who maintains it
 

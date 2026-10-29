@@ -19,7 +19,7 @@ use Waynestate\Advisor\Tools\UpgradePath;
 /**
  * ADVISOR's own module: the nine read-only tools of 0.1, the CREED handbook
  * and policy as resources, and two prompts. Per-project modules (PROCTOR's
- * own tools, BOOSTER's upgrade planner) arrive through the manifest.
+ * own tools, Booster's upgrade planner) arrive through the manifest.
  */
 final class CoreModule implements Module
 {

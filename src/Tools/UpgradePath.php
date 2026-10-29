@@ -8,7 +8,7 @@ use Waynestate\Advisor\Module\ModuleContext;
 use Waynestate\Advisor\Module\ToolDefinition;
 use Waynestate\Advisor\Security\BoosterRunner;
 
-/** Plans the app's PHP and Laravel upgrade, one supported hop at a time, via BOOSTER's read-only `plan`. */
+/** Plans the app's PHP and Laravel upgrade, one supported hop at a time, via Booster's read-only `plan`. */
 final class UpgradePath
 {
     public static function definition(ModuleContext $context): ToolDefinition
