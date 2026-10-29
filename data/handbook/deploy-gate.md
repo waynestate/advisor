@@ -1,5 +1,7 @@
 # Deploy gate
 
+The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to be interpreted as described in RFC 2119.
+
 The deploy gate runs PROCTOR against the commit being released, before it is
 released, and refuses EOL PHP (the stack's deploy-gate decision).
 

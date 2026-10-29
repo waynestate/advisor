@@ -1,5 +1,7 @@
 # Auth
 
+The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to be interpreted as described in RFC 2119.
+
 - One protocol-neutral library, named for what it does, not how. It returns a
   verified identity and leaves the session to the app (the stack's auth design).
 - The app always owns its session. Every driver ends in the app's

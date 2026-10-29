@@ -12,7 +12,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/accessibility.md:8"
+            "source": "handbook/accessibility.md:10"
         },
         {
             "id": "auth-1",
@@ -26,7 +26,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:3"
+            "source": "handbook/auth.md:5"
         },
         {
             "id": "auth-2",
@@ -40,7 +40,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:5"
+            "source": "handbook/auth.md:7"
         },
         {
             "id": "auth-3",
@@ -54,7 +54,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:8"
+            "source": "handbook/auth.md:10"
         },
         {
             "id": "auth-4",
@@ -68,7 +68,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:11"
+            "source": "handbook/auth.md:13"
         },
         {
             "id": "auth-5",
@@ -82,7 +82,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:13"
+            "source": "handbook/auth.md:15"
         },
         {
             "id": "auth-6",
@@ -96,7 +96,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:14"
+            "source": "handbook/auth.md:16"
         },
         {
             "id": "ci-1",
@@ -110,7 +110,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/ci.md:3"
+            "source": "handbook/ci.md:5"
         },
         {
             "id": "ci-2",
@@ -124,7 +124,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/ci.md:5"
+            "source": "handbook/ci.md:7"
         },
         {
             "id": "ci-3",
@@ -138,7 +138,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/ci.md:7"
+            "source": "handbook/ci.md:9"
         },
         {
             "id": "ci-4",
@@ -152,13 +152,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/ci.md:9"
+            "source": "handbook/ci.md:11"
         },
         {
             "id": "ci-5",
             "chapter": "ci",
             "heading": "CI",
-            "text": "git.wayne.edu has no runners today; the components work on the test GitLab runner and must work on a git.wayne.edu runner when one exists (first-repos). Every product strongly recommends the instance runner.",
+            "text": "git.wayne.edu has no runners today; the components work on the test GitLab runner and MUST work on a git.wayne.edu runner when one exists (first-repos). Every product strongly recommends the instance runner.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -166,7 +166,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/ci.md:10"
+            "source": "handbook/ci.md:12"
         },
         {
             "id": "code-1",
@@ -178,7 +178,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:5"
+            "source": "handbook/code.md:7"
         },
         {
             "id": "code-2",
@@ -192,7 +192,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:6"
+            "source": "handbook/code.md:8"
         },
         {
             "id": "code-3",
@@ -206,7 +206,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:8"
+            "source": "handbook/code.md:10"
         },
         {
             "id": "code-4",
@@ -220,7 +220,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:9"
+            "source": "handbook/code.md:11"
         },
         {
             "id": "code-5",
@@ -234,7 +234,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:11"
+            "source": "handbook/code.md:13"
         },
         {
             "id": "code-6",
@@ -248,7 +248,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:16"
+            "source": "handbook/code.md:18"
         },
         {
             "id": "code-7",
@@ -260,7 +260,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:18"
+            "source": "handbook/code.md:20"
         },
         {
             "id": "code-8",
@@ -274,7 +274,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:19"
+            "source": "handbook/code.md:21"
         },
         {
             "id": "code-9",
@@ -288,13 +288,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:21"
+            "source": "handbook/code.md:23"
         },
         {
             "id": "code-10",
             "chapter": "code",
             "heading": "Static analysis",
-            "text": "Existing apps start at the highest level they pass, with a committed baseline that may only shrink, then raise the level one step at a time (the stack's coding standard). Like the band says, the only way is Higher.",
+            "text": "Existing apps start at the highest level they pass, with a committed baseline that MUST NOT grow, then raise the level one step at a time (the stack's coding standard). Like the band says, the only way is Higher.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -302,7 +302,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:22"
+            "source": "handbook/code.md:24"
         },
         {
             "id": "code-11",
@@ -316,7 +316,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:25"
+            "source": "handbook/code.md:27"
         },
         {
             "id": "code-12",
@@ -330,7 +330,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:26"
+            "source": "handbook/code.md:28"
         },
         {
             "id": "code-13",
@@ -342,7 +342,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:36"
+            "source": "handbook/code.md:38"
         },
         {
             "id": "code-14",
@@ -356,7 +356,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:38"
+            "source": "handbook/code.md:40"
         },
         {
             "id": "code-15",
@@ -370,7 +370,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:40"
+            "source": "handbook/code.md:42"
         },
         {
             "id": "code-16",
@@ -384,7 +384,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:42"
+            "source": "handbook/code.md:44"
         },
         {
             "id": "code-17",
@@ -398,7 +398,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:47"
+            "source": "handbook/code.md:49"
         },
         {
             "id": "code-18",
@@ -410,7 +410,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:48"
+            "source": "handbook/code.md:50"
         },
         {
             "id": "code-19",
@@ -424,7 +424,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:49"
+            "source": "handbook/code.md:51"
         },
         {
             "id": "code-20",
@@ -438,7 +438,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:50"
+            "source": "handbook/code.md:52"
         },
         {
             "id": "code-21",
@@ -452,7 +452,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:51"
+            "source": "handbook/code.md:53"
         },
         {
             "id": "code-22",
@@ -464,7 +464,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:52"
+            "source": "handbook/code.md:54"
         },
         {
             "id": "code-23",
@@ -478,7 +478,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:54"
+            "source": "handbook/code.md:56"
         },
         {
             "id": "code-24",
@@ -492,7 +492,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:58"
+            "source": "handbook/code.md:60"
         },
         {
             "id": "code-25",
@@ -504,7 +504,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:60"
+            "source": "handbook/code.md:62"
         },
         {
             "id": "code-26",
@@ -518,7 +518,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:65"
+            "source": "handbook/code.md:67"
         },
         {
             "id": "code-27",
@@ -532,7 +532,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:68"
+            "source": "handbook/code.md:70"
         },
         {
             "id": "code-28",
@@ -546,7 +546,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:70"
+            "source": "handbook/code.md:72"
         },
         {
             "id": "code-29",
@@ -560,7 +560,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:88"
+            "source": "handbook/code.md:90"
         },
         {
             "id": "code-30",
@@ -574,7 +574,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:90"
+            "source": "handbook/code.md:92"
         },
         {
             "id": "code-31",
@@ -588,7 +588,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:94"
+            "source": "handbook/code.md:96"
         },
         {
             "id": "code-32",
@@ -602,7 +602,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:96"
+            "source": "handbook/code.md:98"
         },
         {
             "id": "code-33",
@@ -616,7 +616,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:97"
+            "source": "handbook/code.md:99"
         },
         {
             "id": "code-34",
@@ -630,7 +630,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:101"
+            "source": "handbook/code.md:103"
         },
         {
             "id": "code-35",
@@ -644,7 +644,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:102"
+            "source": "handbook/code.md:104"
         },
         {
             "id": "code-36",
@@ -656,7 +656,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:103"
+            "source": "handbook/code.md:105"
         },
         {
             "id": "code-37",
@@ -670,7 +670,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:104"
+            "source": "handbook/code.md:106"
         },
         {
             "id": "code-38",
@@ -684,7 +684,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:105"
+            "source": "handbook/code.md:107"
         },
         {
             "id": "code-39",
@@ -698,7 +698,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:106"
+            "source": "handbook/code.md:108"
         },
         {
             "id": "code-40",
@@ -712,7 +712,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:107"
+            "source": "handbook/code.md:109"
         },
         {
             "id": "code-41",
@@ -724,7 +724,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:108"
+            "source": "handbook/code.md:110"
         },
         {
             "id": "code-42",
@@ -736,7 +736,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:109"
+            "source": "handbook/code.md:111"
         },
         {
             "id": "code-43",
@@ -750,7 +750,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:111"
+            "source": "handbook/code.md:113"
         },
         {
             "id": "code-44",
@@ -764,7 +764,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:113"
+            "source": "handbook/code.md:115"
         },
         {
             "id": "code-45",
@@ -776,7 +776,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:115"
+            "source": "handbook/code.md:117"
         },
         {
             "id": "code-46",
@@ -790,7 +790,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:116"
+            "source": "handbook/code.md:118"
         },
         {
             "id": "code-47",
@@ -802,7 +802,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:117"
+            "source": "handbook/code.md:119"
         },
         {
             "id": "code-48",
@@ -816,7 +816,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:119"
+            "source": "handbook/code.md:121"
         },
         {
             "id": "code-49",
@@ -830,7 +830,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:120"
+            "source": "handbook/code.md:122"
         },
         {
             "id": "code-50",
@@ -844,7 +844,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:121"
+            "source": "handbook/code.md:123"
         },
         {
             "id": "code-51",
@@ -858,7 +858,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:122"
+            "source": "handbook/code.md:124"
         },
         {
             "id": "code-52",
@@ -872,7 +872,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:124"
+            "source": "handbook/code.md:126"
         },
         {
             "id": "code-53",
@@ -886,7 +886,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:125"
+            "source": "handbook/code.md:127"
         },
         {
             "id": "databases-1",
@@ -900,7 +900,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:16"
+            "source": "handbook/databases.md:26"
         },
         {
             "id": "databases-2",
@@ -914,7 +914,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:19"
+            "source": "handbook/databases.md:29"
         },
         {
             "id": "databases-3",
@@ -926,7 +926,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:22"
+            "source": "handbook/databases.md:32"
         },
         {
             "id": "databases-4",
@@ -940,7 +940,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:24"
+            "source": "handbook/databases.md:34"
         },
         {
             "id": "databases-5",
@@ -954,7 +954,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:26"
+            "source": "handbook/databases.md:36"
         },
         {
             "id": "databases-6",
@@ -968,7 +968,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:28"
+            "source": "handbook/databases.md:38"
         },
         {
             "id": "databases-7",
@@ -982,7 +982,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:30"
+            "source": "handbook/databases.md:40"
         },
         {
             "id": "databases-8",
@@ -996,7 +996,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:33"
+            "source": "handbook/databases.md:43"
         },
         {
             "id": "databases-9",
@@ -1010,7 +1010,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:35"
+            "source": "handbook/databases.md:45"
         },
         {
             "id": "databases-10",
@@ -1024,7 +1024,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:42"
+            "source": "handbook/databases.md:52"
         },
         {
             "id": "databases-11",
@@ -1038,7 +1038,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:43"
+            "source": "handbook/databases.md:53"
         },
         {
             "id": "databases-12",
@@ -1052,7 +1052,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:44"
+            "source": "handbook/databases.md:54"
         },
         {
             "id": "databases-13",
@@ -1066,7 +1066,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:45"
+            "source": "handbook/databases.md:55"
         },
         {
             "id": "databases-14",
@@ -1080,7 +1080,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:46"
+            "source": "handbook/databases.md:56"
         },
         {
             "id": "databases-15",
@@ -1094,7 +1094,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:47"
+            "source": "handbook/databases.md:57"
         },
         {
             "id": "databases-16",
@@ -1108,7 +1108,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:48"
+            "source": "handbook/databases.md:58"
         },
         {
             "id": "databases-17",
@@ -1122,7 +1122,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:52"
+            "source": "handbook/databases.md:62"
         },
         {
             "id": "databases-18",
@@ -1136,7 +1136,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:53"
+            "source": "handbook/databases.md:63"
         },
         {
             "id": "databases-19",
@@ -1150,7 +1150,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:54"
+            "source": "handbook/databases.md:64"
         },
         {
             "id": "databases-20",
@@ -1164,7 +1164,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:55"
+            "source": "handbook/databases.md:65"
         },
         {
             "id": "databases-21",
@@ -1178,7 +1178,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:56"
+            "source": "handbook/databases.md:66"
         },
         {
             "id": "databases-22",
@@ -1192,7 +1192,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:60"
+            "source": "handbook/databases.md:70"
         },
         {
             "id": "databases-23",
@@ -1206,7 +1206,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:61"
+            "source": "handbook/databases.md:71"
         },
         {
             "id": "databases-24",
@@ -1218,7 +1218,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:83"
+            "source": "handbook/databases.md:93"
         },
         {
             "id": "databases-25",
@@ -1230,7 +1230,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:84"
+            "source": "handbook/databases.md:94"
         },
         {
             "id": "databases-26",
@@ -1242,7 +1242,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:86"
+            "source": "handbook/databases.md:96"
         },
         {
             "id": "databases-27",
@@ -1254,7 +1254,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:87"
+            "source": "handbook/databases.md:97"
         },
         {
             "id": "databases-28",
@@ -1266,7 +1266,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:89"
+            "source": "handbook/databases.md:99"
         },
         {
             "id": "databases-29",
@@ -1278,7 +1278,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:91"
+            "source": "handbook/databases.md:101"
         },
         {
             "id": "databases-30",
@@ -1292,7 +1292,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:93"
+            "source": "handbook/databases.md:103"
         },
         {
             "id": "databases-31",
@@ -1306,7 +1306,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:95"
+            "source": "handbook/databases.md:105"
         },
         {
             "id": "databases-32",
@@ -1320,7 +1320,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:97"
+            "source": "handbook/databases.md:107"
         },
         {
             "id": "databases-33",
@@ -1334,7 +1334,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:99"
+            "source": "handbook/databases.md:109"
         },
         {
             "id": "databases-34",
@@ -1348,7 +1348,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:101"
+            "source": "handbook/databases.md:111"
         },
         {
             "id": "databases-35",
@@ -1362,7 +1362,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:102"
+            "source": "handbook/databases.md:112"
         },
         {
             "id": "databases-36",
@@ -1376,7 +1376,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:104"
+            "source": "handbook/databases.md:114"
         },
         {
             "id": "databases-37",
@@ -1390,7 +1390,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:106"
+            "source": "handbook/databases.md:116"
         },
         {
             "id": "databases-38",
@@ -1404,7 +1404,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:107"
+            "source": "handbook/databases.md:117"
         },
         {
             "id": "databases-39",
@@ -1418,7 +1418,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:109"
+            "source": "handbook/databases.md:119"
         },
         {
             "id": "databases-40",
@@ -1432,7 +1432,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:110"
+            "source": "handbook/databases.md:120"
         },
         {
             "id": "dependencies-1",
@@ -1446,13 +1446,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:3"
+            "source": "handbook/dependencies.md:5"
         },
         {
             "id": "dependencies-2",
             "chapter": "dependencies",
             "heading": "Dependencies",
-            "text": "A lock file is required and must be committed (the stack's version policy).",
+            "text": "A lock file is required and MUST be committed (the stack's version policy).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1460,27 +1460,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:5"
+            "source": "handbook/dependencies.md:7"
         },
         {
             "id": "dependencies-3",
             "chapter": "dependencies",
             "heading": "Dependencies",
-            "text": "`composer audit` must report no advisories at or above the policy's severity threshold (the stack's version policy).",
-            "applies_to": [
-                "raw-php",
-                "raw-php-vue",
-                "laravel-blade",
-                "laravel-blade-vue",
-                "laravel-inertia-vue"
-            ],
-            "source": "handbook/dependencies.md:6"
-        },
-        {
-            "id": "dependencies-4",
-            "chapter": "dependencies",
-            "heading": "Dependencies",
-            "text": "`composer.json` `require.php` must not allow an EOL version as its lowest bound (the stack's version policy).",
+            "text": "`composer audit` MUST report no advisories at or above the policy's severity threshold (the stack's version policy).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1489,6 +1475,20 @@
                 "laravel-inertia-vue"
             ],
             "source": "handbook/dependencies.md:8"
+        },
+        {
+            "id": "dependencies-4",
+            "chapter": "dependencies",
+            "heading": "Dependencies",
+            "text": "`composer.json` `require.php` MUST NOT allow an EOL version as its lowest bound (the stack's version policy).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/dependencies.md:10"
         },
         {
             "id": "dependencies-5",
@@ -1500,7 +1500,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:10"
+            "source": "handbook/dependencies.md:12"
         },
         {
             "id": "dependencies-6",
@@ -1514,7 +1514,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:13"
+            "source": "handbook/dependencies.md:15"
         },
         {
             "id": "deploy-gate-1",
@@ -1528,7 +1528,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/deploy-gate.md:6"
+            "source": "handbook/deploy-gate.md:8"
         },
         {
             "id": "deploy-gate-2",
@@ -1542,7 +1542,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/deploy-gate.md:10"
+            "source": "handbook/deploy-gate.md:12"
         },
         {
             "id": "deploy-gate-3",
@@ -1556,7 +1556,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/deploy-gate.md:12"
+            "source": "handbook/deploy-gate.md:14"
         },
         {
             "id": "deploy-gate-4",
@@ -1570,7 +1570,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/deploy-gate.md:14"
+            "source": "handbook/deploy-gate.md:16"
         },
         {
             "id": "deploy-gate-5",
@@ -1584,7 +1584,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/deploy-gate.md:19"
+            "source": "handbook/deploy-gate.md:21"
         },
         {
             "id": "deploy-gate-6",
@@ -1598,7 +1598,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/deploy-gate.md:21"
+            "source": "handbook/deploy-gate.md:23"
         },
         {
             "id": "deploy-gate-7",
@@ -1612,7 +1612,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/deploy-gate.md:27"
+            "source": "handbook/deploy-gate.md:29"
         },
         {
             "id": "deploy-gate-8",
@@ -1626,7 +1626,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/deploy-gate.md:29"
+            "source": "handbook/deploy-gate.md:31"
         },
         {
             "id": "every-os-1",
@@ -1640,7 +1640,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/every-os.md:3"
+            "source": "handbook/every-os.md:5"
         },
         {
             "id": "every-os-2",
@@ -1654,7 +1654,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/every-os.md:4"
+            "source": "handbook/every-os.md:6"
         },
         {
             "id": "every-os-3",
@@ -1668,13 +1668,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/every-os.md:6"
+            "source": "handbook/every-os.md:8"
         },
         {
             "id": "every-os-4",
             "chapter": "every-os",
             "heading": "Every OS",
-            "text": "Every repo carries a `.gitattributes` with `* text=auto eol=lf`, and `.ps1`, `.bat` and `.cmd` set to CRLF. Anything that runs on a Linux host must be LF: on Citadel, and on OpenShift, Coolify or raw Docker elsewhere (the stack's every-OS design).",
+            "text": "Every repo carries a `.gitattributes` with `* text=auto eol=lf`, and `.ps1`, `.bat` and `.cmd` set to CRLF. Anything that runs on a Linux host MUST be LF: on Citadel, and on OpenShift, Coolify or raw Docker elsewhere (the stack's every-OS design).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1682,7 +1682,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/every-os.md:9"
+            "source": "handbook/every-os.md:11"
         },
         {
             "id": "every-os-5",
@@ -1696,7 +1696,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/every-os.md:13"
+            "source": "handbook/every-os.md:15"
         },
         {
             "id": "overrides-1",
@@ -1710,7 +1710,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/overrides.md:3"
+            "source": "handbook/overrides.md:5"
         },
         {
             "id": "overrides-2",
@@ -1724,7 +1724,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/overrides.md:4"
+            "source": "handbook/overrides.md:6"
         },
         {
             "id": "overrides-3",
@@ -1738,7 +1738,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/overrides.md:6"
+            "source": "handbook/overrides.md:8"
         },
         {
             "id": "overrides-4",
@@ -1752,7 +1752,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/overrides.md:7"
+            "source": "handbook/overrides.md:9"
         },
         {
             "id": "overrides-5",
@@ -1766,7 +1766,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/overrides.md:8"
+            "source": "handbook/overrides.md:10"
         },
         {
             "id": "runtime-and-headers-1",
@@ -1780,7 +1780,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:8"
+            "source": "handbook/runtime-and-headers.md:10"
         },
         {
             "id": "runtime-and-headers-2",
@@ -1794,7 +1794,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:10"
+            "source": "handbook/runtime-and-headers.md:12"
         },
         {
             "id": "versions-1",
@@ -1808,7 +1808,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/versions.md:12"
+            "source": "handbook/versions.md:14"
         },
         {
             "id": "versions-2",
@@ -1822,7 +1822,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/versions.md:15"
+            "source": "handbook/versions.md:17"
         },
         {
             "id": "versions-3",
@@ -1836,13 +1836,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/versions.md:17"
+            "source": "handbook/versions.md:19"
         },
         {
             "id": "versions-4",
             "chapter": "versions",
             "heading": "Versions",
-            "text": "`policy.json` is a contract, versioned like WayneUI's `/v2/`. Older Check versions must still read newer policy files (the stack's version policy).",
+            "text": "`policy.json` is a contract, versioned like WayneUI's `/v2/`. Older Check versions MUST still read newer policy files (the stack's version policy).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1850,7 +1850,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/versions.md:19"
+            "source": "handbook/versions.md:21"
         },
         {
             "id": "policy-audit_severity_threshold",

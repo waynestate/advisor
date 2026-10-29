@@ -156,8 +156,11 @@ as release candidates (rc.13 is the newest listed), so 3.6 is not stable. The vu
 release cycle and gives no support policy for older minors. Inertia 3.0 exists; its docs list PHP 8.2 and Laravel 11 as
 the minimums for the Laravel adapter and state no end-of-life policy for v2.
 
-How the stack holds it: `Not yet`. `policy.json` lists only Vue 2 (EOL 2023-12-31) and an empty `inertia` list. The
-reader requires `security_until`, so Vue 3 cannot be added as it stands.
+How the stack holds it: `Enforced`. The schema now allows a line marked `"current": true` with no dates
+(`policy/policy.schema.json`), and `policy.json` lists Vue 3 and Inertia 2 that way, with no invented dates. The schema
+requires `security_until` on every line that is not current, so a made-up date is never needed and a dated line can't
+skip its dates. A version newer than every listed line is treated as current ("current versions are never
+refused").
 
 ### 10. Keep the policy a versioned contract that old tools can still read
 
@@ -863,7 +866,7 @@ These are places where a source disagrees with the repository or with an earlier
 - **Dates re-checked this pass:** Laravel 10 to 12 (release, bug-fix and security dates) match the Laravel table. Node 22,
   24 and 26 match the Node repo. MySQL 5.6, 5.7, 8.0, 8.4 and 9.7 match endoflife.date. Node 20 and the Vue 2 date were
   not re-checked.
-- **Vue 3 cannot be listed.** Its release page gives no fixed end dates, and the reader needs `security_until`. Vue 2 is
+- **Vue 3 is listed as a current line with no dates** (resolved after the second pass: `"current": true`). Vue 2 is
   correct (EOL 2023-12-31). Second pass: settled. The vuejs/core releases page shows 3.5.44 as the latest stable release
   and 3.6.0 only as release candidates (rc.6 to rc.13). A secondary article that said 3.6 shipped on 2026-07-18 does not
   match the official page; ignore it.
@@ -880,7 +883,7 @@ These are places where a source disagrees with the repository or with an earlier
 1. Done in the repository after the first pass: Laravel 13, Node 26 and MySQL 9.7 are in `policy.json` (practice 7). The
    process gap remains (items 19 and 22).
 2. Add a scheduled freshness check against a public EOL feed (practice 8).
-3. Extend the schema for lines with no end date, so Vue 3 and Inertia can be listed (practice 9).
+3. Done: the schema allows `"current": true` lines with no end date, and Vue 3 and Inertia 2 are listed (practice 9).
 4. Add a `source` and `checked_on` field to each version entry (practice 6).
 5. Record the supported PHP range per Laravel release, and add a PROCTOR check for the pair (practice 14).
 6. Add a PROCTOR check that reads the Laravel version from `composer.lock` against the policy (practice 15).

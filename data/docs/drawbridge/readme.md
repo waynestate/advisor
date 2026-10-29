@@ -1,6 +1,17 @@
+<div align="center">
+  <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="DRAWBRIDGE's front page: the headline DRAWBRIDGE in stencil capitals, 'Comes down for signed-in people.', and an architect's section A-A through a gatehouse with the DRAWBRIDGE mark in a detail callout."></a>
+</div>
+
 # DRAWBRIDGE
 
-[![GitHub CI](https://github.com/waynestate/drawbridge/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/drawbridge/actions/workflows/ci.yml)
+<div align="center">
+  <img src="docs/readme/badges/php.svg" alt="php ^8.3">
+  <img src="docs/readme/badges/license.svg" alt="licence MIT">
+  <img src="docs/readme/badges/assertion.svg" alt="assertion ES256, 60 seconds">
+  <a href="https://github.com/waynestate/drawbridge/actions/workflows/ci.yml"><img src="https://github.com/waynestate/drawbridge/actions/workflows/ci.yml/badge.svg" alt="GitHub CI"></a>
+</div>
+
+**Comes down for signed-in people.**
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub). The container rig has its own script, see "Run the checks".
 
@@ -47,6 +58,12 @@ browser --> Apache httpd (DRAWBRIDGE) --> app container
               |  mod_proxy        : forwards to the app
               `- PHP component    : validates the config, renders the Apache config, signs assertions (ES256)
 ```
+
+<div align="center">
+  <img src="docs/readme/gatehouse.svg" width="100%" alt="An architect's section through the gatehouse. 1, the guard: removes X-Authenticated-*, X-Drawbridge-*, X-Sesame-* and OIDC-Claim-* headers, and trims Connection to close, keep-alive and upgrade. 2, the OpenID Connect client: response type code, PKCE S256, callback /_drawbridge/oidc/callback, claims kept in the environment. 3, the signer: a drawbridge+jwt signed with ES256, good for 60 seconds, sent as X-Sesame-Assertion; if it cannot sign, the answer is 503. A door schedule: /up and /assets/ public, /admin/ and anything else login, /api/ api.">
+  <br>
+  <sub>Detail 1, enlarged: the three rooms of the passage, labelled from the source. The drawing inks itself in, and holds still if you have asked your system for less motion.</sub>
+</div>
 
 - A request for a **protected** path without a session is redirected to Entra (authorization code flow with PKCE).
   For an **api** path it gets a plain 401, so a script is never handed an HTML login page. A **public** path passes
@@ -97,7 +114,7 @@ You need Docker. The PHP component needs PHP 8.3 or newer and Composer, but the 
 **Windows (PowerShell)**
 
 ```powershell
-git clone <this repo> drawbridge; cd drawbridge
+git clone https://github.com/waynestate/drawbridge.git; cd drawbridge
 docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 composer install --no-interaction
 Copy-Item .env.example .env
 Copy-Item config\drawbridge.example.yaml config\drawbridge.yaml
@@ -108,7 +125,7 @@ docker build -f docker/gateway/Dockerfile -t drawbridge-gateway .
 **Linux and macOS**
 
 ```sh
-git clone <this repo> drawbridge && cd drawbridge
+git clone https://github.com/waynestate/drawbridge.git && cd drawbridge
 docker run --rm -v "$PWD:/app" -w /app composer:2.10.3 composer install --no-interaction
 cp .env.example .env
 cp config/drawbridge.example.yaml config/drawbridge.yaml
@@ -159,6 +176,25 @@ One app registration covers every app host. In the Entra admin center, under App
    Neither is a secret, but neither belongs in this repository either.
 6. **Authentication contexts** (only if a path uses `auth_context`): in Conditional Access, create the context
    (`c1` ...), and a policy that targets it with whatever it should demand.
+
+## Getting the image
+
+The pipeline builds the gateway image on every merge request and on the default branch, and publishes it to this
+project's GitLab container registry when a tag is pushed. The image is at `<this project's registry>/gateway:<tag>`
+(for example `<this project's registry>/gateway:0.2.0`). There is no `latest` tag: pin a release.
+
+```sh
+docker pull <this project's registry>/gateway:0.2.0
+```
+
+The publish job prints the digest it pushed. Verify the image you pulled against it:
+
+```sh
+docker inspect --format='{{index .RepoDigests 0}}' <this project's registry>/gateway:0.2.0
+```
+
+The image carries OCI labels (`org.opencontainers.image.source`, `.revision`, `.version`, `.licenses`) set from the
+pipeline's commit; a local `docker build` leaves them empty.
 
 ## Configuration
 
@@ -212,6 +248,8 @@ of the match. A path with an encoded slash, a backslash, a semicolon, a control 
 | `DRAWBRIDGE_SESSION_CACHE_ENTRIES` | `1000` | entries in the shared-memory cache: sessions, nonces, provider metadata (minimum 10) |
 | `DRAWBRIDGE_RUN_DIR` | `/tmp/drawbridge` | scratch for rendered config, locks and the session cache |
 | `DRAWBRIDGE_LOG_LEVEL` | `warn` | Apache log level |
+| `DRAWBRIDGE_METRICS_TOKEN` | none | bearer token that may read `/metrics`; empty turns the endpoint off unless an allow list is set |
+| `DRAWBRIDGE_METRICS_ALLOW` | none | comma list of client IPs/CIDRs allowed to read `/metrics`; empty trusts no address |
 
 ## Commands
 
@@ -237,6 +275,15 @@ In Docker, with no local PHP:
 docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
 ```
 
+The unit suite checks the assertion against a mirror of SESAME's `gateway` driver rules
+(`tests/Support/SesameContract.php`). To check it against the real driver instead, point `SESAME_PATH`
+at a SESAME checkout that has been installed (`composer install` in it) and run the integration suite;
+without it the suite skips, so `composer ci` stays green:
+
+```powershell
+docker run --rm -v "${PWD}:/app" -v "C:\path\to\sesame:/sesame:ro" -e SESAME_PATH=/sesame -w /app composer:2.10.3 sh -c "composer install --no-interaction && vendor/bin/phpunit --filter RealSesame"
+```
+
 The container rig runs the real gateway image with a mock OpenID Connect provider
 ([mock-oauth2-server](https://github.com/navikt/mock-oauth2-server), pinned) standing in for Entra, and a tiny echo
 app. It covers sign-in, public and protected paths, header spoofing (including forged `OIDC_*` headers), path tricks,
@@ -257,12 +304,63 @@ sh rig/run.sh        # Linux, macOS
 Point SESAME's `gateway` driver at DRAWBRIDGE: the same issuer, the app's host as the audience, the signing public
 key, and the header `X-Sesame-Assertion`. Apps do not parse the token themselves.
 
+## Metrics
+
+DRAWBRIDGE can expose a Prometheus `/metrics` endpoint, off by default. It is on when `DRAWBRIDGE_METRICS_TOKEN`
+(a bearer token) or `DRAWBRIDGE_METRICS_ALLOW` (a comma list of client IPs/CIDRs) is set, and a request is served
+when it presents the token or comes from an allowed address. A disabled or misconfigured endpoint answers 404 and an
+unauthorized request answers 403, so the route is never advertised and never served to a stranger. The client
+address is `REMOTE_ADDR` (the real client), never a client-supplied header, so a spoofed `X-Forwarded-For` cannot
+grant access, and the token is compared in constant time.
+
+Point a web server at `bin/metrics` for the path. In the rendered Apache config a location such as:
+
+```apache
+<Location "/metrics">
+    SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+    ScriptAlias /metrics /opt/drawbridge/bin/metrics
+</Location>
+```
+
+serves it (the `SetEnvIf` passes the bearer token through; without it only the allow list works).
+
+The endpoint serves only what it can see truthfully:
+
+| Metric | Type | Meaning |
+|---|---|---|
+| `drawbridge_build_info{version}` | gauge | the gateway is up, and which version |
+
+The assertion-signing counters (`drawbridge_signing_requests_total`, `drawbridge_assertions_signed_total`,
+`drawbridge_assertion_errors_total{reason}`) are kept in the signer for in-process use but are not registered on the
+endpoint until a shared store lets it see the signer's counters; a counter that is always zero is not shown. Apache,
+not PHP, serves the requests, so request counts by path class are not exposed here either, and public requests and
+sign-in failures never reach the PHP side; mod_auth_openidc would need its own status or log scraping to expose
+those. Labels carry no identity, claim, or token, and the `reason` label is folded to a fixed set, so it stays
+low-cardinality.
+
+The counters live in the signer's memory. The endpoint is a separate, per-request process, so by default (the
+`InMemory` adapter) it reports build info only. To share the signer's live counters with the endpoint, pass the same
+shared adapter (for example `Prometheus\Storage\APCng`, which needs the APCu extension) to both; without a shared
+store, PHP's share-nothing model cannot see across processes.
+
 ## Documents
 
 - `BEST_PRACTICES.md`: the short list of rules the gateway holds itself to.
 - `OPEN_QUESTIONS.md`: what is unanswered, what is missing, what is not built yet.
 - `CHANGELOG.md`: what changed.
 - `site/`: the front page, a static sheet set for the gatehouse (`site/index.html`; see `site/README.md`).
+
+<details>
+<summary><b>Sheets</b>: three windows onto the gatehouse</summary>
+<br>
+<div align="center"><img src="docs/readme/gallery.jpg" width="100%" alt="Three phone-width crops of the front page: the longitudinal section One request through the gatehouse with its first passage rooms, the general notes Thirteen rules each with a test, and the build sheet with the install commands."></div>
+</details>
+
+<details>
+<summary><b>The brand board</b>: the mark, lockups, palette and type</summary>
+<br>
+<div align="center"><img src="docs/readme/board.jpg" width="100%" alt="DRAWBRIDGE's brand board: the gatehouse mark on a Wayne State green tile, its lockups, the palette of green, gold and cream, the type, favicons and clear space."></div>
+</details>
 
 ## The name
 
@@ -272,3 +370,24 @@ raise the issue. The moat is only as good as the people who keep reporting where
 ## Licence
 
 MIT. Copyright Wayne State University.
+
+<div align="center"><b>Same castle, every sheet</b><br><sub>WayneUI and the stack. DRAWBRIDGE minds the gate.</sub></div>
+
+<div align="center">
+  <a href="https://github.com/waynestate/wayne-ui" title="WayneUI"><img src="docs/readme/cast/wayneui.png" width="40" alt="WayneUI"></a>
+  <a href="https://github.com/waynestate/creed" title="CREED"><img src="docs/readme/cast/creed.png" width="40" alt="CREED"></a>
+  <a href="https://github.com/waynestate/proctor" title="PROCTOR"><img src="docs/readme/cast/proctor.png" width="40" alt="PROCTOR"></a>
+  <a href="https://github.com/waynestate/sesame" title="SESAME"><img src="docs/readme/cast/sesame.png" width="40" alt="SESAME"></a>
+  <a href="https://github.com/waynestate/helmet" title="HELMET"><img src="docs/readme/cast/helmet.png" width="40" alt="HELMET"></a>
+  <a href="https://github.com/waynestate/sourdough" title="Sourdough"><img src="docs/readme/cast/sourdough.png" width="40" alt="Sourdough"></a>
+  <a href="https://github.com/waynestate/squire" title="SQUIRE"><img src="docs/readme/cast/squire.png" width="40" alt="SQUIRE"></a>
+  <a href="https://github.com/waynestate/preflight" title="PREFLIGHT"><img src="docs/readme/cast/preflight.png" width="40" alt="PREFLIGHT"></a>
+  <a href="https://github.com/waynestate/pinstripe" title="Pinstripe"><img src="docs/readme/cast/pinstripe.png" width="40" alt="Pinstripe"></a>
+  <a href="https://github.com/waynestate/booster" title="BOOSTER"><img src="docs/readme/cast/booster.png" width="40" alt="BOOSTER"></a>
+  <a href="https://github.com/waynestate/rollcall" title="ROLLCALL"><img src="docs/readme/cast/rollcall.png" width="40" alt="ROLLCALL"></a>
+  <a href="https://github.com/waynestate/drawbridge" title="DRAWBRIDGE"><img src="docs/readme/cast/drawbridge.png" width="40" alt="DRAWBRIDGE"></a>
+  <a href="https://github.com/waynestate/advisor" title="ADVISOR"><img src="docs/readme/cast/advisor.png" width="40" alt="ADVISOR"></a>
+  <a href="https://github.com/waynestate/weld" title="WELD"><img src="docs/readme/cast/weld.png" width="40" alt="WELD"></a>
+</div>
+
+<div align="center"><sub>Images are regenerated from the front page and the source by <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>. Drawn, not quartered.</sub></div>

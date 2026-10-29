@@ -1,6 +1,15 @@
+<div align="center">
+  <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="ROLLCALL's front page: the headline 'Every app answers present.' beside a sheet of ruled register paper listing sample apps, each marked present, late or back row, over the green roll-book mark."></a>
+</div>
+
 # ROLLCALL
 
-[![GitHub CI](https://github.com/waynestate/rollcall/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/rollcall/actions/workflows/ci.yml)
+<p>
+  <img src="docs/readme/badges/php.svg" alt="php ^8.3">
+  <img src="docs/readme/badges/license.svg" alt="licence MIT">
+  <img src="docs/readme/badges/exit-codes.svg" alt="exit codes 0 ok, 2 error">
+  <a href="https://github.com/waynestate/rollcall/actions/workflows/ci.yml"><img src="https://github.com/waynestate/rollcall/actions/workflows/ci.yml/badge.svg" alt="GitHub CI"></a>
+</p>
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
@@ -11,11 +20,17 @@ Front page: [`site/index.html`](site/index.html) (static, no build step; see `si
 ROLLCALL is the fleet scanner. For every app it answers one question: what is it running, and where does that stand
 against the policy? It reports the PHP image, the declared PHP floor, the Laravel version, the auth package and its
 version, and the PROCTOR result, then checks each version against CREED's `policy.json` by date. It keeps one snapshot
-per scan, so it can show drift and an EOL burn-down over time.
+per scan, so it can show drift and an EOL burn-down over time, and prunes the old ones after the retention window
+(default 90 days; the newest snapshot always stays).
 
 ROLLCALL enforces nothing. It never opens an issue, comments, or deploys, and it exits `0` however the fleet looks.
 The public report is counts and progress only: no app names, no owners, no ranking. The per-app list is internal.
 (Like a good attendance sheet, it is for noticing who is missing, not for shaming them.)
+
+<div align="center">
+  <img src="docs/readme/register.svg" width="100%" alt="A page of ROLLCALL's roll book: seventeen sample apps called down the register one at a time, each answered with a stamp: seven present, five late, four back row and one inaudible.">
+  <br><sub>One page of the roll book, called name by name. Sample data: the apps are fictional, and a real scan's per-app list stays internal.</sub>
+</div>
 
 ## Where it sits in WELD
 
@@ -37,9 +52,15 @@ WELD is Wayne State's application stack. ROLLCALL is the roll book for the whole
 
 A framework-free core (`src/`) plus thin entry points that hold no rules:
 
-- `bin/rollcall`: the CLI (`scan`, `report`, `drift`). One PHP command, so it works the same on Windows, macOS and Linux.
+- `bin/rollcall`: the CLI (`scan`, `report`, `drift`, `prune`). One PHP command, so it works the same on Windows, macOS and Linux.
 - `public/index.php`: a raw-PHP front controller for `GET /metrics` and `GET /report.json`.
-- `src/Laravel/`: a Laravel adapter with a dashboard page, a `/metrics` route and `php artisan rollcall:scan`.
+- `src/Laravel/`: a Laravel adapter with a dashboard page, a `/metrics` route and `php artisan rollcall:scan` and `rollcall:prune`.
+
+CREED's policy reader is carried as a generated copy under `src/Creed/` (namespace `Waynestate\Rollcall\Creed`),
+made by CREED's `bin/export.php` until CREED is on Packagist. Refresh it from a CREED checkout with
+`php <creed>/bin/export.php --namespace='Waynestate\Rollcall\Creed' --to=src/Creed`, and prove the copy has not
+drifted with `composer creed-copy:check` (it reads the checkout from `CREED_PATH`). A hand edit to `src/Creed/`
+fails that check.
 
 Data comes in through three interfaces, each with a fixture adapter, so nothing here needs a live host to try:
 
@@ -95,20 +116,26 @@ runs.
 ## Commands
 
 ```
-rollcall scan   [--today=YYYY-MM-DD]
+rollcall scan   [--today=YYYY-MM-DD] [--prune[=DAYS]]
 rollcall report [--format=text|json|prometheus] [--internal] [--today=YYYY-MM-DD]
 rollcall drift  --feed=<file> [--component=php] [--today=YYYY-MM-DD]
+rollcall prune  [--days=N] [--dry-run] [--today=YYYY-MM-DD]
 ```
 
 - `scan` calls the roll once and stores `<ROLLCALL_STORE_DIR>/<date>.json`. Scanning twice in a day replaces that
   day's snapshot. A gap in one source (a missing report, a bad image tag) becomes a note on that app, not a failed
   scan. A refused GitLab token stops the scan loudly instead of producing a flattering partial answer.
+  `--prune[=DAYS]` deletes snapshots older than that many days after saving (default: `ROLLCALL_RETENTION_DAYS`,
+  90; 0 keeps everything).
 - `report` prints the latest snapshot against the policy as of today. `text` is a terminal table, `json` is the
   machine-readable form, `prometheus` is the metrics text (refused unless `ROLLCALL_METRICS_ENABLED=true`).
   `--internal` adds the per-app list; keep that output inside the project.
 - `drift` compares `policy.json` with a saved endoflife.date v1 product page (for example
   `https://endoflife.date/api/v1/products/php/` saved to a file). A difference is a flag for a person to look at; the
   policy stays the source of truth. ROLLCALL does not fetch that page itself.
+- `prune` deletes snapshots older than `--days` (default: `ROLLCALL_RETENTION_DAYS`, 90; 0 keeps everything). The
+  newest snapshot is never deleted, even if it is older than the cut-off, so the dashboard always has data.
+  `--dry-run` lists what would go without deleting anything.
 
 Exit codes: `0` ok, `2` tool error (bad option, unreadable policy, a source that refused). There is no `1`: ROLLCALL
 does not gate anything.
@@ -125,8 +152,8 @@ does not gate anything.
   the internal view each upgraded app carries the day it landed.
 - **EOL burn-down**: for each scan day, how many apps ran an EOL image on that day.
 
-State is never decided in code: it is derived from the dates in `policy.json`. A version older than anything the
-policy lists counts as EOL; a version newer than the policy knows is `unknown`.
+State is never decided in code: it is derived from the dates in `policy.json` by CREED's reader. A version the
+policy does not list is `unknown`.
 
 ## Configuration
 
@@ -144,6 +171,7 @@ Every setting is an environment variable. `.env.example` holds placeholders; nev
 | `ROLLCALL_IMAGES_FILE` | Export of the app list: `{"apps": [{"project": "group/project", "image": "php:8.4-apache"}]}` | none |
 | `ROLLCALL_PROCTOR_DIR` | PROCTOR JSON reports, one per app: `group/project` is read from `group__project.json` | none |
 | `ROLLCALL_AUTH_PACKAGES` | Comma-separated Composer packages that count as an auth package | the built-in list |
+| `ROLLCALL_RETENTION_DAYS` | How many days of snapshots to keep; the newest is never deleted | `90` (0 keeps everything) |
 | `ROLLCALL_METRICS_ENABLED` | Turn metrics on (`CLI report --format=prometheus` and `/metrics`) | `false` |
 | `ROLLCALL_METRICS_TOKEN` | Bearer token a scraper must present | none |
 | `ROLLCALL_METRICS_ALLOW` | Comma-separated scraper IP addresses (exact match) | none |
@@ -200,9 +228,50 @@ check can run beside the code it protects.
 - PROCTOR reports, image tags and app ids are outside input: shapes are validated, text is bounded, and terminal output
   strips control characters.
 
+<details>
+<summary>Watch the back row empty (the burn-down, sample data)</summary>
+
+<br>
+
+<img src="docs/readme/burn-down.jpg" width="100%" alt="ROLLCALL's sample burn-down: hatched bars of apps on an end-of-life PHP image falling from 19 on August 12 to 4 on October 28, with a red line over the top and the last bar filled green.">
+
+<sub>The same line Grafana draws from <code>/metrics</code>. Made-up apps, real arithmetic.</sub>
+
+</details>
+
+<details>
+<summary>The brand board (the cover of the book)</summary>
+
+<br>
+
+<img src="docs/readme/board.jpg" width="100%" alt="ROLLCALL's brand board: the open roll-book mark with a gold tick on a green tile, lockups, the green, gold and cream palette, type, favicons, and do and don't panels.">
+
+</details>
+
 ## Contributing
 
 This repository is published from Wayne State University's internal GitLab and mirrored to GitHub. Changes land there
 first; Wayne State developers open issues and merge requests on the internal project.
 
 Licence: MIT, Copyright Wayne State University.
+
+<div align="center"><b>The whole class</b><br><sub>WayneUI and the stack. Everyone is here today; the ones in the back row know who they are.</sub></div>
+
+<div align="center">
+  <a href="https://github.com/waynestate/wayne-ui" title="WayneUI"><img src="docs/readme/cast/wayneui.png" width="40" alt="WayneUI"></a>
+  <a href="https://github.com/waynestate/creed" title="CREED"><img src="docs/readme/cast/creed.png" width="40" alt="CREED"></a>
+  <a href="https://github.com/waynestate/proctor" title="PROCTOR"><img src="docs/readme/cast/proctor.png" width="40" alt="PROCTOR"></a>
+  <a href="https://github.com/waynestate/sesame" title="SESAME"><img src="docs/readme/cast/sesame.png" width="40" alt="SESAME"></a>
+  <a href="https://github.com/waynestate/helmet" title="HELMET"><img src="docs/readme/cast/helmet.png" width="40" alt="HELMET"></a>
+  <a href="https://github.com/waynestate/sourdough" title="Sourdough"><img src="docs/readme/cast/sourdough.png" width="40" alt="Sourdough"></a>
+  <a href="https://github.com/waynestate/squire" title="SQUIRE"><img src="docs/readme/cast/squire.png" width="40" alt="SQUIRE"></a>
+  <a href="https://github.com/waynestate/preflight" title="PREFLIGHT"><img src="docs/readme/cast/preflight.png" width="40" alt="PREFLIGHT"></a>
+  <a href="https://github.com/waynestate/pinstripe" title="Pinstripe"><img src="docs/readme/cast/pinstripe.png" width="40" alt="Pinstripe"></a>
+  <a href="https://github.com/waynestate/booster" title="BOOSTER"><img src="docs/readme/cast/booster.png" width="40" alt="BOOSTER"></a>
+  <a href="https://github.com/waynestate/rollcall" title="ROLLCALL"><img src="docs/readme/cast/rollcall.png" width="40" alt="ROLLCALL"></a>
+  <a href="https://github.com/waynestate/drawbridge" title="DRAWBRIDGE"><img src="docs/readme/cast/drawbridge.png" width="40" alt="DRAWBRIDGE"></a>
+  <a href="https://github.com/waynestate/advisor" title="ADVISOR"><img src="docs/readme/cast/advisor.png" width="40" alt="ADVISOR"></a>
+  <a href="https://github.com/waynestate/weld" title="WELD"><img src="docs/readme/cast/weld.png" width="40" alt="WELD"></a>
+</div>
+
+<div align="center"><sub>Images are regenerated from the front page by <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>. Present.</sub></div>

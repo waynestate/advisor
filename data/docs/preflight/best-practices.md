@@ -297,7 +297,11 @@ Citadel-matching images later (see 4.2) without a new major version.
 
 Sources: [GitLab: component examples, inputs for image versions](https://docs.gitlab.com/ci/components/examples/).
 
-**How the stack holds it: Not yet.** Two of three components comply. `php-test` hard-codes `php:${PHP_VERSION}-cli`.
+**How the stack holds it: Checked.** Every component takes `image` as an input, and every job's `image:` is
+`$[[ inputs.image ]]`. `php-test`'s default is `php:${PHP_VERSION}-cli-trixie`: the literal `${PHP_VERSION}`
+survives input interpolation, and GitLab expands it in the image at job time, so the matrix keeps working.
+`tests/check-image-inputs.sh` (and its `.ps1` twin) fail if a job's `image:` stops being an input or a default
+`php:` tag loses its Debian release name.
 
 ### 2.11 Print which component version ran
 Use `spec:component` and `$[[ component.sha ]]` or `$[[ component.version ]]` to write the component's own version into
@@ -440,8 +444,8 @@ templates do not switch on the target yet.
 
 Second pass, rate limits re-checked in Docker's docs: unauthenticated pulls are limited to 100 per 6 hours per IPv4
 address or IPv6 /64 subnet, and free authenticated users to 200 per 6 hours. A shared instance runner usually sits behind
-one address. A default pipeline pulls about six images (four PHP versions, `composer:2`, `php:8.4-cli`), so roughly
-sixteen cold pipelines per six hours would use up the unauthenticated limit for the whole runner. That is arithmetic
+one address. A default pipeline pulls about five images (three PHP versions, `composer:2`, `php:8.4-cli`), so
+twenty cold pipelines per six hours would use up the unauthenticated limit for the whole runner. That is arithmetic
 from the documented limit and an assumed single address, not a measured result. GitLab's dependency proxy for container
 images is on all tiers, is enabled by default on self-managed, caches manifests and layers, and supports pulls by digest
 through `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/image@sha256:...`. It can also hold Docker Hub credentials for the group.
@@ -547,7 +551,7 @@ Why: pipelines run faster, and an unreviewed branch cannot poison the cache that
 
 Sources: [GitLab: caching](https://docs.gitlab.com/ci/caching/).
 
-**How the stack holds it: Not yet.** The templates define no cache, so each matrix job downloads all packages again.
+**How the stack holds it: Checked.** `php-test` caches Composer downloads in `.composer-cache/`, keyed on `composer.lock` and prefixed with the PHP version, so a dependency change invalidates the cache and each PHP version gets its own cache. `tests/check-php-test-cache.sh` (and its `.ps1` twin) fail if the key stops depending on `composer.lock` or the prefix stops including the PHP version. `proctor` and `composer-audit` still define no cache.
 
 Second pass: GitLab appends `-protected` or `-non_protected` to every cache key. Pipelines on protected branches or tags,
 and pipelines started by a Maintainer or Owner, get `-protected`. The separation is on by default and GitLab calls it
@@ -590,9 +594,11 @@ image family of the target you deploy to.
 
 Sources: [Docker Official Image: php](https://github.com/docker-library/docs/blob/master/php/README.md).
 
-**How the stack holds it: Not yet.** The defaults use the bare `cli` tag of the official `php` images, the default for
-raw Docker, OpenShift and Coolify. For the `citadel` target, the jobs should run on Citadel's own images; which Debian
-release those use is not stated in the documents read for this guide.
+**How the stack holds it: Checked.** The `php:` defaults name the Debian release: `php-test` defaults to
+`php:${PHP_VERSION}-cli-trixie` and `proctor` to `php:8.4-cli-trixie@sha256:...` (Debian 13, the release the
+bare `cli` tags point at as of 2026-10-28). `tests/check-image-inputs.sh` (and its `.ps1` twin) fail if a
+default `php:` tag loses its Debian release name. For the `citadel` target, the jobs should run on Citadel's
+own images; which Debian release those use is not stated in the documents read for this guide.
 
 ### 4.11 Use Composer's malware and advisory blocking, and review lock changes
 Run Composer 2.10 or later so flagged versions are refused at install and audit. Review `composer.lock` diffs after any
@@ -677,6 +683,30 @@ Sources: [ESLint](https://eslint.org/); [Prettier](https://prettier.io/).
 `npm ci --ignore-scripts` and runs `npx --no-install eslint` and `npx --no-install prettier --check` against the
 app's own config. Like every component, an app can skip the include, so the enforcement is "when included". ESLint is
 the preflight checklist for your JavaScript.
+
+### 4.17 Build images without privileged runners or the Docker socket
+Do not give a job `privileged: true`, a Docker-in-Docker service, or a mount of the host's `/var/run/docker.sock`
+just to build an image.
+
+Why: a privileged container can reach the host's devices and step outside the sandbox, and a mounted Docker socket
+hands the job the host's Docker daemon, which runs as root on the machine. Either one turns a CI job into a path to
+the runner host, and on a shared instance runner that is every project on it.
+
+Sources: [GitLab Runner: security](https://docs.gitlab.com/runner/security/);
+[CISA and NSA: Defending CI/CD environments](https://cisa.gov/news-events/alerts/2023/06/28/cisa-and-nsa-release-joint-guidance-defending-continuous-integrationcontinuous-delivery-cicd).
+
+**How the stack holds it: Enforced.** The template lint (`bin/lint-templates`, run by `composer ci`) fails a
+template on all four patterns. Rule `privileged` reports "privileged: true is not allowed"; rule `dind-service`
+reports "Docker-in-Docker service is not allowed" for any `docker:dind` or `*-dind` service; rule `docker-sock`
+reports "references docker.sock" for any string that names the socket; rule `kaniko-image` reports "Kaniko image is
+not allowed" for a Kaniko image or service. None of the components builds an image, so nothing in `templates/` needs
+an allowlist entry.
+
+What to do instead: keep image building out of the pipeline jobs. Where a build must run in CI, use a builder that
+does not need privileges, such as [BuildKit in rootless mode](https://github.com/moby/buildkit/blob/master/docs/rootless.md)
+or [Buildah](https://buildah.io/) run rootless. Kaniko is not the fallback here: Google archived the upstream project
+in 2025, so it no longer gets fixes, and the lint rejects it. The runner side of the same rule is 5.3. A mounted
+Docker socket is the one line the preflight checklist never signs.
 
 ---
 

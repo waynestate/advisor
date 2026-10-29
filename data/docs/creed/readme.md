@@ -1,13 +1,24 @@
+<div align="center">
+  <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="CREED's front page: the title page of the Wayne State App Stack Code, 2026 edition, with clause §0.1 spelling out the name, and a green cloth-bound book stamped with CREED's keystone arch mark."></a>
+</div>
+
 # CREED
 
-[![CI](https://github.com/waynestate/creed/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/creed/actions/workflows/ci.yml)
-[![GitHub Actions](https://github.com/waynestate/creed/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/creed/actions/workflows/ci.yml)
+<div align="center">
+  <img src="docs/readme/badges/php.svg" alt="php ^8.3">
+  <img src="docs/readme/badges/license.svg" alt="licence MIT">
+  <img src="docs/readme/badges/policy.svg" alt="policy schema v1, 6 components">
+  <a href="https://github.com/waynestate/creed/actions/workflows/ci.yml"><img src="https://github.com/waynestate/creed/actions/workflows/ci.yml/badge.svg" alt="GitHub CI"></a>
+</div>
+
+**The standard everything rests on.** The Wayne State App Stack Code: one policy file, one reader, and an
+inspector who stamps what he finds.
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
 Front page: [`site/index.html`](site/index.html), a static page you can open in a browser or serve from `site/`.
 
-One command, two clouds, zero excuses — higher.
+One command, two clouds, zero excuses. Higher.
 
 ![Singer of the band Creed in a white tank top and black leather pants on a stage with a red backdrop, one arm stretched out over a cheering crowd](https://media.giphy.com/media/BsQ4hGk3leUxGVCS5X/giphy.gif)
 <sub>GIF via [Giphy](https://giphy.com/gifs/creed-higher-BsQ4hGk3leUxGVCS5X)</sub>
@@ -48,12 +59,49 @@ $floor = $policy->oldestSupported('php', new DateTimeImmutable('2026-10-27'));
 // '8.2'
 ```
 
+### Reading the policy from PHP
+
+The reader's public members, one line each:
+
+- `Policy::bundled()`, `Policy::fromFile($path)`, `Policy::fromArray($data)`: load a policy; `origin()` says where it came from.
+- `stateOf($component, $version, $on)`: the state, or an exception; `tryStateOf()` is the same answer as `null` when it cannot be answered.
+- `oldestSupported($component, $on)`: the lowest version still Active or Security; `supported()` lists all of them, oldest first.
+- `latestPatch($component, $version)`: the current patch in that line; `latestPatchChecked()` says when it was last checked.
+- `line($component, $version)`: the raw line, with `active_until`, `security_until`, `latest_patch`, `latest_patch_checked` (each a string or null) and `current` (true or null).
+- `activeUntil()`, `securityUntil()`: those dates as `DateTimeImmutable`, or null.
+- `daysToEol($component, $version, $on)`: whole days until `security_until`, signed; `isPastGrace()` says whether the grace period is over.
+- `resolveVersion($component, $version)`: the policy line a full version like `8.3.12` belongs to.
+- `isAheadOfPolicy($component, $version)`: whether a version sorts above every line the policy lists.
+- `hasComponent()`, `components()`, `versions($component)`, `tools()`, `toolMinimum($tool)`, `rules()`: the shape of the policy itself.
+
+One last time: the reader answers, it does not guess.
+
 ### With Arms Wide Open
 
 The support window stays open until `security_until`. A version is still
 `Security` on that day, moves to `Eol` the day after, and stays in `Eol` for
 `eol_grace_days` (90) more days before it is `EolGraceExpired`. The boundary
 is inclusive, and the reader never guesses.
+
+<div align="center"><img src="docs/readme/form-cr1.svg" width="100%" alt="Form CR-1 from the front page, filled in four times from policy.json and stamped: PHP 8.2 on 2026-10-28 is Security only, 64 days left; PHP 8.2 on 2027-01-01 is EOL, in grace until 2027-03-31; PHP 8.1 on 2026-10-28 is past grace; Laravel 13 on 2026-10-28 is Supported."></div>
+<div align="center"><sub>Form CR-1, as the front page fills it in: four real rows of <code>policy/policy.json</code>, the same answers <code>Policy::stateOf</code> gives, stamped.</sub></div>
+
+<details>
+<summary><b>Read the rest of the book</b>: the contents, Table 2-1 and the errata slip, as printed on a phone</summary>
+<br>
+<div align="center"><img src="docs/readme/gallery.jpg" width="100%" alt="Three pages of the front page on a phone: the table of contents (ten chapters, 54 practices), Table 2-1 with each PHP edition's dates and state, and the errata slip of open amendments."></div>
+</details>
+
+### Versions CREED hasn't heard of
+
+The reader refuses what it does not know, except the newest thing. A version
+that sorts above every line the policy lists is `Active`, and
+`isAheadOfPolicy()` says so. A version that falls between listed lines is
+still unknown, and still throws. Current versions are never refused.
+
+A line marked `"current": true` is `Active` on every date and carries no
+`security_until`: the policy says the line is current, and the reader does not
+guess when it stops being so.
 
 ### Higher
 
@@ -68,14 +116,31 @@ The rules, chapter by chapter, live in [`handbook/`](handbook/README.md).
 
 ## Keeping the patches fresh
 
-`bin/refresh-patches.php` re-reads the upstream feeds and rewrites the
-`latest_patch` fields in `policy/policy.json`. A scheduled CI job runs it every
+`bin/refresh-patches.php` re-reads the upstream feeds, rewrites the
+`latest_patch` fields in `policy/policy.json`, and proposes new Vue lines from
+endoflife.date. A scheduled CI job runs it every
 Monday and fails the pipeline when the policy is stale; a person then runs the
-tool and commits the result. CI never pushes — it only raises its hand.
+tool and commits the result. CI never pushes. It only raises its hand.
 
 The schedule is a GitLab project setting, not a file in this repo: someone
 creates it under CI/CD > Schedules (weekly, Monday). The GitHub mirror runs the
 same check on a cron and on demand.
+
+## Carrying CREED in another package
+
+CREED is not on Packagist yet, so PROCTOR, BOOSTER, ROLLCALL and ADVISOR each
+carry a generated copy of the reader under their own namespace, and two tools
+in one app never fight over a class name (the generator below keeps the copies
+in step). CREED owns the generator and the check:
+
+```
+php bin/export.php --namespace=Waynestate\Proctor\Creed --to=vendor/creed-copy
+php bin/export.php --check --namespace=Waynestate\Proctor\Creed --to=vendor/creed-copy
+```
+
+The copy is the reader with the namespace rewritten and `bundled()` repointed
+at its own `policy.json`; `--check` fails when the copy drifts from the source.
+Creed Bratton would have a form for this.
 
 ## Tests
 
@@ -103,3 +168,30 @@ recommends a git.wayne.edu instance runner.
 
 Creed Bratton, whose quality assurance work we all admire. His past is a
 mystery. Ours is in `policy/policy.json`, where it belongs.
+
+<details>
+<summary><b>The brand board</b>: the keystone arch, the lockups, the cloth, the ink and the type</summary>
+<br>
+<div align="center"><img src="docs/readme/board.jpg" width="100%" alt="CREED's brand board: the stone arch mark with its gold keystone, lockups, the palette and the type."></div>
+</details>
+
+<div align="center"><b>Authorities having jurisdiction</b><br><sub>WayneUI and the stack. Every one of them reads its dates from here.</sub></div>
+
+<div align="center">
+  <a href="https://github.com/waynestate/wayne-ui" title="WayneUI"><img src="docs/readme/cast/wayneui.png" width="40" alt="WayneUI"></a>
+  <a href="https://github.com/waynestate/creed" title="CREED"><img src="docs/readme/cast/creed.png" width="40" alt="CREED"></a>
+  <a href="https://github.com/waynestate/proctor" title="PROCTOR"><img src="docs/readme/cast/proctor.png" width="40" alt="PROCTOR"></a>
+  <a href="https://github.com/waynestate/sesame" title="SESAME"><img src="docs/readme/cast/sesame.png" width="40" alt="SESAME"></a>
+  <a href="https://github.com/waynestate/helmet" title="HELMET"><img src="docs/readme/cast/helmet.png" width="40" alt="HELMET"></a>
+  <a href="https://github.com/waynestate/sourdough" title="Sourdough"><img src="docs/readme/cast/sourdough.png" width="40" alt="Sourdough"></a>
+  <a href="https://github.com/waynestate/squire" title="SQUIRE"><img src="docs/readme/cast/squire.png" width="40" alt="SQUIRE"></a>
+  <a href="https://github.com/waynestate/preflight" title="PREFLIGHT"><img src="docs/readme/cast/preflight.png" width="40" alt="PREFLIGHT"></a>
+  <a href="https://github.com/waynestate/pinstripe" title="Pinstripe"><img src="docs/readme/cast/pinstripe.png" width="40" alt="Pinstripe"></a>
+  <a href="https://github.com/waynestate/booster" title="BOOSTER"><img src="docs/readme/cast/booster.png" width="40" alt="BOOSTER"></a>
+  <a href="https://github.com/waynestate/rollcall" title="ROLLCALL"><img src="docs/readme/cast/rollcall.png" width="40" alt="ROLLCALL"></a>
+  <a href="https://github.com/waynestate/drawbridge" title="DRAWBRIDGE"><img src="docs/readme/cast/drawbridge.png" width="40" alt="DRAWBRIDGE"></a>
+  <a href="https://github.com/waynestate/advisor" title="ADVISOR"><img src="docs/readme/cast/advisor.png" width="40" alt="ADVISOR"></a>
+  <a href="https://github.com/waynestate/weld" title="WELD"><img src="docs/readme/cast/weld.png" width="40" alt="WELD"></a>
+</div>
+
+<div align="center"><sub>Images are regenerated from the front page and the policy by <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>. Inspected, stamped, and filed one version ahead.</sub></div>

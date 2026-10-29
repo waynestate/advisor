@@ -1,5 +1,7 @@
 # Databases
 
+The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to be interpreted as described in RFC 2119.
+
 ## What the stack supports
 
 The policy lists the MySQL versions in `policy/policy.json`, under `mysql`:
@@ -10,6 +12,14 @@ conventions below keep an app working on the shared server until it is
 upgraded. They are a bridge, not the fix: the fix is the upgrade. Code that
 follows them runs unchanged on 8.4, so the move can be made With Arms Wide
 Open.
+
+## Grace period
+
+An app MAY stay on a database version for 90 days after it leaves support, the
+policy's `eol_grace_days`; the version is `Eol` through that window and
+`EolGraceExpired` the day after, when the gate fails with no override. The
+window is a bridge for the upgrade, not a second support window: the fix is
+still the upgrade.
 
 ## Conventions that keep 5.6 working
 
@@ -70,7 +80,7 @@ owners, not something an app sets (not yet confirmed on a 5.6 server). Passing
 on a 5.6 server.
 
 Oracle moved 5.6 to Sustaining Support on 2021-02-01, so it gets no new fixes.
-Builds older than 5.6.46 also speak only TLS 1.0, which current hosts may
+Builds older than 5.6.46 also speak only TLS 1.0, which current hosts may <!-- lint: allow -->
 refuse (not yet confirmed on a 5.6 server). Both are reasons to plan the move
 rather than wait for it.
 

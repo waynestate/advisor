@@ -1,6 +1,18 @@
+<div align="center">
+  <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="SESAME's front page: the headline 'The way in. One lock, any key.' and the composer require command beside a pegboard where cas, gateway and SAML keys hang around SESAME's open-door mark, over a green service counter that reads 'Same door for every key.'"></a>
+</div>
+
 # SESAME
 
-[![GitHub CI](https://github.com/waynestate/sesame/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/sesame/actions/workflows/ci.yml)
+<p>
+  <img src="docs/readme/badges/php.svg" alt="php ^8.3">
+  <img src="docs/readme/badges/license.svg" alt="licence MIT">
+  <img src="docs/readme/badges/drivers.svg" alt="drivers: fake, cas, gateway">
+  <a href="https://github.com/waynestate/sesame/actions/workflows/ci.yml"><img src="https://github.com/waynestate/sesame/actions/workflows/ci.yml/badge.svg" alt="GitHub CI"></a>
+</p>
+
+**The way in. One lock, any key.** Single Entry, Sessions App-Managed Everywhere: keys cut while you wait, and no
+key ever gets to keep the door.
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub). Both pipelines run the same three checks, so a green build means the same thing on both sides.
 
@@ -88,7 +100,9 @@ On logout, both paths send `Cache-Control: no-store` and
 `Clear-Site-Data: "cache", "storage"` so a back button or a shared browser
 cannot show a signed-in page; `"cookies"` is left out on purpose, because it
 would clear every cookie on the host and sign the user out of every other app
-on wayne.edu, not just this one.
+on wayne.edu, not just this one. Single logout is not supported — the
+identity provider cannot sign the user out of the app's other sessions — so
+SESAME rejects a truthy `slo` (or `single_logout`) config key at boot.
 
 ## Drivers
 
@@ -100,7 +114,20 @@ on wayne.edu, not just this one.
 | `saml` | Later. Direct SP. |
 | `oauth2` | Later. JWT bearer tokens. |
 
+<details>
+<summary><b>Walk round the shop</b>: the front page's counter, pegboard and duplicator</summary>
+<br>
+<div align="center"><img src="docs/readme/gallery.jpg" width="100%" alt="Three cuts of the front page: the hero with SESAME's mark on the pegboard; the pegboard 'One blank per protocol', with fake, cas and gateway marked now and saml and oauth2 marked later; and the duplicator 'Swap the blank. Keep the door.', which re-keys an app from cas to gateway and opens the door for ab1234."></div>
+</details>
+
 ## The cas driver
+
+<div align="center">
+  <img src="docs/readme/duplicator.svg" width="100%" alt="SESAME's key duplicator tracing the cas key. Each of its five notches is one sign-in step: GET /login, /cas/login?service=…, ?ticket=ST-…, /cas/serviceValidate, then findOrImportUser(Identity). The tip is POST /logout to /cas/logout. Then ab1234 is in.">
+  <br>
+  <sub>The duplicator traces the cas key from the front page: five notches, one per sign-in step, and logout at the
+  tip. The cut is the sign-in; the lock is still yours. With reduced motion on, you get the finished key.</sub>
+</div>
 
 The cas driver logs in against a CAS server, CAS 2.0 by default. The base
 URL is required config with no default, and it must include the path the
@@ -560,8 +587,44 @@ docker run --rm -v "${PWD}:/app" -w /app php:8.4-cli vendor/bin/phpunit
 docker run --rm -v "${PWD}:/app" -w /app php:8.5-cli vendor/bin/phpunit
 ```
 
+Static analysis is PHPStan at level 8 plus the Pinstripe strict preset
+(`phpstan/phpstan-strict-rules`): no `empty()`, no mixed in conditions, no
+useless casts, no dynamic calls to static methods. `composer ci` runs the
+whole gate, validate through tests, Pint and PHPStan:
+
+```
+docker run --rm -v "${PWD}:/app" -w /app composer:2 composer ci
+```
+
 ## Strongly recommended: a git.wayne.edu instance runner
 
 git.wayne.edu has no runners today, so CI for this repo runs on the test
 GitLab instance. Every product in the stack strongly recommends a
 git.wayne.edu instance runner.
+
+<details>
+<summary><b>The brand board</b>: the mark, lockups, palette and type</summary>
+<br>
+<div align="center"><img src="docs/readme/board.jpg" width="100%" alt="SESAME's brand board: the open-door mark on a green tile, horizontal and stacked lockups reading 'The way in.', the palette of Wayne State green, gold, cream and slate ink, Lato type, favicon sizes, clear space, and a sign-in button and signed-in header for ab1234."></div>
+</details>
+
+<div align="center"><b>Same door, every key</b><br><sub>WayneUI and the stack. Each one gets in its own way.</sub></div>
+
+<div align="center">
+  <a href="https://github.com/waynestate/wayne-ui" title="WayneUI"><img src="docs/readme/cast/wayneui.png" width="40" alt="WayneUI"></a>
+  <a href="https://github.com/waynestate/creed" title="CREED"><img src="docs/readme/cast/creed.png" width="40" alt="CREED"></a>
+  <a href="https://github.com/waynestate/proctor" title="PROCTOR"><img src="docs/readme/cast/proctor.png" width="40" alt="PROCTOR"></a>
+  <a href="https://github.com/waynestate/sesame" title="SESAME"><img src="docs/readme/cast/sesame.png" width="40" alt="SESAME"></a>
+  <a href="https://github.com/waynestate/helmet" title="HELMET"><img src="docs/readme/cast/helmet.png" width="40" alt="HELMET"></a>
+  <a href="https://github.com/waynestate/sourdough" title="Sourdough"><img src="docs/readme/cast/sourdough.png" width="40" alt="Sourdough"></a>
+  <a href="https://github.com/waynestate/squire" title="SQUIRE"><img src="docs/readme/cast/squire.png" width="40" alt="SQUIRE"></a>
+  <a href="https://github.com/waynestate/preflight" title="PREFLIGHT"><img src="docs/readme/cast/preflight.png" width="40" alt="PREFLIGHT"></a>
+  <a href="https://github.com/waynestate/pinstripe" title="Pinstripe"><img src="docs/readme/cast/pinstripe.png" width="40" alt="Pinstripe"></a>
+  <a href="https://github.com/waynestate/booster" title="BOOSTER"><img src="docs/readme/cast/booster.png" width="40" alt="BOOSTER"></a>
+  <a href="https://github.com/waynestate/rollcall" title="ROLLCALL"><img src="docs/readme/cast/rollcall.png" width="40" alt="ROLLCALL"></a>
+  <a href="https://github.com/waynestate/drawbridge" title="DRAWBRIDGE"><img src="docs/readme/cast/drawbridge.png" width="40" alt="DRAWBRIDGE"></a>
+  <a href="https://github.com/waynestate/advisor" title="ADVISOR"><img src="docs/readme/cast/advisor.png" width="40" alt="ADVISOR"></a>
+  <a href="https://github.com/waynestate/weld" title="WELD"><img src="docs/readme/cast/weld.png" width="40" alt="WELD"></a>
+</div>
+
+<div align="center"><sub>Images are regenerated from the front page by <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>. Open sesame.</sub></div>

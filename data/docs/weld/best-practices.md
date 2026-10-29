@@ -19,7 +19,7 @@ Each practice ends with exactly one tag.
 | `Documented` | Written down in the README or a config file, with no check behind it. |
 | `Not yet` | A gap. |
 
-The tags describe the repo as it stands on 2026-10-28. The Laravel base has landed: the starter kit is in, the password auth (register, login, password reset, two-factor) is removed on purpose, CI runs on both GitLab and GitHub from the same `composer ci` contract, and the stack defaults (PHP floor, stderr logging, database sessions and cache, the 191-character index cap) are set. The stack packages — SESAME, HELMET, PROCTOR, PREFLIGHT, Pinstripe, CREED and WayneUI — are not yet Composer or npm dependencies, so the practices that depend on them are `Not yet` and say which package they wait on. The `Stack:` line on each entry says what the tag should become and which tool owns it.
+The tags describe the repo as it stands on 2026-10-28. The Laravel base has landed: the starter kit is in, the password auth (register, login, password reset, two-factor) is removed on purpose, CI runs on both GitLab and GitHub from the same `composer ci` contract, and the stack defaults (PHP floor, stderr logging, database sessions and cache, the 191-character index cap) are set. The stack packages (SESAME, HELMET, PROCTOR, PREFLIGHT, Pinstripe, CREED and WayneUI) are not yet Composer or npm dependencies, so the practices that depend on them are `Not yet` and say which package they wait on. The `Stack:` line on each entry says what the tag should become and which tool owns it.
 
 ---
 

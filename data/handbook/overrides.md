@@ -1,5 +1,7 @@
 # Overrides
 
+The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to be interpreted as described in RFC 2119.
+
 - Overrides are named, dated and visible (the stack's version policy).
 - An app keeps a `policy-overrides.json` with an expiry date and a reason
   (the stack's version policy).

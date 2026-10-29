@@ -43,7 +43,7 @@ Why: one file changes when a version's dates change, and every tool agrees.
 
 Sources: [PHP supported versions](https://www.php.net/supported-versions.php); the stack's version-policy decision.
 
-**How the stack holds it: Enforced.** `JsonFilePolicySource` derives the state of each version from the file.
+**How the stack holds it: Enforced.** `Policy::fromFile()` (the generated `Waynestate\Proctor\Creed\Policy`) derives the state of each version from the file.
 `PolicyStateTest` pins the boundary days. An unknown version raises "version X not in policy", which the php-floor
 check reports as a failure.
 
@@ -69,7 +69,7 @@ Why: the stack's version policy says older checkers must still read newer policy
 Sources: the stack's version-policy decision; [GitLab Code Quality format: only the listed fields are processed](https://docs.gitlab.com/ci/testing/code_quality/)
 (an example of a reader that ignores extras).
 
-**How the stack holds it: Not yet.** `JsonFilePolicySource` fails with "unsupported schema_version" unless the value is
+**How the stack holds it: Not yet.** `Policy::fromFile()` (the generated `Waynestate\Proctor\Creed\Policy`) fails with "unsupported schema_version" unless the value is
 exactly `1`. That is the opposite of what the stack's version policy asks for.
 
 ### 1.4 Read the banned-constraint list from the policy
@@ -165,8 +165,10 @@ Why: the owner can plan from a date. A bare warning is easy to leave for later, 
 
 Sources: [PHP supported versions](https://www.php.net/supported-versions.php).
 
-**How the stack holds it: Not yet.** `PhpFloorCheck` prints "php floor X is in security-only support" and nothing more.
-The policy file already holds the date.
+**How the stack holds it: Checked.** `PhpFloorCheck` prints the end date and the days left, e.g. "php floor 8.3 is
+in security-only support until 2027-12-31 (430 days left)": the date is the policy file's `security_until`, the days
+are the whole days from the run's date (`--today`) to it, with "1 day left" for one and "ends today" for zero.
+`PhpFloorCheckTest` pins the mid-window, one-day and last-day messages.
 
 ---
 
@@ -609,7 +611,7 @@ Sources: [OASIS SARIF v2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sar
 **How the stack holds it: Enforced.** `SarifWriter` writes a SARIF 2.1.0 log: one run, one rule per distinct check id,
 and one result per non-pass finding, with `fail` mapped to `error`, `warning` to `warning` and `info` to `note`.
 `SarifShapeTest` checks the shape. GitHub code scanning reads it through `github/codeql-action/upload-sarif`.
-PROCTOR now files the mark sheet in the format the head office already reads — no more translating the exam results
+PROCTOR now files the mark sheet in the format the head office already reads. No more translating the exam results
 by hand.
 
 ### 6.6 Make runs reproducible

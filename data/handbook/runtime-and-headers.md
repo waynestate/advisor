@@ -1,5 +1,7 @@
 # Runtime and headers
 
+The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to be interpreted as described in RFC 2119.
+
 To be decided. No ADR decides the runtime and header rules yet, so this
 chapter states no rules.
 
