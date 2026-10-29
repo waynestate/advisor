@@ -60,7 +60,7 @@
             "id": "auth-4",
             "chapter": "auth",
             "heading": "Auth",
-            "text": "Drivers: `cas` (the default today), `gateway`, `saml`, `oauth2`, and `fake` for local development and tests (the stack's auth design).",
+            "text": "Drivers: `cas` (the default today), `gateway`, `oidc`, `oauth2`, `saml` (not built yet), and `fake` for local development and tests (the stack's auth design).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
