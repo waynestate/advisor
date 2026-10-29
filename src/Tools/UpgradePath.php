@@ -41,7 +41,7 @@ final class UpgradePath
                     isset($args['to_laravel']) ? (string) $args['to_laravel'] : null,
                 );
             },
-            group: 'stack',
+            group: 'booster',
             readOnly: true,
             idempotent: true,
             openWorld: false,

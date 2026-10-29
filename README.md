@@ -28,8 +28,8 @@ their coding agent read-only tools into it: the CREED standards and policy, PROC
 the WayneUI markup contract, SESAME and HELMET guidance, and the parts list. Ask it "which PHP can I build on?" and it
 answers from the policy file, with the date and the source, instead of from whatever the model remembers.
 
-It is read-only in 0.1. It cannot write a file, run a shell command, or call out to the network. The one thing it can
-start is the app's own `vendor/bin/proctor`, with a fixed argument shape.
+It is read-only in 0.1. It cannot write a file, run a shell command, or call out to the network. The two things it
+can start are the app's own `vendor/bin/proctor` and BOOSTER's read-only `plan`, both with a fixed argument shape.
 
 ## Where it sits in WELD
 
@@ -124,8 +124,13 @@ Tools (all read-only; each says where its answer came from):
 | `read_project_docs` | A project's README, best practices, or (WayneUI only) markup contract, paged. |
 | `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. |
 | `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
+| `owner_of` | Answers "which project owns X?" from the bundled ownership table, with a fuzzy topic match. |
 | `run_proctor_check` | Runs the app's own `vendor/bin/proctor check` against the bundled policy and returns the findings. |
 | `upgrade_path` | Plans the app's PHP and/or Laravel upgrade, one supported hop at a time, via BOOSTER's read-only `plan`. |
+
+The groups split by what they may start: `stack` never starts a program, `proctor` starts the app's own
+`vendor/bin/proctor`, and `booster` starts BOOSTER's read-only `plan` (never `run`). Set `ADVISOR_GROUPS=stack`
+when you want ADVISOR as pure reference material.
 
 Resources: `advisor://policy` and one `advisor://creed/<chapter>` per handbook chapter.
 Prompts: `orient_me` and `plan_upgrade`.
@@ -154,7 +159,7 @@ ADVISOR reads the process environment only, never a file. The placeholders are i
 | `ADVISOR_ENV` | `APP_ENV`, then `local` | `production` or `prod` always refuses to start. |
 | `ADVISOR_PROJECT_ROOT` | the working directory | The folder `run_proctor_check` may look inside. Paths outside it are refused. |
 | `ADVISOR_READ_ONLY` | on | Set to `0` or `false` to allow tools that write. None exist in 0.1. Read-only wins over `ADVISOR_GROUPS`. |
-| `ADVISOR_GROUPS` | all | Comma list of tool groups to offer (`stack`, `proctor`). |
+| `ADVISOR_GROUPS` | all | Comma list of tool groups to offer (`stack`, `proctor`, `booster`). See below for what each group may start. |
 | `ADVISOR_PROCTOR_TIMEOUT` | `120` | Seconds before a PROCTOR run is stopped (1 to 900). |
 | `ADVISOR_BOOSTER_TIMEOUT` | `60` | Seconds before a BOOSTER plan is stopped (1 to 900). A plan is local and fast, so the default is shorter than a PROCTOR run. |
 | `ADVISOR_BOOSTER_BIN` | none | Where `upgrade_path` finds BOOSTER when the app has no `vendor/bin/booster` of its own: the path to booster's `bin/booster` (or a `booster.phar`). The app's own `vendor/bin/booster` always wins. |
