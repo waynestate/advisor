@@ -240,6 +240,8 @@ the `Waynestate\` namespace, and only if they implement the `Module` interface. 
 
 ## Running the checks
 
+Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
+
 ```
 composer ci
 ```
