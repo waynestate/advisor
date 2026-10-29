@@ -4,5 +4,8 @@
         "vendor",
         "tests/fixtures",
         "data"
+    ],
+    "notPath": [
+        "bin/agent-ready.php"
     ]
 }
