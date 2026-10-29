@@ -22,7 +22,7 @@ Checks: `composer ci` (the same command runs on GitLab and GitHub).
 Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
 
 Front page: [`site/index.html`](site/index.html), a static tailor's shop you can open in a browser or serve from `site/`.
-On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a SQUIRE kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
 <div align="center">
   <img src="docs/readme/tape.svg" width="100%" alt="A yellow tape measure unrolls across a green card with seven marks, one per preset: The cut, Pint, presets per and laravel; The inseam, PHPStan, level 8; The lining, Larastan; The press, Rector, with dead code, code quality, type declarations and early return; The buttonholes, ESLint, javascript and typescript with vue and accessibility; The hem, Prettier, 100 columns, single quotes, semicolons, trailing commas; The chalk line, baseline.">
@@ -240,7 +240,7 @@ Maintainers: how to build, test and release this project, and where its data com
 
 ## Coming next
 
-PREFLIGHT jobs, and reading the PHP floor from CREED.
+Preflight jobs, and reading the PHP floor from CREED.
 
 ## The cast
 
@@ -251,12 +251,12 @@ PREFLIGHT jobs, and reading the PHP floor from CREED.
   <a href="https://github.com/waynestate/sesame" title="SESAME"><img src="docs/readme/cast/sesame.png" width="48" alt="SESAME"></a>
   <a href="https://github.com/waynestate/helmet" title="HELMET"><img src="docs/readme/cast/helmet.png" width="48" alt="HELMET"></a>
   <a href="https://github.com/waynestate/sourdough" title="Sourdough"><img src="docs/readme/cast/sourdough.png" width="48" alt="Sourdough"></a>
-  <a href="https://github.com/waynestate/squire" title="SQUIRE"><img src="docs/readme/cast/squire.png" width="48" alt="SQUIRE"></a>
-  <a href="https://github.com/waynestate/preflight" title="PREFLIGHT"><img src="docs/readme/cast/preflight.png" width="48" alt="PREFLIGHT"></a>
+  <a href="https://github.com/waynestate/squire" title="Squire"><img src="docs/readme/cast/squire.png" width="48" alt="Squire"></a>
+  <a href="https://github.com/waynestate/preflight" title="Preflight"><img src="docs/readme/cast/preflight.png" width="48" alt="Preflight"></a>
   <a href="https://github.com/waynestate/pinstripe" title="Pinstripe"><img src="docs/readme/cast/pinstripe.png" width="48" alt="Pinstripe"></a>
-  <a href="https://github.com/waynestate/booster" title="BOOSTER"><img src="docs/readme/cast/booster.png" width="48" alt="BOOSTER"></a>
-  <a href="https://github.com/waynestate/rollcall" title="ROLLCALL"><img src="docs/readme/cast/rollcall.png" width="48" alt="ROLLCALL"></a>
-  <a href="https://github.com/waynestate/drawbridge" title="DRAWBRIDGE"><img src="docs/readme/cast/drawbridge.png" width="48" alt="DRAWBRIDGE"></a>
+  <a href="https://github.com/waynestate/booster" title="Booster"><img src="docs/readme/cast/booster.png" width="48" alt="Booster"></a>
+  <a href="https://github.com/waynestate/rollcall" title="Rollcall"><img src="docs/readme/cast/rollcall.png" width="48" alt="Rollcall"></a>
+  <a href="https://github.com/waynestate/drawbridge" title="Drawbridge"><img src="docs/readme/cast/drawbridge.png" width="48" alt="Drawbridge"></a>
   <a href="https://github.com/waynestate/advisor" title="ADVISOR"><img src="docs/readme/cast/advisor.png" width="48" alt="ADVISOR"></a>
   <a href="https://github.com/waynestate/weld" title="WELD"><img src="docs/readme/cast/weld.png" width="48" alt="WELD"></a>
 </div>
