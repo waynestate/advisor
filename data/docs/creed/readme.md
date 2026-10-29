@@ -72,6 +72,7 @@ The reader's public members, one line each:
 - `daysToEol($component, $version, $on)`: whole days until `security_until`, signed; `isPastGrace()` says whether the grace period is over.
 - `resolveVersion($component, $version)`: the policy line a full version like `8.3.12` belongs to.
 - `isAheadOfPolicy($component, $version)`: whether a version sorts above every line the policy lists.
+- `belowOldestLineReason($component, $version)`: the reason a version is `Eol` for sorting below every listed line, or null.
 - `hasComponent()`, `components()`, `versions($component)`, `tools()`, `toolMinimum($tool)`, `rules()`: the shape of the policy itself.
 
 One last time: the reader answers, it does not guess.
@@ -94,10 +95,14 @@ is inclusive, and the reader never guesses.
 
 ### Versions CREED hasn't heard of
 
-The reader refuses what it does not know, except the newest thing. A version
-that sorts above every line the policy lists is `Active`, and
-`isAheadOfPolicy()` says so. A version that falls between listed lines is
-still unknown, and still throws. Current versions are never refused.
+The reader refuses what it does not know, except the newest thing and the
+oldest. A version that sorts above every line the policy lists is `Active`,
+and `isAheadOfPolicy()` says so. A version that parses and sorts below every
+listed line is `Eol`: it is older than the oldest listed line, and that is
+end of life by definition. `belowOldestLineReason()` gives the reason,
+`older than the oldest listed line (8.1)`. A version that falls between
+listed lines, or that does not parse, is still unknown, and still throws.
+Current versions are never refused.
 
 A line marked `"current": true` is `Active` on every date and carries no
 `security_until`: the policy says the line is current, and the reader does not
@@ -109,6 +114,31 @@ CREED itself requires PHP `^8.3`, like every stack package, and CI tests it on
 8.3, 8.4 and 8.5. The policy's floor for apps is a different number: `^8.2`
 until PHP 8.2 reaches end of life on 2026-12-31, then `^8.3`. Creed has always
 been one version ahead of everyone else, at least by his own account.
+
+## Proof
+
+**82 Wayne State applications read against CREED on 2026-10-28: 14 passed, 43 flagged, 0 tool errors.** The other
+25 declare no version CREED can read (no `require.php`, no lock, no known image).
+
+Every version an app declares or locks (its PHP floor, Laravel, Vue, Inertia and the PHP image it runs on) went
+through `Policy::stateOf` with CREED 0.1.0 (commit `2d982ae`), inside `php:8.4-cli` with no network, against a
+throwaway copy of each repository: 109 facts, 109 answers.
+
+| Component | Active | Security | Past grace | Older than the policy lists | Facts |
+|---|---:|---:|---:|---:|---:|
+| PHP | 12 | 14 | 13 | 44 | 83 |
+| Laravel | 2 | 2 | 5 | 8 | 17 |
+| Vue | 5 | 0 | 0 | 0 | 5 |
+| Inertia | 0 | 0 | 0 | 4 | 4 |
+
+The apps are counted, never named. The full record, the command and what the run does not prove are on the proof
+page: [`site/proof.html`](site/proof.html). Run it on your own app:
+
+```
+php -r 'require "vendor/autoload.php"; $p = Waynestate\Creed\Policy::bundled(); echo $p->stateOf("php", $p->resolveVersion("php", "8.2.29"), new DateTimeImmutable("2026-10-28"))->name, PHP_EOL;'
+```
+
+Creed Bratton has never once been audited. These 82 apps have.
 
 ## The handbook
 
@@ -125,6 +155,43 @@ tool and commits the result. CI never pushes. It only raises its hand.
 The schedule is a GitLab project setting, not a file in this repo: someone
 creates it under CI/CD > Schedules (weekly, Monday). The GitHub mirror runs the
 same check on a cron and on demand.
+
+## Refreshing the policy
+
+`bin/refresh-policy.php` keeps every support date, patch and new line in
+`policy/policy.json` tied to a canonical source, so nobody types a date by
+hand. PHP dates come from php.net, Node dates from the Node.js release
+schedule, and Laravel, MySQL, Vue and Composer from endoflife.date; patches
+come from php.net, nodejs.org, Packagist and npm. Each run sorts every change:
+
+| Class | What it is | What happens |
+|---|---|---|
+| `tighten` | a date moves earlier, or a `current` line gets its first end date | written |
+| `neutral` | a new `latest_patch`, or a new line above every listed line | written |
+| `loosen-warning` | `active_until` moves later (a warning tier, never a failure) | written |
+| `loosen-fail` | `security_until` moves later, or an EOL line would be supported again | held, unless two independent sources agree (php.net and endoflife.date for PHP, schedule.json and endoflife.date for Node) or `policy/sources.json` shows the same value from the same source for 14 days |
+| `refused` | removing a line or a date, or any change to `tools` or `rules` | never automatic; reported (a Composer minimum on an EOL line shows up here) |
+
+A source that is down, slow or returns something unreadable changes nothing:
+its fields keep their last good value. A line missing from a feed is never
+removed. Where a first-party source and endoflife.date disagree, the first
+party wins and the disagreement is reported.
+
+```
+php bin/refresh-policy.php [--dry-run] [--offline <dir>] [--policy <path>]
+    [--sources <path>] [--report <file>] [--today YYYY-MM-DD] [--touch]
+```
+
+`--report` writes JSON with `changes`, `held`, `refused`,
+`disagreements` and `source_errors`. `--touch` sets `refreshed_on` to today even
+when nothing else changed (the weekly heartbeat). `policy/sources.json` records,
+per value, which source said it, and the first and last day it was seen.
+
+Exit codes: `0` nothing worth committing (always `0` with `--dry-run`); `1` hard
+failure; `3` something was written and every written change was `tighten`,
+`neutral` or `loosen-warning`; `4` something was held or refused, or a
+`loosen-fail` was written on proof. Written changes are always written.
+`bin/refresh-patches.php` still works as before.
 
 ## Carrying CREED in another package
 

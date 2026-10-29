@@ -108,6 +108,32 @@ the gateway session for that host and sends the browser through Entra's sign-out
 discovery document) back to the address. An address on another host is refused, so the link cannot be used to bounce
 visitors elsewhere.
 
+### Error pages
+
+The errors the gateway answers itself get a small page of their own instead of Apache's default English wall: 403
+(an unknown host or a refused path), 502 and 504 (the app is down or taking too long) and 503 (the signer cannot
+sign). Each page is one self-contained HTML file under `docker/gateway/errors/`: inline CSS, system fonts, no
+scripts, no external assets, dark-mode aware, and no hostname or product name in the text. They are served from
+`/_drawbridge/errors/`, which the app hosts keep out of the proxy. Two answers stay deliberately plain: an `api`
+path keeps its bare 401, because a script must never be handed an HTML login page, and the `/metrics` endpoint keeps
+its empty-body 403 (and 404), because a scrape must not look like a page. The endpoint is not routed by the gateway
+config, so these pages cannot reach it; if you wire it up as the Metrics section describes, keep the empty body
+inside that location.
+
+### Response headers
+
+Apps send their own security headers through HELMET, so the gateway never overrides one. On every proxied answer it
+adds `X-Content-Type-Options: nosniff` and `Referrer-Policy: strict-origin-when-cross-origin` with `setifempty`, and
+an app that sends either keeps its own. When the public scheme is https it also adds
+`Strict-Transport-Security: max-age=31536000` the same way, with no `includeSubDomains` and no `preload`: the gateway
+serves many hosts and must not decide subdomain or preload policy for them.
+
+The pages the gateway answers itself are not behind HELMET and carry their own headers, set plainly because no app
+header is expected there. The `/_drawbridge/` locations it owns (the OpenID Connect endpoint on each app host, the
+`/up` check on the default host) get `Cache-Control: no-store` and `Content-Security-Policy: frame-ancestors 'none'`.
+The default catch-all host adds `X-Content-Type-Options: nosniff` and `Cache-Control: no-store` to everything it
+answers, including the unknown-host 403 and the error pages.
+
 ## Install and quick start
 
 You need Docker. The PHP component needs PHP 8.3 or newer and Composer, but the container carries its own.

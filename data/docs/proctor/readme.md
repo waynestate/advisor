@@ -76,22 +76,23 @@ vendor/bin/proctor check [--path=.] [--format=text|json|codequality|sarif] [--po
 - `php-floor`: fails when the lowest PHP version allowed by `require.php` is past security support plus the grace window, when composer.json has no usable php constraint, or when there is no composer.json at all.
 - `unpatched`: warns when a locked component is behind the policy's `latest_patch` for its version line, and passes when it is current. Reads laravel from composer.lock (`laravel/framework`), vue and inertia from package-lock.json (`vue`, `@inertiajs/vue3`), and the PHP runtime from `--php-runtime`. No finding when the component, its version line, or `latest_patch` is absent from the policy.
 - `unbounded-constraints`: fails for every runtime constraint that is `*` or names a dev- branch.
+- `composer-config`: warns when composer.json opens a door Composer closes by default: `allow-plugins` set to `true`, `secure-http` set to `false`, `lock` set to `false`, or `audit.block-insecure` set to `false`; notes when `require.php` is set without `config.platform.php`. Warning and info only, never a fail, so an app that passes today keeps passing.
 - `lock-committed`: fails when composer.lock is missing from the app path.
-- `portability`: warns when code hard-codes a platform fact: an absolute host path, a hard-coded proxy address, a local-disk session store, or a php_value/php_flag line in .htaccess. PHP files are matched on the syntax tree (nikic/php-parser with names resolved), not with regular expressions, so a comment or string that merely mentions a banned call is not flagged and a call split over several lines, or hidden behind a `use function ... as ...` alias, is. A call through a variable (`$f()`) is reported as an info note, never as a pass.
+- `portability`: warns when code hard-codes a platform fact: an absolute host path, a hard-coded proxy address, a local-disk session store, or a php_value/php_flag line in .htaccess. PHP files are matched on the syntax tree (nikic/php-parser with names resolved), not with regular expressions, so a comment or string that merely mentions a banned call is not flagged and a call split over several lines, or hidden behind a `use function ... as ...` alias, is. A call through a variable (`$f()`) is reported as an info note, never as a pass. Scanned: every *.php file, every file under the top-level `config/` directory, and every `.htaccess`. Skipped at any depth: `vendor/`, `node_modules/`, `storage/`, `tests/` and `.git/`; in a Laravel app (an `artisan` file at the project root) also the top-level `bootstrap/cache/`, which holds the generated output of `php artisan optimize` (config.php, routes-v7.php, services.php, packages.php, events.php) instead of app code. A raw-PHP app that keeps its own `bootstrap/cache/` folder is scanned as before.
 - `mysql56`: warns when migrations or app code use MySQL features the shared 5.6 server rejects: JSON columns and JSON queries, generated columns, `renameColumn`/`renameIndex`, vector, invisible and spatial columns, `Schema::hasColumn`-style introspection, raw SQL with 5.7+ syntax, the upsert row alias, indexed strings over 191 characters, date columns defaulting to the current time, and the `db:show`/`db:monitor` commands. Citadel's shared MySQL server is 5.6, so migrations must avoid newer features. Warnings, not failures: an app on its own newer database is not affected. Fix by avoiding the feature (a raw `ALTER TABLE ... CHANGE` instead of `renameColumn`, `timestamp` instead of a date column defaulting to now, `Schema::defaultStringLength(191)` in `boot()`) or by moving the app to its own database.
 - `destructive-deploy`: fails when a deploy script runs an artisan command that drops or rebuilds the database (`migrate:fresh`, `migrate:refresh`, `migrate:reset`, `db:wipe`), which erases production data on every deploy. Scans `.sh` and `.php` files under a top-level `deployments/`, `deploy_scripts/`, `deploy/` or `scripts/` directory, the top-level `build.sh`, `release.sh` and `.gitlab-ci.yml`, and the `scripts` section of composer.json; shell comments are ignored. Fix by running plain `php artisan migrate --force` in the deploy.
 - `ci-pipelines`: for stack packages (composer.json `name` starting with `waynestate/`), fails when `.gitlab-ci.yml` or `.github/workflows/ci.yml` is missing or runs no `composer ci`; for any other project, a missing or incomplete `.gitlab-ci.yml` is a warning and `.github/workflows/ci.yml` is optional. Warns when a GitHub `uses:` ref is not a 40-hex commit SHA. The proctor fails the stack's own exam halls, and only leaves a note for everyone else's.
 - `composer-audit`: fails for advisories at or above the policy's `audit_severity_threshold`, warns for lower ones, and reports info when composer or the lock file is absent.
 - `composer-version`: fails when the Composer on PATH carries the command-injection holes CVE-2024-35241 and CVE-2024-35242 (2.2.x below 2.2.24, or any other 2.x below 2.7.7) or is Composer 1, which is end of life; warns when composer cannot be run. The invigilator checks its own pen: [GHSA-47f6-5gq3-vx9c](https://github.com/advisories/GHSA-47f6-5gq3-vx9c) and [GHSA-v9qv-c7wm-wgmf](https://github.com/advisories/GHSA-v9qv-c7wm-wgmf).
 - `repo-url-credentials`: warns when a credential is written into a package source URL: a deploy token in the userinfo of a composer.json repository URL or a composer.lock source/dist URL (`https://gitlab+deploy-token-12:***@host/group/lib.git`), a bare token user of 20+ characters, a `private_token`, `access_token`, `token` or `password` query parameter, or a `.npmrc` line that sets `_authToken`, `_auth` or `_password` to a literal value (`${SOME_VAR}` is fine). The secret is masked as `***` in the message, so the report itself is safe to hand back. Warning, not failure: about sixteen production apps carry such URLs today. Fix by moving the token to `auth.json`, which is gitignored, or a CI variable, and using one registry URL without credentials. The proctor spots the answer key taped inside the desk before the student does.
-- `overrides`: fails for every expired entry in policy-overrides.json.
+- `overrides`: fails for every expired entry in policy-overrides.json, and warns (`proctor/overrides/expiring`) for an active entry that expires within 14 days of `--today` (the expiry day counts), so an approval that is about to lapse is visible instead of silent. The warning never changes the exit code. An entry that names a check that is not registered in the run, or that names the `overrides` check itself, is a tool error (exit 2): the file is rejected before any check runs.
 - `policy-age`: warns when the policy in use is more than 60 days old (its `refreshed_on` date is more than 60 days before `--today`), or when a non-bundled policy has no `refreshed_on` date. Warning only: an old policy never fails a run, and the bundled policy may omit the date. It exists so a stopped CREED refresh robot is visible instead of silent.
 
 ## Exit codes
 
 - `0`: pass (warnings allowed)
 - `1`: one or more failures
-- `2`: tool error (bad options, unreadable policy, a present but malformed or unreadable composer.json, or an unreadable overrides file). A missing composer.json is not a tool error: the app gets a verdict, with php-floor failing.
+- `2`: tool error (bad options, unreadable policy, a present but malformed or unreadable composer.json, or an overrides file that is malformed, unreadable, or names a check that is not registered or the overrides check itself). A missing composer.json is not a tool error: the app gets a verdict, with php-floor failing.
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'fontFamily':'Helvetica, Arial, sans-serif','primaryColor':'#F4F1EA','primaryTextColor':'#1f2a33','primaryBorderColor':'#0C5449','lineColor':'#8A9A94'}}}%%
@@ -139,9 +140,16 @@ The full set, grouped by check:
 | `lock-committed` | `proctor/lock-committed` |
 | `destructive-deploy` | `proctor/destructive-deploy` |
 | `overrides` | `proctor/overrides` |
+| `overrides` | `proctor/overrides/expiring` |
 | `unbounded-constraints` | `proctor/unbounded-constraints` |
 | `unbounded-constraints` | `proctor/unbounded-constraints/unbounded` |
 | `unbounded-constraints` | `proctor/unbounded-constraints/repository` |
+| `composer-config` | `proctor/composer-config` |
+| `composer-config` | `proctor/composer-config/allow-plugins-all` |
+| `composer-config` | `proctor/composer-config/secure-http-off` |
+| `composer-config` | `proctor/composer-config/lock-off` |
+| `composer-config` | `proctor/composer-config/audit-blocking-off` |
+| `composer-config` | `proctor/composer-config/platform-php-unset` |
 | `portability` | `proctor/portability` |
 | `portability` | `proctor/portability/host-path` |
 | `portability` | `proctor/portability/proxy-address` |
@@ -232,12 +240,22 @@ An expired override fails the `overrides` check. An active override turns the
 check's fail findings into warnings. An override never waives a failure whose
 state is EOL plus grace (eol_grace_expired); that failure stands (the stack's version policy decision).
 
+PROCTOR rejects the file (exit 2) when an entry names a check that is not
+registered in the run, or names the `overrides` check itself: an override
+cannot exempt the check that polices overrides, and an entry for a check
+that does not exist would silently do nothing. The list of valid check ids
+is built from the checks PROCTOR runs, so a new check needs no change to
+the guard. An active override that expires within 14 days of `--today`
+(the expiry day counts) gets a warning finding
+(`proctor/overrides/expiring`) instead of lapsing without a trace. A
+warning never changes the exit code.
+
 ## Policy
 
 `--policy` takes a CREED-format policy file: schema_version 1, component
 versions with released, active_until and security_until dates, and rules
 (audit_severity_threshold, banned_constraints, eol_grace_days). The
-policy-file wiring to `waynestate/creed` follows its v0.1.0 tag.
+policy-file wiring to `waynestate/creed` is described below.
 
 Without `--policy`, PROCTOR resolves the policy in this order (first match
 wins):
@@ -271,24 +289,7 @@ running CREED's `bin/export.php` against `src/Creed/`.
 
 ## Proof
 
-**82 Wayne State applications run through PROCTOR on 2026-10-28: 0 passed, 81 flagged, 1 tool error.**
-
-Each app was copied with `.git`, `auth.json` and every `.env` removed and checked inside `php:8.4-cli`, with Wayne
-State's servers out of reach, using `proctor check --format=json --policy=<CREED policy> --today=2026-10-28`.
-Flagged means exit 1 with a report naming each problem: PROCTOR doing its job.
-
-| Sitting | Flagged | Tool errors |
-|---|---:|---:|
-| First (0.2.0, the day before its tag) | 51 | 31 |
-| Retake (0.2.0 plus "apps without composer.json get a verdict") | 81 | 1 |
-
-The first sitting found 31 plain PHP apps PROCTOR refused with exit 2; that was fixed with a fixture test and every
-app sat again. Most common fails on the retake: `php-floor` (76 apps), `lock-committed` (30), `composer-audit`
-(20), `unbounded-constraints` (13). The one tool error is the PHP parser running out of the default 128 MB on a very
-large tree; the fix is queued with a test. The apps are counted, never named. The breakdown, the command and what
-the run does not prove: [`site/proof.html`](site/proof.html).
-
-Eighty-one papers handed back in red. The proctor saw that.
+Proof runs against real Wayne State applications are on a private site, [proof.apps.wayne.edu/proctor](https://proof.apps.wayne.edu/proctor/), behind a Wayne State employee sign-in.
 
 ## Running the tests in Docker
 

@@ -74,10 +74,11 @@ What is on the bench today:
 - `.gitattributes` sets `* text=auto eol=lf`
 - `composer ci` is the CI contract: it runs validate, tests, Pint, PHPStan level 8 and audit, the same command on
   GitLab and GitHub
-- `pint.json` and `phpstan.neon` still copy Pinstripe's 0.1 Laravel presets; Pinstripe is on Packagist now
-  (`dev-main`, no tag yet), and they switch to `includes: vendor/waynestate/pinstripe/...` when WELD requires it
-- HELMET appends its security headers and CSP middleware to the web group; the Vite build takes the per-request
-  nonce; trusted proxies are a literal list in `bootstrap/app.php`; `/up` stays Laravel's built-in health route
+- `pint.json` and `phpstan.neon` still copy Pinstripe's 0.1 Laravel presets; Pinstripe 0.1.1 is on Packagist
+  (tagged), and they switch to `includes: vendor/waynestate/pinstripe/...` when WELD requires it
+- HELMET runs its security headers and CSP middleware in the global chain, so every response carries the baseline;
+  the Vite build takes the per-request nonce; trusted proxies are a literal list in `bootstrap/app.php`; `/up` stays
+  Laravel's built-in health route
 - SESAME owns sign-in at `/login` and `/logout`; the fake driver stands in for the identity provider locally, and
   CAS is an env change away
 - PROCTOR measures WELD against CREED's `policy.json` as a CI job (`composer proctor`): warnings pass, failures
@@ -117,10 +118,11 @@ Coolify and plain Docker, with Citadel for comparison.
 
 Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
 
-`weld:doctor` strikes an arc across the whole setup and reports every joint: the PHP version, the
-app key, debug in production, secure session cookies, writable storage, the database and pending
-migrations. One line per check, PASS or WARN or FAIL; exit code 1 when anything FAILs, so it works
-as a gate. A good bead is a quiet one: all PASS and nothing to say.
+`weld:doctor` strikes an arc across the local setup and reports every joint: the app key,
+writable storage, the database and pending migrations. One line per check, PASS or WARN or FAIL;
+exit code 1 when anything FAILs, so it works as a gate. The standards checks (PHP version, debug
+in production, secure session cookies) belong to PROCTOR: run `composer proctor`, and the doctor
+report says so. A good bead is a quiet one: all PASS and nothing to say.
 
 - Windows (PowerShell): `.\bin\weld.ps1 doctor`
 - macOS / Linux: `bin/weld.sh doctor`

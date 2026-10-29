@@ -12,7 +12,7 @@ Tags: **Enforced** (code or a failing test), **Checked** (a test or CI warns), *
 |---|---|---|
 | Never write to the systems you scan | Enforced | `GitLabRepositorySource::send()` allows only `GET` and `HEAD`; `ReadOnlyAndDocsTest` fails on a write verb in `src/` and on file writes outside the snapshot store |
 | Use the smallest token scope (`read_api`), owned by a group or service account | Documented | README; ROLLCALL cannot see a token's scopes |
-| Plan token expiry and rotation; an expired token is a loud failure | Enforced (loud failure) / Documented (rotation) | A 401 or 403 stops the scan with a plain message; rotation is in `OPEN_QUESTIONS.md` |
+| Plan token expiry and rotation; an expired token is a loud failure | Enforced (warning, loud failure) / Documented (rotation) | A 401 or 403 stops the scan with a plain message; `scan` prints a note 14 days before the token expires (and when it has already expired); rotation is in `OPEN_QUESTIONS.md` |
 | List projects per group with subgroups, in the small form | Enforced | `include_subgroups=true&simple=true&archived=false`, tested |
 | Fetch only the files you need, never clone | Enforced | File endpoints only; the directory adapter reads two named files |
 | Skip what has not changed | Enforced | `HEAD` blob id compared with the last snapshot; tested for both adapters |
@@ -31,7 +31,7 @@ Tags: **Enforced** (code or a failing test), **Checked** (a test or CI warns), *
 | Read the PROCTOR report; do not re-run a rule | Enforced | `ProctorReportReader` validates PROCTOR's JSON shape |
 | Show every override with reason and expiry; an expired one stays, marked expired | Checked | Internal report and page; tested |
 | Show the date next to every state | Enforced | `security_until` and `days_to_eol` in each table |
-| A package with no advisory data says "no data", not "safe" | Not yet | The Packagist advisories lookup is not built |
+| A package with no advisory data says "no data", not "safe" | Enforced | `PackageAdvisories` answers `no data` for an absent package, a missing version or an unparseable range, and `clear` (never "safe") when the feed lists none that apply; tested |
 
 ## Show progress without blame
 
@@ -52,5 +52,5 @@ Tags: **Enforced** (code or a failing test), **Checked** (a test or CI warns), *
 
 ## Not yet
 
-Citadel read-only adapter, the upgrade-record reader, ownership verification, the Packagist advisories lookup, the
-CycloneDX bill of materials, the front page and the a11y gate run. See `OPEN_QUESTIONS.md`, "Not built yet".
+Citadel read-only adapter, the upgrade-record reader, ownership verification, the live Packagist advisories fetch,
+the CycloneDX bill of materials, the front page and the a11y gate run. See `OPEN_QUESTIONS.md`, "Not built yet".
