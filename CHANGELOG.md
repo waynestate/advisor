@@ -6,6 +6,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Added
 
+- Added: agent-ready site (prompt blocks, Markdown twins, llms.txt), from Squire's kit.
 - `playbook_lookup` tool: answers "what is the value of X?" for WSU shared values. An environment variable of the
   same name wins, then the private `waynestate/playbook` package (Playbook) supplies the rest; without it the tool
   says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are

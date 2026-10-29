@@ -10,6 +10,11 @@
 <title>ADVISOR: What applies, and what's next.</title>
 <meta name="description" content="ADVISOR is the Wayne State app stack's own MCP server: it orients your coding agent and gives it read-only tools into the stack's standards, versions, docs and checks.">
 <meta name="theme-color" content="#f4f1ea">
+<link rel="canonical" href="https://advisor.apps.wayne.edu/">
+<!-- For agents (ADR-0019): this sheet as Markdown. bin/agent-ready.php writes it from
+     Squire's kit, and the front controller also sends it to any client that asks for
+     text/markdown. The same map, minus the contour lines. -->
+<link rel="alternate" type="text/markdown" href="index.md">
 <link rel="icon" href="brand/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png">
 <link rel="apple-touch-icon" href="brand/advisor-avatar-256.png">
@@ -22,6 +27,7 @@
 -->
 <link rel="preload" href="assets/fonts/fraunces-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/wayne-ui/wayne-ui.css">
+<link rel="stylesheet" href="assets/agent-ready.css">
 <link rel="stylesheet" href="assets/advisor.css">
 <script>
   /* Plot routes with motion only for people who are happy with motion.
@@ -44,6 +50,7 @@
       <a href="#ask">Ask the map</a>
       <a href="#legend">Legend</a>
       <a href="#directions">Directions</a>
+      <a href="#briefings">Briefings</a>
       <a href="#neighbours">Neighbours</a>
     </nav>
     <p class="sheet-head__meta"><span class="sheet-head__label">Sheet</span> 0.1</p>
@@ -90,6 +97,17 @@
           <a class="wsu-btn wsu-btn--primary wsu-btn--lg" href="#ask">Ask the map</a>
           <a class="hero__link" href="#directions">Get directions</a>
         </p>
+
+        <!-- The map key's small print: where an agent reads this sheet. The script adds
+             Copy page as Markdown and Open in ChatGPT; without it, the plain links still work. -->
+        <nav class="ar-page map-key" aria-labelledby="map-key-label" data-ar-page>
+          <p class="ar-page__label" id="map-key-label">For your agent</p>
+          <ul class="ar-page__list">
+            <li><a class="ar-page__link" href="#briefings">Get started with an agent</a></li>
+            <li><a class="ar-page__link" href="index.md" type="text/markdown">This page as Markdown</a></li>
+            <li><a class="ar-page__link" href="llms.txt">llms.txt</a></li>
+          </ul>
+        </nav>
       </div>
 
       <!-- The mark lands like a pin on the sheet; the compass bezel swings and
@@ -356,6 +374,93 @@ composer ci</code></pre>
     </div>
   </section>
 
+  <!-- ========================================================== briefings -->
+  <!-- The prompts. Every orienteering event starts with a briefing at the start line: the
+       course, what is out of bounds, where to finish. These are briefings for your coding agent:
+       its role, the task, the stack's constraints, the output wanted, and a standing order to
+       ask before it guesses. The text is plain HTML, so an agent reading this page (or index.md)
+       gets it without the script; agent-ready.js only adds the buttons. Keep every command in
+       step with the README: bin/agent-ready.php --check fails a prompt that runs a command the
+       docs do not. -->
+  <section class="section section--briefings" id="briefings" aria-labelledby="briefings-title">
+    <div class="wsu-container">
+      <div class="section__head section__head--left">
+        <p class="eyebrow">Read out at the start line</p>
+        <h2 id="briefings-title">Briefings for your agent</h2>
+        <p>Your coding agent can set ADVISOR up itself. Brief it: copy a briefing, or run it straight in OpenCode, Claude Code, Codex or ChatGPT. Each one names the controls in order, what is out of bounds, and tells the agent to ask before it guesses.</p>
+      </div>
+
+      <div class="briefings">
+        <section class="ar-prompt ar-prompt--lead briefing" id="prompt-get-started" aria-labelledby="prompt-get-started-title" data-ar-prompt>
+          <header class="ar-prompt__head">
+            <span class="ar-prompt__glyph" aria-hidden="true">1</span>
+            <div>
+              <p class="ar-prompt__kicker">Briefing 1 · Any PHP app, raw or Laravel</p>
+              <h3 class="ar-prompt__title" id="prompt-get-started-title">Get started with ADVISOR</h3>
+              <p class="ar-prompt__desc">From composer require to a connected server: the config shown before it is written, and the first question asked.</p>
+            </div>
+          </header>
+          <pre class="ar-prompt__text"><code>You are a coding agent helping a Wayne State University developer connect ADVISOR to the app in this folder. ADVISOR is the MCP server of WELD, the Wayne State application stack: read-only tools that answer from CREED's policy and the stack's own docs, with the date and the source, instead of from memory.
+
+Read first:
+- https://advisor.apps.wayne.edu/llms.txt, the index of ADVISOR's pages, each one as Markdown. Work from them, not from memory.
+- This app's composer.json and its .gitignore.
+- Which coding agent you are. ADVISOR writes the config for claude, warriorgpt, cursor and vscode, and prints TOML for codex. For any other client (OpenCode, for one), print the claude config, translate it by hand, and show me before you write it.
+
+Task:
+1. Add ADVISOR as a dev dependency with `composer require --dev waynestate/advisor` (PHP 8.3 or newer).
+2. Print the client config and show it to me: `php vendor/bin/advisor install --client=claude`, with your client's name in place of claude. Write nothing yet.
+3. When I say yes, run it again with --write, and check that the file it wrote is in .gitignore.
+4. If the server does not show up, run `php vendor/bin/advisor doctor` and tell me what it found.
+5. Once it is connected, call list_projects, then policy_lookup for PHP, and tell me which PHP this app can build on today, with the date and the source.
+
+Constraints:
+- ADVISOR is a dev dependency and refuses to run in production. Never move it into require, and never set ADVISOR_ENV to production.
+- Never commit a generated client config: it starts a program on whoever opens the project.
+- The command it registers is always php vendor/bin/advisor mcp. Do not change it.
+- Give separate commands for Windows (PowerShell), macOS and Linux wherever they differ.
+- Ask me before you guess, and before you pass --force.
+
+Output: the config you propose, the commands you ran, the doctor result if you ran it, then your questions.</code></pre>
+        </section>
+
+        <h3 class="briefings__title">Or take the Laravel route</h3>
+        <section class="ar-prompt briefing" id="prompt-laravel" aria-labelledby="prompt-laravel-title" data-ar-prompt>
+          <header class="ar-prompt__head">
+            <span class="ar-prompt__glyph" aria-hidden="true">2</span>
+            <div>
+              <p class="ar-prompt__kicker">Briefing 2 · Laravel, Blade or Inertia</p>
+              <h3 class="ar-prompt__title" id="prompt-laravel-title">ADVISOR in a Laravel app, beside Boost</h3>
+              <p class="ar-prompt__desc">The adapter on laravel/mcp, the published config, and both servers in one client: Boost knows Laravel, ADVISOR knows WSU.</p>
+            </div>
+          </header>
+          <pre class="ar-prompt__text"><code>You are a coding agent adding ADVISOR to a Laravel app at Wayne State University, beside Laravel Boost. ADVISOR is the MCP server of WELD, the Wayne State application stack. Boost knows Laravel; ADVISOR knows WSU. Run both.
+
+Read first:
+- https://advisor.apps.wayne.edu/llms.txt, then the README it links: Install, Quick start, Laravel apps and Configuration.
+- composer.json, composer.lock, config/, .gitignore, .env.example, and any MCP client config already in the project (Boost writes one).
+
+Task:
+1. Add ADVISOR with `composer require --dev waynestate/advisor`. Its service provider is auto-discovered, and its Laravel adapter runs on laravel/mcp.
+2. If I want the settings in the app, publish them with `php artisan vendor:publish --tag=advisor-config`. They land in config/advisor.php and read the same ADVISOR_* variables.
+3. Choose with me how the client starts it: `php vendor/bin/advisor install` for my client, or the Laravel way, `php artisan mcp:start advisor`. Either way it needs ADVISOR_ENABLED=1 in its environment.
+4. Add it beside Boost's entry without touching Boost's. Then ask ADVISOR policy_lookup for PHP and Laravel, and list_stack_rules with the permutation that fits this app (laravel-blade, laravel-blade-vue or laravel-inertia-vue).
+
+Constraints:
+- Keep Boost. ADVISOR does not replace it.
+- Off unless ADVISOR_ENABLED is set, and never in production: keep it in require-dev.
+- Never commit a generated client config, and never pass --force over an entry you did not write.
+- Give separate commands for Windows (PowerShell), macOS and Linux wherever they differ.
+- Ask me before you guess, and before you change anything Boost owns.
+
+Output: the client config with both servers in it, the commands you ran, the rules list_stack_rules returned, then your questions.</code></pre>
+        </section>
+
+        <p class="briefings__fine">The agent reads the same sheet you do: <a href="llms.txt">llms.txt</a> lists the pages, <a href="llms-full.txt">llms-full.txt</a> holds them in one file, and this page has a <a href="index.md" type="text/markdown">Markdown twin</a>. Nothing here phones home; the buttons only copy text or open the tool you picked. The route is read-only, and so is the advisor.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ====================================================== out of bounds -->
   <section class="section section--bounds" aria-labelledby="bounds-title">
     <div class="wsu-container">
@@ -436,6 +541,7 @@ composer ci</code></pre>
 
 <div class="toast" role="status" aria-live="polite"></div>
 
+<script src="assets/agent-ready.js" defer></script>
 <script src="assets/advisor.js" defer></script>
 </body>
 </html>

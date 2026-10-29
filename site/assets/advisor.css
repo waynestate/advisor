@@ -19,7 +19,7 @@
      2. sheet header, footer        7. out of bounds, neighbours, uncharted
      3. hero and compass rose       8. responsive
      4. ask form and the map        9. motion (only under html.motion)
-     5. legend
+     5. legend                     10. agent-ready kit (briefings)
    ========================================================================== */
 
 /* ------------------------------------------------------ 1. fonts, tokens */
@@ -892,4 +892,115 @@ li.hood__item:has(.part-link:hover) img { filter: brightness(1.12) saturate(1.1)
 @media (prefers-reduced-motion: no-preference) {
 li.hood__item img { transition: transform 160ms ease, filter 160ms ease; }
 li.hood__item:has(.part-link:hover) img { transform: translateY(-2px); }
+}
+
+/* ---------------------------------------- 10. agent-ready kit (briefings)
+
+   Squire's agent-ready.css lays out the prompt blocks and the page menu; this
+   maps its tokens onto the field map. A prompt is a start-line briefing: cream stock,
+   a maroon control circle for its number (the colour orienteering maps print
+   the course in), the route itself on the paper's deeper cream with a dashed
+   maroon leg down its edge, and commands on the map's dark code ground.     */
+
+:root {
+  --ar-bg: var(--adv-paper-hi);
+  --ar-ink: var(--adv-ink);
+  --ar-muted: var(--adv-ink-muted);
+  --ar-rule: var(--adv-line);
+  --ar-accent: var(--adv-green);
+  --ar-on-accent: #fff;
+  --ar-focus: var(--adv-maroon);
+  --ar-code-bg: var(--adv-paper);
+  --ar-code-ink: var(--adv-ink);
+  --ar-term-bg: var(--adv-code-bg);
+  --ar-term-ink: var(--adv-code-text);
+  --ar-display: var(--adv-display);
+  --ar-radius: 12px;
+  --ar-shadow: var(--adv-shadow);
+}
+
+.section--briefings .wsu-container { max-width: 1100px; }
+.briefings { display: grid; gap: var(--wsu-space-6); }
+
+.briefing { border-color: var(--adv-line); border-top: 4px solid var(--adv-green); }
+
+/* The control circle: a maroon ring with the briefing's number, as on the course. */
+.briefing .ar-prompt__glyph {
+  width: 2.6rem; height: 2.6rem;
+  border: 3px solid var(--adv-maroon); border-radius: 50%;
+  background: var(--adv-paper-hi); color: var(--adv-maroon);
+  font-family: var(--adv-display); font-weight: 800; font-size: 1.15rem; letter-spacing: 0;
+}
+.briefing .ar-prompt__kicker {
+  font-family: var(--adv-display); font-style: italic; font-size: 1rem;
+  letter-spacing: 0; text-transform: none; color: var(--adv-maroon);
+}
+.briefing .ar-prompt__title {
+  font-weight: 800; font-size: clamp(1.4rem, 2.6vw, 1.85rem); letter-spacing: -0.01em; color: var(--adv-green-deep);
+}
+
+/* The route: deeper cream, the leg drawn as a dashed maroon line down its edge. */
+.briefing .ar-prompt__text {
+  border: 1px solid var(--adv-line);
+  border-left: 0;
+  background-color: var(--adv-paper);
+  background-image: linear-gradient(to bottom, var(--adv-maroon) 55%, transparent 55%);
+  background-size: 3px 14px;
+  background-repeat: repeat-y;
+  background-position: 0 0;
+  background-attachment: local;
+  padding-left: 1.35rem;
+}
+.briefing .ar-prompt__more { color: var(--adv-maroon); font-family: var(--wsu-font-family-body); font-weight: 700; }
+
+.briefing .ar-btn { border-radius: 999px; border-color: var(--adv-green); color: var(--adv-green-deep); }
+.briefing .ar-btn--primary { background: var(--adv-green); color: #fff; }
+.briefing .ar-btn--primary:hover { background: var(--adv-green-deep); box-shadow: 0 0 0 3px var(--adv-gold); }
+.briefing .ar-run__label { color: var(--adv-maroon); font-weight: 700; }
+.briefing .ar-chip { border-radius: 999px; border-color: rgba(12, 84, 73, 0.35); background: var(--adv-paper-hi); }
+.briefing .ar-chip:hover { border-color: var(--adv-green); background: var(--adv-paper); }
+/* The chosen tool is the lit waypoint: gold. */
+.briefing .ar-chip[aria-expanded="true"] { border-color: var(--adv-green-deep); background: var(--adv-gold); color: var(--adv-green-deep); box-shadow: none; }
+.briefing .ar-status { color: var(--adv-green); font-weight: 700; }
+
+.briefing .ar-cmd { border-radius: 10px; }
+.briefing .ar-cmd .ar-btn { border-color: var(--adv-gold); color: var(--adv-gold); background: transparent; }
+.briefing .ar-cmd .ar-btn:hover { background: rgba(255, 204, 51, 0.12); box-shadow: none; }
+.briefing .ar-cmd .ar-seg__btn[aria-pressed="true"] { background: var(--adv-gold); color: var(--adv-green-deep); }
+.briefing .ar-cmd .ar-status { color: inherit; }
+.briefing .ar-cmd :focus-visible { outline-color: var(--adv-gold); }
+.briefing .ar-cmd__note a { color: var(--adv-gold-soft); }
+
+.briefings__title {
+  margin: var(--wsu-space-2) 0 0;
+  font-family: var(--adv-display); font-style: italic; font-weight: 600; font-size: 1.35rem; color: var(--adv-maroon);
+}
+.briefings__fine { max-width: 46rem; margin: 0; color: var(--adv-ink-muted); line-height: 1.6; }
+
+/* The map key's small print, under the hero's buttons. */
+.map-key {
+  position: relative; z-index: 1;
+  max-width: 34rem; margin-top: var(--wsu-space-5); padding-top: var(--wsu-space-2);
+  border-top: 1.5px dashed rgba(139, 33, 69, 0.45);
+  gap: 0 1.1rem;
+}
+.map-key .ar-page__label {
+  font-family: var(--adv-display); font-style: italic; font-size: 1rem; letter-spacing: 0; text-transform: none;
+  color: var(--adv-maroon);
+}
+.map-key .ar-page__list { gap: 0 1.1rem; }
+.map-key .ar-page__link,
+.map-key .ar-page__btn {
+  font-weight: 700; color: var(--adv-green);
+  text-shadow: 0 0 2px var(--adv-paper), 0 0 6px var(--adv-paper);
+}
+.map-key .ar-status { flex-basis: 100%; color: var(--adv-green); font-weight: 700; }
+
+@media (max-width: 640px) {
+  .briefing .ar-prompt__glyph { width: 2.2rem; height: 2.2rem; font-size: 1rem; }
+}
+
+@media print {
+  .ar-prompt__actions, .ar-cmd, .ar-prompt__more, .map-key { display: none; }
+  .ar-prompt.is-collapsed .ar-prompt__text { max-height: none; -webkit-mask-image: none; mask-image: none; }
 }
