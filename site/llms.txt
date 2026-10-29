@@ -1,6 +1,6 @@
 # ADVISOR
 
-> ADVISOR is the Wayne State app stack's own MCP server: it orients your coding agent and gives it read-only tools into the stack's standards, versions, docs and checks.
+> ADVISOR is an MCP server for the Wayne State app stack. Your coding agent asks it about our standards, supported versions, docs and checks, and it answers read-only from the stack's own files.
 
 Front page: [`site/index.html`](https://github.com/waynestate/advisor/blob/HEAD/site/index.html), a static field map of the stack (open it in a browser).
 
@@ -24,12 +24,12 @@ Every page below is Markdown. The HTML pages send the same Markdown to a client 
 
 ## Pages
 
-- [ADVISOR: What applies, and what's next.](https://advisor.apps.wayne.edu/index.md): ADVISOR is the Wayne State app stack's own MCP server: it orients your coding agent and gives it read-only tools into the stack's standards, versions, docs and checks.
+- [ADVISOR: What applies, and what's next.](https://advisor.apps.wayne.edu/index.md): ADVISOR is an MCP server for the Wayne State app stack. Your coding agent asks it about our standards, supported versions, docs and checks, and it answers read-only from the stack's own files.
 
 ## Prompts
 
-- [Get started with ADVISOR](https://advisor.apps.wayne.edu/#prompt-get-started): From composer require to a connected server: the config shown before it is written, and the first question asked. The prompt itself is in https://advisor.apps.wayne.edu/index.md.
-- [ADVISOR in a Laravel app, beside Boost](https://advisor.apps.wayne.edu/#prompt-laravel): The adapter on laravel/mcp, the published config, and both servers in one client: Boost knows Laravel, ADVISOR knows WSU. The prompt itself is in https://advisor.apps.wayne.edu/index.md.
+- [Get started with ADVISOR](https://advisor.apps.wayne.edu/#prompt-get-started): The agent installs ADVISOR, shows you the client config before writing it, and asks its first question once it's connected. The prompt itself is in https://advisor.apps.wayne.edu/index.md.
+- [ADVISOR in a Laravel app, beside Boost](https://advisor.apps.wayne.edu/#prompt-laravel): Uses the laravel/mcp adapter and adds ADVISOR to your client next to Boost, without touching Boost's entry. The prompt itself is in https://advisor.apps.wayne.edu/index.md.
 
 ## Source
 

@@ -8,7 +8,7 @@
 <meta name="stack-env" content="auto">
 <script src="assets/stack-env.js" defer></script>
 <title>ADVISOR: What applies, and what's next.</title>
-<meta name="description" content="ADVISOR is the Wayne State app stack's own MCP server: it orients your coding agent and gives it read-only tools into the stack's standards, versions, docs and checks.">
+<meta name="description" content="ADVISOR is an MCP server for the Wayne State app stack. Your coding agent asks it about our standards, supported versions, docs and checks, and it answers read-only from the stack's own files.">
 <meta name="theme-color" content="#f4f1ea">
 <link rel="canonical" href="https://advisor.apps.wayne.edu/">
 <!-- For agents (ADR-0019): this sheet as Markdown. bin/agent-ready.php writes it from
@@ -79,10 +79,10 @@
         </p>
 
         <p class="hero__tagline">What applies, and what's next.</p>
-        <p class="hero__blurb">The stack's own MCP server, like Laravel Boost for Wayne State. It orients your coding agent and hands it
-          read-only tools into every stack project: the standards, the supported versions, the docs and the checks. Ask
-          “which PHP can I build on?” and it answers from the policy file, with the date and the source, instead of from
-          whatever the model remembers.</p>
+        <p class="hero__blurb">An MCP server for the stack, a bit like Laravel Boost but for Wayne State. Your coding agent
+          connects to it and gets nine read-only tools: CREED's rules and support dates, each project's docs, PROCTOR and
+          Booster's upgrade plan. Ask it “which PHP can I build on?” and it answers from CREED's policy file, with the date
+          and the source, instead of from whatever the model remembers.</p>
 
         <div class="quickstart">
           <code class="quickstart__code" id="quickstart-cmd"><span class="t-dim" aria-hidden="true">$ </span>composer require --dev waynestate/advisor</code>
@@ -93,7 +93,7 @@
         <p class="hero__note">PHP 8.3 or newer. ADVISOR is on Packagist:
           <code>composer require --dev waynestate/advisor:^0.1</code>.</p>
 
-        <p class="hero__note hero__weld"><b>Works alongside <a href="https://weld.apps.wayne.edu/">WELD</a>.</b> Add ADVISOR to a WELD app, or any WSU PHP app, when you want your coding agent to know the stack.</p>
+        <p class="hero__note hero__weld"><b>Works alongside <a href="https://weld.apps.wayne.edu/">WELD</a>.</b> You can add ADVISOR to a WELD app or to any other Wayne State PHP app.</p>
 
         <p class="hero__cta">
           <a class="wsu-btn wsu-btn--primary wsu-btn--lg" href="#ask">Ask the map</a>
@@ -148,8 +148,8 @@
       <div class="section__head">
         <p class="eyebrow">The magic trick, minus the magic</p>
         <h2 id="ask-title">Ask the map</h2>
-        <p>Type the kind of question you would ask your coding agent. The map plots the route ADVISOR takes: from your app,
-          through the advising office, past the tool that answers, to the stack project the answer comes from.</p>
+        <p>Type a question you'd ask your coding agent. The map draws the route ADVISOR takes to answer it: which tools it
+          calls, and which project the answer comes from.</p>
       </div>
 
       <form class="ask" id="ask-form" autocomplete="off">
@@ -233,7 +233,7 @@
         <div class="section__head section__head--left">
           <p class="eyebrow">Read this before you set off</p>
           <h2 id="legend-title">Legend</h2>
-          <p>Six tools, two prompts and a shelf of resources. Every tool is read-only and every answer says where it came from.</p>
+          <p>ADVISOR 0.1 has nine tools. These six are the ones you'll use most; the others are <code>owner_of</code>, <code>playbook_lookup</code> and <code>upgrade_path</code>. Every tool is read-only, and every answer names its source.</p>
         </div>
 
         <h3 class="legend__group">Tools</h3>
@@ -252,7 +252,7 @@
           </div>
           <div class="legend__item">
             <dt><span class="sym sym--clock" aria-hidden="true"></span><code>policy_lookup</code></dt>
-            <dd>Support state for PHP, Laravel, Node, MySQL, Vue, Inertia or Composer from CREED, as of today.</dd>
+            <dd>Whether a PHP, Laravel, Node, MySQL, Vue or Inertia version is supported today, from CREED. For Composer, the minimum version.</dd>
           </div>
           <div class="legend__item">
             <dt><span class="sym sym--rule" aria-hidden="true"></span><code>list_stack_rules</code></dt>
@@ -269,7 +269,7 @@
             <h3 class="legend__group">Prompts</h3>
             <ul class="legend__plain">
               <li><code>orient_me</code> <span>a first walk round the stack, ending in three next steps</span></li>
-              <li><code>plan_upgrade</code> <span>the way off an old version, via the policy and PROCTOR</span></li>
+              <li><code>plan_upgrade</code> <span>plans the next upgrade hop from the policy, PROCTOR and Booster's plan</span></li>
             </ul>
           </div>
           <div>
@@ -289,8 +289,8 @@
           </div>
         </div>
 
-        <p class="legend__boost"><strong>Boost knows Laravel; ADVISOR knows Wayne State.</strong> They do not overlap, so run both.
-          In a Laravel app the same server also runs as <code>php artisan mcp:start advisor</code>, right beside Boost.</p>
+        <p class="legend__boost"><strong>Run it next to Laravel Boost.</strong> Boost knows Laravel and ADVISOR knows Wayne State,
+          so they don't overlap. In a Laravel app the same server also runs as <code>php artisan mcp:start advisor</code>.</p>
       </div>
     </div>
   </section>
@@ -301,8 +301,8 @@
       <div class="section__head section__head--left">
         <p class="eyebrow">Turn-by-turn</p>
         <h2 id="dir-title">Directions</h2>
-        <p>Three turns from a fresh clone to an agent that knows the stack. It is one PHP command, so it is the same on
-          Windows, macOS and Linux: no shell script to pick.</p>
+        <p>Three steps, and they're the same on Windows, macOS and Linux, because ADVISOR is one PHP command rather than a
+          shell script.</p>
       </div>
 
       <div class="dir-grid">
@@ -311,7 +311,7 @@
           <span class="turn__num" aria-hidden="true">1</span>
           <div class="turn__body">
             <h3>Add it to your app</h3>
-            <p>As a dev dependency. It refuses to run in production anyway.</p>
+            <p>Add it as a dev dependency. It won't start in production anyway.</p>
             <pre class="cmd"><code>composer require --dev waynestate/advisor</code></pre>
           </div>
         </li>
@@ -319,8 +319,8 @@
           <span class="turn__num" aria-hidden="true">2</span>
           <div class="turn__body">
             <h3>Print the client config, and read it</h3>
-            <p>Nothing is written yet. Pick your client: <code>claude</code>, <code>cursor</code> or <code>vscode</code>.
-              For <code>codex</code> it prints TOML to paste into <code>~/.codex/config.toml</code>.</p>
+            <p>This writes nothing yet. Use your client's name: <code>claude</code>, <code>warriorgpt</code>, <code>cursor</code>
+              or <code>vscode</code>. For <code>codex</code> it prints TOML to paste into <code>~/.codex/config.toml</code>.</p>
             <pre class="cmd"><code>php vendor/bin/advisor install --client=claude</code></pre>
             <pre class="cmd cmd--out" aria-label="What it prints"><code>{"mcpServers":{"advisor":{"command":"php","args":["vendor/bin/advisor","mcp"],"env":{"ADVISOR_ENABLED":"1"}}}}</code></pre>
           </div>
@@ -329,9 +329,9 @@
           <span class="turn__num" aria-hidden="true">3</span>
           <div class="turn__body">
             <h3>Write it, then approve it by name</h3>
-            <p>Open the project in your client and approve the <code>advisor</code> server when it asks. Keep the generated
-              file out of git: it starts a program on whoever opens the project, and <code>install</code> warns you if it
-              is not ignored.</p>
+            <p>Then open the project in your client and approve the <code>advisor</code> server when it asks. Don't commit the
+              file it writes. It starts a program for anyone who opens the project, so <code>install</code> warns you if
+              it isn't in <code>.gitignore</code>.</p>
             <pre class="cmd"><code>php vendor/bin/advisor install --client=claude --write</code></pre>
           </div>
         </li>
@@ -346,6 +346,7 @@
           <li class="arm arm--l"><span class="arm__name">cursor</span><code>.cursor/mcp.json</code></li>
           <li class="arm arm--r"><span class="arm__name">vscode</span><code>.vscode/mcp.json</code></li>
           <li class="arm arm--l"><span class="arm__name">codex</span><code>printed only (TOML)</code></li>
+          <li class="arm arm--r"><span class="arm__name">warriorgpt</span><code>.mcp.json</code></li>
         </ul>
         <span class="signpost__pole" aria-hidden="true"></span>
         <p class="signpost__note">Every one starts the same fixed command, <code>php vendor/bin/advisor mcp</code>. Run your client from the folder that holds <code>vendor/</code>, or set <code>ADVISOR_PROJECT_ROOT</code>.</p>
@@ -361,7 +362,7 @@ php vendor/bin/advisor mcp
 <span class="t-dim"># check the bundled content against its manifest</span>
 php vendor/bin/advisor content:verify
 
-<span class="t-dim"># a check of the install and the client config</span>
+<span class="t-dim"># when the server doesn't show up in your client</span>
 php vendor/bin/advisor doctor
 
 <span class="t-dim"># every check, in the advisor repo itself</span>
@@ -369,7 +370,7 @@ composer ci</code></pre>
         </div>
         <div class="dir-box">
           <h3>Laravel apps</h3>
-          <p>The adapter on <code>laravel/mcp</code> is auto-discovered. Publish the config if you want it in the app:</p>
+          <p>The Laravel adapter runs on <code>laravel/mcp</code> and is auto-discovered. If you want the settings in your app, publish the config:</p>
           <pre class="cmd"><code>php artisan vendor:publish --tag=advisor-config</code></pre>
         </div>
       </div>
@@ -389,7 +390,7 @@ composer ci</code></pre>
       <div class="section__head section__head--left">
         <p class="eyebrow">Read out at the start line</p>
         <h2 id="briefings-title">Briefings for your agent</h2>
-        <p>Your coding agent can set ADVISOR up itself. Brief it: copy a briefing, or run it straight in OpenCode, Claude Code, Codex or ChatGPT. Each one names the controls in order, what is out of bounds, and tells the agent to ask before it guesses.</p>
+        <p>Your coding agent can set ADVISOR up for you. Copy a briefing, or open it directly in OpenCode, Claude Code, Codex or ChatGPT. Each one lists the steps and the limits, and tells the agent to ask you before it guesses.</p>
       </div>
 
       <div class="briefings">
@@ -399,7 +400,7 @@ composer ci</code></pre>
             <div>
               <p class="ar-prompt__kicker">Briefing 1 · Any PHP app, raw or Laravel</p>
               <h3 class="ar-prompt__title" id="prompt-get-started-title">Get started with ADVISOR</h3>
-              <p class="ar-prompt__desc">From composer require to a connected server: the config shown before it is written, and the first question asked.</p>
+              <p class="ar-prompt__desc">The agent installs ADVISOR, shows you the client config before writing it, and asks its first question once it's connected.</p>
             </div>
           </header>
           <pre class="ar-prompt__text"><code>You are a coding agent helping a Wayne State University developer connect ADVISOR to the app in this folder. ADVISOR is the MCP server of WELD, the Wayne State application stack: read-only tools that answer from CREED's policy and the stack's own docs, with the date and the source, instead of from memory.
@@ -433,7 +434,7 @@ Output: the config you propose, the commands you ran, the doctor result if you r
             <div>
               <p class="ar-prompt__kicker">Briefing 2 · Laravel, Blade or Inertia</p>
               <h3 class="ar-prompt__title" id="prompt-laravel-title">ADVISOR in a Laravel app, beside Boost</h3>
-              <p class="ar-prompt__desc">The adapter on laravel/mcp, the published config, and both servers in one client: Boost knows Laravel, ADVISOR knows WSU.</p>
+              <p class="ar-prompt__desc">Uses the laravel/mcp adapter and adds ADVISOR to your client next to Boost, without touching Boost's entry.</p>
             </div>
           </header>
           <pre class="ar-prompt__text"><code>You are a coding agent adding ADVISOR to a Laravel app at Wayne State University, beside Laravel Boost. ADVISOR is the MCP server of WELD, the Wayne State application stack. Boost knows Laravel; ADVISOR knows WSU. Run both.
@@ -458,7 +459,7 @@ Constraints:
 Output: the client config with both servers in it, the commands you ran, the rules list_stack_rules returned, then your questions.</code></pre>
         </section>
 
-        <p class="briefings__fine">The agent reads the same sheet you do: <a href="llms.txt">llms.txt</a> lists the pages, <a href="llms-full.txt">llms-full.txt</a> holds them in one file, and this page has a <a href="index.md" type="text/markdown">Markdown twin</a>. Nothing here phones home; the buttons only copy text or open the tool you picked. The route is read-only, and so is the advisor.</p>
+        <p class="briefings__fine">Your agent can read this page too. <a href="llms.txt">llms.txt</a> lists the pages, <a href="llms-full.txt">llms-full.txt</a> has all of them in one file, and this page has a <a href="index.md" type="text/markdown">Markdown twin</a>. The buttons only copy text or open the tool you picked. This page sends nothing back to us.</p>
       </div>
     </div>
   </section>
@@ -474,11 +475,11 @@ Output: the client config with both servers in it, the commands you ran, the rul
         </div>
         <ul class="bounds__list">
           <li><strong>Off unless you turn it on.</strong> No <code>ADVISOR_ENABLED</code>, no server. <code>production</code> always refuses.</li>
-          <li><strong>Read-only.</strong> No tool takes a command, a URL or a free path. None writes a file in 0.1.</li>
+          <li><strong>Read-only.</strong> No tool takes a command, a URL or a free path, and none of them writes a file in 0.1.</li>
           <li><strong>No network, no model calls.</strong> It serves a bundled copy of the stack's docs, so it works offline.</li>
-          <li><strong>Verified content.</strong> Every bundled file is checked against a SHA-256 manifest at start-up; a mismatch stops the server.</li>
-          <li><strong>Answers are data.</strong> Every result is labelled as reference text and cleaned of invisible characters. PROCTOR in CI decides pass or fail, not ADVISOR.</li>
-          <li><strong>One safe program.</strong> <code>run_proctor_check</code> starts only your app's own PROCTOR, with an argument array, an allowlisted environment, a timeout, and no shell.</li>
+          <li><strong>Verified content.</strong> At start-up, every bundled file is checked against a SHA-256 manifest. If one doesn't match, the server won't start.</li>
+          <li><strong>Answers are data.</strong> Every result is labelled as reference text and cleaned of invisible characters. Pass or fail is PROCTOR's call in CI.</li>
+          <li><strong>Two fixed programs.</strong> <code>run_proctor_check</code> starts only your app's own PROCTOR, with an allowlisted environment. <code>upgrade_path</code> starts only Booster's read-only <code>plan</code>, never <code>run</code>. Both get an argument array and a timeout, and neither goes through a shell.</li>
         </ul>
       </div>
     </div>
@@ -490,7 +491,7 @@ Output: the client config with both servers in it, the commands you ran, the rul
       <div class="section__head">
         <p class="eyebrow">Adjoining sheets</p>
         <h2 id="nb-title">The neighbourhood</h2>
-        <p>ADVISOR serves what every part of the stack publishes. Here is who lives where.</p>
+        <p>ADVISOR answers from a bundled copy of what these projects publish. Here is who lives where.</p>
       </div>
 
       <ul class="hood">
@@ -501,12 +502,12 @@ Output: the client config with both servers in it, the commands you ran, the rul
         <li class="hood__item"><span class="hood__mark"><img src="assets/marks/pinstripe.png" width="56" height="56" alt=""></span><span class="hood__name"><a class="part-link" href="https://pinstripe.apps.wayne.edu/">Pinstripe</a></span><span class="hood__role">the coding standard</span></li>
         <li class="hood__item"><span class="hood__mark"><img src="assets/marks/sesame.png" width="56" height="56" alt=""></span><span class="hood__name"><a class="part-link" href="https://sesame.apps.wayne.edu/">SESAME</a></span><span class="hood__role">sign-in</span></li>
         <li class="hood__item"><span class="hood__mark"><img src="assets/marks/helmet.png" width="56" height="56" alt=""></span><span class="hood__name"><a class="part-link" href="https://helmet.apps.wayne.edu/">HELMET</a></span><span class="hood__role">the runtime baseline</span></li>
-        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/sourdough.png" width="56" height="56" alt=""></span><span class="hood__name"><a class="part-link" href="https://sourdough.apps.wayne.edu/">Sourdough</a></span><span class="hood__role">the starters</span></li>
-        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/weld.png" width="56" height="56" alt=""></span><span class="hood__name"><a class="part-link" href="https://weld.apps.wayne.edu/">WELD</a></span><span class="hood__role">the stack as one app</span></li>
+        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/sourdough.png" width="56" height="56" alt=""></span><span class="hood__name"><a class="part-link" href="https://sourdough.apps.wayne.edu/">Sourdough</a></span><span class="hood__role">the raw PHP starter</span></li>
+        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/weld.png" width="56" height="56" alt=""></span><span class="hood__name"><a class="part-link" href="https://weld.apps.wayne.edu/">WELD</a></span><span class="hood__role">the Laravel starter app</span></li>
         <li class="hood__item hood__item--here"><span class="hood__mark"><img src="brand/advisor-avatar-256.png" width="56" height="56" alt=""></span><span class="hood__name">ADVISOR</span><span class="hood__role">you are here</span></li>
         <li class="hood__item"><span class="hood__mark"><img src="assets/marks/booster.png" width="56" height="56" alt=""></span><span class="hood__name"><a class="part-link" href="https://booster.apps.wayne.edu/">Booster</a></span><span class="hood__role">upgrades, one hop at a time</span></li>
         <li class="hood__item"><span class="hood__mark"><img src="assets/marks/rollcall.png" width="56" height="56" alt=""></span><span class="hood__name"><a class="part-link" href="https://rollcall.apps.wayne.edu/">Rollcall</a></span><span class="hood__role">the fleet census</span></li>
-        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/drawbridge.png" width="56" height="56" alt=""></span><span class="hood__name"><a class="part-link" href="https://drawbridge.apps.wayne.edu/">Drawbridge</a></span><span class="hood__role">the auth gateway</span></li>
+        <li class="hood__item"><span class="hood__mark"><img src="assets/marks/drawbridge.png" width="56" height="56" alt=""></span><span class="hood__name"><a class="part-link" href="https://drawbridge.apps.wayne.edu/">Drawbridge</a></span><span class="hood__role">the sign-in gateway</span></li>
         <li class="hood__item"><span class="hood__mark"><img src="assets/marks/squire.png" width="56" height="56" alt=""></span><span class="hood__name"><a class="part-link" href="https://squire.apps.wayne.edu/">Squire</a></span><span class="hood__role">the deploy kit</span></li>
       </ul>
     </div>
@@ -519,12 +520,12 @@ Output: the client config with both servers in it, the commands you ran, the rul
         <div class="section__head section__head--left">
           <p class="eyebrow">Here be roadmaps</p>
           <h2 id="unch-title">Not yet surveyed</h2>
-          <p>Honest edges of the map. None of these exist in 0.1 except where marked, so none of them gets a command.</p>
+          <p>The edges of the map. None of these is in 0.1, so none of them gets a command here.</p>
         </div>
         <ul class="unch">
-          <li><span class="chip chip--soon">Coming soon</span><h3>Ask ADVISOR on the web</h3><p>A chat page. It needs a model, a data decision and an accessibility pass of its own.</p></li>
-          <li><span class="chip chip--soon">Coming soon</span><h3>Tools that write</h3><p>Scaffold with Sourdough, apply a Booster step. The read-only switch and tool groups are built so they can arrive safely.</p></li>
-          <li><span class="chip chip--soon">Coming soon</span><h3>Modules from each project</h3><p>The loader exists and is tested; projects ship their own tools through a manifest when they are ready.</p></li>
+          <li><span class="chip chip--soon">Coming soon</span><h3>Ask ADVISOR on the web</h3><p>A chat page. First we need to pick a model and decide what data it may see, and it will need its own accessibility review.</p></li>
+          <li><span class="chip chip--soon">Coming soon</span><h3>Tools that write</h3><p>Things like starting an app with Sourdough or applying a Booster hop. When they come, they stay off until you set <code>ADVISOR_READ_ONLY=0</code>.</p></li>
+          <li><span class="chip chip--soon">Coming soon</span><h3>Modules from each project</h3><p>The loader is built and tested. It only loads what <code>modules.json</code> lists, and no project ships a module yet.</p></li>
           <li><span class="chip chip--soon">Coming soon</span><h3>HTTP transport</h3><p>stdio first. Remote needs a threat model before it needs a port.</p></li>
         </ul>
       </div>
