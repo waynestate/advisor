@@ -168,9 +168,10 @@ when nothing else changed (the weekly heartbeat). `policy/sources.json` records,
 per value, which source said it, and the first and last day it was seen.
 
 Exit codes: `0` nothing worth committing (always `0` with `--dry-run`); `1` hard
-failure; `3` something was written and every written change was `tighten`,
-`neutral` or `loosen-warning`; `4` something was held or refused, or a
-`loosen-fail` was written on proof. Written changes are always written.
+failure; `3` something was written to `policy/policy.json` or `policy/sources.json`,
+including a released `loosen-fail` (the policy robot raises the alert from the
+report); `4` something was held or refused; nothing is committed for that run.
+Written changes are always written.
 `bin/refresh-patches.php` still works as before.
 
 ## Carrying CREED in another package
@@ -178,7 +179,7 @@ failure; `3` something was written and every written change was `tighten`,
 PROCTOR, Booster, Rollcall and ADVISOR each carry a generated copy of the
 reader under their own namespace, so two tools in one app never fight over a
 class name (the generator below keeps the copies in step). The copies began
-because CREED was not on Packagist. It is now (`waynestate/creed` 0.1.0), so
+because CREED was not on Packagist. It is now (`waynestate/creed` 0.1.2), so
 each copy can become a real `require`, one consumer at a time; until a
 consumer switches, its copy stays. CREED owns the generator and the check:
 
