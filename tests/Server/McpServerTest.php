@@ -26,12 +26,12 @@ final class McpServerTest extends TestCase
     }
 
     #[DataProvider('eras')]
-    public function testListsTheEightReadOnlyTools(bool $modern): void
+    public function testListsTheNineReadOnlyTools(bool $modern): void
     {
         $response = $this->harness($modern)->call('tools/list');
 
         $names = array_column($response['result']['tools'], 'name');
-        $this->assertSame(['get_project_status', 'list_projects', 'list_stack_rules', 'owner_of', 'policy_lookup', 'read_project_docs', 'run_proctor_check', 'upgrade_path'], $names);
+        $this->assertSame(['get_project_status', 'list_projects', 'list_stack_rules', 'owner_of', 'playbook_lookup', 'policy_lookup', 'read_project_docs', 'run_proctor_check', 'upgrade_path'], $names);
     }
 
     public function testInitializeNamesTheServerAndGivesInstructions(): void

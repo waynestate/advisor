@@ -148,6 +148,32 @@
         }
     },
     {
+        "name": "playbook_lookup",
+        "title": "Look up a shared value",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "description": "Optional shared-value key, for example CAS_URL."
+                }
+            },
+            "additionalProperties": false
+        },
+        "description": "Answers \"what is the value of X?\" for WSU shared values: an environment variable of the same name wins, then PLAYBOOK (waynestate/playbook) supplies the rest. Pass a key such as CAS_URL for one answer (the value plus its source: environment, playbook or unset), or nothing for every key with its value and source. Read-only; keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are refused. PLAYBOOK is optional; without it the tool says how to get it instead of failing.",
+        "annotations": {
+            "title": "Look up a shared value",
+            "readOnlyHint": true,
+            "destructiveHint": false,
+            "idempotentHint": true,
+            "openWorldHint": false
+        },
+        "outputSchema": {
+            "type": "object"
+        }
+    },
+    {
         "name": "policy_lookup",
         "title": "Look up support dates",
         "inputSchema": {

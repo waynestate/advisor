@@ -125,6 +125,7 @@ Tools (all read-only; each says where its answer came from):
 | `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. |
 | `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
 | `owner_of` | Answers "which project owns X?" from the bundled ownership table, with a fuzzy topic match. |
+| `playbook_lookup` | A shared value by key, or every key: an environment variable of the same name wins, then PLAYBOOK; secret-looking keys are refused. |
 | `run_proctor_check` | Runs the app's own `vendor/bin/proctor check` against the bundled policy and returns the findings. |
 | `upgrade_path` | Plans the app's PHP and/or Laravel upgrade, one supported hop at a time, via BOOSTER's read-only `plan`. |
 

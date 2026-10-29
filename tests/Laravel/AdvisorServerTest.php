@@ -36,13 +36,13 @@ final class AdvisorServerTest extends TestCase
         $booted = $this->app->make(Booted::class);
 
         $this->assertInstanceOf(Booted::class, $booted);
-        $this->assertCount(8, $booted->catalog->tools());
+        $this->assertCount(9, $booted->catalog->tools());
     }
 
-    public function testTheServerOffersTheSameEightTools(): void
+    public function testTheServerOffersTheSameNineTools(): void
     {
         $this->assertSame(
-            ['get_project_status', 'list_projects', 'list_stack_rules', 'owner_of', 'policy_lookup', 'read_project_docs', 'run_proctor_check', 'upgrade_path'],
+            ['get_project_status', 'list_projects', 'list_stack_rules', 'owner_of', 'playbook_lookup', 'policy_lookup', 'read_project_docs', 'run_proctor_check', 'upgrade_path'],
             array_map(static fn(array $tool): string => $tool['name'], $this->listed()),
         );
     }
@@ -60,6 +60,8 @@ final class AdvisorServerTest extends TestCase
     {
         AdvisorServer::tool($this->tool('list_projects'))->assertOk()->assertSee('wayne-ui');
         AdvisorServer::tool($this->tool('get_project_status'), ['project' => 'proctor'])->assertOk()->assertSee('PROCTOR');
+        // No PLAYBOOK package in the test bench: the teaching answer, not an error.
+        AdvisorServer::tool($this->tool('playbook_lookup'), ['key' => 'CAS_URL'])->assertOk()->assertSee('waynestate/playbook');
     }
 
     public function testBadArgumentsAreAnErrorTheModelCanFix(): void
