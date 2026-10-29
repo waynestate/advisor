@@ -22,9 +22,10 @@ Each practice has a reason, sources, and a tag that says how the stack holds it 
 | `Documented` | Written down only. |
 | `Not yet` | A gap. |
 
-Tags describe the repository and design documents as they stand on 2026-10-27. PROCTOR v0.1 is specified in
-`first-repos.md` and its checks are named below as specified. CREED's own pipeline currently includes the
-`php-test` and `composer-audit` components only, because the `proctor` component waits for a tagged CREED release.
+Tags describe the repository and design documents as they stand on 2026-10-29. PROCTOR v0.1 is specified in
+`first-repos.md` and its checks are named below as specified. CREED's own pipeline includes the `php-test`,
+`composer-audit` and `proctor` components, pinned to Preflight 0.1.0; the `proctor` job checks `deploy/` and is
+allowed to fail while its current findings are fixed.
 
 ## 1. The version policy as data
 
@@ -73,7 +74,9 @@ How the stack holds it: `Enforced`. The schema declares `format: date` and a fix
 
 ### 4. Make the reader refuse to guess
 
-A version with no `security_until` is an error, not a silent pass. An unknown component or version is an error.
+A version with no `security_until` is an error, not a silent pass, unless its line is marked current. An unknown
+component, or a version between the listed lines, is an error. A version older than the oldest listed line is EOL,
+and one newer than every listed line is Active: current versions are never refused.
 
 Why: a tool that guesses turns missing data into a green check.
 
@@ -84,8 +87,8 @@ it does not describe a tool that refuses unknown data).
 Second pass: the first pass said the GOV.UK policy "is to track EOL dates explicitly". The page is softer than that. It
 also carries a banner saying it may be out of date (last updated 2025-03-19). Treat it as prior art for the intent only.
 
-How the stack holds it: `Enforced`. `stateOf` throws for unknown components, unknown versions and a missing
-`security_until`; tests cover each case.
+How the stack holds it: `Enforced`. `stateOf` throws for an unknown component, a version between the listed lines,
+and a missing `security_until` on a line that is not marked current; tests cover each case.
 
 ### 5. Compute state from the date, with an inclusive end and a stated grace period
 
@@ -157,7 +160,7 @@ release cycle and gives no support policy for older minors. Inertia 3.0 exists; 
 the minimums for the Laravel adapter and state no end-of-life policy for v2.
 
 How the stack holds it: `Enforced`. The schema now allows a line marked `"current": true` with no dates
-(`policy/policy.schema.json`), and `policy.json` lists Vue 3 and Inertia 2 that way, with no invented dates. The schema
+(`policy/policy.schema.json`), and `policy.json` lists Vue 3, Inertia 2 and Inertia 3 that way, with no invented dates. The schema
 requires `security_until` on every line that is not current, so a made-up date is never needed and a dated line can't
 skip its dates. A version newer than every listed line is treated as current ("current versions are never
 refused").
@@ -213,8 +216,8 @@ Sources: [PHP supported versions](https://www.php.net/supported-versions.php) (t
 security fixes), [GOV.UK Publishing manual, keeping software current](https://docs.publishing.service.gov.uk/manual/keeping-software-current.html),
 [PHP 2026 news archive](https://www.php.net/archive/2026.php).
 
-How the stack holds it: `Checked`. `php-floor` reports a WARN for a security-only floor. The runtime ribbon and log
-line in the stack's version policy wait for HELMET.
+How the stack holds it: `Checked`. `php-floor` reports a WARN for a security-only floor. HELMET ships the runtime
+ribbon, with version warnings from a CREED `policy.json`. The log line in the stack's version policy is not built yet.
 
 ### 13. Raise the floor on the day the old version ends
 
@@ -250,8 +253,9 @@ Why: an EOL framework is the largest unpatched surface in a typical app.
 Sources: [Laravel release notes](https://laravel.com/docs/13.x/releases).
 
 How the stack holds it: `Not yet`. The reader can classify Laravel 10, 11, 12 and 13 (second pass: 13 was added after
-the first pass), but no PROCTOR v0.1 check reads `composer.lock` for the framework. The planned deploy gate will
-check it. A supported branch is not enough on its own: see practice 38 for the October 2026 Laravel advisory.
+the first pass). PROCTOR `unpatched` reads `laravel/framework` from `composer.lock` and warns when the locked patch
+trails the policy's `latest_patch`, but no check fails an app whose framework line is EOL; the planned deploy gate
+will. A supported branch is not enough on its own: see practice 38 for the October 2026 Laravel advisory.
 
 ### 16. Use a Node release that is in LTS or maintenance
 
@@ -430,7 +434,7 @@ Second pass: the first pass also cited the GOV.UK manual here. As read on 2026-1
 dated exceptions, so the citation was removed. The practice itself is the stack's own design (the version policy).
 
 How the stack holds it: `Checked`. PROCTOR `overrides` prints every override and fails an expired one. Rollcall is
-meant to list them across apps and is not built.
+counts expired overrides across apps in its fleet report.
 
 ### 28. Roll a new rule out in stages, with dates
 
@@ -602,7 +606,8 @@ Sources: [Packagist: Composer 2.9.6 Perforce fixes](https://blog.packagist.com/c
 [Composer config reference](https://getcomposer.org/doc/06-config.md#audit).
 
 How the stack holds it: `Not yet`. CREED's README tells developers to run the floating `composer:2` image, and no repo
-records or pins a Composer version. This pass did not read the Preflight components, so what they install is unknown.
+but the policy records a minimum Composer version (`tools.composer.minimum`, 2.8.0) and CREED's own pipeline runs the
+pinned `composer:2.10.3` image.
 
 ### 40. Treat a brand-new package version as untrusted for a short time
 
@@ -642,8 +647,9 @@ Why: build tools run with your credentials and your source (practice 16), and th
 Sources: [npm config](https://docs.npmjs.com/cli/v11/using-npm/config),
 [Composer config, `policy`](https://getcomposer.org/doc/06-config.md#policy).
 
-How the stack holds it: `Not yet`. Preflight has `proctor`, `php-test` and `composer-audit` only, so nothing audits
-`package-lock.json`. The `audit_severity_threshold` rule is read by the Composer audit alone.
+How the stack holds it: `Not yet`. Preflight 0.1.0 has `proctor`, `php-test` and `composer-audit`; `sbom`, `pint`,
+`phpstan` and `eslint` arrive in the next tag. None of them audits `package-lock.json`. The `audit_severity_threshold`
+rule is read by the Composer audit alone.
 
 ### 42. Gate on tools that work on every GitLab tier
 
@@ -851,16 +857,15 @@ These are places where a source disagrees with the repository or with an earlier
 
 - **Laravel 13, Node 26 and MySQL 9.7 were missing from `policy.json` when the first pass was written; they are there
   now.** Second pass: all three entries match the vendor pages. Laravel 13: released 2026-03-17, security fixes to
-  2028-03-17 (the page still shows bug fixes as "Q3 2027", and the policy holds 2027-09-17, which the page does not
-  state; see the open item below). Node 26: LTS from 2026-10-28, maintenance from 2027-10-20, end of life 2029-04-30.
+  2028-03-17 (the page shows bug fixes as "Q3 2027"; the policy holds 2027-09-30, recorded from endoflife.date on
+  2026-10-29; see the resolved note below). Node 26: LTS from 2026-10-28, maintenance from 2027-10-20, end of life 2029-04-30.
   endoflife.date shows 2027-10-27 for the same field ([endoflife.date Node API](https://endoflife.date/api/v1/products/nodejs/)).
   MySQL 9.7: Premier to 2031-04-30 and Extended to 2034-04-30 on endoflife.date. The stack's version policy says
 "Q1 2028" for Laravel 13;
   the page gives the day.
-- **Open item: Laravel 13 `active_until` is 2027-09-17 in `policy.json`.** The Laravel release page gives "Q3 2027" for
-  bug fixes and no day. The first pass said not to store a date a project has not published (practice 3). Either the date
-  came from another source, which should be recorded, or it is a guess made from the 18-month rule. This pass could not
-  tell which. Check it and write the source down (practice 6).
+- **Resolved: Laravel 13 `active_until` is 2027-09-30 in `policy.json`.** The Laravel release page gives "Q3 2027" for
+  bug fixes and no day. The date came from another source: the refresh of 2026-10-29 recorded 2027-09-30 from
+  endoflife.date in `policy/sources.json`, so the date now carries its source (practice 6).
 - **PHP dates match.** 8.1 to 8.5 agree with php.net and the EOL table. Second pass: 8.2 to 8.5 were re-read on
   php.net's supported-versions page and match `policy.json`; the endoflife.date PHP API agrees.
 - **Dates re-checked this pass:** Laravel 10 to 12 (release, bug-fix and security dates) match the Laravel table. Node 22,
@@ -883,7 +888,7 @@ These are places where a source disagrees with the repository or with an earlier
 1. Done in the repository after the first pass: Laravel 13, Node 26 and MySQL 9.7 are in `policy.json` (practice 7). The
    process gap remains (items 19 and 22).
 2. Add a scheduled freshness check against a public EOL feed (practice 8).
-3. Done: the schema allows `"current": true` lines with no end date, and Vue 3 and Inertia 2 are listed (practice 9).
+3. Done: the schema allows `"current": true` lines with no end date, and Vue 3, Inertia 2 and Inertia 3 are listed (practice 9).
 4. Add a `source` and `checked_on` field to each version entry (practice 6).
 5. Record the supported PHP range per Laravel release, and add a PROCTOR check for the pair (practice 14).
 6. Add a PROCTOR check that reads the Laravel version from `composer.lock` against the policy (practice 15).
@@ -929,7 +934,7 @@ Added in the second pass (2026-10-27):
 34. Ask WSU's accessibility office and counsel which Title II dates apply, then write the chapter's target level
     (practices 52 and 54).
 35. Add an accessibility job to Preflight, using Pa11y or another deterministic tool (practice 53).
-36. Resolve the Laravel 13 `active_until` date (2027-09-17): find its source or remove it (Checks against the web).
+36. Done: the Laravel 13 `active_until` date (2027-09-30) carries its source, endoflife.date, in `policy/sources.json` (Checks against the web).
 37. Make `security_until` required in the schema, so the schema and the reader agree (practice 2). Do this together with
     item 3, because lines with no published end date (Vue 3) need another way to be modelled.
 

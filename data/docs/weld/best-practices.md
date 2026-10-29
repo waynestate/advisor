@@ -19,7 +19,7 @@ Each practice ends with exactly one tag.
 | `Documented` | Written down in the README or a config file, with no check behind it. |
 | `Not yet` | A gap. |
 
-The tags describe the repo as it stands on 2026-10-28. The Laravel base has landed: the starter kit is in, the password auth (register, login, password reset, two-factor) is removed on purpose, CI runs on both GitLab and GitHub from the same `composer ci` contract, and the stack defaults (PHP floor, stderr logging, database sessions and cache, the 191-character index cap) are set. The stack packages (SESAME, HELMET, PROCTOR, Preflight, Pinstripe, CREED and WayneUI) are not yet Composer or npm dependencies, so the practices that depend on them are `Not yet` and say which package they wait on. The `Stack:` line on each entry says what the tag should become and which tool owns it.
+The tags describe the repo as it stands on 2026-10-28. The Laravel base has landed: the starter kit is in, the password auth (register, login, password reset, two-factor) is removed on purpose, CI runs on both GitLab and GitHub from the same `composer ci` contract, and the stack defaults (PHP floor, stderr logging, database sessions and cache, the 191-character index cap) are set. The stack packages are partly wired in: SESAME and HELMET sit in `require`, CREED and PROCTOR in `require-dev`, and Preflight, Pinstripe and WayneUI are not yet Composer or npm dependencies, so the practices that depend on those three are `Not yet` and say which package they wait on. The `Stack:` line on each entry says what the tag should become and which tool owns it.
 
 ---
 
@@ -47,7 +47,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Use `@inertiajs/vue3` ^3 and `inertiajs/inertia-laravel` ^3. Do not import Axios, call `Inertia::lazy()` (use `Inertia::optional()`), read `data-page`, or `require()` Inertia packages.
 - **Why:** Inertia 3 removed all of these; code copied from older tutorials fails or half-works.
 - **Sources:** [Inertia v3 upgrade guide](https://inertiajs.com/docs/v3/getting-started/upgrade-guide.md).
-- **Stack:** `Not yet`. WELD is on Inertia 2, not 3: `composer.json:13` pins `inertiajs/inertia-laravel: ^2.0` and `package.json:26` pins `@inertiajs/vue3: ^2.0.0-beta.3`. The removed APIs are not used (no `axios` dependency, no `Inertia::lazy`, no `data-page`), so the migration is a version bump, not a rewrite. Target `Checked`: ESLint `no-restricted-imports` for `axios`, a grep check for `Inertia::lazy`, and Composer constraints.
+- **Stack:** `Not yet`. WELD is on Inertia 2, not 3: `composer.json:17` pins `inertiajs/inertia-laravel: ^2.0` and `package.json:27` pins `@inertiajs/vue3: ^2.0.0-beta.3`. The removed APIs are not used (no `axios` dependency, no `Inertia::lazy`, no `data-page`), so the migration is a version bump, not a rewrite. Target `Checked`: ESLint `no-restricted-imports` for `axios`, a grep check for `Inertia::lazy`, and Composer constraints.
 
 ### W5. Commit `.ai/rules`; ignore what Boost regenerates
 - **Practice:** Laravel Boost is a `require-dev` package. Commit `.ai/rules/` (project rules). Ignore `.mcp.json`, `boost.json` and the generated block of `CLAUDE.md`/`AGENTS.md`. WELD's own conventions go in `.ai/guidelines/` and each stack package may ship `resources/boost/guidelines/core.blade.php` and `resources/boost/skills/*/SKILL.md`.
@@ -59,7 +59,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Sail's own description is "Laravel's default Docker development environment". It is not a production image and WELD never deploys it.
 - **Why:** Sail's runtime images carry dev tooling and a bash-script CLI.
 - **Sources:** [Laravel Sail](https://laravel.com/docs/13.x/sail).
-- **Stack:** `Documented`. `composer.json:23` keeps `laravel/sail` in `require-dev`, so it is a local tool, not a runtime dependency. Target `Checked`: PROCTOR flags `laravel/sail` outside `require-dev` and any `vendor/laravel/sail` path in a production Dockerfile.
+- **Stack:** `Documented`. `composer.json:29` keeps `laravel/sail` in `require-dev`, so it is a local tool, not a runtime dependency. Target `Checked`: PROCTOR flags `laravel/sail` outside `require-dev` and any `vendor/laravel/sail` path in a production Dockerfile.
 
 ### W7. The supported dev path is Compose driven by native scripts, not Sail
 - **Practice:** Sail runs on Windows "via WSL2". The stack rule is that Windows needs no bash and no WSL. Ship `weld.ps1` and `weld.sh` (or one PHP command) over a plain `compose.yaml`; Sail stays an unsupported convenience.
@@ -115,7 +115,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Use `SESSION_DRIVER=database` (or Redis) and a shared cache, even for one replica. Every host overlaps old and new containers during a deploy.
 - **Why:** A login must survive a hop between replicas.
 - **Sources:** [Laravel scheduling](https://laravel.com/docs/13.x/scheduling) (`onOneServer` needs a shared cache).
-- **Stack:** `Documented`. `.env.example:30` sets `SESSION_DRIVER=database` and `.env.example:40` sets `CACHE_STORE=database`; `config/session.php:21` and `config/cache.php:18` default to the same. Target `Checked`: the portability job logs in on replica A and reads the session on replica B.
+- **Stack:** `Documented`. `.env.example:30` sets `SESSION_DRIVER=database` and `.env.example:55` sets `CACHE_STORE=database`; `config/session.php:21` and `config/cache.php:18` default to the same. Target `Checked`: the portability job logs in on replica A and reads the session on replica B.
 
 ### W16. Stop cleanly on SIGTERM
 - **Practice:** Run PHP as PID 1 under a small init, or an entrypoint that `exec`s the server. Queue workers finish the current job on `SIGTERM`. Set the platform's grace period above the longest job `#[Timeout]`.
@@ -135,7 +135,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** `QUEUE_CONNECTION=database`; run `php artisan queue:work --max-time=3600 --tries=3` as the `worker` process where the platform allows one. Use `#[Tries]`, `#[Timeout]` and `#[Backoff]` on jobs.
 - **Why:** It needs no extra service, and `--max-time` recycles memory.
 - **Sources:** [Laravel queues](https://laravel.com/docs/13.x/queues) (`--max-time`, job attributes, jobs table migration).
-- **Stack:** `Documented`. `.env.example:38` sets `QUEUE_CONNECTION=database`, `config/queue.php:16` defaults to it, and the jobs tables are migrated by `database/migrations/0001_01_01_000002_create_jobs_table.php:14`. No job classes exist yet, so the `#[Tries]`/`#[Timeout]`/`#[Backoff]` attributes are not in use. Target `Checked`: a test that every job class declares `#[Tries]` and `#[Timeout]`.
+- **Stack:** `Documented`. `.env.example:53` sets `QUEUE_CONNECTION=database`, `config/queue.php:16` defaults to it, and the jobs tables are migrated by `database/migrations/0001_01_01_000002_create_jobs_table.php:14`. No job classes exist yet, so the `#[Tries]`/`#[Timeout]`/`#[Backoff]` attributes are not in use. Target `Checked`: a test that every job class declares `#[Tries]` and `#[Timeout]`.
 
 ### W19. Where no worker can run, run the queue from the scheduler
 - **Practice:** On Citadel (no queue workers), schedule `queue:work --stop-when-empty --max-time=50 --tries=3` every minute with `withoutOverlapping` and a short expiry. Select it with `WELD_QUEUE_MODE=scheduled`.
@@ -179,7 +179,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Require `laravel/framework` at or above the latest patched release, run `composer audit` in CI, and let CREED's `policy.json` name the minimum patch level. A critical TokenGuard authentication bypass was published on 2026-10-19 (fixed in 13.29.0 and 12.68.0).
 - **Why:** Framework advisories arrive several times a year.
 - **Sources:** [laravel/framework advisories](https://github.com/laravel/framework/security/advisories), [GHSA-f9x3-7vq9-cph6](https://github.com/laravel/framework/security/advisories/GHSA-f9x3-7vq9-cph6).
-- **Stack:** `Checked`. `composer.json:14` pins `laravel/framework: ^13.29` (at or above the patched release), `composer.json:51` runs `@composer audit` inside the `ci` script, and `.gitlab-ci.yml:9` includes the Preflight `composer-audit` component, so the audit runs in CI. CREED's `policy.json` is a dependency and PROCTOR measures against it.
+- **Stack:** `Checked`. `composer.json:18` pins `laravel/framework: ^13.29` (at or above the patched release), `composer.json:61` runs `@composer audit` inside the `ci` script, and `.gitlab-ci.yml:9` includes the Preflight `composer-audit` component, so the audit runs in CI. CREED's `policy.json` is a dependency and PROCTOR measures against it.
 
 ### W26. Debug is off outside local
 - **Practice:** `APP_DEBUG=false` in production. The debug page has had an XSS advisory (Low, 2026-09-10).
@@ -191,7 +191,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Laravel 13 formalised request-forgery protection as `PreventRequestForgery` (origin-aware, still token-compatible). Any custom middleware stack or HELMET code must reference the new name.
 - **Why:** Code that removes or reorders the old name can silently drop protection.
 - **Sources:** [Laravel 13 release notes](https://laravel.com/docs/13.x/releases). Whether the old class name remains as an alias is not confirmed.
-- **Stack:** `Documented`. `bootstrap/app.php:19` appends to the default `web` middleware group, which carries `PreventRequestForgery` in Laravel 13, so the protection is in place by default. There is no feature test that posts without a token and expects 419. Target `Checked`: a feature test posts without a token and expects 419.
+- **Stack:** `Documented`. `bootstrap/app.php:25` appends to the default `web` middleware group, which carries `PreventRequestForgery` in Laravel 13, so the protection is in place by default. There is no feature test that posts without a token and expects 419. Target `Checked`: a feature test posts without a token and expects 419.
 
 ### W28. CSP works with Inertia 3 and Vite
 - **Practice:** HELMET sets the CSP header and calls `Vite::useCspNonce()`; Laravel then adds the nonce to the tags `@vite` emits. Inertia 3 puts initial page data in a JSON script element. Run the policy in report-only first.
@@ -211,19 +211,19 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** `composer.json` requires `php: ^8.3` with `config.platform.php` `8.3.0`. Tests run on 8.3, 8.4 and 8.5. Laravel 13 needs 8.3 or newer.
 - **Why:** The stack's floor and the framework agree.
 - **Sources:** [Laravel 13 releases](https://laravel.com/docs/13.x/releases).
-- **Stack:** `Checked`. `composer.json:12` requires `php: ^8.3`, `composer.json:88` sets `config.platform.php` to `8.3.0`, and the CI matrix runs on 8.3, 8.4 and 8.5 (`.gitlab-ci.yml:8` and `.github/workflows/ci.yml:18`).
+- **Stack:** `Checked`. `composer.json:16` requires `php: ^8.3`, `composer.json:98` sets `config.platform.php` to `8.3.0`, and the CI matrix runs on 8.3, 8.4 and 8.5 (`.gitlab-ci.yml:8` and `.github/workflows/ci.yml:18`).
 
 ### W31. Keep dev tools inside the PHP floor
 - **Practice:** Pest 5 requires PHP `^8.4`. On a `^8.3` floor use Pest 4 or PHPUnit and cap the constraint.
 - **Why:** An unconstrained `composer require pestphp/pest` breaks installs on 8.3.
 - **Sources:** [Pest on Packagist](https://repo.packagist.org/p2/pestphp/pest.json); Pint 1.32.1 requires `^8.3` ([Pint](https://repo.packagist.org/p2/laravel/pint.json)).
-- **Stack:** `Checked`. WELD uses PHPUnit, not Pest: `composer.json:27` pins `phpunit/phpunit: ^12.0`, and the CI matrix starts at 8.3 (`.gitlab-ci.yml:8`), so `composer install` runs on 8.3 and would fail if a dev tool required 8.4 or newer.
+- **Stack:** `Checked`. WELD uses PHPUnit, not Pest: `composer.json:33` pins `phpunit/phpunit: ^12.0`, and the CI matrix starts at 8.3 (`.gitlab-ci.yml:8`), so `composer install` runs on 8.3 and would fail if a dev tool required 8.4 or newer.
 
 ### W32. Pinstripe owns style and static analysis
 - **Practice:** Use Pinstripe's Pint preset, PHPStan level 8 through Larastan, ESLint (flat config) and Prettier. No local overrides without a recorded reason.
 - **Why:** One standard across all stack repos.
 - **Sources:** [Larastan](https://repo.packagist.org/p2/larastan/larastan.json).
-- **Stack:** `Checked`, for the PHP side. `composer.json:43` runs `pint --test`, `composer.json:45` runs `phpstan analyse`, and both are in the `ci` script (`composer.json:46-52`), which CI runs; `pint.json:2` uses the `laravel` preset and `phpstan.neon:8` sets `level: 8`. The JS side is configured but not yet in the CI pipeline: `eslint.config.js` (flat config) and `.prettierrc` exist, but no CI job runs `npm run lint` or `npm run format:check`. Pinstripe is not a dependency yet, so the presets are copied, not included.
+- **Stack:** `Checked`, for the PHP side. `composer.json:51` runs `pint --test`, `composer.json:53` runs `phpstan analyse`, and both are in the `ci` script (`composer.json:56-62`), which CI runs; `pint.json:2` uses the `laravel` preset and `phpstan.neon:8` sets `level: 8`. The JS side is configured but not yet in the CI pipeline: `eslint.config.js` (flat config) and `.prettierrc` exist, but no CI job runs `npm run lint` or `npm run format:check`. Pinstripe is not a dependency yet, so the presets are copied, not included.
 
 ### W33. Pin shared CI components to a commit
 - **Practice:** Preflight components are referenced by commit SHA or a fixed tag, not a moving branch.
