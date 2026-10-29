@@ -16,6 +16,10 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.
 - Changed: project names written as words except acronyms.
 
+### Fixed
+
+- Fixed: stale capability claims in the site and docs.
+
 ## [0.1.1] - 2026-10-29
 
 ### Added
