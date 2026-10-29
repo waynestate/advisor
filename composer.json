@@ -33,7 +33,8 @@
         "waynestate/pinstripe": "^0.1"
     },
     "suggest": {
-        "laravel/mcp": "For the Laravel adapter (1.1.2): ADVISOR then runs beside Laravel Boost with `php artisan mcp:start advisor`"
+        "laravel/mcp": "For the Laravel adapter (1.1.2): ADVISOR then runs beside Laravel Boost with `php artisan mcp:start advisor`",
+        "waynestate/playbook": "WSU's shared values; private, git.wayne.edu"
     },
     "config": {
         "allow-plugins": {
