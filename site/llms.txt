@@ -12,10 +12,11 @@ Development happens on Wayne State's GitLab; this repository is a release mirror
 
 > Every WSU student has an advisor. Now every WSU app does too, and this one answers email.
 
-ADVISOR is WELD's own MCP server, like Laravel Boost for WSU. It orients a developer who is new to the stack and gives
-their coding agent read-only tools into it: the CREED standards and policy, PROCTOR results, the upgrade path,
-the WayneUI markup contract, SESAME and HELMET guidance, and the parts list. Ask it "which PHP can I build on?" and it
-answers from the policy file, with the date and the source, instead of from whatever the model remembers.
+ADVISOR is an MCP server for the Wayne State application stack, a bit like Laravel Boost but for WSU. It orients a
+developer who is new to the stack and gives their coding agent nine read-only tools into it: the CREED standards and
+policy, PROCTOR results, the upgrade path, the WayneUI markup contract, SESAME and HELMET guidance, and the parts list.
+Ask it "which PHP can I build on?" and it answers from the policy file, with the date and the source, instead of from
+whatever the model remembers.
 
 It is read-only in 0.1. It cannot write a file, run a shell command, or call out to the network. The two things it
 can start are the app's own `vendor/bin/proctor` and Booster's read-only `plan`, both with a fixed argument shape.
