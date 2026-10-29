@@ -42,7 +42,7 @@ final class McpServerTest extends TestCase
 
         $result = $responses[$id]['result'];
         $this->assertSame('advisor', $result['serverInfo']['name']);
-        $this->assertSame('0.1.0', $result['serverInfo']['version']);
+        $this->assertSame('0.1.2', $result['serverInfo']['version']);
         $this->assertNotSame('', $result['instructions']);
         $this->assertArrayHasKey('tools', $result['capabilities']);
     }
