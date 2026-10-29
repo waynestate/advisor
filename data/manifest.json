@@ -75,11 +75,11 @@
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "4e500ce0606c7ce8a334d671778368c415d3c9f060d3a6ce80505a0a0297e6fd",
+            "sha256": "ed52768e4a6187d04a7cebcb115a34c979830144b0da3a322d4903248cbe163a",
             "source": "sesame/BEST_PRACTICES.md"
         },
         "docs/sesame/readme.md": {
-            "sha256": "8ff155d60e2f0adbd19e58ba541346489360e3c9d54a98f34fea7e9d312495c5",
+            "sha256": "21774ae265c72bae0261e8df0ab72b58f9ba4d4d83eaaffd6edc33e511e162f1",
             "source": "sesame/README.md"
         },
         "docs/sourdough/best-practices.md": {
