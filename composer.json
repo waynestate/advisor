@@ -53,18 +53,23 @@
         "analyse": "phpstan analyse --memory-limit=1G",
         "content:generate": "@php bin/advisor content:generate",
         "content:verify": "@php bin/advisor content:verify",
+        "site:agent-ready": "php bin/agent-ready.php",
+        "site:agent-ready-check": "php bin/agent-ready.php --check",
         "ci": [
             "@composer validate --strict",
             "@php bin/advisor content:verify",
             "@php bin/advisor stack-parts --check=README.md",
             "phpunit",
             "pint --test",
+            "@site:agent-ready-check",
             "phpstan analyse --memory-limit=1G",
             "@composer audit"
         ]
     },
     "scripts-descriptions": {
-        "ci": "Run every CI check: manifest, bundled content, tests, style, static analysis, audit"
+        "ci": "Run every CI check: manifest, bundled content, tests, style, agent-ready files, static analysis, audit",
+        "site:agent-ready": "Rewrite the Markdown twins, llms.txt, llms-full.txt, robots.txt and sitemap.xml in site/ (Squire's agent-ready kit).",
+        "site:agent-ready-check": "Fail when the agent-ready files are stale, a page lacks its Markdown link, a prompt drifts from the docs, or the kit was edited here."
     },
     "bin": [
         "bin/advisor"

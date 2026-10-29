@@ -1,0 +1,41 @@
+# ADVISOR
+
+> ADVISOR is the Wayne State app stack's own MCP server: it orients your coding agent and gives it read-only tools into the stack's standards, versions, docs and checks.
+
+Front page: [`site/index.html`](https://github.com/waynestate/advisor/blob/HEAD/site/index.html), a static field map of the stack (open it in a browser).
+
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](https://github.com/waynestate/advisor/blob/HEAD/deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+
+Checks: `composer ci` (the same command runs on GitLab and GitHub).
+
+Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
+
+> Every WSU student has an advisor. Now every WSU app does too, and this one answers email.
+
+ADVISOR is WELD's own MCP server, like Laravel Boost for WSU. It orients a developer who is new to the stack and gives
+their coding agent read-only tools into it: the CREED standards and policy, PROCTOR results, the upgrade path,
+the WayneUI markup contract, SESAME and HELMET guidance, and the parts list. Ask it "which PHP can I build on?" and it
+answers from the policy file, with the date and the source, instead of from whatever the model remembers.
+
+It is read-only in 0.1. It cannot write a file, run a shell command, or call out to the network. The two things it
+can start are the app's own `vendor/bin/proctor` and Booster's read-only `plan`, both with a fixed argument shape.
+
+Every page below is Markdown. The HTML pages send the same Markdown to a client that asks for `text/markdown`. Written by Squire's agent-ready kit from the README and the pages; do not edit.
+
+## Pages
+
+- [ADVISOR: What applies, and what's next.](https://advisor.apps.wayne.edu/index.md): ADVISOR is the Wayne State app stack's own MCP server: it orients your coding agent and gives it read-only tools into the stack's standards, versions, docs and checks.
+
+## Prompts
+
+- [Get started with ADVISOR](https://advisor.apps.wayne.edu/#prompt-get-started): From composer require to a connected server: the config shown before it is written, and the first question asked. The prompt itself is in https://advisor.apps.wayne.edu/index.md.
+- [ADVISOR in a Laravel app, beside Boost](https://advisor.apps.wayne.edu/#prompt-laravel): The adapter on laravel/mcp, the published config, and both servers in one client: Boost knows Laravel, ADVISOR knows WSU. The prompt itself is in https://advisor.apps.wayne.edu/index.md.
+
+## Source
+
+- [README](https://github.com/waynestate/advisor/blob/HEAD/README.md): the project's README, with install, commands and checks
+- [Everything in one file](https://advisor.apps.wayne.edu/llms-full.txt): the README and every page above, as one Markdown file
+
+## Optional
+
+- [WELD](https://weld.apps.wayne.edu/llms.txt): the Wayne State application stack: every part, and the reference app

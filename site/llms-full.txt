@@ -1,0 +1,530 @@
+# ADVISOR: everything in one file
+
+> ADVISOR is the Wayne State app stack's own MCP server: it orients your coding agent and gives it read-only tools into the stack's standards, versions, docs and checks.
+
+The README and the Markdown twin of every page, joined. The index is https://advisor.apps.wayne.edu/llms.txt. Written by Squire's agent-ready kit; do not edit.
+
+---
+
+## README
+
+Source: https://github.com/waynestate/advisor/blob/HEAD/README.md
+
+## ADVISOR
+
+Front page: [`site/index.html`](https://github.com/waynestate/advisor/blob/HEAD/site/index.html), a static field map of the stack (open it in a browser).
+
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](https://github.com/waynestate/advisor/blob/HEAD/deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+
+Checks: `composer ci` (the same command runs on GitLab and GitHub).
+
+Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
+
+> Every WSU student has an advisor. Now every WSU app does too, and this one answers email.
+
+ADVISOR is WELD's own MCP server, like Laravel Boost for WSU. It orients a developer who is new to the stack and gives
+their coding agent read-only tools into it: the CREED standards and policy, PROCTOR results, the upgrade path,
+the WayneUI markup contract, SESAME and HELMET guidance, and the parts list. Ask it "which PHP can I build on?" and it
+answers from the policy file, with the date and the source, instead of from whatever the model remembers.
+
+It is read-only in 0.1. It cannot write a file, run a shell command, or call out to the network. The two things it
+can start are the app's own `vendor/bin/proctor` and Booster's read-only `plan`, both with a fixed argument shape.
+
+### Where it sits in WELD
+
+WELD is the Wayne State application stack: Wired, Everything, Linked, Deployed. ADVISOR is the part that talks to your
+coding agent.
+
+| Part | What it is |
+|---|---|
+| **WayneUI** | interface (project 0) |
+| **CREED** | version policy and written standards |
+| **PROCTOR** | checks an app |
+| **SESAME** | sign-in inside the app |
+| **HELMET** | runtime baseline |
+| **Sourdough** | starter |
+| **Preflight** | CI components |
+| **Pinstripe** | coding standard |
+| **Booster** | upgrades |
+| **Rollcall** | fleet census |
+| **Drawbridge** | sign-in gateway |
+| **Squire** | deploy kit |
+| **ADVISOR** | MCP server |
+| **WELD** | the stack's name and its reference app |
+
+ADVISOR serves a bundled copy of what these projects publish (see "Served content"), so it works offline, and it does
+not replace Laravel Boost. Boost knows Laravel; ADVISOR knows WSU. Run both.
+
+### Install
+
+PHP 8.3 or newer (8.3, 8.4 and 8.5 are tested). Add it to the app as a dev dependency:
+
+```
+composer require --dev waynestate/advisor
+```
+
+The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP
+command and not a shell script.
+
+ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.1`. No extra repository needed.
+
+### Quick start
+
+1. Print the config your MCP client needs, and read it:
+
+   ```
+   php vendor/bin/advisor install --client=claude
+   ```
+
+2. Write it into the project when you are happy with it:
+
+   ```
+   php vendor/bin/advisor install --client=claude --write
+   ```
+
+3. Open the project in your client and approve the `advisor` server by name when it asks.
+
+The command it registers is always the same fixed string, `php vendor/bin/advisor mcp`, with `ADVISOR_ENABLED=1` in
+its environment. Clients: `claude` (`.mcp.json`), `warriorgpt` (`.mcp.json`), `cursor` (`.cursor/mcp.json`), `vscode`
+(`.vscode/mcp.json`) and `codex` (TOML, printed only; paste it into `~/.codex/config.toml`).
+
+`install` never replaces a different existing `advisor` entry unless you pass `--force`, keeps your other servers, and
+warns when the file is not in `.gitignore`. A client config starts a program on whoever opens the project, so do not
+commit a generated one; this repository ignores `.mcp.json` for that reason.
+
+Run the client from the folder that holds `vendor/`. If it starts somewhere else, set `ADVISOR_PROJECT_ROOT`.
+
+#### Laravel apps
+
+ADVISOR also ships a Laravel adapter on `laravel/mcp`, auto-discovered by the service provider. With it, the same
+server runs as `php artisan mcp:start advisor`, beside Boost. Publish the config if you want it in the app:
+
+```
+php artisan vendor:publish --tag=advisor-config
+```
+
+Settings come from the same `ADVISOR_*` variables, read through `config/advisor.php`. The same rules apply: off unless
+`ADVISOR_ENABLED` is set, and never in production.
+
+### What it offers
+
+Tools (all read-only; each says where its answer came from):
+
+| Tool | Does |
+|---|---|
+| `list_projects` | The stack's projects, WayneUI first, with built or proposed state. |
+| `get_project_status` | One project: state, package, PHP constraint, its floor under today's policy, next step. |
+| `read_project_docs` | A project's README, best practices, or (WayneUI only) markup contract, paged. |
+| `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. |
+| `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
+| `owner_of` | Answers "which project owns X?" from the bundled ownership table, with a fuzzy topic match. |
+| `playbook_lookup` | A shared value by key, or every key: an environment variable of the same name wins, then Playbook; secret-looking keys are refused. |
+| `run_proctor_check` | Runs the app's own `vendor/bin/proctor check` against the bundled policy and returns the findings. |
+| `upgrade_path` | Plans the app's PHP and/or Laravel upgrade, one supported hop at a time, via Booster's read-only `plan`. |
+
+The groups split by what they may start: `stack` never starts a program, `proctor` starts the app's own
+`vendor/bin/proctor`, and `booster` starts Booster's read-only `plan` (never `run`). Set `ADVISOR_GROUPS=stack`
+when you want ADVISOR as pure reference material.
+
+Resources: `advisor://policy` and one `advisor://creed/` per handbook chapter.
+Prompts: `orient_me` and `plan_upgrade`.
+
+Here is what that looks like when you ask. Each numbered control point is one of the tools above, with the arguments the
+front page's own route table sends:
+
+Everything ADVISOR returns is labelled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.
+
+### Configuration
+
+ADVISOR reads the process environment only, never a file. The placeholders are in `.env.example`.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `ADVISOR_ENABLED` | off | Must be `1` or `true`, or the server refuses to start. `advisor install` sets it in the client config. |
+| `ADVISOR_ENV` | `APP_ENV`, then `local` | `production` or `prod` always refuses to start. |
+| `ADVISOR_PROJECT_ROOT` | the working directory | The folder `run_proctor_check` may look inside. Paths outside it are refused. |
+| `ADVISOR_READ_ONLY` | on | Set to `0` or `false` to allow tools that write. None exist in 0.1. Read-only wins over `ADVISOR_GROUPS`. |
+| `ADVISOR_GROUPS` | all | Comma list of tool groups to offer (`stack`, `proctor`, `booster`). See below for what each group may start. |
+| `ADVISOR_PROCTOR_TIMEOUT` | `120` | Seconds before a PROCTOR run is stopped (1 to 900). |
+| `ADVISOR_BOOSTER_TIMEOUT` | `60` | Seconds before a Booster plan is stopped (1 to 900). A plan is local and fast, so the default is shorter than a PROCTOR run. |
+| `ADVISOR_BOOSTER_BIN` | none | Where `upgrade_path` finds Booster when the app has no `vendor/bin/booster` of its own: the path to booster's `bin/booster` (or a `booster.phar`). The app's own `vendor/bin/booster` always wins. |
+| `ADVISOR_MAX_CHARS` | `20000` | Largest piece of text one doc call returns (1000 to 45000). |
+| `ADVISOR_AUDIT_LOG` | off | A file for a one-line-per-call audit log: time, tool, a hash of the arguments, outcome, duration. Arguments are hashed, never written. |
+| `ADVISOR_LOG_LEVEL` | `warning` | Log level on stderr (`debug` to `emergency`). |
+| `ADVISOR_STACK_DIR` | none | Folder holding the sibling stack repos; used only by `content:generate`. |
+| `ADVISOR_PRIVATE_DENYLIST` | none | A file (kept outside the repo) with private strings to strip from the bundle; used by `content:generate` and the public-posture test. See "Releasing". |
+| `ADVISOR_MODULES_FILE` | none | An extra module manifest (see "Modules"). |
+
+A bad value stops the server with a message on stderr. It does not guess.
+
+### Commands
+
+```
+php vendor/bin/advisor mcp                          # serve over stdio (your client starts this)
+php vendor/bin/advisor install [--client=claude] [--write] [--force] [--path=.]
+php vendor/bin/advisor content:verify               # check the bundled content against its manifest
+php vendor/bin/advisor content:generate [--sources=<dir>] [--check]
+php vendor/bin/advisor stack-parts [--write=<readme>] [--check=<readme>]
+php vendor/bin/advisor doctor [--json]              # check the install when the server does not show up
+```
+
+Stdout carries only protocol messages. Logs, warnings and stray output go to stderr, so a client never sees garbage.
+
+### When it doesn't show up
+
+You added the config, opened the project, and the `advisor` server is not in the list. Run:
+
+```
+php vendor/bin/advisor doctor
+```
+
+It checks the four things that keep a server from appearing, in plain words, and changes nothing:
+
+- **php**: the PHP on your machine satisfies ADVISOR's own `composer.json` (8.3 or newer).
+- **content**: the bundled `data/` still matches its manifest.
+- **client:claude**, **client:warriorgpt**, **client:cursor**, **client:vscode**: each client's MCP config: is the file there, does it have the `advisor` entry, and is the script it points at in the project? A missing file is a warning, not a failure; you only need the one client you use.
+- **mcp**: the server actually starts. Doctor boots it in-process and asks for its tools.
+
+A `fail` is something to fix; a `warn` is something you may not care about. The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
+
+The advisor will see you now.
+
+### Served content
+
+The handbook, policy, project docs and WayneUI contract in `data/` are generated from the sibling stack repositories by
+`content:generate` and verified at start-up against `data/manifest.json` (a SHA-256 for every file). If a file does not
+match, the server refuses to start rather than serve it. Files are cleaned on the way in: line endings are normalised
+and invisible characters (the TAG block, zero-width and bidirectional controls) are stripped.
+
+To refresh it, with the stack repos checked out side by side:
+
+```
+php vendor/bin/advisor content:generate --sources=/path/to/stack
+php vendor/bin/advisor content:generate --sources=/path/to/stack --check   # exits 1 on drift
+```
+
+CI cannot see the sibling repositories, so `composer ci` runs `content:verify`, which needs none of them.
+
+### Releasing
+
+ADVISOR is a public repository, so the bundle must not carry internal names. The public-posture test always checks
+generic shapes (ADR numbers, open-question numbers, design-doc paths, the coordination repo). Private strings
+(hostnames, people) are loaded from the file named by `ADVISOR_PRIVATE_DENYLIST` and checked only when the file is
+present.
+
+To release:
+
+1. Set `ADVISOR_PRIVATE_DENYLIST` to a file kept outside the repository (one literal or `regex:` pattern per line,
+   `#` comments).
+2. In GitLab CI, the file comes from a masked file-type CI variable.
+3. Regenerate the bundle with the file present: `php vendor/bin/advisor content:generate --sources=/path/to/stack`.
+4. Run `composer ci` to confirm the public-posture test passes.
+
+The file is never committed. The bundle is regenerated with the file present before every release.
+
+### Modules
+
+Each stack project can later ship its own ADVISOR tools. Modules load only from a manifest (`modules.json`), only from
+the `Waynestate\` namespace, and only if they implement the `Module` interface. Nothing scans a folder.
+
+### Running the checks
+
+Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](https://github.com/waynestate/advisor/blob/HEAD/MAINTAINING.md).
+
+```
+composer ci
+```
+
+That runs `composer validate --strict`, `content:verify`, PHPUnit, Pint, PHPStan (level 8, Pinstripe's raw preset,
+included from `vendor/waynestate/pinstripe`) and `composer audit`. No PHP on your machine? Use Docker:
+
+```
+docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+```
+
+Tests drive the real SDK server in-process with a small MCP client, snapshot `tools/list`, and start
+`bin/advisor mcp` as a subprocess to prove stdout stays clean. To accept an intended change to the tool list, run
+`ADVISOR_UPDATE_SNAPSHOTS=1 vendor/bin/phpunit`, then review and commit the diff.
+
+### Safety, in short
+
+- Off unless enabled; refuses production; refuses to start on a bad setting or a content file that fails its hash.
+- Read-only by default; no tool takes a command, a URL or a free path.
+- Every result is cleaned of invisible characters and labelled as data; secrets in PROCTOR output are redacted.
+- `run_proctor_check` runs one fixed program with an argument array and an allowlisted environment, never a shell.
+- `upgrade_path` runs Booster's read-only `plan` the same way: one fixed program, an argument array, an allowlisted command, never a shell. It plans; it never runs a hop.
+- No network calls, and no model calls, from ADVISOR itself.
+
+See `BEST_PRACTICES.md`, and `OPEN_QUESTIONS.md` for what is decided, assumed and not yet built.
+
+### Why "ADVISOR"
+
+Because registration is open, the advisor will see you now, and unlike the real one it knows which PHP version you are
+allowed to be on. A little Creed energy too: it will tell you who you are, in `composer.json`, whether you like it or not.
+
+### License
+
+MIT. Copyright Wayne State University.
+
+---
+
+Source: https://advisor.apps.wayne.edu/
+
+The Wayne State app stack, surveyed
+
+## ADVISOR
+
+ADVISOR stands for Answers, Directions, Versions, Integrations, Standards, Onboarding and Resources.
+
+What applies, and what's next.
+
+The stack's own MCP server, like Laravel Boost for Wayne State. It orients your coding agent and hands it read-only tools into every stack project: the standards, the supported versions, the docs and the checks. Ask “which PHP can I build on?” and it answers from the policy file, with the date and the source, instead of from whatever the model remembers.
+
+`$ composer require --dev waynestate/advisor`
+
+PHP 8.3 or newer. ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.1`.
+
+[Ask the map](https://advisor.apps.wayne.edu/#ask) [Get directions](https://advisor.apps.wayne.edu/#directions)
+
+The ADVISOR mark: a speech bubble holding a gold compass needle.
+
+The magic trick, minus the magic
+
+### Ask the map
+
+Type the kind of question you would ask your coding agent. The map plots the route ADVISOR takes: from your app, through the advising office, past the tool that answers, to the stack project the answer comes from.
+
+An illustration of how your agent uses ADVISOR's tools. This page calls nothing; the real server runs on your machine, beside your app.
+
+Control descriptions
+
+#### Route card
+
+“Which PHP can I build on?”
+
+1. **Start:** your app, where your coding agent is working
+2. **ADVISOR** takes the question
+3. Tool `policy_lookup` with `component: php`
+4. **Finish:** CREED, `policy.json`
+
+Answer, as reference data
+
+PHP 8.4 and 8.5 are in active support, 8.2 and 8.3 get security fixes only, and 8.1 is past its end of life.
+
+Source: CREED `policy.json`, worked out for today.
+
+Climb: 0 m. Everything on this route is read-only.
+
+Read this before you set off
+
+### Legend
+
+Six tools, two prompts and a shelf of resources. Every tool is read-only and every answer says where it came from.
+
+#### Tools
+
+- **`list_projects`**: The stack's projects, WayneUI first, each marked built or proposed.
+- **`get_project_status`**: One project: its state, package, PHP constraint, its floor under today's policy, and its next step.
+- **`read_project_docs`**: A project's README or best practices, paged. For WayneUI, its markup contract too.
+- **`policy_lookup`**: Support state for PHP, Laravel, Node, MySQL, Vue, Inertia or Composer from CREED, as of today.
+- **`list_stack_rules`**: CREED handbook rules with their file and line, filtered by your app's shape and by chapter.
+- **`run_proctor_check`**: Runs your app's own `vendor/bin/proctor check` against the bundled policy and returns the findings.
+
+#### Prompts
+
+- `orient_me` a first walk round the stack, ending in three next steps
+- `plan_upgrade` the way off an old version, via the policy and PROCTOR
+
+#### Resources
+
+- `advisor://policy` CREED's policy file
+- `advisor://creed/<chapter>` one per handbook chapter
+
+#### Map symbols
+
+- your app
+- a tool call
+- where the answer lives
+
+**Boost knows Laravel; ADVISOR knows Wayne State.** They do not overlap, so run both. In a Laravel app the same server also runs as `php artisan mcp:start advisor`, right beside Boost.
+
+Turn-by-turn
+
+### Directions
+
+Three turns from a fresh clone to an agent that knows the stack. It is one PHP command, so it is the same on Windows, macOS and Linux: no shell script to pick.
+
+1. ### Add it to your app
+   As a dev dependency. It refuses to run in production anyway.
+   ```
+   composer require --dev waynestate/advisor
+   ```
+2. ### Print the client config, and read it
+   Nothing is written yet. Pick your client: `claude`, `cursor` or `vscode`. For `codex` it prints TOML to paste into `~/.codex/config.toml`.
+   ```
+   php vendor/bin/advisor install --client=claude
+   ```
+   ```
+   {"mcpServers":{"advisor":{"command":"php","args":["vendor/bin/advisor","mcp"],"env":{"ADVISOR_ENABLED":"1"}}}}
+   ```
+3. ### Write it, then approve it by name
+   Open the project in your client and approve the `advisor` server when it asks. Keep the generated file out of git: it starts a program on whoever opens the project, and `install` warns you if it is not ignored.
+   ```
+   php vendor/bin/advisor install --client=claude --write
+   ```
+
+Where `install --write` puts it
+
+- claude`.mcp.json`
+- cursor`.cursor/mcp.json`
+- vscode`.vscode/mcp.json`
+- codex`printed only (TOML)`
+
+Every one starts the same fixed command, `php vendor/bin/advisor mcp`. Run your client from the folder that holds `vendor/`, or set `ADVISOR_PROJECT_ROOT`.
+
+#### Other commands
+
+```
+# serve over stdio (your client starts this)
+php vendor/bin/advisor mcp
+
+# check the bundled content against its manifest
+php vendor/bin/advisor content:verify
+
+# a check of the install and the client config
+php vendor/bin/advisor doctor
+
+# every check, in the advisor repo itself
+composer ci
+```
+
+#### Laravel apps
+
+The adapter on `laravel/mcp` is auto-discovered. Publish the config if you want it in the app:
+
+```
+php artisan vendor:publish --tag=advisor-config
+```
+
+Read out at the start line
+
+### Briefings for your agent
+
+Your coding agent can set ADVISOR up itself. Brief it: copy a briefing, or run it straight in OpenCode, Claude Code, Codex or ChatGPT. Each one names the controls in order, what is out of bounds, and tells the agent to ask before it guesses.
+
+#### Get started with ADVISOR
+
+From composer require to a connected server: the config shown before it is written, and the first question asked.
+
+A prompt for your coding agent. Copy it as it stands:
+
+```text
+You are a coding agent helping a Wayne State University developer connect ADVISOR to the app in this folder. ADVISOR is the MCP server of WELD, the Wayne State application stack: read-only tools that answer from CREED's policy and the stack's own docs, with the date and the source, instead of from memory.
+
+Read first:
+- https://advisor.apps.wayne.edu/llms.txt, the index of ADVISOR's pages, each one as Markdown. Work from them, not from memory.
+- This app's composer.json and its .gitignore.
+- Which coding agent you are. ADVISOR writes the config for claude, warriorgpt, cursor and vscode, and prints TOML for codex. For any other client (OpenCode, for one), print the claude config, translate it by hand, and show me before you write it.
+
+Task:
+1. Add ADVISOR as a dev dependency with `composer require --dev waynestate/advisor` (PHP 8.3 or newer).
+2. Print the client config and show it to me: `php vendor/bin/advisor install --client=claude`, with your client's name in place of claude. Write nothing yet.
+3. When I say yes, run it again with --write, and check that the file it wrote is in .gitignore.
+4. If the server does not show up, run `php vendor/bin/advisor doctor` and tell me what it found.
+5. Once it is connected, call list_projects, then policy_lookup for PHP, and tell me which PHP this app can build on today, with the date and the source.
+
+Constraints:
+- ADVISOR is a dev dependency and refuses to run in production. Never move it into require, and never set ADVISOR_ENV to production.
+- Never commit a generated client config: it starts a program on whoever opens the project.
+- The command it registers is always php vendor/bin/advisor mcp. Do not change it.
+- Give separate commands for Windows (PowerShell), macOS and Linux wherever they differ.
+- Ask me before you guess, and before you pass --force.
+
+Output: the config you propose, the commands you ran, the doctor result if you ran it, then your questions.
+```
+
+#### Or take the Laravel route
+
+#### ADVISOR in a Laravel app, beside Boost
+
+The adapter on laravel/mcp, the published config, and both servers in one client: Boost knows Laravel, ADVISOR knows WSU.
+
+A prompt for your coding agent. Copy it as it stands:
+
+```text
+You are a coding agent adding ADVISOR to a Laravel app at Wayne State University, beside Laravel Boost. ADVISOR is the MCP server of WELD, the Wayne State application stack. Boost knows Laravel; ADVISOR knows WSU. Run both.
+
+Read first:
+- https://advisor.apps.wayne.edu/llms.txt, then the README it links: Install, Quick start, Laravel apps and Configuration.
+- composer.json, composer.lock, config/, .gitignore, .env.example, and any MCP client config already in the project (Boost writes one).
+
+Task:
+1. Add ADVISOR with `composer require --dev waynestate/advisor`. Its service provider is auto-discovered, and its Laravel adapter runs on laravel/mcp.
+2. If I want the settings in the app, publish them with `php artisan vendor:publish --tag=advisor-config`. They land in config/advisor.php and read the same ADVISOR_* variables.
+3. Choose with me how the client starts it: `php vendor/bin/advisor install` for my client, or the Laravel way, `php artisan mcp:start advisor`. Either way it needs ADVISOR_ENABLED=1 in its environment.
+4. Add it beside Boost's entry without touching Boost's. Then ask ADVISOR policy_lookup for PHP and Laravel, and list_stack_rules with the permutation that fits this app (laravel-blade, laravel-blade-vue or laravel-inertia-vue).
+
+Constraints:
+- Keep Boost. ADVISOR does not replace it.
+- Off unless ADVISOR_ENABLED is set, and never in production: keep it in require-dev.
+- Never commit a generated client config, and never pass --force over an entry you did not write.
+- Give separate commands for Windows (PowerShell), macOS and Linux wherever they differ.
+- Ask me before you guess, and before you change anything Boost owns.
+
+Output: the client config with both servers in it, the commands you ran, the rules list_stack_rules returned, then your questions.
+```
+
+The agent reads the same sheet you do: [llms.txt](https://advisor.apps.wayne.edu/llms.txt) lists the pages, [llms-full.txt](https://advisor.apps.wayne.edu/llms-full.txt) holds them in one file, and this page has a [Markdown twin](https://advisor.apps.wayne.edu/index.md). Nothing here phones home; the buttons only copy text or open the tool you picked. The route is read-only, and so is the advisor.
+
+Hatched on the map, for a reason
+
+### Out of bounds
+
+An advisor can tell you what's required. It cannot sit the exam for you, and this one cannot touch your files.
+
+- **Off unless you turn it on.** No `ADVISOR_ENABLED`, no server. `production` always refuses.
+- **Read-only.** No tool takes a command, a URL or a free path. None writes a file in 0.1.
+- **No network, no model calls.** It serves a bundled copy of the stack's docs, so it works offline.
+- **Verified content.** Every bundled file is checked against a SHA-256 manifest at start-up; a mismatch stops the server.
+- **Answers are data.** Every result is labelled as reference text and cleaned of invisible characters. PROCTOR in CI decides pass or fail, not ADVISOR.
+- **One safe program.** `run_proctor_check` starts only your app's own PROCTOR, with an argument array, an allowlisted environment, a timeout, and no shell.
+
+Adjoining sheets
+
+### The neighbourhood
+
+ADVISOR serves what every part of the stack publishes. Here is who lives where.
+
+- [WayneUI](https://wayneui.apps.wayne.edu/)the interface, project 0
+- [CREED](https://creed.apps.wayne.edu/)the standards and policy
+- [PROCTOR](https://proctor.apps.wayne.edu/)checks an app
+- [Preflight](https://preflight.apps.wayne.edu/)shared CI
+- [Pinstripe](https://pinstripe.apps.wayne.edu/)the coding standard
+- [SESAME](https://sesame.apps.wayne.edu/)sign-in
+- [HELMET](https://helmet.apps.wayne.edu/)the runtime baseline
+- [Sourdough](https://sourdough.apps.wayne.edu/)the starters
+- [WELD](https://weld.apps.wayne.edu/)the stack as one app
+- ADVISORyou are here
+- [Booster](https://booster.apps.wayne.edu/)upgrades, one hop at a time
+- [Rollcall](https://rollcall.apps.wayne.edu/)the fleet census
+- [Drawbridge](https://drawbridge.apps.wayne.edu/)the auth gateway
+- [Squire](https://squire.apps.wayne.edu/)the deploy kit
+
+Here be roadmaps
+
+### Not yet surveyed
+
+Honest edges of the map. None of these exist in 0.1 except where marked, so none of them gets a command.
+
+- Coming soon
+  ### Ask ADVISOR on the web
+  A chat page. It needs a model, a data decision and an accessibility pass of its own.
+- Coming soon
+  ### Tools that write
+  Scaffold with Sourdough, apply a Booster step. The read-only switch and tool groups are built so they can arrive safely.
+- Coming soon
+  ### Modules from each project
+  The loader exists and is tested; projects ship their own tools through a manifest when they are ready.
+- Coming soon
+  ### HTTP transport
+  stdio first. Remote needs a threat model before it needs a port.
