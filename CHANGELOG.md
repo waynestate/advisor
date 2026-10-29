@@ -4,6 +4,12 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Changed
+
+- PHPStan includes Pinstripe's `raw.neon` preset (`waynestate/pinstripe` 0.1.0 as a dev dependency) instead of a hand
+  copy of its settings; two docblocks were tightened to satisfy the preset's method-signature checks. Pint already
+  used the `per` preset, so `pint.json` is unchanged.
+
 ## [0.1.0] - 2026-10-29
 
 First build, aimed at 0.1.0.

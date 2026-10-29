@@ -29,14 +29,16 @@
         "laravel/pint": "^1.32",
         "orchestra/testbench": "^10.0",
         "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^11.5"
+        "phpunit/phpunit": "^11.5",
+        "waynestate/pinstripe": "^0.1"
     },
     "suggest": {
         "laravel/mcp": "For the Laravel adapter (1.1.2): ADVISOR then runs beside Laravel Boost with `php artisan mcp:start advisor`"
     },
     "config": {
         "allow-plugins": {
-            "php-http/discovery": false
+            "php-http/discovery": false,
+            "phpstan/extension-installer": true
         },
         "platform": {
             "php": "8.3.0"

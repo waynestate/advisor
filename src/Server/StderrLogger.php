@@ -37,8 +37,8 @@ final class StderrLogger extends AbstractLogger
     }
 
     /**
-     * @param mixed                $level
-     * @param array<string, mixed> $context
+     * @param mixed    $level
+     * @param mixed[]  $context
      */
     public function log($level, string|Stringable $message, array $context = []): void
     {
