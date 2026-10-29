@@ -2,13 +2,13 @@
 
 Status: draft, checked against sources on 2026-10-27, with a second research pass the same day (see "Second pass
 (2026-10-27)" near the end). Applies to the Preflight components `proctor`, `php-test` and `composer-audit` at the state
-of the repo on that date (tag 0.1.0 exists; the components added after it arrive in the next tag).
+of the repo on that date (tag 0.1.0 existed; the components added after it shipped in 0.1.1).
 
 ## What this covers
 
 Preflight is a set of GitLab CI/CD components that every stack project and WSU app includes with
-`include: component:`. Today it has seven: `php-test` (PHP versions through `parallel:matrix`), `composer-audit`,
-`proctor`, `sbom`, `pint`, `phpstan` and `eslint`. Accessibility and contract suites come later.
+`include: component:`. Today it has nine: `php-test` (PHP versions through `parallel:matrix`), `composer-audit`,
+`proctor`, `sbom`, `pint`, `phpstan`, `eslint`, `package-publish` and `renovate`. Accessibility and contract suites come later.
 
 This guide is for two groups:
 
@@ -65,7 +65,7 @@ Sources: [GitLab: CI/CD components, versions](https://docs.gitlab.com/ci/compone
 [GitLab: pipeline security, includes](https://docs.gitlab.com/ci/pipeline_security/);
 [OpenSSF Scorecard: Pinned-Dependencies](https://github.com/ossf/scorecard/blob/main/docs/checks.md).
 
-**How the stack holds it: Documented.** The README pins `proctor` to `0.1.0`, the first tag. PROCTOR's own
+**How the stack holds it: Documented.** The README pins `proctor` to `0.1.1`, the latest tag. PROCTOR's own
 `.gitlab-ci.yml` pins a full SHA, with a comment against `~latest`. Nothing checks an app's includes.
 
 ### 1.2 Protect the component project's default branch and release tags
@@ -95,7 +95,7 @@ Why: the catalog gives typed discovery and lets consumers pin an exact or partia
 
 Sources: [GitLab: components, publishing](https://docs.gitlab.com/ci/components/).
 
-**How the stack holds it: Not yet.** The layout is right (`templates/<name>/template.yml`, a README). Tag `0.1.0` exists; the `release` job is still to be confirmed.
+**How the stack holds it: Not yet.** The layout is right (`templates/<name>/template.yml`, a README). Tags `0.1.0` and `0.1.1` exist; the `release` job is still to be confirmed.
 The README examples pin `@0.1.0` for the components in that tag and a full commit SHA for the rest.
 
 ### 1.4 Keep inputs and job names stable inside a major version
@@ -136,7 +136,7 @@ Sources: [StepSecurity: tj-actions breach](https://www.stepsecurity.io/blog/when
 The tj-actions details above come from search summaries of these pages and the NVD record could not be read in this
 pass, so treat the exact counts and dates as unverified.
 
-**How the stack holds it: Not yet.** Tag `0.1.0` exists, but no release note format records the SHA a consumer pins,
+**How the stack holds it: Not yet.** Tags `0.1.0` and `0.1.1` exist, but no release note format records the SHA a consumer pins,
 and nothing yet says what to do when the next tag is cut.
 
 ### 1.7 Give consumers a reviewed way to bump their pins
@@ -329,7 +329,7 @@ Sources: [GitLab: includes, merge behaviour](https://docs.gitlab.com/ci/yaml/inc
 [GitLab: pipeline execution policies (Ultimate)](https://docs.gitlab.com/user/application_security/policies/pipeline_execution_policies/).
 
 **How the stack holds it: Documented.** The stack's enforcement-points decision names the CI gate as point (c) and Fleet as point (e), which shows
-who skips CI. Rollcall is not built, so nothing reports skipped or weakened pipelines today.
+who skips CI. Rollcall does not read pipelines yet, so nothing reports skipped or weakened pipelines today.
 
 Prior art (second pass): Drupal's shared GitLab templates, used by more than 2,000 contributed projects at the time of
 a December 2025 post, do not force anything. Most jobs are turned off by setting a variable to 0, and projects keep
@@ -496,7 +496,7 @@ Why: the template alone would not notice a missing lock.
 Sources: [Composer basic usage: the lock file](https://getcomposer.org/doc/01-basic-usage.md).
 
 **How the stack holds it: Checked.** PROCTOR's `lock-committed` fails when the lock is missing. It runs only if the app
-includes the `proctor` component, which cannot run yet (see 6.1).
+includes the `proctor` component, whose default command now runs on a fresh app (see 6.1).
 
 ### 4.6 Audit the lock and fail the job
 Run `composer audit --locked`. A non-zero exit fails the job. Give the audit no `allow_failure`.
@@ -632,7 +632,7 @@ Sources: [Semgrep: Shai-Hulud second wave](https://semgrep.dev/blog/2025/digging
 [Better Stack: Shai-Hulud](https://betterstack.com/community/guides/scaling-nodejs/shai-hulud-attack/). These were read as
 search summaries only, so details are unverified.
 
-**How the stack holds it: Documented.** README.md "Shared conventions" records the rule. Preflight has no JavaScript component yet, so nothing runs it.
+**How the stack holds it: Documented.** README.md "Shared conventions" records the rule. The `eslint` component runs `npm ci --ignore-scripts`.
 
 ### 4.13 Generate a CycloneDX SBOM and validate it
 Produce a software bill of materials for every release, and fail the build on an invalid one.
@@ -816,9 +816,9 @@ Why: a default that errors teaches developers to ignore the job.
 
 Sources: [GitLab: component examples, defaults](https://docs.gitlab.com/ci/components/examples/).
 
-**How the stack holds it: Not yet.** The default `vendor/bin/proctor check --format=codequality` omits `--policy`, which
-PROCTOR requires, so it exits 2. PROCTOR will default to CREED's bundled policy once CREED v0.1.0 is tagged. PROCTOR
-and CREED pipelines include only `php-test` and `composer-audit` until then.
+**How the stack holds it: Documented.** The default `vendor/bin/proctor check --format=codequality` omits `--policy`,
+which used to make it exit 2. Since PROCTOR 0.2.1 the policy resolves without the option: `PROCTOR_POLICY`, then the
+app's installed CREED policy, then the copy bundled with PROCTOR. No test in this repo runs the component yet.
 
 ### 6.2 Derive the PHP matrix from the policy, and drop end-of-life versions
 The tested versions should be those the policy lists as supported, intersected with what the app declares.

@@ -7,7 +7,7 @@
             "role": "runs it (the composer-audit check)",
             "also": [
                 {
-                    "project": "PREFLIGHT",
+                    "project": "Preflight",
                     "role": "CI job that calls PROCTOR"
                 },
                 {
@@ -45,17 +45,17 @@
         {
             "topic": "sign-in",
             "owner": "SESAME",
-            "role": "sign-in inside the app (CAS, gateway assertion, SAML and OAuth2 drivers)",
+            "role": "sign-in inside the app (CAS, gateway assertion, OpenID Connect and OAuth2 drivers)",
             "also": [
                 {
-                    "project": "DRAWBRIDGE",
+                    "project": "Drawbridge",
                     "role": "the gateway in front of the app"
                 }
             ]
         },
         {
-            "topic": "SAML and OIDC gateway",
-            "owner": "DRAWBRIDGE",
+            "topic": "OpenID Connect gateway",
+            "owner": "Drawbridge",
             "role": "the sign-in gateway (Microsoft Entra ID over OpenID Connect, signed assertions only)",
             "also": [
                 {
@@ -72,7 +72,7 @@
         },
         {
             "topic": "CI templates",
-            "owner": "PREFLIGHT",
+            "owner": "Preflight",
             "role": "the CI templates for GitLab and GitHub (tests, PROCTOR, audit and accessibility)",
             "also": [
                 {
@@ -83,13 +83,13 @@
         },
         {
             "topic": "Citadel deploy kit and release scripts",
-            "owner": "SQUIRE",
+            "owner": "Squire",
             "role": "the deploy kit and release scripts, with the Citadel target",
             "also": []
         },
         {
             "topic": "upgrades",
-            "owner": "BOOSTER",
+            "owner": "Booster",
             "role": "plans and runs PHP and Laravel upgrades, one supported hop at a time",
             "also": [
                 {
@@ -100,7 +100,7 @@
         },
         {
             "topic": "fleet census",
-            "owner": "ROLLCALL",
+            "owner": "Rollcall",
             "role": "the fleet census: what runs where, and on what PHP",
             "also": []
         },

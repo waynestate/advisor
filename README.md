@@ -48,12 +48,12 @@ coding agent.
 | **SESAME** | sign-in inside the app |
 | **HELMET** | runtime baseline |
 | **Sourdough** | starter |
-| **PREFLIGHT** | CI components |
+| **Preflight** | CI components |
 | **Pinstripe** | coding standard |
-| **BOOSTER** | upgrades |
-| **ROLLCALL** | fleet census |
-| **DRAWBRIDGE** | sign-in gateway |
-| **SQUIRE** | deploy kit |
+| **Booster** | upgrades |
+| **Rollcall** | fleet census |
+| **Drawbridge** | sign-in gateway |
+| **Squire** | deploy kit |
 | **ADVISOR** | MCP server |
 | **WELD** | the stack's name and its reference app |
 

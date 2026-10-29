@@ -230,7 +230,7 @@ Maintainers: how to build, test and release this project, and where its data com
 - PHPStan extension-installer 1.4.3
 - PHPStan strict-rules 2.1.0
 - Larastan 3.13.2
-- Rector 2.8.1
+- Rector 2.8.2
 - ESLint 10.13.0
 - Prettier 3.9.10
 - eslint-plugin-vue 10.12.0
@@ -240,7 +240,7 @@ Maintainers: how to build, test and release this project, and where its data com
 
 ## Coming next
 
-Preflight jobs, and reading the PHP floor from CREED.
+Reading the PHP floor from CREED. (Preflight's pint, phpstan and eslint jobs already run your app's Pinstripe config.)
 
 ## The cast
 

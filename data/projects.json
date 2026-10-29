@@ -50,7 +50,7 @@
             "name": "SESAME",
             "kind": "auth library",
             "tagline": "sign-in inside the app",
-            "role": "Protocol-neutral sign-in: drivers for CAS, a signed gateway assertion, SAML and OAuth2. It returns a verified identity and leaves the session to the app.",
+            "role": "Protocol-neutral sign-in: drivers for CAS, a signed gateway assertion, OpenID Connect (Entra sign-in) and OAuth2 bearer tokens (SAML is planned). It returns a verified identity and leaves the session to the app.",
             "state": "built",
             "package": "waynestate/sesame",
             "php": "^8.3",
@@ -80,11 +80,11 @@
             "name": "Sourdough",
             "kind": "starters",
             "tagline": "starter",
-            "role": "The starters: `sourdough new` for each permutation, already wired to CREED, PROCTOR, SESAME, HELMET, PREFLIGHT and Pinstripe.",
+            "role": "The starters: `sourdough new --raw` generates the raw PHP starter today; the Laravel permutations print their plan and stop until a later release.",
             "state": "built",
             "package": "waynestate/sourdough",
             "php": "^8.3",
-            "next_step": "Start new apps from it, and use its feed command to keep an existing app current.",
+            "next_step": "Start new raw PHP apps with `sourdough new --raw`; keep an app honest with `sourdough manifest --check` (`feed` is a later release).",
             "docs": [
                 "readme",
                 "best-practices"
@@ -92,7 +92,7 @@
         },
         {
             "id": "preflight",
-            "name": "PREFLIGHT",
+            "name": "Preflight",
             "kind": "CI templates",
             "tagline": "CI components",
             "role": "CI templates for GitLab (components) and GitHub (reusable workflows): tests, PROCTOR, audit and accessibility, with `composer ci` as the one contract.",
@@ -122,14 +122,14 @@
         },
         {
             "id": "booster",
-            "name": "BOOSTER",
+            "name": "Booster",
             "kind": "upgrade",
             "tagline": "upgrades",
             "role": "The upgrade tool: Rector recipes and checks that move an app one PHP or Laravel version at a time.",
             "state": "built",
             "package": "waynestate/booster",
             "php": "^8.3",
-            "next_step": "Plan one hop at a time; call get_project_status to see whether BOOSTER is built yet.",
+            "next_step": "Plan one hop at a time with `upgrade_path`, and read its README for the Rector recipes.",
             "docs": [
                 "readme",
                 "best-practices"
@@ -137,7 +137,7 @@
         },
         {
             "id": "rollcall",
-            "name": "ROLLCALL",
+            "name": "Rollcall",
             "kind": "fleet census",
             "tagline": "fleet census",
             "role": "The fleet census: PHP, image, framework and PROCTOR result for every app, and the end-of-life burn-down.",
@@ -152,14 +152,14 @@
         },
         {
             "id": "drawbridge",
-            "name": "DRAWBRIDGE",
+            "name": "Drawbridge",
             "kind": "auth gateway",
             "tagline": "sign-in gateway",
-            "role": "The Citadel auth gateway: one SAML service provider that hands each app a signed assertion for SESAME's gateway driver.",
+            "role": "The Citadel auth gateway: one OpenID Connect client through Entra ID that hands each app a signed assertion for SESAME's gateway driver.",
             "state": "built",
             "package": "waynestate/drawbridge",
             "php": "^8.3",
-            "next_step": "Apps on Citadel use SESAME's gateway driver; plan against the DRAWBRIDGE README.",
+            "next_step": "Apps on Citadel use SESAME's gateway driver; plan against the Drawbridge README.",
             "docs": [
                 "readme",
                 "best-practices"
@@ -167,7 +167,7 @@
         },
         {
             "id": "squire",
-            "name": "SQUIRE",
+            "name": "Squire",
             "kind": "deploy kit",
             "tagline": "deploy kit",
             "role": "The Citadel kit: the app-side release script, local parity with the platform, and upstream merge requests. Platform-specific deploy code lives here and nowhere else.",
