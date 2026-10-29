@@ -8,7 +8,7 @@ use Waynestate\Advisor\Exception\ToolInputError;
 use Waynestate\Advisor\Module\ModuleContext;
 use Waynestate\Advisor\Module\ToolDefinition;
 
-/** Shared values from PLAYBOOK, with the environment winning the argument. */
+/** Shared values from Playbook, with the environment winning the argument. */
 final class PlaybookLookup
 {
     /** Keys that look like secrets are never looked up or returned. */
@@ -30,7 +30,7 @@ final class PlaybookLookup
                 'additionalProperties' => false,
             ],
             handler: static function (array $args): array {
-                // Plain string, not ::class: PLAYBOOK is a suggested package that
+                // Plain string, not ::class: Playbook is a suggested package that
                 // CI never installs, so PHPStan must not look the class up.
                 $playbook = 'Waynestate\Playbook\Playbook';
                 if (!class_exists($playbook)) {
@@ -68,7 +68,7 @@ final class PlaybookLookup
     }
 
     /**
-     * One key, environment first, then PLAYBOOK. $playbook is the fully
+     * One key, environment first, then Playbook. $playbook is the fully
      * qualified name of the Playbook class as a plain string.
      *
      * @return array{value: string|null, source: string}

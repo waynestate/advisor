@@ -10,7 +10,7 @@ use Waynestate\Advisor\Tests\Support\Boot;
 
 /**
  * playbook_lookup without the private package: a teaching answer, not an error.
- * Runs in its own process because PlaybookLookupTest loads the PLAYBOOK stub
+ * Runs in its own process because PlaybookLookupTest loads the Playbook stub
  * for the rest of the suite's main process.
  */
 final class PlaybookLookupUnavailableTest extends TestCase

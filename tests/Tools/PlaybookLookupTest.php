@@ -9,7 +9,7 @@ use Waynestate\Advisor\Server\Booted;
 use Waynestate\Advisor\Server\ToolOutcome;
 use Waynestate\Advisor\Tests\Support\Boot;
 
-/** playbook_lookup against the PLAYBOOK stub (tests/Fixtures/playbook-stub.php). */
+/** playbook_lookup against the Playbook stub (tests/Fixtures/playbook-stub.php). */
 final class PlaybookLookupTest extends TestCase
 {
     /** @var string|false */

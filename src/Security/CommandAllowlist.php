@@ -26,7 +26,7 @@ final class CommandAllowlist
     ];
 
     /**
-     * BOOSTER's `plan` is the only subcommand ADVISOR may call: it reads the
+     * Booster's `plan` is the only subcommand ADVISOR may call: it reads the
      * app's manifests and prints a plan, and it changes nothing. `run` is the
      * command that edits files, and it is not on this list.
      *

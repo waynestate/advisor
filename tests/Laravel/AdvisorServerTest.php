@@ -60,7 +60,7 @@ final class AdvisorServerTest extends TestCase
     {
         AdvisorServer::tool($this->tool('list_projects'))->assertOk()->assertSee('wayne-ui');
         AdvisorServer::tool($this->tool('get_project_status'), ['project' => 'proctor'])->assertOk()->assertSee('PROCTOR');
-        // No PLAYBOOK package in the test bench: the teaching answer, not an error.
+        // No Playbook package in the test bench: the teaching answer, not an error.
         AdvisorServer::tool($this->tool('playbook_lookup'), ['key' => 'CAS_URL'])->assertOk()->assertSee('waynestate/playbook');
     }
 
