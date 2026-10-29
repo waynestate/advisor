@@ -4,8 +4,16 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Added
+
+- `owner_of` tool: answers "which project owns X?" from a new bundled `data/ownership.json` table (sourced from
+  `generator/ownership.json`, verified by `content:verify`). Fuzzy match: every word of the topic must appear in a
+  row's topic or role; a no-match answer lists every known topic.
+
 ### Changed
 
+- `upgrade_path` moves from the `stack` group to a new `booster` group, so `ADVISOR_GROUPS=stack` offers reference
+  tools only and never starts a program. `ADVISOR_GROUPS` now accepts `stack`, `proctor` and `booster`.
 - PHPStan includes Pinstripe's `raw.neon` preset (`waynestate/pinstripe` 0.1.0 as a dev dependency) instead of a hand
   copy of its settings; two docblocks were tightened to satisfy the preset's method-signature checks. Pint already
   used the `per` preset, so `pint.json` is unchanged.

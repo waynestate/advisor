@@ -104,6 +104,41 @@ final class ToolsTest extends TestCase
         }
     }
 
+    public function testOwnerOfFindsTheProjectThatOwnsATopic(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'owner_of', ['topic' => 'composer audit']));
+
+        $this->assertNotEmpty($data['matches']);
+        $this->assertSame('PROCTOR', $data['matches'][0]['owner']);
+        $this->assertArrayHasKey('role', $data['matches'][0]);
+        $this->assertArrayHasKey('also', $data['matches'][0]);
+        $this->assertNotSame('', $data['source']);
+    }
+
+    public function testOwnerOfMatchesCaseInsensitively(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'owner_of', ['topic' => 'Composer AUDIT']));
+
+        $this->assertNotEmpty($data['matches']);
+        $this->assertSame('PROCTOR', $data['matches'][0]['owner']);
+    }
+
+    public function testOwnerOfListsKnownTopicsWhenNothingMatches(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'owner_of', ['topic' => 'quantum flux capacitor']));
+
+        $this->assertSame([], $data['matches']);
+        $this->assertContains('composer audit', $data['known_topics']);
+        $this->assertArrayHasKey('note', $data);
+    }
+
+    public function testOwnerOfRefusesATopicWithNoWords(): void
+    {
+        $outcome = $this->call(Boot::core(), 'owner_of', ['topic' => '   ']);
+
+        $this->assertTrue($outcome->isError);
+    }
+
     public function testRunProctorCheckGoesThroughTheAllowlistedRunner(): void
     {
         $root = $this->tempDir();

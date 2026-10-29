@@ -55,8 +55,11 @@ final class CatalogTest extends TestCase
     public function testGroupsNarrowTheList(): void
     {
         $this->assertContains('policy_lookup', $this->toolNames(['ADVISOR_GROUPS' => 'stack']));
+        $this->assertContains('owner_of', $this->toolNames(['ADVISOR_GROUPS' => 'stack']));
         $this->assertNotContains('run_proctor_check', $this->toolNames(['ADVISOR_GROUPS' => 'stack']));
+        $this->assertNotContains('upgrade_path', $this->toolNames(['ADVISOR_GROUPS' => 'stack']), 'The stack group never starts a program.');
         $this->assertSame(['run_proctor_check'], $this->toolNames(['ADVISOR_GROUPS' => 'proctor']));
+        $this->assertSame(['upgrade_path'], $this->toolNames(['ADVISOR_GROUPS' => 'booster']));
     }
 
     public function testToolsComeBackInTheSameOrderEveryTime(): void
