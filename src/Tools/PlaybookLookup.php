@@ -30,7 +30,9 @@ final class PlaybookLookup
                 'additionalProperties' => false,
             ],
             handler: static function (array $args): array {
-                $playbook = \Waynestate\Playbook\Playbook::class;
+                // Plain string, not ::class: PLAYBOOK is a suggested package that
+                // CI never installs, so PHPStan must not look the class up.
+                $playbook = 'Waynestate\Playbook\Playbook';
                 if (!class_exists($playbook)) {
                     return ['available' => false, 'how_to_get' => self::HOW_TO_GET];
                 }
@@ -66,9 +68,8 @@ final class PlaybookLookup
     }
 
     /**
-     * One key, environment first, then PLAYBOOK.
-     *
-     * @param class-string $playbook
+     * One key, environment first, then PLAYBOOK. $playbook is the fully
+     * qualified name of the Playbook class as a plain string.
      *
      * @return array{value: string|null, source: string}
      */
