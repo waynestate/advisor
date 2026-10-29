@@ -71,7 +71,8 @@ composer require --dev waynestate/advisor
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP
 command and not a shell script.
 
-Until the package is published, install it from a clone of the repository with a Composer `path` or `vcs` repository.
+ADVISOR is on Packagist with no tagged release yet, so until 0.1.0 is tagged, ask for the main branch:
+`composer require --dev waynestate/advisor:dev-main`. No extra repository needed.
 
 ## Quick start
 

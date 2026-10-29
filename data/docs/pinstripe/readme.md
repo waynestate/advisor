@@ -45,8 +45,11 @@ Front page: [`site/index.html`](site/index.html), a static tailor's shop you can
 Add Pinstripe as a dev dependency:
 
 ```
-composer require --dev waynestate/pinstripe
+composer require --dev waynestate/pinstripe:dev-main
 ```
+
+Pinstripe is on Packagist with no tagged release yet, so ask for `dev-main` until 0.1.0 is tagged. The npm package,
+`@waynestate/pinstripe`, is at 0.1.0 already.
 
 Point PHPStan at the raw config. `phpstan.neon`:
 
@@ -82,7 +85,7 @@ The tailor flags the old cut before the fabric is retired.
 Same, with the Laravel parts:
 
 ```
-composer require --dev waynestate/pinstripe larastan/larastan
+composer require --dev waynestate/pinstripe:dev-main larastan/larastan
 ```
 
 Pinstripe pulls in `phpstan/extension-installer`, which registers Larastan for you. When Composer asks, allow the
@@ -169,6 +172,37 @@ New apps can include `vendor/waynestate/pinstripe/phpstan/strict.neon` instead o
 Generate a baseline with `phpstan analyse --generate-baseline`, include it in your `phpstan.neon`, and only ever
 shrink it. New code gets no baseline. A baseline is a tailor's chalk line: it marks the fabric as it is, and every
 release you take it in, never let it out.
+
+## Baselines only shrink
+
+Pinstripe ships `pinstripe-baseline`, one PHP command that runs on every OS, to keep that promise. It reads both
+the NEON baseline and the PHP format (`phpstan-baseline.php`).
+
+```
+vendor/bin/pinstripe-baseline count phpstan-baseline.neon
+```
+
+prints how many errors the baseline ignores: the sum of each entry's `count`, 1 when `count` is absent.
+
+```
+vendor/bin/pinstripe-baseline check --max=42 phpstan-baseline.neon
+```
+
+exits 1 with `baseline grew: N errors, the most allowed is M` when the count is above the limit, 0 otherwise. To
+compare with the target branch instead of a fixed number, pass a git ref:
+
+```
+vendor/bin/pinstripe-baseline check --against=origin/main phpstan-baseline.neon
+```
+
+In GitLab CI the merge request's base SHA is already in the environment:
+
+```
+vendor/bin/pinstripe-baseline check --against=$CI_MERGE_REQUEST_DIFF_BASE_SHA phpstan-baseline.neon
+```
+
+A baseline is a tailor's chalk line, and this command is the tape measure: it fails the build the moment the line
+gets longer.
 
 ## Tested with
 

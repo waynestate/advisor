@@ -61,8 +61,9 @@ php artisan key:generate
 
 ## Status
 
-The Laravel base is in. The stack packages arrive once they are on Packagist, and each one gets welded on as it lands.
-Until then, WELD runs on the starter kit plus these stack defaults:
+HELMET, SESAME and PROCTOR are welded in from Packagist; the rest of the cast is on Packagist too and gets welded on
+in turn.
+What is on the bench today:
 
 - `composer.json` is `waynestate/weld`, requires PHP `^8.3`, and the lock file resolves for 8.3.0
 - `.env.example` sets `APP_NAME=WELD`, `LOG_CHANNEL=stderr` and `SESSION_DRIVER=database`
@@ -70,10 +71,16 @@ Until then, WELD runs on the starter kit plus these stack defaults:
 - `.gitattributes` sets `* text=auto eol=lf`
 - `composer ci` is the CI contract: it runs validate, tests, Pint, PHPStan level 8 and audit, the same command on
   GitLab and GitHub
-- `pint.json` and `phpstan.neon` copy Pinstripe's 0.1 Laravel presets (Pinstripe is not on Packagist yet); they
-  switch to `includes: vendor/waynestate/pinstripe/...` once it lands
-- The starter kit's password auth (register, login, password reset, two-factor) is removed on purpose; SESAME owns
-  sign-in at `/login`, `/logout` and `/cas/*`, and `/login` answers 503 until SESAME is welded in
+- `pint.json` and `phpstan.neon` still copy Pinstripe's 0.1 Laravel presets; Pinstripe is on Packagist now
+  (`dev-main`, no tag yet), and they switch to `includes: vendor/waynestate/pinstripe/...` when WELD requires it
+- HELMET appends its security headers and CSP middleware to the web group; the Vite build takes the per-request
+  nonce; trusted proxies are a literal list in `bootstrap/app.php`; `/up` stays Laravel's built-in health route
+- SESAME owns sign-in at `/login` and `/logout`; the fake driver stands in for the identity provider locally, and
+  CAS is an env change away
+- PROCTOR measures WELD against CREED's `policy.json` as a CI job (`composer proctor`): warnings pass, failures
+  block
+- The starter kit's password auth (register, login, password reset, two-factor) is removed on purpose; the door is
+  SESAME's
 - The license is MIT
 
 Best practices for building, running and deploying WELD live in [BEST_PRACTICES.md](BEST_PRACTICES.md).

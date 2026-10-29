@@ -20,8 +20,7 @@ Front page: [`site/index.html`](site/index.html), a static page you can open in 
 
 One command, two clouds, zero excuses. Higher.
 
-![Singer of the band Creed in a white tank top and black leather pants on a stage with a red backdrop, one arm stretched out over a cheering crowd](https://media.giphy.com/media/BsQ4hGk3leUxGVCS5X/giphy.gif)
-<sub>GIF via [Giphy](https://giphy.com/gifs/creed-higher-BsQ4hGk3leUxGVCS5X)</sub>
+![Singer of the band Creed in a white tank top and black leather pants on a stage with a red backdrop, one arm stretched out over a cheering crowd](docs/readme/creed-band.gif)
 
 CREED is the Wayne State app stack's version policy, as data. One file,
 `policy/policy.json`, lists the support dates for PHP, Laravel, Node, MySQL,
@@ -128,10 +127,12 @@ same check on a cron and on demand.
 
 ## Carrying CREED in another package
 
-CREED is not on Packagist yet, so PROCTOR, BOOSTER, ROLLCALL and ADVISOR each
-carry a generated copy of the reader under their own namespace, and two tools
-in one app never fight over a class name (the generator below keeps the copies
-in step). CREED owns the generator and the check:
+PROCTOR, BOOSTER, ROLLCALL and ADVISOR each carry a generated copy of the
+reader under their own namespace, so two tools in one app never fight over a
+class name (the generator below keeps the copies in step). The copies began
+because CREED was not on Packagist. It is now (`waynestate/creed` 0.1.0), so
+each copy can become a real `require`, one consumer at a time; until a
+consumer switches, its copy stays. CREED owns the generator and the check:
 
 ```
 php bin/export.php --namespace=Waynestate\Proctor\Creed --to=vendor/creed-copy
@@ -163,8 +164,7 @@ docker run --rm -v "${PWD}:/app" -w /app composer:2 composer validate-policy
 git.wayne.edu has no runners today. Every product in the stack strongly
 recommends a git.wayne.edu instance runner.
 
-![Creed Bratton from The Office in a dark suit and blue shirt with a wide, wild-eyed grin](https://media.giphy.com/media/sg6OczNgfp7Jm/giphy.gif)
-<sub>GIF via [Giphy](https://giphy.com/gifs/creed-sg6OczNgfp7Jm)</sub>
+![Creed Bratton from The Office in a dark suit and blue shirt with a wide, wild-eyed grin](docs/readme/creed-bratton.gif)
 
 Creed Bratton, whose quality assurance work we all admire. His past is a
 mystery. Ours is in `policy/policy.json`, where it belongs.

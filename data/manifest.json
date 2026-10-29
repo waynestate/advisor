@@ -7,7 +7,7 @@
             "source": "advisor/BEST_PRACTICES.md"
         },
         "docs/advisor/readme.md": {
-            "sha256": "ddc2e58a6f2e9e2f98e75c87fd4b407db88049bc17ef3c488413f871bddd6324",
+            "sha256": "96d41a829227e553251d4e4dda9694f1f63aebf86eca686fc35c3eb1829340d4",
             "source": "advisor/README.md"
         },
         "docs/booster/best-practices.md": {
@@ -15,7 +15,7 @@
             "source": "booster/BEST_PRACTICES.md"
         },
         "docs/booster/readme.md": {
-            "sha256": "a296b721b4ecceb9f5f99b2565fb32ecd7c3206b7a9cff6159c10421ff8e5030",
+            "sha256": "c1b84ff0d175a6af8657b587a36dd08c3dec07ed6e35f568c1283a47037e5073",
             "source": "booster/README.md"
         },
         "docs/creed/best-practices.md": {
@@ -23,7 +23,7 @@
             "source": "creed/BEST_PRACTICES.md"
         },
         "docs/creed/readme.md": {
-            "sha256": "afd3af4a417a3f4d199e1390d62d2eac46e2bd1cba3e3463eb2c5ccdcdb0097c",
+            "sha256": "afdcf9f5e222f71d6d452d2268533b73bfab88cf0c174cafa7a06d74125f574f",
             "source": "creed/README.md"
         },
         "docs/drawbridge/best-practices.md": {
@@ -47,7 +47,7 @@
             "source": "pinstripe/BEST_PRACTICES.md"
         },
         "docs/pinstripe/readme.md": {
-            "sha256": "466b87d9d4463ebcbffdb9adfc093379684bdff4dc3b4f3811020ec0282affb6",
+            "sha256": "bdf06ae42fb24b8142f52a7a1c823bc8d6a1f2d4b919f16245d0a67887c93fdf",
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
@@ -55,7 +55,7 @@
             "source": "preflight/BEST_PRACTICES.md"
         },
         "docs/preflight/readme.md": {
-            "sha256": "f4240d3fbb16538d7422b94ab0efc53831f6bcbe3e07403bd29f1cdc911baa7b",
+            "sha256": "4d7e28e14dc1442e7a6e827a2f6d6cc299a856533f233508d4e8d9f1d86d9fe9",
             "source": "preflight/README.md"
         },
         "docs/proctor/best-practices.md": {
@@ -63,7 +63,7 @@
             "source": "proctor/BEST_PRACTICES.md"
         },
         "docs/proctor/readme.md": {
-            "sha256": "2e29bccb0c69d1c9d1a24935e634f311e1f5ba4d980c549e15f1fd743e0595be",
+            "sha256": "e14a3534504abd436c1b6291dd6f89e994ed83c85cf2dad7b250a88cfa2ca085",
             "source": "proctor/README.md"
         },
         "docs/rollcall/best-practices.md": {
@@ -71,7 +71,7 @@
             "source": "rollcall/BEST_PRACTICES.md"
         },
         "docs/rollcall/readme.md": {
-            "sha256": "5f3d1cf7b1ead97ba653c9387943bb584ab7556d14fef9359c89d03ed58eec54",
+            "sha256": "8560c4ea173648578caac92129eb35a79714bf1d026405b171c4ea32f75d3c5f",
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
@@ -95,7 +95,7 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "84f34c1d429fc240f51ead6b7adff5a65b613135b1e4c8190d996673de58653f",
+            "sha256": "6121888ba5dffd75a33072cf38c58e5536934f81266b90789accf4f72dc6e856",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {
@@ -111,7 +111,7 @@
             "source": "weld/BEST_PRACTICES.md"
         },
         "docs/weld/readme.md": {
-            "sha256": "eaa682f0f2fbb19399599d8112a43d729a0efce8eb118d3151586ed69232296c",
+            "sha256": "c0b6fe373af7e695449efb783c3b121d4e8da57b400024cbd2051e1f8587dbfd",
             "source": "weld/README.md"
         },
         "handbook/README.md": {
