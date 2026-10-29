@@ -7,6 +7,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 ### Changed
 
 - Changed: the deploy layer's Squire kit is refreshed to 0.3.3 (release options can now live in ./.env.squire).
+- Changed: the deploy layer's Squire kit is refreshed to 0.3.4 (the local .env.squire file is now git-ignored).
 
 ## [0.1.2] - 2026-10-29
 
