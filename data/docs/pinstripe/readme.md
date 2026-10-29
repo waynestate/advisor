@@ -49,7 +49,7 @@ Add Pinstripe as a dev dependency:
 composer require --dev waynestate/pinstripe:^0.1
 ```
 
-Pinstripe 0.1.0 is on Packagist, and the npm package, `@waynestate/pinstripe`, is at 0.1.0 too.
+Pinstripe 0.1.1 is on Packagist, and the npm package, `@waynestate/pinstripe`, is at 0.1.0.
 
 Point PHPStan at the raw config. `phpstan.neon`:
 
@@ -165,7 +165,24 @@ alone. Rector is the tailor's press: it smooths old code to the standard without
 
 ## The strict cut
 
-New apps can include `vendor/waynestate/pinstripe/phpstan/strict.neon` instead of `raw.neon` or `laravel.neon`. It keeps the base cut and turns on `phpstan/phpstan-strict-rules`, so loose comparisons like `==` fail the build. Existing apps stay on the base cut and baseline their way over. Strict is the tailor's chalk line drawn before the first stitch.
+New apps can include `vendor/waynestate/pinstripe/phpstan/strict.neon` instead of `raw.neon` or `laravel.neon`. It keeps the base cut and turns on `phpstan/phpstan-strict-rules`, so loose comparisons like `==` fail the build. Existing apps stay on the base cut and baseline their way over.
+
+PHPStan checks phpdoc method signatures from level 3 up, and `phpstan/phpstan-strict-rules` forces the two switches behind them on for every run it is installed for. The base cut pins `reportMaybesInMethodSignatures` and `reportStaticMethodSignatures` off so it stays exactly as documented; the strict cut keeps them on, so it also reports maybe-mismatched overrides and static method overrides.
+
+`phpstan/phpstan-strict-rules` forces eight more switches on for every run as well. Each one is decided below: low noise and real bugs stay on in every cut, noisy ones are pinned off in the base cut and turned on only in `strict.neon`.
+
+| Parameter | Raw and Laravel cuts | Strict cut | Why |
+|---|---|---|---|
+| `checkExplicitMixedMissingReturn` | on | on | A function declared to return `mixed` that can fall off the end is a real bug, and rare in practice. |
+| `checkFunctionNameCase` | on | on | A wrongly cased function name works on Windows and macOS and breaks on Linux. |
+| `checkInternalClassCaseSensitivity` | on | on | The same case bug for PHP's own classes. |
+| `checkStrictPrintfPlaceholderTypes` | on | on | `%d` fed a string is a real formatting bug, and rare. |
+| `checkDynamicProperties` | off | on | Floods legacy code with undeclared properties. |
+| `reportMaybesInPropertyPhpDocTypes` | off | on | Reports "maybe" phpdoc mismatches that legacy docblocks trip constantly. |
+| `reportWrongPhpDocTypeInVarTag` | off | on | Old `@var` tags are often loose; fixing them is cleanup, not bug hunting. |
+| `reportNonIntStringArrayKey` | off | on | Bleeding-edge check that is noisy on loosely keyed arrays. |
+
+Strict is the tailor's chalk line drawn before the first stitch.
 
 ## Adopting on an existing app
 

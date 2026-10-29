@@ -53,7 +53,7 @@ WELD is Wayne State's application stack. ROLLCALL is the roll book for the whole
 
 A framework-free core (`src/`) plus thin entry points that hold no rules:
 
-- `bin/rollcall`: the CLI (`scan`, `report`, `drift`, `prune`). One PHP command, so it works the same on Windows, macOS and Linux.
+- `bin/rollcall`: the CLI (`scan`, `report`, `drift`, `advisories`, `prune`). One PHP command, so it works the same on Windows, macOS and Linux.
 - `public/index.php`: a raw-PHP front controller for `GET /metrics` and `GET /report.json`.
 - `src/Laravel/`: a Laravel adapter with a dashboard page, a `/metrics` route and `php artisan rollcall:scan` and `rollcall:prune`.
 
@@ -117,10 +117,11 @@ runs.
 ## Commands
 
 ```
-rollcall scan   [--today=YYYY-MM-DD] [--prune[=DAYS]]
-rollcall report [--format=text|json|prometheus] [--internal] [--today=YYYY-MM-DD]
-rollcall drift  --feed=<file> [--component=php] [--today=YYYY-MM-DD]
-rollcall prune  [--days=N] [--dry-run] [--today=YYYY-MM-DD]
+rollcall scan       [--today=YYYY-MM-DD] [--prune[=DAYS]]
+rollcall report     [--format=text|json|prometheus] [--internal] [--today=YYYY-MM-DD]
+rollcall drift      --feed=<file> [--component=php] [--today=YYYY-MM-DD]
+rollcall advisories --feed=<file> [--today=YYYY-MM-DD]
+rollcall prune      [--days=N] [--dry-run] [--today=YYYY-MM-DD]
 ```
 
 - `scan` calls the roll once and stores `<ROLLCALL_STORE_DIR>/<date>.json`. Scanning twice in a day replaces that
@@ -134,6 +135,14 @@ rollcall prune  [--days=N] [--dry-run] [--today=YYYY-MM-DD]
 - `drift` compares `policy.json` with a saved endoflife.date v1 product page (for example
   `https://endoflife.date/api/v1/products/php/` saved to a file). A difference is a flag for a person to look at; the
   policy stays the source of truth. ROLLCALL does not fetch that page itself.
+- `advisories` checks each app's locked `laravel/framework` and auth-package versions against a saved Packagist
+  security-advisories response (for example
+  `https://packagist.org/api/security-advisories/?packages[]=laravel/framework` saved to a file). One line per
+  package and version, sorted by package then version: the status (`affected`, `clear` or `no data`), the count and
+  the advisory ids, and how many apps hold that pair. A package with no advisory data prints `no data`, never
+  `safe`: an absent row proves nothing about the package, and a version nobody can parse says `no data` too.
+  ROLLCALL does not fetch that page itself; a person saves it and `--feed` points at the file. Output is package
+  names and counts only: no app ids.
 - `prune` deletes snapshots older than `--days` (default: `ROLLCALL_RETENTION_DAYS`, 90; 0 keeps everything). The
   newest snapshot is never deleted, even if it is older than the cut-off, so the dashboard always has data.
   `--dry-run` lists what would go without deleting anything.
@@ -186,6 +195,55 @@ Scanning GitLab (once a person gives you a token and a group): set `ROLLCALL_SOU
 variables. ROLLCALL sends only `GET` and `HEAD`, fetches the two Composer files without cloning, skips a file whose blob
 id has not changed, follows `Link` pagination only to the configured host, and waits out `429 Retry-After`.
 
+## WSU values (PLAYBOOK)
+
+`ROLLCALL_GITLAB_URL` is a Wayne State value, so it may come from PLAYBOOK (`waynestate/playbook`) when the
+environment has none. The environment always wins; PLAYBOOK only fills what the environment leaves out. The GitLab
+token never comes through PLAYBOOK and stays an environment variable.
+
+| Setting | Value |
+|---|---|
+| `ROLLCALL_GITLAB_URL` | The `https://` base URL of the GitLab instance |
+
+PLAYBOOK is private and lives on git.wayne.edu. Getting it into your app:
+
+Composer: add the repository to your `composer.json`, then require the package. Composer authenticates to
+git.wayne.edu with the token in `auth.json`.
+
+```json
+{
+    "repositories": [
+        {"type": "vcs", "url": "https://git.wayne.edu/enterprise-apps/playbook.git"}
+    ]
+}
+```
+
+```
+composer require waynestate/playbook
+```
+
+curl (Linux, macOS):
+
+```
+curl --fail -H "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://git.wayne.edu/api/v4/projects/enterprise-apps%2Fplaybook/repository/files/playbook.env/raw?ref=main" -o .env.playbook
+```
+
+PowerShell (Windows):
+
+```
+Invoke-WebRequest -Headers @{ 'PRIVATE-TOKEN' = $env:GITLAB_TOKEN } -Uri "https://git.wayne.edu/api/v4/projects/enterprise-apps%2Fplaybook/repository/files/playbook.env/raw?ref=main" -OutFile .env.playbook
+```
+
+Clone:
+
+```
+git clone https://git.wayne.edu/enterprise-apps/playbook.git
+```
+
+The token is your own: `read_api` for curl, `read_repository` for clone and Composer.
+
+PLAYBOOK is private on git.wayne.edu. If you get a 404, ask the Enterprise Applications team for read access.
+
 ## Metrics
 
 Off by default (the stack's metrics rule). With `ROLLCALL_METRICS_ENABLED=true`, `/metrics` serves Prometheus text built from the latest
@@ -226,7 +284,11 @@ check can run beside the code it protects.
 - Read-only toward GitLab and everything else: one gate in the GitLab adapter allows only `GET` and `HEAD`, and a test
   fails if a write verb appears in `src/`.
 - The GitLab token comes from the environment, is sent only to the configured `https` host, and is hidden from debug
-  output and error messages. Use a `read_api` token with an expiry and a named rotation owner.
+  output and error messages. Use a `read_api` token with an expiry and a named rotation owner. When the source is
+  GitLab, `scan` reads the token's own record (`GET /api/v4/personal_access_tokens/self`) and prints a note 14 days
+  before it expires, or when it has already expired. The note names the date; rotating the token stays the owner's
+  job, never ROLLCALL's. The check is advisory: a refused, unreachable or unparseable answer prints nothing and
+  never fails the scan, and the token value never appears in output.
 - Composer files are parsed as data. No `composer install`, script or plugin from a scanned repository ever runs.
 - PROCTOR reports, image tags and app ids are outside input: shapes are validated, text is bounded, and terminal output
   strips control characters.

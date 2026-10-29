@@ -124,10 +124,10 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Stack:** `Not yet`. There is no Dockerfile or entrypoint yet. Target `Checked`: the portability job sends `SIGTERM` and requires exit 0 within the grace period.
 
 ### W17. Trust proxies by preset, never `*`
-- **Practice:** Select a preset (`citadel`, `docker`, `openshift`, `coolify`). Do not paste `trustProxies(at: '*')` from tutorials. Set `APP_URL` and trusted hosts; Laravel trusts subdomains of `APP_URL` unless `subdomains: false`.
+- **Practice:** Select a HELMET preset (`citadel` or `docker`), or list the front proxy in `HELMET_PROXIES` on other platforms. Do not paste `trustProxies(at: '*')` from tutorials. Set `APP_URL` and trusted hosts; Laravel trusts subdomains of `APP_URL` unless `subdomains: false`.
 - **Why:** An app that trusts all proxies lets a client forge `X-Forwarded-*` and the host used in callbacks.
 - **Sources:** [Laravel requests: trusted proxies and hosts](https://laravel.com/docs/13.x/requests).
-- **Stack:** `Not yet`. There is no `trustProxies` call in the app yet; HELMET owns the preset. Target `Checked`: a portability probe sends forged `X-Forwarded-Host` and `-Proto` from an untrusted peer.
+- **Stack:** `Enforced` by HELMET 0.2 (required `^0.2`): it trusts only the preset or listed proxies and drops `X-Forwarded-Port`. Target `Checked`: a portability probe sends forged `X-Forwarded-Host` and `-Proto` from an untrusted peer.
 
 ## 3. Queues and scheduling without Citadel workers
 

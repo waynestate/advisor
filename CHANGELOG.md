@@ -11,6 +11,10 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
   says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are
   refused. `waynestate/playbook` is suggested, never required.
 
+### Changed
+
+- Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.
+
 ## [0.1.1] - 2026-10-29
 
 ### Added
