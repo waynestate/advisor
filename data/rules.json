@@ -1517,6 +1517,104 @@
             "source": "handbook/dependencies.md:15"
         },
         {
+            "id": "dependencies-7",
+            "chapter": "dependencies",
+            "heading": "Private packages",
+            "text": "Internal-only packages MUST be installed from one GitLab package registry per ecosystem (Composer, npm), not from one `vcs`, `path` or `artifact` repository entry per package (the stack's private-packages decision).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/dependencies.md:19"
+        },
+        {
+            "id": "dependencies-8",
+            "chapter": "dependencies",
+            "heading": "Private packages",
+            "text": "Credentials MUST NOT appear in any repository URL in `composer.json` or `composer.lock`, or as a literal value in a committed `.npmrc`. Tokens live in a gitignored `auth.json`, the npm user config, or a CI or build-time secret (the stack's private-packages decision).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/dependencies.md:22"
+        },
+        {
+            "id": "dependencies-9",
+            "chapter": "dependencies",
+            "heading": "Private packages",
+            "text": "Builds MUST use a read-only deploy token (`read_package_registry` only); personal access tokens MUST NOT be used in builds (the stack's private-packages decision).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/dependencies.md:26"
+        },
+        {
+            "id": "dependencies-10",
+            "chapter": "dependencies",
+            "heading": "Private packages",
+            "text": "The private Composer registry entry MUST be canonical, and the Packagist entry SHOULD exclude the internal vendor names, so a public package with the same name can never be installed instead (the stack's private-packages decision).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/dependencies.md:29"
+        },
+        {
+            "id": "dependencies-11",
+            "chapter": "dependencies",
+            "heading": "Private packages",
+            "text": "A released version MUST map to one commit for ever: tags are protected, and a version is never republished from a different commit (the stack's private-packages decision).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/dependencies.md:33"
+        },
+        {
+            "id": "dependencies-12",
+            "chapter": "dependencies",
+            "heading": "Private packages",
+            "text": "Public code MUST NOT go through the private registry; it is published to Packagist or npm (the stack's private-packages decision).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/dependencies.md:36"
+        },
+        {
+            "id": "dependencies-13",
+            "chapter": "dependencies",
+            "heading": "Private packages",
+            "text": "Apps SHOULD NOT proxy or mirror public registries in v1 (the stack's private-packages decision).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/dependencies.md:38"
+        },
+        {
             "id": "deploy-gate-1",
             "chapter": "deploy-gate",
             "heading": "Deploy gate",

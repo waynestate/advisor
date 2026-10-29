@@ -15,7 +15,7 @@
             "source": "booster/BEST_PRACTICES.md"
         },
         "docs/booster/readme.md": {
-            "sha256": "2dd2d597cbe8474400d7c1b64d9d1b99c5945ac44bcf12fa51e34cae90ca604e",
+            "sha256": "a296b721b4ecceb9f5f99b2565fb32ecd7c3206b7a9cff6159c10421ff8e5030",
             "source": "booster/README.md"
         },
         "docs/creed/best-practices.md": {
@@ -31,11 +31,11 @@
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "3c022634773202fe0ab17203934acba30c42d8bcd6b767c9ee10a1203f1a05fc",
+            "sha256": "43c2d392ac09cc3a41b6de33d64629eb09adb2cf3655d0c198d3193a03a77348",
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
-            "sha256": "5f533dab98fb9e573e22402ba892ab5cc14f31540208c5bbf0a85691662d3db5",
+            "sha256": "1db49acd04529af98dddee973025295f0428cdfac8db2f1b877efe93c6dce480",
             "source": "helmet/BEST_PRACTICES.md"
         },
         "docs/helmet/readme.md": {
@@ -139,7 +139,7 @@
             "source": "creed/handbook/databases.md"
         },
         "handbook/dependencies.md": {
-            "sha256": "69e04be4134533295d6feb28e769f005a48de61fc387a905eaceed023df0e7d9",
+            "sha256": "4f50a602456b0ced8076ee3e20d0c5f18f75d3f91b3cb0e914e722bfbbc6b864",
             "source": "creed/handbook/dependencies.md"
         },
         "handbook/deploy-gate.md": {
@@ -171,7 +171,7 @@
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {
-            "sha256": "71212ed9f6f36266952c3aa83c9bfd011373cace06f51866e95fa6747fbda64c",
+            "sha256": "a65fad25351bbae4335f8933e38ea2fe26cf9d321f7d444e61b4d0d4ded5d107",
             "source": "creed/handbook, creed/policy/policy.json"
         }
     }
