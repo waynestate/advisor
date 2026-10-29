@@ -15,6 +15,8 @@
 
 Front page: [`site/index.html`](site/index.html), a static field map of the stack (open it in a browser).
 
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a SQUIRE kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
 Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
