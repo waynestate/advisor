@@ -4,6 +4,8 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-29
+
 First build, aimed at 0.1.0.
 
 ### Added
