@@ -286,7 +286,8 @@ code, pre { font-family: var(--wsu-font-family-mono); }
 }
 .copy-btn:hover { background: var(--adv-gold-soft); }
 .copy-btn.is-copied .copy-btn__label { animation: none; }
-.hero__note { max-width: 34rem; margin: var(--wsu-space-3) 0 0; font-size: 0.9375rem; color: var(--adv-ink-muted); }
+.hero__note { position: relative; z-index: 1; max-width: 34rem; margin: var(--wsu-space-3) 0 0; font-size: 1rem; color: var(--adv-ink); text-shadow: 0 0 2px var(--adv-paper), 0 0 6px var(--adv-paper), 0 0 10px var(--adv-paper); } /* a map-label halo: the trail goes behind the words, not through them */
+.hero__note code { font-size: 0.9375rem; text-shadow: none; }
 
 .hero__cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--wsu-space-5); margin: var(--wsu-space-6) 0 0; }
 .hero__cta .wsu-btn--primary { background: var(--adv-green); color: #fff; border-color: var(--adv-green); }
