@@ -97,7 +97,7 @@ MD);
         $this->generator()->generate();
         $readme = (string) (new ContentBundle($this->out))->doc('proctor', 'readme');
 
-        $this->assertStringContainsString('<img src="docs/example.png"', $readme);
+        $this->assertStringContainsString("```html\n<img src=\"docs/example.png\" alt=\"an example of markup, not a real image\">\n```\n", $readme);
         $this->assertStringContainsString('Prose after the fence.', $readme);
     }
 }

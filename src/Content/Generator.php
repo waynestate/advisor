@@ -304,8 +304,9 @@ final class Generator
         }
 
         // Even segments are outside code fences, odd ones are the fence lines
-        // themselves, and every segment after an opening fence is code.
-        $parts = preg_split('/^(?:```|~~~)[^\n]*$/m', $text, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [$text];
+        // themselves, and every segment after an opening fence is code. The
+        // group keeps the fence line in the split so it survives the rebuild.
+        $parts = preg_split('/^(```[^\n]*|~~~[^\n]*)$/m', $text, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [$text];
         foreach ($parts as $i => $part) {
             if ($i % 4 === 0) {
                 $parts[$i] = $this->trimImageLines((string) $part);
