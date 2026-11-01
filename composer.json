@@ -89,6 +89,9 @@
             "providers": [
                 "Waynestate\\Advisor\\Laravel\\AdvisorServiceProvider"
             ]
+        },
+        "proctor": {
+            "wayneui.copies": "fail"
         }
     },
     "minimum-stability": "stable",
