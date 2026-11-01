@@ -1,14 +1,9 @@
-<div align="center">
-  <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="SESAME's front page: the headline 'The way in. One lock, any key.' and the composer require command beside a pegboard where cas, gateway and SAML keys hang around SESAME's open-door mark, over a green service counter that reads 'Same door for every key.'"></a>
-</div>
+
 
 # SESAME
 
 <p>
-  <img src="docs/readme/badges/php.svg" alt="php ^8.3">
-  <img src="docs/readme/badges/license.svg" alt="licence MIT">
-  <img src="docs/readme/badges/drivers.svg" alt="drivers: fake, cas, gateway, oauth2, oidc">
-  <a href="https://github.com/waynestate/sesame/actions/workflows/ci.yml"><img src="https://github.com/waynestate/sesame/actions/workflows/ci.yml/badge.svg" alt="GitHub CI"></a>
+
 </p>
 
 **The way in. One lock, any key.** Single Entry, Sessions App-Managed Everywhere: keys cut while you wait, and no
@@ -36,6 +31,17 @@ and merge requests on the internal project.
 ```
 composer require waynestate/sesame
 ```
+
+## Which driver for my app?
+
+| Situation | Driver | Entra registration |
+|---|---|---|
+| App on Citadel today | `cas` | None. |
+| App on Citadel once Drawbridge is live | `gateway` | None per app (Drawbridge holds it once). |
+| App off Citadel or an API with its own audience | `oidc` or `oauth2` | Its own registration. |
+| Local development | `fake` | None. |
+
+The recommended path on Citadel is the `gateway` driver behind Drawbridge. Drawbridge is Wayne State's auth gateway: the browser signs in once at the gateway, which passes the app a signed assertion that the `gateway` driver verifies. Drawbridge is not live yet, so there is no production gateway to point at today. Until it is, CAS (the `cas` driver) is today's option for a Citadel app, and it needs no per-app Entra registration.
 
 ## WSU values (Playbook)
 
@@ -223,25 +229,18 @@ session at logout. Laravel apps use Laravel's own CSRF token instead: the
 |---|---|
 | `fake` | Now. Local development and tests only. Refuses to boot in production. |
 | `cas` | Now. CAS 2.0 against Academica by default. |
-| `gateway` | Now. A signed JWT assertion from the auth gateway (on Citadel, that is `auth.apps.wayne.edu`, the first planned one), never a bare header. |
+| `gateway` | Now. The recommended driver for apps on Citadel: a signed JWT assertion from the auth gateway (on Citadel, that is `auth.apps.wayne.edu`, the first planned one), never a bare header. No Entra registration per app: Drawbridge holds it once. |
 | `saml` | Later. Direct SP. |
 | `oauth2` | Now. A JWT bearer token verified against the issuer's key set (JWKS), RS256 only. Microsoft Entra ID first. APIs only. |
-| `oidc` | Now. Browser sign-in with OpenID Connect (code flow with PKCE), Microsoft Entra ID first. Needs `league/oauth2-client`. |
+| `oidc` | Now. Browser sign-in with OpenID Connect (code flow with PKCE), Microsoft Entra ID first. Needs its own Entra registration per app; for apps off Citadel and APIs. Needs `league/oauth2-client`. |
 
 <details>
 <summary><b>Walk round the shop</b>: the front page's counter, pegboard and duplicator</summary>
 <br>
-<div align="center"><img src="docs/readme/gallery.jpg" width="100%" alt="Three cuts of the front page: the hero with SESAME's mark on the pegboard; the pegboard 'One blank per protocol', with fake marked local only, cas, gateway, oauth2 and oidc marked now, and saml marked later; and the duplicator 'Swap the blank. Keep the door.', which re-keys an app from cas to gateway and opens the door for ab1234."></div>
+
 </details>
 
 ## The cas driver
-
-<div align="center">
-  <img src="docs/readme/duplicator.svg" width="100%" alt="SESAME's key duplicator tracing the cas key. Each of its five notches is one sign-in step: GET /login, /cas/login?service=…, ?ticket=ST-…, /cas/serviceValidate, then findOrImportUser(Identity). The tip is POST /logout to /cas/logout. Then ab1234 is in.">
-  <br>
-  <sub>The duplicator traces the cas key from the front page: five notches, one per sign-in step, and logout at the
-  tip. The cut is the sign-in; the lock is still yours. With reduced motion on, you get the finished key.</sub>
-</div>
 
 The cas driver logs in against a CAS server, CAS 2.0 by default. The base
 URL is required config with no default, and it must include the path the
@@ -316,6 +315,8 @@ comes from the CAS `authenticationDate` attribute, and when the server does
 not send one, the MFA check fails because there is no sign-in time to age.
 
 ## The gateway driver
+
+This is the recommended path on Citadel: Drawbridge is not live yet, but once it is, every app behind it uses this driver and needs no Entra registration of its own.
 
 The gateway driver signs the user in from a signed JWT assertion that the auth
 gateway (Drawbridge) puts in one header. It verifies the assertion's signature
@@ -469,6 +470,8 @@ sign-in rather than let it through.
 
 ## The oidc driver (Entra sign-in)
 
+> This is the exception, not the default. On Citadel prefer the `gateway` driver behind Drawbridge, which needs no Entra registration per app. This driver needs its own registration (see "The Entra app registration" below).
+
 Open sesame, said straight to Entra. The oidc driver signs a person in
 through the browser with OpenID Connect: the authorization code flow with
 PKCE (S256), the ID token checked against the issuer's key set. It is the
@@ -530,14 +533,15 @@ change. `oidc.username_fallback` (off by default) uses the part of
 > something else (`iss` plus `sub`, or `tid` plus `oid`).
 
 The roles claim (`oidc.roles_claim`,
-default `wsuRoles`) becomes the `roles` attribute; a mapped claim that
+default `wsu_roles`) becomes the `roles` attribute; a mapped claim that
 arrives under a custom-claim namespace
-(`http://schemas.example.test/claims/wsuRoles` or `extn.wsuRoles`) is found
+(`http://schemas.example.test/claims/wsu_roles` or `extn.wsu_roles`) is found
 by its short name. The exact name and the namespaced forms are counted
-together: two or more candidates (an exact `wsuRoles` beside a namespaced
+together: two or more candidates (an exact `wsu_roles` beside a namespaced
 one, say) count as none. `oidc.claims` (default
-`wsuRoles,accessid`) lists the claims passed to the resolver under their own
-names, so `$identity->attributes['wsuRoles']` works. `iss`, `sub`, `oid`,
+`wsu_roles,accessid`) lists the claims passed to the resolver under their own
+names, so `$identity->attributes['wsu_roles']` works. Set `roles_claim` (and
+`claims`) to `wsuRoles` to keep the old name. `iss`, `sub`, `oid`,
 `tid`, `email`, `name` and `preferred_username` are attributes too; key the
 app's users on `iss` plus `sub`, or `tid` plus `oid` (S24), never on the
 username alone.
@@ -647,8 +651,8 @@ right: Entra's redirect back is a top-level GET, which Lax allows (S41);
 | `oidc.client_auth` | `SESAME_OIDC_CLIENT_AUTH` | `client_secret_post` | Or `client_secret_basic`. |
 | `oidc.username_claim` | `SESAME_OIDC_USERNAME_CLAIM` | `accessid` | The claim the username comes from. |
 | `oidc.username_fallback` | `SESAME_OIDC_USERNAME_FALLBACK` | `false` | Opt in to the `preferred_username` prefix when the claim is missing. `preferred_username` is user-changeable; see the warning above. |
-| `oidc.roles_claim` | `SESAME_OIDC_ROLES_CLAIM` | `wsuRoles` | The claim that becomes the `roles` attribute; namespaced forms are found. |
-| `oidc.claims` | `SESAME_OIDC_CLAIMS` | `wsuRoles,accessid` | Claims passed to the resolver as attributes under their own names. |
+| `oidc.roles_claim` | `SESAME_OIDC_ROLES_CLAIM` | `wsu_roles` | The claim that becomes the `roles` attribute; namespaced forms are found. |
+| `oidc.claims` | `SESAME_OIDC_CLAIMS` | `wsu_roles,accessid` | Claims passed to the resolver as attributes under their own names. |
 | `oidc.assume_mfa` | `SESAME_OIDC_ASSUME_MFA` | `false` | Count a sign-in as MFA when Conditional Access enforces it for the app. |
 | `oidc.algorithms` | none | `['RS256']` | The ID token algorithms allowed: `RS256`, `RS384`, `RS512` only. |
 | `oidc.leeway_seconds` | `SESAME_OIDC_LEEWAY_SECONDS` | `60` | Clock skew on `exp`, `nbf` and `iat`, at most 300. |
@@ -678,7 +682,7 @@ What the developer (or the Entra admin) sets on the app registration:
   tokens" boxes unchecked; the code flow does not need them.
 - **Token configuration**: add the optional ID token claim `auth_time`
   (and `email` if the app wants it). Ask the Entra admin for the mapped
-  `wsuRoles` and `accessid` claims (a claims-mapping policy); if they arrive
+  `wsu_roles` and `accessid` claims (a claims-mapping policy); if they arrive
   under a namespace, SESAME finds them by their short names.
 - **Enterprise application, Properties: Assignment required = Yes**, then
   assign the groups that may sign in. This is what limits an app to, for
@@ -905,6 +909,40 @@ The app's user is available through the facade:
 $user = app(\Waynestate\Sesame\Sesame::class)->user();
 ```
 
+SESAME stores the user your resolver returned at sign-in and hands back that
+same copy until the session ends. When the app wants the signed-in user read
+back from its own store on every request, so a change made after the sign-in
+(a removed role, a deleted account) shows up from the next request on, the
+resolver also implements `Waynestate\Sesame\RefreshesUser`: its
+`refreshUser($user)` runs on every request, and a `null` answer signs the
+session out. The wayne-cas shim already implements it, looking the user up
+through `auth.providers.users.model`; a resolver that does not implement it
+keeps handing back the stored copy, as it always has.
+
+The same user is available through Laravel's own auth, because the provider
+registers a `sesame` guard driver. Point a guard in `config/auth.php` at it:
+
+```php
+'guards' => [
+    'web' => [
+        'driver' => 'sesame',
+        'provider' => 'users',
+    ],
+],
+```
+
+and the usual calls work against the SESAME session: `auth()->user()`,
+`$request->user()`, `Auth::check()`, and the `auth` middleware. The note
+above applies here too: the guard hands back the stored copy, or the
+refreshed one when the resolver refreshes. A user that is not an
+`Illuminate\Contracts\Auth\Authenticatable` reads as `null` through the
+guard; the `auth.sesame` middleware still sees it, because it checks the
+SESAME session directly.
+
+`auth()->logout()` signs the user out of both sides, the Laravel session and
+the SESAME session. The identity provider's single sign-on session is left
+alone.
+
 The cas and oauth2 drivers need a PSR-18 client. The adapter uses the app's
 `Psr\Http\Client\ClientInterface` binding when there is one, Guzzle when it is
 installed, and nothing when there is neither. Bind a client when the app has
@@ -985,13 +1023,28 @@ class User extends Model implements WayneCasable
 }
 ```
 
+The one change a wayne-cas model needs: `getReadOnlyAttributes` goes from
+protected to public, keeping its `$persistedAttributes` parameter. The
+interface and the trait share that signature, so a model that satisfies one
+satisfies both.
+
 The `WayneCasable` interface and the `ReadOnlyAttributes` trait are in the
 `Waynestate\Sesame\WayneCas` namespace.
 
 The middleware. wayne-cas's `WayneAuthenticate` middleware is kept as the
 `wayne.cas` alias. It checks the SESAME session instead of the Laravel auth
 guard, and it sends unauthenticated users to the `sesame.login` route. The
-AJAX 403 is kept, because wayne-cas returned it.
+AJAX 403 is kept, because wayne-cas returned it. It is safe in the global
+`web` group (it lets the `sesame.login`, `sesame.callback` and
+`sesame.logout` routes straight through), though putting it on the app's
+routes is still the recommended setup; an app that takes the routes over
+with `sesame.routes = false` must keep those names or exclude its routes.
+
+The guard. wayne-cas apps that read the user through `auth()->user()` can
+keep that call: point the app's guard at the `sesame` driver (see "Laravel")
+and `auth()->user()`, `Auth::check()` and `auth()->logout()` all work
+against the SESAME session. Without the guard, the equivalent is
+`app(Sesame::class)->user()`.
 
 The service URL. wayne-cas built the service URL from the current request.
 SESAME takes `sesame.cas.service_url` from config; the Laravel adapter
@@ -1037,26 +1090,9 @@ git.wayne.edu instance runner.
 <details>
 <summary><b>The brand board</b>: the mark, lockups, palette and type</summary>
 <br>
-<div align="center"><img src="docs/readme/board.jpg" width="100%" alt="SESAME's brand board: the open-door mark on a green tile, horizontal and stacked lockups reading 'The way in.', the palette of Wayne State green, gold, cream and slate ink, Lato type, favicon sizes, clear space, and a sign-in button and signed-in header for ab1234."></div>
+
 </details>
 
 <div align="center"><b>Same door, every key</b><br><sub>WayneUI and the stack. Each one gets in its own way.</sub></div>
-
-<div align="center">
-  <a href="https://github.com/waynestate/wayne-ui" title="WayneUI"><img src="docs/readme/cast/wayneui.png" width="40" alt="WayneUI"></a>
-  <a href="https://github.com/waynestate/creed" title="CREED"><img src="docs/readme/cast/creed.png" width="40" alt="CREED"></a>
-  <a href="https://github.com/waynestate/proctor" title="PROCTOR"><img src="docs/readme/cast/proctor.png" width="40" alt="PROCTOR"></a>
-  <a href="https://github.com/waynestate/sesame" title="SESAME"><img src="docs/readme/cast/sesame.png" width="40" alt="SESAME"></a>
-  <a href="https://github.com/waynestate/helmet" title="HELMET"><img src="docs/readme/cast/helmet.png" width="40" alt="HELMET"></a>
-  <a href="https://github.com/waynestate/sourdough" title="Sourdough"><img src="docs/readme/cast/sourdough.png" width="40" alt="Sourdough"></a>
-  <a href="https://github.com/waynestate/squire" title="Squire"><img src="docs/readme/cast/squire.png" width="40" alt="Squire"></a>
-  <a href="https://github.com/waynestate/preflight" title="Preflight"><img src="docs/readme/cast/preflight.png" width="40" alt="Preflight"></a>
-  <a href="https://github.com/waynestate/pinstripe" title="Pinstripe"><img src="docs/readme/cast/pinstripe.png" width="40" alt="Pinstripe"></a>
-  <a href="https://github.com/waynestate/booster" title="Booster"><img src="docs/readme/cast/booster.png" width="40" alt="Booster"></a>
-  <a href="https://github.com/waynestate/rollcall" title="Rollcall"><img src="docs/readme/cast/rollcall.png" width="40" alt="Rollcall"></a>
-  <a href="https://github.com/waynestate/drawbridge" title="Drawbridge"><img src="docs/readme/cast/drawbridge.png" width="40" alt="Drawbridge"></a>
-  <a href="https://github.com/waynestate/advisor" title="ADVISOR"><img src="docs/readme/cast/advisor.png" width="40" alt="ADVISOR"></a>
-  <a href="https://github.com/waynestate/weld" title="WELD"><img src="docs/readme/cast/weld.png" width="40" alt="WELD"></a>
-</div>
 
 <div align="center"><sub>Images are regenerated from the front page by <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>. Open sesame.</sub></div>

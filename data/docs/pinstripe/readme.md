@@ -1,14 +1,9 @@
-<div align="center">
-  <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="Pinstripe's front page: the headline Pinstripe, 'Sharp code. Every line.', and a swatch of green pinstripe cloth with the necktie mark sewn on and a hang tag reading Cut PER, Size level 8, Lining Larastan, Fit a11y."></a>
-</div>
+
 
 # Pinstripe
 
 <p>
-  <img src="docs/readme/badges/php.svg" alt="php ^8.3">
-  <img src="docs/readme/badges/phpstan.svg" alt="phpstan level 8">
-  <img src="docs/readme/badges/license.svg" alt="licence MIT">
-  <a href="https://github.com/waynestate/pinstripe/actions/workflows/ci.yml"><img src="https://github.com/waynestate/pinstripe/actions/workflows/ci.yml/badge.svg" alt="GitHub CI"></a>
+
 </p>
 
 **Sharp code. Every line.**
@@ -17,6 +12,10 @@ The coding standard for the Wayne State app stack: shared presets for Pint, PHPS
 and ESLint with Prettier. Your app points at them and adds only its own exceptions. Pinstripe is to code what a good
 suit is to a job interview: nobody notices it, everybody notices when it's missing.
 
+**Not to be confused with:** Pinstripe is the code style settings you run locally; Preflight runs them, and PROCTOR, in CI.
+Pinstripe's Rector set modernises code within the app's current PHP version, while Booster upgrades the app to a newer
+PHP version.
+
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
 Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
@@ -24,21 +23,19 @@ Development happens on Wayne State's GitLab; this repository is a release mirror
 Front page: [`site/index.html`](site/index.html), a static tailor's shop you can open in a browser or serve from `site/`.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-<div align="center">
-  <img src="docs/readme/tape.svg" width="100%" alt="A yellow tape measure unrolls across a green card with seven marks, one per preset: The cut, Pint, presets per and laravel; The inseam, PHPStan, level 8; The lining, Larastan; The press, Rector, with dead code, code quality, type declarations and early return; The buttonholes, ESLint, javascript and typescript with vue and accessibility; The hem, Prettier, 100 columns, single quotes, semicolons, trailing commas; The chalk line, baseline.">
-</div>
+
 <div align="center"><sub>Seven pieces, one tape. Every mark is read from the preset files in this repo; with reduced motion on, the tape stays unrolled.</sub></div>
 
 <details>
 <summary><b>Try it on</b>: three cuts from <code>site/</code> at phone width</summary>
 <br>
-<div align="center"><img src="docs/readme/gallery.jpg" width="100%" alt="Three phone-width crops of Pinstripe's front page: the hero with the pinstripe swatch and hang tag, the fitting where messy PHP is chalked, and the pieces with the pincushion."></div>
+
 </details>
 
 <details>
 <summary><b>The pattern book</b>: the brand board</summary>
 <br>
-<div align="center"><img src="docs/readme/board.jpg" width="100%" alt="Pinstripe's brand board: the necktie mark in its green and gold, the pinstripe cloth, and the type and colours it is cut from."></div>
+
 </details>
 
 ## Use it in a raw PHP app
@@ -243,23 +240,6 @@ Maintainers: how to build, test and release this project, and where its data com
 Reading the PHP floor from CREED. (Preflight's pint, phpstan and eslint jobs already run your app's Pinstripe config.)
 
 ## The cast
-
-<div align="center">
-  <a href="https://github.com/waynestate/wayne-ui" title="WayneUI"><img src="docs/readme/cast/wayneui.png" width="48" alt="WayneUI"></a>
-  <a href="https://github.com/waynestate/creed" title="CREED"><img src="docs/readme/cast/creed.png" width="48" alt="CREED"></a>
-  <a href="https://github.com/waynestate/proctor" title="PROCTOR"><img src="docs/readme/cast/proctor.png" width="48" alt="PROCTOR"></a>
-  <a href="https://github.com/waynestate/sesame" title="SESAME"><img src="docs/readme/cast/sesame.png" width="48" alt="SESAME"></a>
-  <a href="https://github.com/waynestate/helmet" title="HELMET"><img src="docs/readme/cast/helmet.png" width="48" alt="HELMET"></a>
-  <a href="https://github.com/waynestate/sourdough" title="Sourdough"><img src="docs/readme/cast/sourdough.png" width="48" alt="Sourdough"></a>
-  <a href="https://github.com/waynestate/squire" title="Squire"><img src="docs/readme/cast/squire.png" width="48" alt="Squire"></a>
-  <a href="https://github.com/waynestate/preflight" title="Preflight"><img src="docs/readme/cast/preflight.png" width="48" alt="Preflight"></a>
-  <a href="https://github.com/waynestate/pinstripe" title="Pinstripe"><img src="docs/readme/cast/pinstripe.png" width="48" alt="Pinstripe"></a>
-  <a href="https://github.com/waynestate/booster" title="Booster"><img src="docs/readme/cast/booster.png" width="48" alt="Booster"></a>
-  <a href="https://github.com/waynestate/rollcall" title="Rollcall"><img src="docs/readme/cast/rollcall.png" width="48" alt="Rollcall"></a>
-  <a href="https://github.com/waynestate/drawbridge" title="Drawbridge"><img src="docs/readme/cast/drawbridge.png" width="48" alt="Drawbridge"></a>
-  <a href="https://github.com/waynestate/advisor" title="ADVISOR"><img src="docs/readme/cast/advisor.png" width="48" alt="ADVISOR"></a>
-  <a href="https://github.com/waynestate/weld" title="WELD"><img src="docs/readme/cast/weld.png" width="48" alt="WELD"></a>
-</div>
 
 <div align="center"><sub>Fourteen parts, one fitting room. The README art is cut from the front page by
 <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>; no suit was harmed, and every hem was pinned first.</sub></div>

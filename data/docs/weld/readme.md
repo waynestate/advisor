@@ -1,16 +1,11 @@
-<div align="center">
-  <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="WELD's front page: the headline WELD, 'Wired, Everything, Linked, Deployed. Many parts, one piece.', the composer create-project command, and the welder's-helmet mark on a green tile."></a>
-</div>
+
 
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
 # WELD
 
 <p>
-  <img src="docs/readme/badges/php.svg" alt="php ^8.3">
-  <img src="docs/readme/badges/laravel.svg" alt="laravel ^13.29">
-  <img src="docs/readme/badges/license.svg" alt="licence MIT">
-  <a href="https://github.com/waynestate/weld/actions/workflows/ci.yml"><img src="https://github.com/waynestate/weld/actions/workflows/ci.yml/badge.svg" alt="GitHub CI"></a>
+
 </p>
 
 **W**ired, **E**verything, **L**inked, **D**eployed. Many parts, one piece.
@@ -21,10 +16,20 @@ Megazord, except it comes with a deploy script and nobody has to shout to make i
 
 Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
 
+**Not to be confused with:** `weld:doctor` checks local setup only; standards checks are PROCTOR's.
+
 ## Get it
 
 WELD is an app you start from, not a library you require. The Megazord ships in a repo, not a box.
-Clone it and it is yours to rename:
+Composer makes you a fresh copy, writes `.env`, generates the app key and runs the first migration:
+
+```
+composer create-project waynestate/weld my-app
+cd my-app
+npm ci
+```
+
+Or clone it, if you want the history too, and it is yours to rename:
 
 ```
 git clone https://github.com/waynestate/weld.git my-app
@@ -51,15 +56,13 @@ php artisan key:generate
 | HELMET | The baseline runtime: security headers and CSP, sessions, trusted proxies, `/up` |
 | Ziggy | Route names as URLs: the route list ships inside the Vite bundle, so `route()` works in Vue without an inline script |
 
-<div align="center">
-  <img src="docs/readme/journey.svg" width="100%" alt="WELD's journey, one request and six stops joined by a gold seam: HELMET sets security headers, SESAME signs the user in, WayneUI renders the page, PROCTOR checks the code, Preflight runs CI, Squire deploys.">
-</div>
+
 <div align="center"><sub>One request, six stops, one seam. The bead runs the length of it; with reduced motion on, it stays put.</sub></div>
 
 <details>
 <summary><b>See the front page</b>: three cuts from <code>site/</code> at phone width</summary>
 <br>
-<div align="center"><img src="docs/readme/gallery.jpg" width="100%" alt="Three phone-width crops of WELD's front page on the green shop floor: the hero with the helmet mark, the start of 'The cast' with WayneUI's card, and 'Pick your path' with the raw PHP and Laravel + Blade cards."></div>
+
 </details>
 
 ## Status
@@ -114,6 +117,40 @@ The same subcommands work on every OS:
 Deploying somewhere other than a laptop? [Running WELD off Citadel](docs/running-off-citadel.md) covers OpenShift,
 Coolify and plain Docker, with Citadel for comparison.
 
+## Oracle
+
+WELD speaks Oracle through `yajra/laravel-oci8`, and the wiring is already in: an `oracle` connection in
+`config/database.php`, a check command, and plain-language sentences for the common errors. Until you set the
+Oracle settings it stays dormant: nothing connects and nothing errors.
+
+Fill in one set of names in `.env` (the commented block in `.env.example`): `ORACLE_USERNAME`, `ORACLE_PASSWORD`,
+and either `ORACLE_TNS` (an Easy Connect string, `host:port/service`, or a full descriptor) or `ORACLE_HOST`,
+`ORACLE_PORT` and `ORACLE_SERVICE_NAME`. On a server, set them in the app's environment settings, never in a file
+in git.
+
+Check the settings and the connection in plain language, one line per finding:
+
+```
+php artisan oracle:check
+```
+
+The local `app` container runs the stock Composer image, which has no Oracle driver. When you need a real
+connection from your machine, the Oracle-ready image is opt-in through `compose.oracle.yaml`:
+
+```
+# Windows (PowerShell):
+$env:WELD_ORACLE_IMAGE = "squire/oracle-parity:8.3"
+docker compose -f compose.yaml -f compose.oracle.yaml up
+# macOS / Linux:
+WELD_ORACLE_IMAGE=squire/oracle-parity:8.3 docker compose -f compose.yaml -f compose.oracle.yaml up
+```
+
+The overlay swaps only the app's image and passes the `ORACLE_*` settings through from `.env`; the ports stay
+bound to `127.0.0.1`. It fails closed when `WELD_ORACLE_IMAGE` is unset.
+
+`squire/oracle-parity:8.3` is the name Squire documents for its parity image; build it once with Squire's
+`scripts/oracle-image-build.sh --flavour parity --php 8.3` (the name is a placeholder until a registry is chosen).
+
 ## Check your setup
 
 Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
@@ -137,23 +174,6 @@ WELD is one of those shapes, Laravel with Inertia and Vue, with every part alrea
 Pick Sourdough when you want a starter you shape yourself. Pick WELD when you want the finished piece.
 
 ## The cast
-
-<div align="center">
-  <a href="https://github.com/waynestate/wayne-ui" title="WayneUI"><img src="docs/readme/cast/wayneui.png" width="48" alt="WayneUI"></a>
-  <a href="https://github.com/waynestate/creed" title="CREED"><img src="docs/readme/cast/creed.png" width="48" alt="CREED"></a>
-  <a href="https://github.com/waynestate/proctor" title="PROCTOR"><img src="docs/readme/cast/proctor.png" width="48" alt="PROCTOR"></a>
-  <a href="https://github.com/waynestate/sesame" title="SESAME"><img src="docs/readme/cast/sesame.png" width="48" alt="SESAME"></a>
-  <a href="https://github.com/waynestate/helmet" title="HELMET"><img src="docs/readme/cast/helmet.png" width="48" alt="HELMET"></a>
-  <a href="https://github.com/waynestate/sourdough" title="Sourdough"><img src="docs/readme/cast/sourdough.png" width="48" alt="Sourdough"></a>
-  <a href="https://github.com/waynestate/squire" title="Squire"><img src="docs/readme/cast/squire.png" width="48" alt="Squire"></a>
-  <a href="https://github.com/waynestate/preflight" title="Preflight"><img src="docs/readme/cast/preflight.png" width="48" alt="Preflight"></a>
-  <a href="https://github.com/waynestate/pinstripe" title="Pinstripe"><img src="docs/readme/cast/pinstripe.png" width="48" alt="Pinstripe"></a>
-  <a href="https://github.com/waynestate/booster" title="Booster"><img src="docs/readme/cast/booster.png" width="48" alt="Booster"></a>
-  <a href="https://github.com/waynestate/rollcall" title="Rollcall"><img src="docs/readme/cast/rollcall.png" width="48" alt="Rollcall"></a>
-  <a href="https://github.com/waynestate/drawbridge" title="Drawbridge"><img src="docs/readme/cast/drawbridge.png" width="48" alt="Drawbridge"></a>
-  <a href="https://github.com/waynestate/advisor" title="ADVISOR"><img src="docs/readme/cast/advisor.png" width="48" alt="ADVISOR"></a>
-  <a href="https://github.com/waynestate/weld" title="WELD"><img src="docs/readme/cast/weld.png" width="48" alt="WELD"></a>
-</div>
 
 <div align="center"><sub>Fourteen parts, one bead. The README art is cut from the front page by
 <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>; no sparks were drawn in its making.</sub></p>
