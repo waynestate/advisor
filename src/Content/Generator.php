@@ -277,17 +277,71 @@ final class Generator
         return $this->clean((string) file_get_contents($path));
     }
 
-    /** LF line endings, one final newline, no invisible characters, no internal names, a size cap. */
+    /** LF line endings, one final newline, no invisible characters, no internal names, no image boilerplate, a size cap. */
     private function clean(string $text): string
     {
         $text = str_replace(["\r\n", "\r"], "\n", $text);
         $text = Invisible::strip($text);
         $text = $this->sanitize($text);
+        $text = $this->trimImages($text);
         if (strlen($text) > self::MAX_FILE_BYTES) {
             throw new RuntimeException('A source file is larger than 1 MB; refusing to bundle it.');
         }
 
         return rtrim($text, "\n") . "\n";
+    }
+
+    /**
+     * Drops the image boilerplate that means nothing in a text answer: centred
+     * hero and badge blocks, stray img tags on their own line, and Markdown
+     * image lines whose target is relative or a GIF. JSON sources pass through
+     * untouched, and nothing inside a fenced code block is rewritten.
+     */
+    private function trimImages(string $text): string
+    {
+        if (str_starts_with($text, '{') || str_starts_with($text, '[')) {
+            return $text;
+        }
+
+        // Even segments are outside code fences, odd ones are the fence lines
+        // themselves, and every segment after an opening fence is code. The
+        // group keeps the fence line in the split so it survives the rebuild.
+        $parts = preg_split('/^(```[^\n]*|~~~[^\n]*)$/m', $text, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [$text];
+        foreach ($parts as $i => $part) {
+            if ($i % 4 === 0) {
+                $parts[$i] = $this->trimImageLines((string) $part);
+            }
+        }
+
+        return implode('', $parts);
+    }
+
+    private function trimImageLines(string $text): string
+    {
+        // Centred div/p blocks exist only to hold images; keep any that do not.
+        $text = (string) preg_replace_callback(
+            '#<(div|p)\s[^>]*align=["\']center["\'][^>]*>.*?</\1>#is',
+            static fn(array $m): string => str_contains($m[0], '<img') ? '' : $m[0],
+            $text,
+        );
+        // An img tag, optionally wrapped in a link, that owns its line.
+        $text = (string) preg_replace('/^[ \t]*(?:<a\s[^>]*>\s*)?<img\b[^>]*>\s*(?:<\/a>)?[ \t]*$/m', '', $text);
+        // Markdown image lines whose target is relative or a GIF.
+        $text = (string) preg_replace_callback(
+            '/^[ \t]*!\[[^\]]*\]\(\s*<?([^()<>\s]+)>?(?:\s+[^()]*)?\)[ \t]*$/m',
+            static function (array $m): string {
+                if (str_starts_with($m[1], 'http') && !str_ends_with(strtolower($m[1]), '.gif')) {
+                    return $m[0];
+                }
+
+                return '';
+            },
+            $text,
+        );
+        // Three or more blank lines become one.
+        $text = (string) preg_replace("/\n{4,}/", "\n\n", $text);
+
+        return $text;
     }
 
     /** Replaces the internal names the sources still carry (see SANITIZATIONS and the private denylist). */

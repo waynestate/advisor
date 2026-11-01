@@ -19,7 +19,7 @@ final class PolicyLookup
         return new ToolDefinition(
             name: 'policy_lookup',
             title: 'Look up support dates',
-            description: 'Answers "is this version supported?" from the bundled CREED policy.json: for a runtime or framework (php, laravel, node, mysql, vue, inertia) it returns each version\'s active and security-support end dates and its state today (active, security, eol, eol_grace_expired); for a developer tool (composer) it returns the minimum version. Pass a version such as 8.3 or 8.3.12 to get one answer. Read-only; every answer names its source and date.',
+            description: 'Answers "is this version supported?" from the bundled CREED policy.json: for a runtime or framework (php, laravel, node, mysql, vue, inertia) it returns each version\'s active and security-support end dates and its state today (active, security, eol, eol_grace_expired); for a developer tool (composer) it returns the minimum version. Rows carry latest_patch (the newest patch release on that line, with the date it was checked) when the policy has it. Pass a version such as 8.3 or 8.3.12 to get one answer. Read-only; every answer names its source and date.',
             inputSchema: [
                 'type' => 'object',
                 'properties' => [
@@ -56,6 +56,8 @@ final class PolicyLookup
                         'version' => $key,
                         'active_until' => $dates['active_until'] ?? null,
                         'security_until' => $dates['security_until'] ?? null,
+                        'latest_patch' => $dates['latest_patch'] ?? null,
+                        'latest_patch_checked' => $dates['latest_patch_checked'] ?? null,
                         'state' => $policy->stateOf($component, $key, $today)?->value,
                     ];
                 }
@@ -73,11 +75,14 @@ final class PolicyLookup
                         throw new ToolInputError("The policy has no entry for {$component} {$version}. Call policy_lookup without a version to see the versions it covers.");
                     }
                     $state = $policy->stateOf($component, $key, $today);
+                    $matched = $policy->versions($component)[$key] ?? [];
                     $answer['answer'] = [
                         'asked' => $version,
                         'matched' => $key,
                         'state' => $state?->value,
                         'supported' => $state !== null && in_array($state->value, ['active', 'security'], true),
+                        'latest_patch' => $matched['latest_patch'] ?? null,
+                        'latest_patch_checked' => $matched['latest_patch_checked'] ?? null,
                     ];
                 }
 

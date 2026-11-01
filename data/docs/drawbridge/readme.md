@@ -1,15 +1,6 @@
-<div align="center">
-  <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="Drawbridge's front page: the headline Drawbridge in stencil capitals, 'Comes down for signed-in people.', and an architect's section A-A through a gatehouse with the Drawbridge mark in a detail callout."></a>
-</div>
+
 
 # Drawbridge
-
-<div align="center">
-  <img src="docs/readme/badges/php.svg" alt="php ^8.3">
-  <img src="docs/readme/badges/license.svg" alt="licence MIT">
-  <img src="docs/readme/badges/assertion.svg" alt="assertion ES256, 60 seconds">
-  <a href="https://github.com/waynestate/drawbridge/actions/workflows/ci.yml"><img src="https://github.com/waynestate/drawbridge/actions/workflows/ci.yml/badge.svg" alt="GitHub CI"></a>
-</div>
 
 **Comes down for signed-in people.**
 
@@ -17,24 +8,26 @@ Checks: `composer ci` (the same command runs on GitLab and GitHub). The containe
 
 > The one way into the Citadel. It only comes down for people who signed in.
 
-Drawbridge is the Citadel auth gateway at `auth.apps.wayne.edu`: one OpenID Connect client, signed in through
-Microsoft Entra ID, for every app on the platform. It sits in front of the apps as a reverse proxy, makes sure the
-visitor has a session, throws away any identity header the visitor tried to bring along, and passes the app either a
+Drawbridge is the sign-in gateway for the apps on Citadel, Wayne State's container platform. It is Apache with
+mod_auth_openidc, set up as one OpenID Connect client for Microsoft Entra ID. It is not live yet: its home will be
+`auth.apps.wayne.edu`, in front of every app on the platform, once the Citadel routing for it exists. Release 0.2 is
+unreleased; so far only the gateway image is built, and it will run as a service on Citadel. As a reverse proxy it
+checks that the visitor has a session, drops any identity header the visitor sent, and passes the app either a
 short-lived signed assertion that SESAME's `gateway` driver verifies, or plain `X-Authenticated-*` headers for apps
 that cannot verify a token yet. Which paths need a login, and which need an Entra authentication context on top, is
 declared per app in a config file. Nothing else decides it.
 
-Why a moat and not a lock on each door: every app doing its own OpenID Connect is another chance to get a nonce,
-a state check or a token signature wrong. Drawbridge does the sign-in once, in a maintained module
-(mod_auth_openidc), and every app only has to check one small signed token.
+Why a moat and not a lock on every door: each app doing its own OpenID Connect is another chance to get a nonce,
+a state check or a token signature wrong. We'd rather get that right once, in a maintained module
+(mod_auth_openidc). Each app then checks one small signed token.
 
-This repository is published from Wayne State University's internal GitLab and mirrored here. Changes land there
-first.
+Development happens on Wayne State's GitLab. This GitHub repository is a read-only release mirror: `main` and tags
+are copied here automatically, and changes, issues and merge requests go to GitLab first.
 
-## Where it fits in WELD
+## Where it fits in the stack
 
-WELD is the Wayne State application stack: one contract, several paths that agree, accessibility as a gate, and
-decisions written down.
+Drawbridge is one part of the Wayne State application stack: one contract, several paths that agree, accessibility
+as a gate, and decisions written down. WELD is the Laravel starter app with the rest of it already set up.
 
 | Part | Job |
 |---|---|
@@ -59,27 +52,21 @@ browser --> Apache httpd (Drawbridge) --> app container
               `- PHP component    : validates the config, renders the Apache config, signs assertions (ES256)
 ```
 
-<div align="center">
-  <img src="docs/readme/gatehouse.svg" width="100%" alt="An architect's section through the gatehouse. 1, the guard: removes X-Authenticated-*, X-Drawbridge-*, X-Sesame-* and OIDC-Claim-* headers, and trims Connection to close, keep-alive and upgrade. 2, the OpenID Connect client: response type code, PKCE S256, callback /_drawbridge/oidc/callback, claims kept in the environment. 3, the signer: a drawbridge+jwt signed with ES256, good for 60 seconds, sent as X-Sesame-Assertion; if it cannot sign, the answer is 503. A door schedule: /up and /assets/ public, /admin/ and anything else login, /api/ api.">
-  <br>
-  <sub>Detail 1, enlarged: the three rooms of the passage, labelled from the source. The drawing inks itself in, and holds still if you have asked your system for less motion.</sub>
-</div>
-
-- A request for a **protected** path without a session is redirected to Entra (authorization code flow with PKCE).
-  For an **api** path it gets a plain 401, so a script is never handed an HTML login page. A **public** path passes
-  through with no identity at all.
+- A request for a **protected** path without a session goes to Entra to sign in (authorization code flow with PKCE)
+  and comes back. For an **api** path it gets a plain 401, so a script never receives an HTML login page. A
+  **public** path passes through with no identity attached.
 - mod_auth_openidc checks the ID token (signature, issuer, audience, nonce, expiry) and keeps the session. The
   claims reach the gateway in the request environment only, never as headers, and no Entra token is passed to an app.
 - The assertion is a compact JWT with `typ: drawbridge+jwt` and a `kid`. Claims: `iss` (Drawbridge, never Entra),
   `aud` (the app's host), `sub` (the configured user claim, `accessid` in the example config and `preferred_username`
   if unset), `iat`, `nbf`, `exp`
   (60 seconds by default), `jti`; `auth_time`, `amr` and `acrs` when the ID token carries them; `email`, `name` and
-  `affiliations` when configured; and any `extra_claims` (for example `wsuRoles`). A new one is minted for every
-  request, and only from an ID token whose `iss` is the configured provider.
-- If the signer cannot sign, the answer is 503. A request never reaches the app unsigned.
+   `affiliations` when configured; and any `extra_claims` (for example `wsu_roles`). A new one is signed for every
+   request, and only from an ID token whose `iss` is the configured provider.
+- If the signer cannot sign, the answer is 503. Nothing reaches the app unsigned.
 - Header stripping: the guard removes every inbound `X-Authenticated-*`, `X-Sesame-*`, `X-Drawbridge-*`,
   `OIDC_CLAIM_*`, `OIDC_access_token` (and the module's other token names), `Remote-User`, `X-Forwarded-*`,
-  `Forwarded` and similar header, in every hyphen and underscore spelling, on every request, before authentication
+  `Forwarded` and similar header, in any hyphen or underscore spelling, on every request, before authentication
   runs. Every header under an owned prefix goes, whatever follows the prefix. It also trims `Connection` to `close`,
   `keep-alive` and `upgrade`, so a client cannot ask the proxy to drop a header the gateway set.
 
@@ -136,7 +123,8 @@ answers, including the unknown-host 403 and the error pages.
 
 ## Install and quick start
 
-You need Docker. The PHP component needs PHP 8.3 or newer and Composer, but the container carries its own.
+You need Docker and nothing else. The PHP component needs PHP 8.3 or newer and Composer, and these steps run both
+inside the `composer:2.10.3` container.
 
 **Windows (PowerShell)**
 
@@ -162,8 +150,8 @@ docker build -f docker/gateway/Dockerfile -t drawbridge-gateway .
 
 With PHP installed locally the same commands are `composer install` and `php bin/drawbridge ...`.
 
-Then run the image with the two files it cannot start without mounted read-only, and the two secrets in its
-environment (the entrypoint refuses to start if any is missing, and `render` refuses an unusable secret):
+Then run the image with the two files it cannot start without, mounted read-only, and the two secrets in its
+environment. The entrypoint refuses to start if any is missing, and `render` refuses an unusable secret:
 
 | Item | What it is |
 |---|---|
@@ -196,13 +184,15 @@ One app registration covers every app host. In the Entra admin center, under App
    once it has (see `OPEN_QUESTIONS.md`, secret rotation).
 4. **Token configuration.** Add the optional ID token claims the config reads: `accessid` (the AccessID, transformed
    from the user principal name with `ExtractMailPrefix`; this is what the example config uses for `oidc.user_claim`),
-   `email`, `auth_time`, and `acrs` if any path uses an authentication context. Add `wsuRoles` as a mapped claim (it
-   comes from an on-premises AD attribute) and set `acceptMappedClaims: true` in the app manifest, so no custom
-   signing key is needed and the metadata URL stays plain; list it in `oidc.extra_claims`. A tenant that does not
-   send `accessid` leaves `oidc.user_claim` at `preferred_username`.
+   `email`, `auth_time`, and `acrs` if any path uses an authentication context. Add `wsu_roles` as a mapped claim
+   (the source attribute is `user.wsuRoles`, an on-premises AD attribute; the emitted claim is `wsu_roles`) and set
+   `acceptMappedClaims: true` in the app manifest, so no custom signing key is needed and the metadata URL stays
+   plain; list it in `oidc.extra_claims`. A tenant that does not send `accessid` leaves `oidc.user_claim` at
+   `preferred_username`.
 5. **Overview.** Copy the Directory (tenant) ID into `oidc.issuer`
    (`https://login.microsoftonline.com/<tenant-id>/v2.0`) and the Application (client) ID into `oidc.client_id`.
-   Neither is a secret, but neither belongs in this repository either.
+   Neither is a secret, but neither belongs in this repository either. The issuer is in Playbook as
+   `SESAME_OAUTH2_ISSUER`; see the WSU values (Playbook) section below.
 6. **Authentication contexts** (only if a path uses `auth_context`): in Conditional Access, create the context
    (`c1` ...), and a policy that targets it with whatever it should demand.
 
@@ -225,6 +215,46 @@ docker inspect --format='{{index .RepoDigests 0}}' <this project's registry>/gat
 The image carries OCI labels (`org.opencontainers.image.source`, `.revision`, `.version`, `.licenses`) set from the
 pipeline's commit; a local `docker build` leaves them empty.
 
+## WSU values (Playbook)
+
+A drawbridge lifts for barges it knows; these two settings tell it who is
+coming. Both carry Wayne State's shared values, and both come from
+[Playbook](https://git.wayne.edu/enterprise-apps/playbook), the private
+repository of the university's shared `KEY=value` lines: never secrets, never
+per-app values. Drawbridge does not read Playbook in code; it is where a
+person looks up the values to type into `config/drawbridge.yaml` and `.env`.
+
+| Playbook key | Drawbridge setting | Where it goes |
+|---|---|---|
+| `SESAME_OAUTH2_ISSUER` | `oidc.issuer` | `config/drawbridge.yaml`: the Entra issuer for the Wayne State tenant. Copy it from Playbook; never write a tenant id by hand. |
+| `HELMET_PROXIES` | `DRAWBRIDGE_TRUSTED_PROXIES` | `.env`: the front proxy addresses, comma-separated CIDRs. |
+
+**curl (Linux, macOS).**
+
+```
+curl --fail -H "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://git.wayne.edu/api/v4/projects/enterprise-apps%2Fplaybook/repository/files/playbook.env/raw?ref=main" -o .env.playbook
+```
+
+**PowerShell (Windows).**
+
+```powershell
+Invoke-WebRequest -Headers @{ 'PRIVATE-TOKEN' = $env:GITLAB_TOKEN } -Uri "https://git.wayne.edu/api/v4/projects/enterprise-apps%2Fplaybook/repository/files/playbook.env/raw?ref=main" -OutFile .env.playbook
+```
+
+**A clone.**
+
+```
+git clone https://git.wayne.edu/enterprise-apps/playbook.git
+```
+
+The curl and PowerShell commands download the values to `.env.playbook`; copy
+the two you need out of it. The secrets (`DRAWBRIDGE_OIDC_CLIENT_SECRET`,
+`DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE`, `DRAWBRIDGE_METRICS_TOKEN`), the client
+id and the signing key are never in Playbook. The token is your own: `read_api`
+for curl, `read_repository` for clone.
+
+Playbook is private on git.wayne.edu. If you get a 404, ask the Enterprise Applications team for read access.
+
 ## Configuration
 
 One YAML (or PHP array) file declares the gateway, the OpenID Connect provider and each app.
@@ -236,7 +266,7 @@ oidc:
   client_id: <application-client-id>
   client_secret_env: DRAWBRIDGE_OIDC_CLIENT_SECRET   # the NAME of the variable, never the secret
   user_claim: accessid                               # the AccessID; preferred_username for a tenant that does not send it
-  extra_claims: [wsuRoles]                           # copied into the assertion when present
+  extra_claims: [wsu_roles]                          # copied into the assertion when present
 
 apps:
   - id: app1
@@ -390,13 +420,13 @@ On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a S
 <details>
 <summary><b>Sheets</b>: three windows onto the gatehouse</summary>
 <br>
-<div align="center"><img src="docs/readme/gallery.jpg" width="100%" alt="Three phone-width crops of the front page: the longitudinal section One request through the gatehouse with its first passage rooms, the general notes Thirteen rules each with a test, and the build sheet with the install commands."></div>
+
 </details>
 
 <details>
 <summary><b>The brand board</b>: the mark, lockups, palette and type</summary>
 <br>
-<div align="center"><img src="docs/readme/board.jpg" width="100%" alt="Drawbridge's brand board: the gatehouse mark on a Wayne State green tile, its lockups, the palette of green, gold and cream, the type, favicons and clear space."></div>
+
 </details>
 
 ## The name
@@ -409,22 +439,5 @@ raise the issue. The moat is only as good as the people who keep reporting where
 MIT. Copyright Wayne State University.
 
 <div align="center"><b>Same castle, every sheet</b><br><sub>WayneUI and the stack. Drawbridge minds the gate.</sub></div>
-
-<div align="center">
-  <a href="https://github.com/waynestate/wayne-ui" title="WayneUI"><img src="docs/readme/cast/wayneui.png" width="40" alt="WayneUI"></a>
-  <a href="https://github.com/waynestate/creed" title="CREED"><img src="docs/readme/cast/creed.png" width="40" alt="CREED"></a>
-  <a href="https://github.com/waynestate/proctor" title="PROCTOR"><img src="docs/readme/cast/proctor.png" width="40" alt="PROCTOR"></a>
-  <a href="https://github.com/waynestate/sesame" title="SESAME"><img src="docs/readme/cast/sesame.png" width="40" alt="SESAME"></a>
-  <a href="https://github.com/waynestate/helmet" title="HELMET"><img src="docs/readme/cast/helmet.png" width="40" alt="HELMET"></a>
-  <a href="https://github.com/waynestate/sourdough" title="Sourdough"><img src="docs/readme/cast/sourdough.png" width="40" alt="Sourdough"></a>
-  <a href="https://github.com/waynestate/squire" title="Squire"><img src="docs/readme/cast/squire.png" width="40" alt="Squire"></a>
-  <a href="https://github.com/waynestate/preflight" title="Preflight"><img src="docs/readme/cast/preflight.png" width="40" alt="Preflight"></a>
-  <a href="https://github.com/waynestate/pinstripe" title="Pinstripe"><img src="docs/readme/cast/pinstripe.png" width="40" alt="Pinstripe"></a>
-  <a href="https://github.com/waynestate/booster" title="Booster"><img src="docs/readme/cast/booster.png" width="40" alt="Booster"></a>
-  <a href="https://github.com/waynestate/rollcall" title="Rollcall"><img src="docs/readme/cast/rollcall.png" width="40" alt="Rollcall"></a>
-  <a href="https://github.com/waynestate/drawbridge" title="Drawbridge"><img src="docs/readme/cast/drawbridge.png" width="40" alt="Drawbridge"></a>
-  <a href="https://github.com/waynestate/advisor" title="ADVISOR"><img src="docs/readme/cast/advisor.png" width="40" alt="ADVISOR"></a>
-  <a href="https://github.com/waynestate/weld" title="WELD"><img src="docs/readme/cast/weld.png" width="40" alt="WELD"></a>
-</div>
 
 <div align="center"><sub>Images are regenerated from the front page and the source by <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>. Drawn, not quartered.</sub></div>

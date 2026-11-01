@@ -1,15 +1,6 @@
-<div align="center">
-  <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="ADVISOR's front page: the headline 'ADVISOR', the line 'Answers, Directions, Versions, Integrations, Standards, Onboarding and Resources', the tagline 'What applies, and what's next.', the command composer require --dev waynestate/advisor, and the ADVISOR mark pinned at the centre of a compass rose on a topographic map, marked 'You are here'."></a>
-</div>
+
 
 # ADVISOR
-
-<div align="center">
-  <img src="docs/readme/badges/php.svg" alt="php ^8.3">
-  <img src="docs/readme/badges/license.svg" alt="licence MIT">
-  <img src="docs/readme/badges/mcp-sdk.svg" alt="mcp sdk 0.9.0">
-  <a href="https://github.com/waynestate/advisor/actions/workflows/ci.yml"><img src="https://github.com/waynestate/advisor/actions/workflows/ci.yml/badge.svg" alt="GitHub CI"></a>
-</div>
 
 <div align="center"><b>What applies, and what's next.</b></div>
 
@@ -23,18 +14,20 @@ Development happens on Wayne State's GitLab; this repository is a release mirror
 
 > Every WSU student has an advisor. Now every WSU app does too, and this one answers email.
 
-ADVISOR is WELD's own MCP server, like Laravel Boost for WSU. It orients a developer who is new to the stack and gives
-their coding agent read-only tools into it: the CREED standards and policy, PROCTOR results, the upgrade path,
-the WayneUI markup contract, SESAME and HELMET guidance, and the parts list. Ask it "which PHP can I build on?" and it
-answers from the policy file, with the date and the source, instead of from whatever the model remembers.
+ADVISOR is an MCP server for the Wayne State application stack, a bit like Laravel Boost but for WSU. It orients a
+developer who is new to the stack and gives their coding agent nine read-only tools into it: the CREED standards and
+policy, PROCTOR results, the upgrade path, the WayneUI markup contract, SESAME and HELMET guidance, and the parts list.
+Ask it "which PHP can I build on?" and it answers from the policy file, with the date and the source, instead of from
+whatever the model remembers.
 
 It is read-only in 0.1. It cannot write a file, run a shell command, or call out to the network. The two things it
 can start are the app's own `vendor/bin/proctor` and Booster's read-only `plan`, both with a fixed argument shape.
 
 ## Where it sits in WELD
 
-WELD is the Wayne State application stack: Wired, Everything, Linked, Deployed. ADVISOR is the part that talks to your
-coding agent.
+The stack is the Wayne State application stack. WELD, Wired, Everything, Linked, Deployed, is its Laravel starter app.
+You can add ADVISOR to a WELD app or to any other Wayne State PHP app, and in either case it is the part of the stack
+that talks to your coding agent.
 
 <!-- stack-parts:start -->
 
@@ -55,7 +48,7 @@ coding agent.
 | **Drawbridge** | sign-in gateway |
 | **Squire** | deploy kit |
 | **ADVISOR** | MCP server |
-| **WELD** | the stack's name and its reference app |
+| **WELD** | the Laravel starter app |
 
 <!-- stack-parts:end -->
 
@@ -115,7 +108,7 @@ Settings come from the same `ADVISOR_*` variables, read through `config/advisor.
 
 ## What it offers
 
-Tools (all read-only; each says where its answer came from):
+Nine tools, all read-only. Each one says where its answer came from:
 
 | Tool | Does |
 |---|---|
@@ -139,13 +132,13 @@ Prompts: `orient_me` and `plan_upgrade`.
 Here is what that looks like when you ask. Each numbered control point is one of the tools above, with the arguments the
 front page's own route table sends:
 
-<div align="center"><img src="docs/readme/route.svg" width="100%" alt="A topographic field map of the stack. Three questions are plotted from 'your app' through the ADVISOR advising office to the project that answers. 'Which PHP can I build on?' goes through policy_lookup (component: php) to CREED's policy.json. 'Which security headers do I need?' goes through list_stack_rules (chapter: runtime-and-headers) and read_project_docs (project: helmet) to HELMET. 'How do I get off PHP 8.2?' goes through the plan_upgrade prompt, policy_lookup, run_proctor_check and read_project_docs (project: booster) to Booster."></div>
+
 <div align="center"><sub>Ask the map: three questions, three routes. Every control point is a real ADVISOR tool or prompt, and the whole trip is read-only.</sub></div>
 
 <details>
 <summary><b>Phone-sized field notes</b>: the front page's ask box, legend and directions</summary>
 <br>
-<div align="center"><img src="docs/readme/gallery.jpg" width="100%" alt="Three phone cuts of the front page: 'Ask the map', with the question box set to 'Which PHP can I build on?' and a row of sample questions; the Legend, listing the read-only tools list_projects, get_project_status and read_project_docs; and Directions, three turns from composer require to a working client config."></div>
+
 </details>
 
 Everything ADVISOR returns is labelled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.
@@ -281,7 +274,7 @@ allowed to be on. A little Creed energy too: it will tell you who you are, in `c
 <details>
 <summary><b>The brand board</b>: the mark, lockups, palette and type</summary>
 <br>
-<div align="center"><img src="docs/readme/board.jpg" width="100%" alt="ADVISOR's brand board: the speech-bubble-and-compass mark on a Wayne State green tile, the app icon, horizontal and stacked lockups reading 'What applies, and what's next.', the mark on light and dark, the palette of green, gold, cream and a maroon site accent, Montserrat and Inter type, favicons at 64, 32 and 16 px, clear space, do and don't, and a chat-client mockup."></div>
+
 </details>
 
 ## License
@@ -289,22 +282,5 @@ allowed to be on. A little Creed energy too: it will tell you who you are, in `c
 MIT. Copyright Wayne State University.
 
 <div align="center"><b>Everyone on the sheet</b><br><sub>WayneUI and the stack. ADVISOR is the one with office hours.</sub></div>
-
-<div align="center">
-  <a href="https://github.com/waynestate/wayne-ui" title="WayneUI"><img src="docs/readme/cast/wayneui.png" width="40" alt="WayneUI"></a>
-  <a href="https://github.com/waynestate/creed" title="CREED"><img src="docs/readme/cast/creed.png" width="40" alt="CREED"></a>
-  <a href="https://github.com/waynestate/proctor" title="PROCTOR"><img src="docs/readme/cast/proctor.png" width="40" alt="PROCTOR"></a>
-  <a href="https://github.com/waynestate/sesame" title="SESAME"><img src="docs/readme/cast/sesame.png" width="40" alt="SESAME"></a>
-  <a href="https://github.com/waynestate/helmet" title="HELMET"><img src="docs/readme/cast/helmet.png" width="40" alt="HELMET"></a>
-  <a href="https://github.com/waynestate/sourdough" title="Sourdough"><img src="docs/readme/cast/sourdough.png" width="40" alt="Sourdough"></a>
-  <a href="https://github.com/waynestate/squire" title="Squire"><img src="docs/readme/cast/squire.png" width="40" alt="Squire"></a>
-  <a href="https://github.com/waynestate/preflight" title="Preflight"><img src="docs/readme/cast/preflight.png" width="40" alt="Preflight"></a>
-  <a href="https://github.com/waynestate/pinstripe" title="Pinstripe"><img src="docs/readme/cast/pinstripe.png" width="40" alt="Pinstripe"></a>
-  <a href="https://github.com/waynestate/booster" title="Booster"><img src="docs/readme/cast/booster.png" width="40" alt="Booster"></a>
-  <a href="https://github.com/waynestate/rollcall" title="Rollcall"><img src="docs/readme/cast/rollcall.png" width="40" alt="Rollcall"></a>
-  <a href="https://github.com/waynestate/drawbridge" title="Drawbridge"><img src="docs/readme/cast/drawbridge.png" width="40" alt="Drawbridge"></a>
-  <a href="https://github.com/waynestate/advisor" title="ADVISOR"><img src="docs/readme/cast/advisor.png" width="40" alt="ADVISOR"></a>
-  <a href="https://github.com/waynestate/weld" title="WELD"><img src="docs/readme/cast/weld.png" width="40" alt="WELD"></a>
-</div>
 
 <div align="center"><sub>Images are regenerated from the front page by <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>. No appointment necessary.</sub></div>

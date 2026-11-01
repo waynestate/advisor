@@ -1,15 +1,6 @@
-<div align="center">
-  <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="Squire's front page: the headline Squire and the composer require command beside the squire's satchel, with build.sh, release.sh, health.php and the parity kit hanging as luggage tags from a leather rail."></a>
-</div>
+
 
 # Squire
-
-<div align="center">
-  <img src="docs/readme/badges/php.svg" alt="php ^8.3">
-  <img src="docs/readme/badges/license.svg" alt="licence MIT">
-  <img src="docs/readme/badges/exit-codes.svg" alt="exit codes 0, 1, 2">
-  <a href="https://github.com/waynestate/squire/actions/workflows/ci.yml"><img src="https://github.com/waynestate/squire/actions/workflows/ci.yml/badge.svg" alt="GitHub CI"></a>
-</div>
 
 **Suits you up for deploy day.** A squire carries the kit, readies the armour and gets the knight on the field.
 
@@ -17,28 +8,22 @@ Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
 Squire is the Citadel kit: build.sh, the release script, the health check, and local parity on the real images. It is part of WELD, the Wayne State application stack, beside WayneUI (project 0, the interface layer), CREED, PROCTOR, Preflight, SESAME, HELMET, Pinstripe and Sourdough.
 
+**Not to be confused with:** `squire doctor` checks deploy setup only; standards checks are PROCTOR's.
+
 > A knight never suits up alone. Your app shouldn't deploy alone either.
 
 Front page: [`site/index.html`](site/index.html), a static page you can serve from anywhere.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Status: 0.3.0, tagged and on Packagist. This repository is published from Wayne State University's internal GitLab and mirrored to GitHub.
+Status: 0.4.0, tagged and on Packagist. This repository is published from Wayne State University's internal GitLab and mirrored to GitHub.
 
 <details>
 <summary>Open the bag: two more cuts of the front page</summary>
-
-<div align="center">
-  <img src="docs/readme/gallery.jpg" width="720" alt="Two cuts of Squire's front page: the riding order of the stack's parts hung as tags on a strap, ending in Squire, and the S-rules that doctor checks, each sewn on as a round patch.">
-</div>
 
 </details>
 
 <details>
 <summary>The kit bag's label: the brand board</summary>
-
-<div align="center">
-  <img src="docs/readme/board.jpg" width="720" alt="Squire's brand board: the satchel mark, lockups, the green, gold and cream palette, type, favicons, and do and don't panels.">
-</div>
 
 </details>
 
@@ -46,7 +31,10 @@ Status: 0.3.0, tagged and on Packagist. This repository is published from Wayne 
 
 - `squire init` writes the scripts a Citadel app needs from templates, for raw PHP, Laravel or a static site, and detects
   a Vue/Inertia layer from `package.json`, adding the layer's release script and Node 22 parity service. `squire init
-  --check` reports when your copies have drifted from the templates (depend, do not copy).
+  --check` reports when your copies have drifted from the templates (depend, do not copy). In a directory below the
+  repository root (a `deploy/` layer, say), `init` also keeps the `.gitignore` honest: it appends `/vendor/`, `.env` and
+  `.env.squire` when they are missing, never touches a line the app added, and leaves the repository root's `.gitignore`
+  to the app.
 - `squire update` takes the new template versions for the files you never edited, and shows a diff for the ones you did.
   It never overwrites your edits, and it runs the same in CI and on a laptop.
 - `squire doctor` checks an app against the best practices a machine can decide ([BEST_PRACTICES.md](BEST_PRACTICES.md)).
@@ -123,8 +111,9 @@ diff, and a file Squire did not write is never touched. A squire polishes the ar
 |---|---|
 | `build.sh` | Citadel's build hook: system packages only, POSIX sh, runs as root with no app source. No Composer, no npm. |
 | `deployments/001-first-release.sh` | Runs once per app: calls the release script with the smoke test off (Apache is not up yet). |
-| `scripts/release.sh` | The idempotent release: preconditions, `composer install --no-dev` from the lock file, audit, Laravel `migrate --force` and `optimize`, PROCTOR (a report by default, a gate with `SQUIRE_PROCTOR=enforce`), `/up` smoke test. Use it as the Quick Update post-script as well. |
+| `scripts/release.sh` | The idempotent release: preconditions, `composer install --no-dev` from the lock file, audit, Laravel `migrate --force` and `optimize`, PROCTOR (a report by default, a gate with `SQUIRE_PROCTOR=enforce`), an Oracle connection check (a report, never a gate), `/up` smoke test. Use it as the Quick Update post-script as well. |
 | `health.php` | Citadel's health check (`["php","health.php"]`): one HTTP request to `/up`, never boots the framework. |
+| `oracle-check.php` | The plain-language Oracle connection check the release runs: settings, host, port, driver, login. A report, never a gate; silent when the app has no `ORACLE_*` settings. |
 | `public/up.php` | Raw PHP and static: the endpoint that answers `ok`. Laravel has `/up` built in. |
 | `public/index.php` | Raw: the front controller that serves `public/` files safely and hands the rest to the app's entry. Static: the one that serves the committed site with HELMET's headers. Never written over an app's own. |
 | `public/.htaccess` | Raw: sends every request but `index.php` and `up.php` to the front controller. Static: routes every request that is not a real file to it. |
@@ -132,13 +121,16 @@ diff, and a file Squire did not write is never touched. A squire polishes the ar
 | Vue `docker-compose.squire.yml` | Vue layer only: the common parity compose plus a Node 22 service for frontend tooling. |
 | `docker-compose.squire.yml`, `.squire/`, `.env.squire.example`, `scripts/parity.sh`, `scripts/parity.ps1` | Local parity. |
 
-<div align="center">
-  <img src="docs/readme/packing-list.svg" width="100%" alt="A leather strap hangs a luggage tag for each file Squire packs: build.sh, deployments/001-first-release.sh, scripts/release.sh, health.php and the parity kit of 12 files. Each tag is stamped Packed, then the satchel's own tag reads From my-app, Holds 15 files.">
-  <br><sub>The packing list for deploy day: each tag lands on the strap and gets its stamp.</sub>
-</div>
-
 Every shell script uses `set -euo pipefail` (`build.sh` uses `set -eu`, because Citadel runs it with `/bin/sh`), prints a
 `[squire] ==> step N: ...` marker for each step, and can be run twice with the same result.
+
+The release also runs an Oracle connection check (`oracle-check.php`) after PROCTOR and before the smoke test. It is a
+report, never a gate: a finding prints in the deployment log and the release goes on. When the app does not use Oracle
+(no `ORACLE_*` settings) it prints nothing. It checks, in order, that the settings are present, that the host resolves,
+that the port answers within 3 seconds, that the `oci8` driver is loaded, and that the login works, stopping at the first
+failure so a bad port never costs a login attempt. Settings: `ORACLE_USERNAME`, `ORACLE_PASSWORD`, and either `ORACLE_TNS`
+(Easy Connect `host:port/service`, or a full `(DESCRIPTION=...)` descriptor) or `ORACLE_HOST`, `ORACLE_PORT` and
+`ORACLE_SERVICE_NAME`. Only setting names are ever printed, never values.
 
 ## Copies of Squire's templates
 
@@ -157,13 +149,34 @@ which files each kind and layer installs and where; `manifest.json` records the 
 Refresh the copy when Squire's templates move on, and run `--check` in CI to keep it honest. A squire keeps the armour
 polished; the copy stays in step.
 
+## The agent-ready kit
+
+Every stack repo carries the same bytes: a Markdown twin beside every page in the site folder, plus `llms.txt`,
+`llms-full.txt`, `robots.txt` and `sitemap.xml`, styled by the kit's `agent-ready.css` and `agent-ready.js` in the
+site's `assets/` folder. Squire owns the kit, and a site takes a new version from a Squire checkout with
+`php bin/agent-ready.php --sync-to=<repo>`, which copies the kit and the tool itself. The site then regenerates its
+files with `php bin/agent-ready.php` and commits them, and runs `--check` in CI to stay honest.
+
+A library package that carries the kit should keep it out of Composer downloads: add to its `.gitattributes`
+
+```
+/bin/agent-ready.php export-ignore
+/site export-ignore
+```
+
+so a `composer require` of the package never ships the kit. A squire packs what the knight will carry, and only that.
+
 ## Citadel setup
 
 1. In the dashboard set the build script to `build.sh`, the health check to `["php","health.php"]`, and the Quick Update
    post-script to `./scripts/release.sh` (user `citadel`).
 2. Commit `composer.lock`, and `package-lock.json` or `pnpm-lock.yaml` if you have a frontend.
 3. Mark the scripts executable in git. On Windows: `git update-index --chmod=+x build.sh scripts/*.sh deployments/*.sh`.
-4. Set `SQUIRE_*` values in the dashboard environment (below), not in a file in the repository.
+4. Set `SQUIRE_*` values in the app's `./.env` configuration file (below), not in a file in the repository. The
+   dashboard has no environment field; its configuration-files step, after the wizard, writes `./.env` into the
+   source tree. A Laravel app reads `./.env` already; a raw PHP app loads it with `vlucas/phpdotenv`
+   (`Dotenv\Dotenv::createUnsafeImmutable($root)->safeLoad()`), so `getenv()` sees the values and a real environment
+   variable wins.
 
 ## Local parity
 
@@ -195,9 +208,35 @@ It is good for trying Squire out and not for proving parity. If the build step f
 `vendor/`, the source folder is not writable by the container's `citadel` user (uid 1000 by default); on Linux set
 `SQUIRE_SOURCE_UID` and `SQUIRE_SOURCE_GID` to yours.
 
+## Oracle-ready images (local)
+
+Apps that talk to Oracle need the Instant Client and the `oci8` extension. Squire ships two opt-in Docker recipes
+that carry both, so nobody compiles them by hand:
+
+- `squire/oracle-sail:<php>`: Laravel Sail's own runtime plus the Oracle install. In your `docker-compose.yml`,
+  swap the service's `build:` block for `image: squire/oracle-sail:8.4` and keep the rest of the service as Sail
+  wrote it; the image keeps Sail's entrypoint contract, including the `WWWUSER` UID remap.
+- `squire/oracle-parity:<php>`: the official `php:<php>-cli-bookworm` image with the extensions Citadel apps use
+  (intl, ldap, soap, zip, gd, pdo_mysql, mysqli, bcmath, pcntl, exif, redis, imagick), Composer and git, plus the
+  Oracle install. This is the flavour WELD's `compose.oracle.yaml` points its services at. It runs as a non-root
+  `app` user whose UID is a build argument (`APP_UID`) and can still be overridden at run time.
+
+The names above are placeholders until the registry is chosen; re-tag once it is.
+
+Both flavours download Oracle's Instant Client Basic Light at build time under Oracle's licence and never commit
+it: the install script pins the exact SHA-256 of each zip. Oracle does not publish a 21.x client for arm64, so the
+line differs per architecture: linux/amd64 gets 21.7.0.0.0 and linux/arm64 gets 19.32.0.0.0.
+
+```
+scripts/oracle-image-build.sh --flavour sail --php 8.4        # or: --flavour parity
+scripts/oracle-image-test.sh --flavour all --platform linux/amd64
+```
+
 ## Configuration
 
-All optional. On Citadel set them in the dashboard; locally, in `.env.squire`.
+All optional. On Citadel, add `./.env.squire` as a configuration file (the configuration-files step after the wizard;
+the wizard has no environment field) and keep it out of git. `release.sh` reads the release options from it, and a
+variable already in the environment wins. Locally, the same file holds the parity settings.
 
 Release script (`scripts/release.sh`):
 
@@ -269,26 +308,3 @@ gate a release with `SQUIRE_PROCTOR=enforce`; what is still missing on its side 
 ## Licence
 
 MIT, copyright Wayne State University. A squire carries the armour; the knight still has to show up.
-
-<div align="center">
-
-## The rest of the party
-
-  <a href="https://github.com/waynestate/wayne-ui"><img src="docs/readme/cast/wayneui.png" width="44" alt="WayneUI"></a>
-  <a href="https://github.com/waynestate/creed"><img src="docs/readme/cast/creed.png" width="44" alt="CREED"></a>
-  <a href="https://github.com/waynestate/proctor"><img src="docs/readme/cast/proctor.png" width="44" alt="PROCTOR"></a>
-  <a href="https://github.com/waynestate/sesame"><img src="docs/readme/cast/sesame.png" width="44" alt="SESAME"></a>
-  <a href="https://github.com/waynestate/helmet"><img src="docs/readme/cast/helmet.png" width="44" alt="HELMET"></a>
-  <a href="https://github.com/waynestate/sourdough"><img src="docs/readme/cast/sourdough.png" width="44" alt="Sourdough"></a>
-  <a href="https://github.com/waynestate/squire"><img src="docs/readme/cast/squire.png" width="44" alt="Squire"></a>
-  <a href="https://github.com/waynestate/preflight"><img src="docs/readme/cast/preflight.png" width="44" alt="Preflight"></a>
-  <a href="https://github.com/waynestate/pinstripe"><img src="docs/readme/cast/pinstripe.png" width="44" alt="Pinstripe"></a>
-  <a href="https://github.com/waynestate/booster"><img src="docs/readme/cast/booster.png" width="44" alt="Booster"></a>
-  <a href="https://github.com/waynestate/rollcall"><img src="docs/readme/cast/rollcall.png" width="44" alt="Rollcall"></a>
-  <a href="https://github.com/waynestate/drawbridge"><img src="docs/readme/cast/drawbridge.png" width="44" alt="Drawbridge"></a>
-  <a href="https://github.com/waynestate/advisor"><img src="docs/readme/cast/advisor.png" width="44" alt="ADVISOR"></a>
-  <a href="https://github.com/waynestate/weld"><img src="docs/readme/cast/weld.png" width="44" alt="WELD"></a>
-
-<sub>A squire is only as good as the party it rides with. Mind the buckle.</sub>
-
-</div>

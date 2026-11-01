@@ -93,6 +93,26 @@ final class ToolsTest extends TestCase
         $this->assertTrue($this->call($booted, 'policy_lookup', ['component' => 'cobol'])->isError);
     }
 
+    public function testPolicyLookupCarriesLatestPatch(): void
+    {
+        $policy = json_decode((string) file_get_contents(dirname(__DIR__, 2) . '/data/policy.json'), true, 512, JSON_THROW_ON_ERROR);
+        $expected = $policy['components']['php']['versions']['8.3']['latest_patch'];
+        $booted = Boot::core();
+        $all = $this->data($this->call($booted, 'policy_lookup', ['component' => 'php']));
+        $row = null;
+        foreach ($all['versions'] as $candidate) {
+            if ($candidate['version'] === '8.3') {
+                $row = $candidate;
+            }
+        }
+        $one = $this->data($this->call($booted, 'policy_lookup', ['component' => 'php', 'version' => '8.3.4']));
+
+        $this->assertNotNull($row);
+        $this->assertSame($expected, $row['latest_patch']);
+        $this->assertSame($expected, $one['answer']['latest_patch']);
+        $this->assertSame($policy['components']['php']['versions']['8.3']['latest_patch_checked'], $one['answer']['latest_patch_checked']);
+    }
+
     public function testListStackRulesFiltersAndCites(): void
     {
         $data = $this->data($this->call(Boot::core(), 'list_stack_rules', ['permutation' => 'laravel-inertia-vue']));
