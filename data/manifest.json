@@ -35,11 +35,11 @@
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
-            "sha256": "4995e813613efa85600f3e021105fa3df6e11b6ac999103f91c4e0af20f9fe09",
+            "sha256": "eca412eabd6a8a1a23d8337d2f45939cc113a0404797bcb2a6d0f6f96bd007c4",
             "source": "helmet/BEST_PRACTICES.md"
         },
         "docs/helmet/readme.md": {
-            "sha256": "b1906aa0b5e1c034bc4ed39f912e7e417cc1c9eba3dc16a5f6359beef7489b2a",
+            "sha256": "2ede680b7a49f722686bfa3f2cea0baf9c8810987b9c9809ef163abba1dbb82c",
             "source": "helmet/README.md"
         },
         "docs/pinstripe/best-practices.md": {
