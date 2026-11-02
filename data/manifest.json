@@ -7,7 +7,7 @@
             "source": "advisor/BEST_PRACTICES.md"
         },
         "docs/advisor/readme.md": {
-            "sha256": "0bc98cd9c0887fd10eefd4525dfa20b11168577246997a78d22d609316eb3c92",
+            "sha256": "25598e1244f5476cd86974447af0f6f34062831e3da48b4a4ea5221dcb456d47",
             "source": "advisor/README.md"
         },
         "docs/booster/best-practices.md": {
@@ -75,11 +75,11 @@
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "7decf16669121ee79184457943850c0775230e3ef444e8dc808887e1e606f3c5",
+            "sha256": "e977d06b858c014aa1ed58e8ab80f925af10d5b6321a2c07e8799fb5f93ac19c",
             "source": "sesame/BEST_PRACTICES.md"
         },
         "docs/sesame/readme.md": {
-            "sha256": "0cd6da6b0d5dc84d1ca8aec0bdd3c611efd0ac7dbfb8d9c50d1fa7c1fb5bbaf6",
+            "sha256": "ba7751ce3a511a4e75541b61983eedd141f6800b73a915576c7aede4022017c6",
             "source": "sesame/README.md"
         },
         "docs/sourdough/best-practices.md": {
@@ -95,12 +95,16 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "24965f38ef39a989f6b10818aee657e7fc68692556eeb31fc23b4ed87e17d5bc",
+            "sha256": "e02c3a75f01c823f7909f2da5008c1f043d0482e4e1d59dc6789546aed797709",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {
             "sha256": "cabe956e30822a56213b3e5e5436c33e37eb9006558c26294d6ca7f1e0ea468e",
             "source": "wayne-ui/contract/markup-contract.json"
+        },
+        "docs/wayne-ui/migrating.md": {
+            "sha256": "9f0375861226dbc16b721240031aca7f31908cb476f5d253b89749f4ced79b74",
+            "source": "wayne-ui/MIGRATING.md"
         },
         "docs/wayne-ui/readme.md": {
             "sha256": "6638ed2020c25a572203c6c4c40a6e3fec89301afe432d04b6b84592058b8c7e",
@@ -175,7 +179,7 @@
             "source": "creed/policy/policy.json"
         },
         "projects.json": {
-            "sha256": "d3aa3c2c2b1c4a445b11e52e53e01422502e582c1db5475dd9b364e09a4df3c7",
+            "sha256": "31989963ab63f8f6c1d765a5dbe0b38f2ccb53dec002bbe32be7c05e2021872c",
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {
