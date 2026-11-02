@@ -193,6 +193,73 @@ final class GeneratorTest extends TestCase
         }
     }
 
+    public function testBundlesExtraDocsNamedInTheSeed(): void
+    {
+        $this->put($this->sources . '/wayne-ui/MIGRATING.md', "# Migrating\n\nFrom 1.x to 2.x.\n");
+        $this->put($this->seed, (string) json_encode(['projects' => [
+            ['id' => 'proctor', 'name' => 'PROCTOR', 'kind' => 'check', 'tagline' => 'checks an app', 'role' => 'Checks.', 'next_step' => 'Run it.'],
+            ['id' => 'wayne-ui', 'name' => 'WayneUI', 'kind' => 'ui', 'tagline' => 'interface', 'role' => 'UI.', 'next_step' => 'Use it.', 'contract' => 'contract/markup-contract.json', 'extra_docs' => ['migrating' => 'MIGRATING.md']],
+        ]]));
+
+        $this->generator()->generate();
+        $bundle = new ContentBundle($this->out);
+
+        $this->assertSame([], $bundle->problems());
+        $this->assertSame(['contract', 'migrating'], $bundle->docsFor('wayne-ui'));
+        $this->assertSame('wayne-ui/MIGRATING.md', $bundle->source('docs/wayne-ui/migrating.md'));
+        $this->assertStringContainsString('From 1.x to 2.x.', (string) $bundle->doc('wayne-ui', 'migrating'));
+    }
+
+    public function testAMissingExtraDocIsSkippedNotAnError(): void
+    {
+        $this->put($this->seed, (string) json_encode(['projects' => [
+            ['id' => 'proctor', 'name' => 'PROCTOR', 'kind' => 'check', 'tagline' => 'checks an app', 'role' => 'Checks.', 'next_step' => 'Run it.'],
+            ['id' => 'wayne-ui', 'name' => 'WayneUI', 'kind' => 'ui', 'tagline' => 'interface', 'role' => 'UI.', 'next_step' => 'Use it.', 'contract' => 'contract/markup-contract.json', 'extra_docs' => ['migrating' => 'MISSING.md']],
+        ]]));
+
+        $this->generator()->generate();
+        $bundle = new ContentBundle($this->out);
+
+        $this->assertSame(['contract'], $bundle->docsFor('wayne-ui'));
+        $this->assertNull($bundle->doc('wayne-ui', 'migrating'));
+    }
+
+    public function testVersionPrefersComposerJsonOverPackageJsonAndChangelog(): void
+    {
+        $this->put($this->sources . '/proctor/composer.json', '{"name":"waynestate/proctor","version":"9.9.9","require":{"php":"^8.3"}}');
+        $this->put($this->sources . '/proctor/package.json', '{"version":"1.1.1"}');
+        $this->put($this->sources . '/proctor/CHANGELOG.md', "## [2.2.2]\n\n- Shipped.\n");
+
+        $this->generator()->generate();
+
+        $this->assertSame('9.9.9', (new ContentBundle($this->out))->project('proctor')['version']);
+    }
+
+    public function testVersionFallsBackToPackageJson(): void
+    {
+        $this->put($this->sources . '/proctor/package.json', '{"version":"1.2.3"}');
+
+        $this->generator()->generate();
+
+        $this->assertSame('1.2.3', (new ContentBundle($this->out))->project('proctor')['version']);
+    }
+
+    public function testVersionFallsBackToTheNewestChangelogHeading(): void
+    {
+        $this->put($this->sources . '/proctor/CHANGELOG.md', "## 0.9.0\n\n- Old.\n\n## [0.2.0]\n\n- Older.\n\n## [0.10.1]\n\n- Newest by version, not by position.\n");
+
+        $this->generator()->generate();
+
+        $this->assertSame('0.10.1', (new ContentBundle($this->out))->project('proctor')['version']);
+    }
+
+    public function testVersionIsNullWhenNoneIsPublished(): void
+    {
+        $this->generator()->generate();
+
+        $this->assertNull((new ContentBundle($this->out))->project('proctor')['version']);
+    }
+
     public function testMissingSourcesAreAnErrorNotAnEmptyBundle(): void
     {
         $this->expectException(RuntimeException::class);
