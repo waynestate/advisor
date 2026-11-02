@@ -514,6 +514,10 @@ with the number of unique files and a reminder that nothing was applied. A Larav
 cannot see the framework's classes, so its preview is marked incomplete and the report says to run `composer install`
 first.
 
+A run prints one line per hop to standard error while it works: the hop's position in the plan, its id, its status,
+the number of files it changed and the seconds it took, and a final line totals the hops run, the stops and the whole
+run. They go to standard error so the report on standard output is untouched and `--format json` stays valid JSON.
+
 Three hops edit manifests instead of code. `node-pin-24` sets `engines.node` in `package.json` and writes `.nvmrc`,
 then the app's usual gate applies. `mix-to-vite` converts a simple `webpack.mix.js` to Vite (below) and asks for a
 build gate, which runs `npm ci` and `npm run build` in the `node:26` container before the app's tests.
@@ -541,7 +545,12 @@ swaps the Composer requirement and drops any `wayne-cas` path or VCS repository 
 when nothing in the app reads its config keys any more (a manual step names the readers while anything still does),
 and flags dead `DUO_*` settings in example env files; planned with `--sesame`, and left out with a warning when the
 plan ends below PHP 8.3, which SESAME needs; it lands just before the hop from Laravel 10 to 11, and while PHP is
-still below 8.3 the PHP hops go first); `wayneui-1-to-2` (planned with `--wayneui` for an app that requires
+still below 8.3 the PHP hops go first); Booster also probes the repositories composer.json names for wayne-cas
+(a path entry must exist on disk, a vcs, git or gitlab entry is checked with `git ls-remote`), and when the app has
+no `vendor/` and that repository cannot be reached the swap goes first instead, because the Laravel hops need
+composer to install and composer is blocked by that repository; this applies to an app already on PHP 8.3 or newer
+(SESAME needs 8.3, so below that the PHP hops still go first); the plan says so in a warning; `wayneui-1-to-2`
+(planned with `--wayneui` for an app that requires
 `cit-web-infra/wayne-ui`, after the last Laravel hop, on Laravel 11 or newer: swaps the Composer requirement for
 `waynestate/wayne-ui ^2.0`, rewrites the one-to-one rows (class tokens, icon names, the mapped brand hexes in style
 blocks and CSS, the `Breadcrumbs` calls and the `config/wayne-ui.php` keys) and lists the rest as manual lines; it

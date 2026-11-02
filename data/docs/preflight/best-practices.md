@@ -283,7 +283,7 @@ artifact, not the template, so it is not affected. The report must be a single J
 each entry needs `description`, `check_name`, `fingerprint`, `location.path` (no leading `./`), a line number and a
 `severity` of `info`, `minor`, `major`, `critical` or `blocker`. PROCTOR's output should be tested against those rules.
 
-### 2.9 Set a timeout, and let superseded pipelines be cancelled
+### 2.9 Set a timeout, and let superseded pipelines be canceled
 Give each job a `timeout` and `interruptible: true` where a newer push makes the old run pointless.
 
 Why: a hung `apt-get` or `composer install` holds a runner, and runners are the scarce part of a shared instance.
@@ -295,7 +295,7 @@ Sources: [GitLab: CI/CD YAML, `timeout` and `interruptible`](https://docs.gitlab
 **How the stack holds it: Partially.** All nine templates set `interruptible: true` and a `timeout` of their own:
 `10m` for pint and phpstan, `15m` for eslint, `30 minutes` for composer-audit, package-publish, php-test, proctor and
 sbom, and `1 hour` for renovate. What stays open is the cancellation half: whether a superseded pipeline is actually
-cancelled still needs `workflow:auto_cancel` in the app's own file, which a component cannot force (see 3.1).
+canceled still needs `workflow:auto_cancel` in the app's own file, which a component cannot force (see 3.1).
 
 ### 2.10 Make every job image an input
 `proctor` and `composer-audit` already take `image`. `php-test` builds its image from `php_versions` and has no way to
@@ -334,7 +334,7 @@ State it in the docs, and measure adoption instead of assuming it.
 
 Why: the main `.gitlab-ci.yml` is merged over included jobs, and an app can simply not include Preflight.
 
-Sources: [GitLab: includes, merge behaviour](https://docs.gitlab.com/ci/yaml/includes/);
+Sources: [GitLab: includes, merge behavior](https://docs.gitlab.com/ci/yaml/includes/);
 [GitLab: pipeline execution policies (Ultimate)](https://docs.gitlab.com/user/application_security/policies/pipeline_execution_policies/).
 
 **How the stack holds it: Documented.** The stack's enforcement-points decision names the CI gate as point (c) and Fleet as point (e), which shows
@@ -554,7 +554,7 @@ Why: advisories are published after code is merged.
 
 Sources: [OpenSSF Scorecard: Vulnerabilities](https://github.com/ossf/scorecard/blob/main/docs/checks.md).
 
-**How the stack holds it: Not yet.** No schedule is documented or provided.
+**How the stack holds it: Documented.** The README's "Run it on a schedule" note under `composer-audit` says to create a weekly pipeline schedule on the default branch (project settings, Build, Pipeline schedules), and the component carries no `rules:` block, so it runs in scheduled pipelines. The schedule itself is a project setting that Preflight cannot create or check.
 
 ### 4.8 Cache dependencies by lock hash and keep protected and unprotected caches apart
 Key the Composer cache on `composer.lock`. Leave GitLab's separation of protected and unprotected caches on.
@@ -574,7 +574,7 @@ release. GitLab's page has no PHP or Composer example, so the Composer cache dir
 ### 4.9 Name the version of every tool you download
 Install a named Composer release, not whatever is newest.
 
-Why: pinned tools make a run repeatable, and Composer's audit behaviour has changed between releases.
+Why: pinned tools make a run repeatable, and Composer's audit behavior has changed between releases.
 
 Sources: [GitLab: pipeline security, shell tools](https://docs.gitlab.com/ci/pipeline_security/);
 [Composer: download, versioned releases with checksums](https://getcomposer.org/download/).
@@ -629,7 +629,7 @@ Sources: [Packagist: supply chain security update](https://blog.packagist.com/an
 [Packagist: Composer 2.10 release](https://blog.packagist.com/composer-2-10-release/).
 
 **How the stack holds it: Checked.** `php-test` and `proctor` install the Composer release named by the `composer_version`
-input (default `2.10.3`), and `composer-audit` runs on a digest-pinned `composer:2` image, so the 2.10 behaviour is chosen,
+input (default `2.10.3`), and `composer-audit` runs on a digest-pinned `composer:2` image, so the 2.10 behavior is chosen,
 not picked up by accident. The `contract` job keeps the defaults matched to `contract/inputs.json`; reviewing lock
 changes after an `update` or `require` stays a human step.
 
@@ -757,8 +757,9 @@ Why: a leaked job token acts with the triggering user's access.
 
 Sources: [GitLab: CI/CD job token](https://docs.gitlab.com/ci/jobs/ci_job_token/).
 
-**How the stack holds it: Not yet.** It matters when private packages (served from GitLab's own package registry) need a token. No
-document sets the rule.
+**How the stack holds it: Documented.** It matters when private packages (served from GitLab's own package registry) need a
+token. The README's "Keep the job token allowlist short" section now sets the rule, and says plainly that the
+allowlist is a project setting Preflight cannot create or check.
 
 Second pass: the GitLab docs say the allowlist is on by default and a project's list starts with only itself. The option to
 allow all groups and projects shows only on self-managed or Dedicated instances, and only when enforcement is off. GitLab
@@ -777,7 +778,9 @@ Sources: [GitLab Runner: security](https://docs.gitlab.com/runner/security/);
 [CISA and NSA: Defending CI/CD environments](https://cisa.gov/news-events/alerts/2023/06/28/cisa-and-nsa-release-joint-guidance-defending-continuous-integrationcontinuous-delivery-cicd).
 
 **How the stack holds it: Documented.** The stack's instance-runner case expects a Docker executor and leaves capacity,
-maintenance and limits to ops. Nothing states "non-privileged" or "ephemeral".
+maintenance and limits to ops. The README's "Strongly recommended: a git.wayne.edu instance runner" section now
+states the request wording: a non-privileged Docker executor (no privileged mode, no Docker socket mount), a
+fresh ephemeral environment for every job, and no shell executor shared between projects.
 
 Second pass, concrete settings from the GitLab Runner security page, to put in the runner request:
 
@@ -810,7 +813,7 @@ unauthenticated user could run arbitrary code on the server using a crafted regu
 The same release fixed CVE-2026-16301 (High, 8.5: a Developer could run pipelines on protected branches without
 authorization) and CVE-2026-14814 (High, 8.2: cache poisoning of raw repository file responses that could expose protected
 environment variables). GitLab's page does not tell self-managed owners to rotate runner tokens. Some secondary reports
-do, and they disagree on dates, so check GitLab's own advisory and ops' judgement before acting on that advice. Every
+do, and they disagree on dates, so check GitLab's own advisory and ops' judgment before acting on that advice. Every
 Preflight job depends on this instance being sound, and the guide cannot tell whether git.wayne.edu is patched because its
 help page shows no version.
 
@@ -983,15 +986,19 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 9. 4.9: Pin the Composer version the installer fetches and the `composer-audit` image.
 10. 2.2 (updated): Constrain the inputs that are still free: `test_command`, `proctor_command` and the path-like
     `config`, `memory_limit`, `output` and `eslint_args`.
-11. 4.7: Provide a scheduled audit pipeline.
+11. Done: 4.7: Documented the scheduled audit in the README: a weekly pipeline schedule on the default branch (project settings, Build, Pipeline schedules); the component has no `rules:` and runs in scheduled pipelines, and the schedule itself is a project setting Preflight cannot create or check.
 12. 4.2: Use a dependency proxy or Citadel images for job images.
 13. 3.2: Recommend branch and CI-file protection for app repos.
 14. 3.4: Add a `workflow:rules` example to the README.
 15. 2.5: Build job names from an input so one project can include a component twice.
 16. 4.8: Add a Composer cache keyed on `composer.lock`.
 17. 5.1: Add secret detection to Preflight's own pipeline.
-18. 5.2: Write down the job token allowlist rule for projects that install private packages from GitLab's registry.
-19. 5.3: State "non-privileged, ephemeral Docker executor" in the runner request.
+18. Done: 5.2: Documented the job token allowlist rule in the README: list only the projects a private-package install
+    really needs, use the fine-grained permissions where they fit, and review the list when a dependency is
+    dropped; the allowlist is a project setting Preflight cannot create or check.
+19. Done: 5.3: Stated the runner request wording in the README: a non-privileged Docker executor (no privileged mode,
+    no Docker socket mount), a fresh ephemeral environment for every job, and no shell executor shared between
+    projects.
 20. 5.4: Agree the list of hosts jobs may reach.
 21. 1.4: Add an inputs contract file and a test that catches a renamed input or job.
 22. 2.3 and 2.6: Lint templates for global keys, and explain which components may be weakened.

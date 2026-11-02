@@ -199,7 +199,7 @@ front page's own route table sends:
 
 </details>
 
-Everything ADVISOR returns is labelled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.
+Everything ADVISOR returns is labeled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.
 
 ## Configuration
 
@@ -261,7 +261,7 @@ The advisor will see you now.
 The handbook, policy, project docs, the WayneUI markup contract and WayneUI's 1.x to 2.x migration guide in `data/`
 are generated from the sibling stack repositories by `content:generate` and verified at start-up against
 `data/manifest.json` (a SHA-256 for every file). If a file does not match, the server refuses to start rather than
-serve it. Files are cleaned on the way in: line endings are normalised and invisible characters (the TAG block,
+serve it. Files are cleaned on the way in: line endings are normalized and invisible characters (the TAG block,
 zero-width and bidirectional controls) are stripped. Each project entry also carries its version when the project
 publishes one (composer.json, else package.json, else the newest CHANGELOG heading).
 
@@ -323,7 +323,7 @@ Tests drive the real SDK server in-process with a small MCP client, snapshot `to
 
 - Off unless enabled; refuses production; refuses to start on a bad setting or a content file that fails its hash.
 - Read-only by default; no tool takes a command, a URL or a free path.
-- Every result is cleaned of invisible characters and labelled as data; secrets in PROCTOR output are redacted.
+- Every result is cleaned of invisible characters and labeled as data; secrets in PROCTOR output are redacted.
 - `run_proctor_check` runs one fixed program with an argument array and an allowlisted environment, never a shell.
 - `upgrade_path` runs Booster's read-only `plan` the same way: one fixed program, an argument array, an allowlisted command, never a shell. It plans; it never runs a hop.
 - No network calls, and no model calls, from ADVISOR itself.

@@ -63,10 +63,19 @@ Options:
 - `--plan <file>` a ready-made plan file (JSON matching `resources/plan.schema.json`)
 - `--playbook` require `waynestate/playbook` in the generated app: adds the VCS repository and the package to `require`
 - `--no-playbook` skip the Playbook wiring (no `suggest`, no `.env.example` block, no README section)
+- `--no-advisor` skip the ADVISOR wiring (no `require-dev` entry, no `.mcp.json` git-ignore, no README section)
 
 Exit codes: `0` done, `1` refused (invalid flags, non-empty target, not available, model gave up), `2` tool error.
 
 By default the generated app suggests `waynestate/playbook` (WSU's private shared-values package on git.wayne.edu), lists its seven setting names in `.env.example`, and documents how to fetch them in a "WSU values (PLAYBOOK)" README section; the command prints a hint line pointing at it after generation. `--playbook` additionally adds the VCS repository and requires the package; `--no-playbook` skips all of it. The two flags together are refused with exit `1`.
+
+Generated apps ship with ADVISOR wired in by default: `waynestate/advisor` lands in `require-dev`, `.mcp.json` is git-ignored (a client config starts a program for whoever opens the project), and the README gains an "ADVISOR" section. The Next steps print the install line once dependencies are in:
+
+```
+php vendor/bin/advisor install --client=claude --write
+```
+
+`--no-advisor` skips all of it.
 
 The app name (from `--name`, from the plan, or from the basename of `<dir>`) must start with a letter or number and use only letters, numbers, spaces, dots, dashes and underscores, at most 63 characters; anything else is refused before anything is written.
 
@@ -80,7 +89,7 @@ The app name (from `--name`, from the plan, or from the basename of `<dir>`) mus
 | `--laravel --vue` | Laravel + Blade + Vue islands |
 | `--laravel --inertia` (or `--inertia`) | Laravel + Inertia/Vue |
 
-`--raw` and `--laravel` generate in 0.1. The other permutations print the plan and exit `1` with "not available in this release"; later steps add them.
+`--raw`, `--laravel` and `--inertia` generate in 0.1. The remaining permutations (`--raw --vue`, `--laravel --vue`) print the plan and exit `1` with "not available in this release"; later steps add them.
 
 Oracle is wired but dormant in every generated app. The settings `ORACLE_USERNAME`, `ORACLE_PASSWORD`, and either `ORACLE_TNS` or `ORACLE_HOST`, `ORACLE_PORT`, `ORACLE_SERVICE_NAME` ship commented out in `.env.example`; while they are empty, nothing connects and nothing errors. Once you fill them in, Laravel apps check the wiring with `php artisan oracle:check`, and raw PHP apps run queries through the `App\Oracle` helper, which takes values only as binds and answers mistakes with plain sentences.
 

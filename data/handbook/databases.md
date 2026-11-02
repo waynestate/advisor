@@ -30,6 +30,11 @@ policy's `eol_grace_days`; the version is `Eol` through that window and
 window is a bridge for the upgrade, not a second support window: the fix is
 still the upgrade.
 
+## Names, comments and connections
+
+- Table and column names are descriptive. Add table and column comments (Laravel's `->comment()`) where the database supports them, to say what an element is for (SHOULD) (WSU developer standards, 2024).
+- The connection between the app and the database MUST be encrypted. The database account MUST have only the privileges the app needs, never an administrator account (WSU developer standards, 2024).
+
 ## Conventions that keep 5.6 working
 
 - Set `Schema::defaultStringLength(191)` in `AppServiceProvider::boot()`,

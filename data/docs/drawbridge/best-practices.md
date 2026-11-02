@@ -8,7 +8,7 @@ The rules Drawbridge holds itself to. Each one has a test.
    that cannot sign gives 503, never an unsigned request. A config error stops the container from starting.
 3. **Public is a decision, not a default.** A path with no rule gets `login` unless the app says otherwise. Public
    paths carry no identity at all.
-4. **Match the normalised path, never the raw one.** Encoded slashes, backslashes, semicolons, control characters and
+4. **Match the normalized path, never the raw one.** Encoded slashes, backslashes, semicolons, control characters and
    bad UTF-8 are treated as protected. Query strings never choose a rule. Test: `PathAttackTest`, `PathNormalizerTest`.
 5. **Exact or prefix, nothing clever.** No wildcards, no regular expressions in config. The Apache pattern is built
    from the literal, never typed by hand.

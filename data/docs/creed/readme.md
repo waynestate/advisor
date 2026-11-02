@@ -139,7 +139,7 @@ endoflife.date. A scheduled CI job runs the refresh every Monday and is
 check-only: when the policy changed, the tool exits 3 and the job fails on the
 diff. The policy robot (`bin/policy-bot.php run`) is the committing path: it
 commits the data allowlist on `auto/policy-refresh` and pushes it as a merge
-request labelled `auto-data`; a data-only run is auto-merged, and missing CI
+request labeled `auto-data`; a data-only run is auto-merged, and missing CI
 variables stop the run before any push. A person runs it, or a schedule
 someone wires to it does; no pipeline in this repo runs it yet. Today the
 scheduled job only checks. Once a bot token is set as a masked, protected CI
