@@ -43,6 +43,48 @@ cp .env.example .env
 php artisan key:generate
 ```
 
+## Clone it and rename
+
+Want an app that is yours instead of a copy of WELD? Clone it, rename the four things that still say WELD, give it its own key, and re-run the checks.
+
+Clone into a folder named for the new app:
+
+```
+git clone https://github.com/waynestate/weld.git my-app
+cd my-app
+```
+
+Rename these four things:
+
+| What | Where | Change |
+| --- | --- | --- |
+| Composer name | `composer.json`, the `"name"` field | `waynestate/weld` becomes your package, e.g. `wayne-state/my-app` |
+| App name | `.env.example` (and `.env` once you have one) | `APP_NAME=WELD` becomes your app name; `VITE_APP_NAME` follows it through `${APP_NAME}` |
+| Site title | `site/index.html`, the `<title>` tag | `WELD: Many parts, one piece.` becomes yours; the front page copy is about WELD itself, so rewrite it for your app |
+| Git remote | repository config | point `origin` at your own repository |
+
+The `App\` namespace stays as it is; nothing in the app, the tests or the welded packages needs it renamed.
+
+Then give the copy its own key and remote. Skip the copy if `up` already made `.env`. Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+php artisan key:generate
+git remote set-url origin https://git.example.com/you/my-app.git
+```
+
+macOS and Linux (sh):
+
+```sh
+cp .env.example .env
+php artisan key:generate
+git remote set-url origin https://git.example.com/you/my-app.git
+```
+
+Then re-run the checks the way CI does: `.\bin\weld.ps1 test` (or `bin/weld.sh test`), which runs `composer ci` in the container, plus `composer proctor` for the standards check. A photocopy is not a weld yet: when the checks pass under your name, the seam holds.
+
+Want a smaller starting point than a full Laravel app? `sourdough new` is the other route: today it generates a raw PHP app with SESAME, HELMET, PROCTOR and the Preflight components already in place, and the Laravel flavours are still on the way.
+
 ## What is welded in
 
 | Part | What it does in WELD |

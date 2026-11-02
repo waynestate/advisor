@@ -51,11 +51,11 @@
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
-            "sha256": "97f61b67f870dee29673df4377899f3150c2c30899d4a796485949af232d41f4",
+            "sha256": "9c64954f77e811743ad06ce2b35b8f8b201bb2852b7964ea83f162d128653d5d",
             "source": "preflight/BEST_PRACTICES.md"
         },
         "docs/preflight/readme.md": {
-            "sha256": "955c20d766c8255ce7f7a5614f2e2c34b70c14c34c20fa9b9b92b4dabf6b94e1",
+            "sha256": "b9d6cdc24059f3001aa41f3de9aea7154e80cd1a6eabb893fb8e065198eadb93",
             "source": "preflight/README.md"
         },
         "docs/proctor/best-practices.md": {
@@ -115,7 +115,7 @@
             "source": "weld/BEST_PRACTICES.md"
         },
         "docs/weld/readme.md": {
-            "sha256": "76b28c50a71493dca0562058817bcbd8f74773a647a06ef9e204784d5a8e8f2c",
+            "sha256": "b5bf26054c236b6368960e274a0a794e21d25a241706792d3bd926874b9a9b72",
             "source": "weld/README.md"
         },
         "guides/connect-to-oracle-on-citadel.md": {
