@@ -67,11 +67,11 @@
             "source": "proctor/README.md"
         },
         "docs/rollcall/best-practices.md": {
-            "sha256": "3ceb17b9e2074ebdd0421d09391ad3c4b43e55eb07fd4f1c0a62b7b9d65951cc",
+            "sha256": "4d982b86f16ee417675970d3fb66ce6e7b53ebbe57e83b3972cfb8540e753639",
             "source": "rollcall/BEST_PRACTICES.md"
         },
         "docs/rollcall/readme.md": {
-            "sha256": "8730e6633744e3b452b8b3552026c18c4c8fe4e97f1df9c9411014812302ef5f",
+            "sha256": "f9cdc05fc3a9faff34d958c3dd11119d98496662e51dce02b0d3d127f7573a97",
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
