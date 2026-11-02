@@ -7,7 +7,7 @@
             "source": "advisor/BEST_PRACTICES.md"
         },
         "docs/advisor/readme.md": {
-            "sha256": "25598e1244f5476cd86974447af0f6f34062831e3da48b4a4ea5221dcb456d47",
+            "sha256": "bac9ff11685dc52ded1a8a4ad13aab3d70f2a2b76348cf49eba828189da15b17",
             "source": "advisor/README.md"
         },
         "docs/booster/best-practices.md": {
@@ -179,7 +179,7 @@
             "source": "creed/policy/policy.json"
         },
         "projects.json": {
-            "sha256": "31989963ab63f8f6c1d765a5dbe0b38f2ccb53dec002bbe32be7c05e2021872c",
+            "sha256": "e400e92a3f584b2bc0b6980c2e50c5e6d9a39a395f68dfd0744d8995959f86e6",
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {
