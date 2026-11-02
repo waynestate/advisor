@@ -371,6 +371,33 @@ final class ContentBundle
     }
 
     /**
+     * @return list<string> the slugs of the bundled hand-written guides, sorted
+     */
+    public function guides(): array
+    {
+        $this->ensureVerified();
+        $slugs = [];
+        $files = glob($this->dir . '/guides/*.md') ?: [];
+        sort($files);
+        foreach ($files as $file) {
+            $slugs[] = basename($file, '.md');
+        }
+
+        return $slugs;
+    }
+
+    public function guide(string $slug): ?string
+    {
+        $this->ensureVerified();
+        if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
+            return null;
+        }
+        $path = $this->dir . '/guides/' . $slug . '.md';
+
+        return is_file($path) ? (string) file_get_contents($path) : null;
+    }
+
+    /**
      * @return list<string> the doc kinds (readme, best-practices, contract) bundled for a project
      */
     public function docsFor(string $project): array

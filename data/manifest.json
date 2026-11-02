@@ -114,6 +114,10 @@
             "sha256": "76b28c50a71493dca0562058817bcbd8f74773a647a06ef9e204784d5a8e8f2c",
             "source": "weld/README.md"
         },
+        "guides/connect-to-oracle-on-citadel.md": {
+            "sha256": "d913456c022b75ff8b4ab8d7bd1538cc8f56efd0178f5612cee036313756bcc8",
+            "source": "generator/guides/connect-to-oracle-on-citadel.md"
+        },
         "handbook/README.md": {
             "sha256": "c9c229bc78ab706eba8eb478fec1588d63a0fe17aa5a1b4848b43674689bf622",
             "source": "creed/handbook/README.md"
