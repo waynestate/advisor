@@ -180,7 +180,11 @@ final class GeneratorTest extends TestCase
 
     public function testNoGuidesFolderMeansNoGuideFiles(): void
     {
-        rmdir(dirname($this->seed) . '/guides');
+        $guidesDir = dirname($this->seed) . '/guides';
+        foreach (glob($guidesDir . '/*.md') ?: [] as $file) {
+            unlink($file);
+        }
+        rmdir($guidesDir);
 
         $built = $this->generator()->build();
 
