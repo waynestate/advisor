@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Waynestate\Advisor\Tests\Content;
 
+use FilesystemIterator;
 use PHPUnit\Framework\TestCase;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use RuntimeException;
 use Waynestate\Advisor\Content\ContentBundle;
 use Waynestate\Advisor\Content\Denylist;
@@ -164,6 +167,29 @@ final class GeneratorTest extends TestCase
         $this->assertStringContainsString('a design document', $readme);
         $this->assertStringContainsString('an ADR', $readme);
         $this->assertStringContainsString("the stack's design documents", $readme);
+    }
+
+    public function testUrlCredentialsAreRedactedOnTheWayIn(): void
+    {
+        $this->put($this->sources . '/proctor/README.md', "# PROCTOR\n\nClone from https://deploy:s3cretvalue@example.test/x.git.\nPlain links stay as they are: https://example.test/x and git@example.test:x.git.\n");
+        $this->generator()->generate();
+        $readme = (string) (new ContentBundle($this->out))->doc('proctor', 'readme');
+
+        $this->assertStringContainsString('https://deploy:<token>@example.test/x.git', $readme);
+        $this->assertStringNotContainsString('s3cretvalue', $readme);
+        $this->assertStringContainsString('https://example.test/x', $readme);
+        $this->assertStringContainsString('git@example.test:x.git', $readme);
+    }
+
+    public function testNoBundledFileCarriesUrlCredentials(): void
+    {
+        $dataDir = dirname(__DIR__, 2) . '/data';
+        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dataDir, FilesystemIterator::SKIP_DOTS));
+
+        foreach ($files as $file) {
+            $content = (string) file_get_contents($file->getPathname());
+            $this->assertDoesNotMatchRegularExpression('#://[^/\s:@]+:[^/\s@<]+@#', $content, $file->getFilename());
+        }
     }
 
     public function testBundlesHandWrittenGuidesFromBesideTheSeed(): void

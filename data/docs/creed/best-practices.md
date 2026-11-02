@@ -128,9 +128,9 @@ Sources: [Laravel release notes](https://laravel.com/docs/13.x/releases),
 
 How the stack holds it: `Not yet`. Second pass: the first pass said `policy.json` lacked Laravel 13, Node 26 and MySQL 9.7
 LTS. Those three are now in the file, with dates that match the vendor pages. The practice stays `Not yet` because the
-process is still manual and nothing alerts when the next release ships. The gap was real: Laravel 13 (released
-2026-03-17) and MySQL 9.7 (released 2026-04-21) took six to seven months to land. See practices 49 and 50 for what comes
-next.
+process is still manual: the scheduled job fails when upstream ships a patch, but a new release line is still found by
+hand. The gap was real: Laravel 13 (released 2026-03-17) and MySQL 9.7 (released 2026-04-21) took six to seven months to
+land. See practices 49 and 50 for what comes next.
 
 ### 8. Check the policy against upstream automatically
 
@@ -141,8 +141,9 @@ Why: people forget; a job does not.
 
 Sources: [endoflife.date MySQL](https://endoflife.date/mysql), [PHP supported versions](https://www.php.net/supported-versions.php).
 
-How the stack holds it: `Not yet`. The prior-art note proposes using the endoflife.date API as a staleness check, but
-nothing runs it.
+How the stack holds it: `Partially`. A scheduled job re-reads the upstream feeds, including endoflife.date, and fails
+the pipeline when the latest patch levels in `policy.json` are stale; it is check-only and never commits. Support dates
+are still hand-edited, and the full refresher is not scheduled.
 
 ### 9. Model support honestly when a project publishes no dates
 
@@ -174,9 +175,10 @@ Why: tools ship on different days, and apps run old tool versions.
 
 Sources: [Semantic Versioning 2.0.0](https://semver.org/).
 
-How the stack holds it: `Documented`. The stack's version policy and `versions.md` state it. The schema pins
-`schema_version` to `1` and
-the reader ignores unknown keys, but no test runs an older reader against a newer file.
+How the stack holds it: `Enforced`. The stack's version policy and `versions.md` state it. The schema pins
+`schema_version` to `1`, the reader ignores unknown keys, and `tests/OlderReaderContractTest.php` loads a
+future-shaped policy file with the reader: every known line answers the same, unknown keys are ignored, and a
+higher `schema_version` is accepted, because the reader checks for the key and never reads its value.
 
 Second pass: the schema sets `additionalProperties: false` at the top level, on each component, on each version entry and
 on `rules`. That is right for catching typos, but it means any tool that validates a newer policy against an older copy of
@@ -749,8 +751,8 @@ Why: the move off 5.6 will touch accounts, drivers and the upgrade path in one g
 Sources: [MySQL 9.7: native pluggable authentication](https://dev.mysql.com/doc/refman/9.7/en/native-pluggable-authentication.html),
 [endoflife.date MySQL](https://endoflife.date/mysql).
 
-How the stack holds it: `Not yet`. `policy.json` lists the LTS lines 8.4 and 9.7 and not the short-lived ones, which is
-the sensible choice, but the rule "list LTS lines only" is not written down.
+How the stack holds it: `Documented`. `policy.json` lists the LTS lines 8.4 and 9.7 and not the short-lived ones, and
+`handbook/databases.md` writes down the rule and the authentication-plugin step.
 
 ### 48. Say how fast the platform adds a new PHP, and how it announces a drop
 
@@ -796,8 +798,9 @@ Why: practice 8 says "compare with a feed" but not what to compare or what to ig
 
 Sources: [endoflife.date PHP API](https://endoflife.date/api/v1/products/php/), [endoflife.date MySQL API](https://endoflife.date/api/v1/products/mysql/).
 
-How the stack holds it: `Not yet`. Nothing calls the API. endoflife.date is a community aggregator, so the job reports
-differences and a human confirms them against the vendor page (practice 6).
+How the stack holds it: `Partially`. `bin/refresh-policy.php` calls the API and classifies every change before writing
+it, but no pipeline runs it yet. endoflife.date is a community aggregator, so the job reports differences and a human
+confirms them against the vendor page (practice 6).
 
 ### 51. Decide whether the schema is strict or tolerant, and test both readers
 
@@ -887,7 +890,8 @@ These are places where a source disagrees with the repository or with an earlier
 
 1. Done in the repository after the first pass: Laravel 13, Node 26 and MySQL 9.7 are in `policy.json` (practice 7). The
    process gap remains (items 19 and 22).
-2. Add a scheduled freshness check against a public EOL feed (practice 8).
+2. Partially: a scheduled job checks the latest patch levels against the upstream feeds and fails when they are stale;
+   support dates stay hand-edited, and the full refresher is not scheduled (practice 8).
 3. Done: the schema allows `"current": true` lines with no end date, and Vue 3, Inertia 2 and Inertia 3 are listed (practice 9).
 4. Add a `source` and `checked_on` field to each version entry (practice 6).
 5. Record the supported PHP range per Laravel release, and add a PROCTOR check for the pair (practice 14).
@@ -899,7 +903,8 @@ These are places where a source disagrees with the repository or with an earlier
 11. Add a PHPStan rule for `env()` outside `config/` and put the rule in Pinstripe (practice 25).
 12. Add a `config` check that `APP_DEBUG` is false in production, and write the runtime and headers chapter (practice 26).
 13. Put the PROCTOR check ID next to every handbook rule (practices 29 and 32).
-14. Add a test that an older reader accepts a newer policy file (practice 10).
+14. Done: `tests/OlderReaderContractTest.php` loads a future-shaped policy file with the reader and asserts every
+    known line still answers the same (practice 10).
 15. Add stage dates (`report`, `warn`, `block`) to the schema (practice 28).
 16. Add PROCTOR checks for `.gitattributes`, CRLF in server files and file-name case collisions (practice 34).
 17. Add a PROCTOR check that CI includes are pinned to a tag or SHA (practice 23).
@@ -924,11 +929,12 @@ Added in the second pass (2026-10-27):
 27. Ask the owners of git.wayne.edu to publish its GitLab patch level and a patch routine (practice 45).
 28. Record each Laravel release's minimum database in the policy, and add a check against the platform database
     (practice 46).
-29. Write down the MySQL auth plugin step and the rule "list LTS lines only" (practice 47).
+29. Done: `handbook/databases.md` writes down the MySQL auth plugin step and the rule "list LTS lines only" (practice 47).
 30. State a target for adding a new PHP image, per target (Citadel and elsewhere), and a notice period for retiring
     one (practice 48).
 31. Decide how `active_until` is derived for Node 27 and later, which have no Maintenance phase (practice 49).
-32. Build the freshness job against the endoflife.date API with the filter rules in practice 50 (extends item 2).
+32. Partially: `bin/refresh-policy.php` calls the API with the filter rules in practice 50 and classifies every change,
+   but no pipeline runs it yet (extends item 2).
 33. Decide strict or tolerant schema validation, and add a test with an old schema and reader against a new file
     (practice 51; extends item 14).
 34. Ask WSU's accessibility office and counsel which Title II dates apply, then write the chapter's target level
@@ -1020,12 +1026,14 @@ Corrected or changed:
 3. Composer exit codes: the conflict is explained by Composer version, and the current docs list only 0 and 1.
 4. GOV.UK citations: removed from practices 27 and 28 (the page does not say what was claimed) and softened in practice 4.
 5. Practice 2: noted that the schema does not require `security_until`; only the reader refuses a missing one.
+   Superseded: the schema now requires `security_until` on every line that is not `"current": true`.
 6. Practice 10: noted that the strict schema conflicts with "old tools can read new files" (practice 51).
 7. Practice 20, 21, 23, 35: added Composer 2.9 blocking, the `audit.abandoned` default, GitLab's SHA-pinning advice and a
    PHP 8.5 PDO difference.
 8. Practice 11: the ASVS citation is general, and OWASP Top 10:2025 A03 is added as the closer fit.
-9. New open item: the Laravel 13 `active_until` date in `policy.json` (2027-09-17) is not on the vendor page, which says
-   "Q3 2027".
+9. New open item: the Laravel 13 `active_until` date in `policy.json` is not on the vendor page, which says "Q3 2027".
+   Resolved: the date is 2027-09-30 and carries its source, endoflife.date, in `policy/sources.json` (Checks against the
+   web).
 
 Not verified, and said so in the text: whether Citadel images were rebuilt after 2026-10-21; the git.wayne.edu GitLab tier
 and patch level; how fast the 2026-10-19 Laravel advisory reached the Composer advisory feed; the GitLab CVEs beyond one

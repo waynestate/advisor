@@ -28,7 +28,7 @@ application renders.
 repository URL with the credentials in it:
 
 ```json
-"url": "https://deploy:m3Dtmz3RGzeoHiQx3Ezq@git.wayne.edu/cit-web-infra/wayne-ui.git"
+"url": "https://deploy:<token>@git.wayne.edu/cit-web-infra/wayne-ui.git"
 ```
 
 That token is in the git history of every application that followed the

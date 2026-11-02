@@ -50,6 +50,8 @@ final class Generator
         ['#\bADR-\d{4}\b#', 'an ADR'],
         // "the coordination repo[itory]" -> "the stack's design documents"
         ['#\b(?:the )?coordination repo(?:sitory)?#', "the stack's design documents"],
+        // scheme://user:secret@host -> scheme://user:<token>@host; a credential never ships in the bundle
+        ['#([a-z][a-z0-9+.-]*://)([^/\s:@]+):([^/\s@"\']+)@#i', '$1$2:<token>@'],
     ];
 
     private readonly Denylist $denylist;
