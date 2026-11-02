@@ -6,6 +6,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Added
 
+- Added: hand-written guides bundled from generator/guides/ and served as advisor://guide/<slug>; first guide: Connect to Oracle on Citadel.
 - Added: policy_lookup returns latest_patch; the bundled docs drop hero images, badges and GIFs.
 
 ### Changed
