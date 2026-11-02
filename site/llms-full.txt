@@ -91,6 +91,58 @@ The command it registers is always the same fixed string, `php vendor/bin/adviso
 its environment. Clients: `claude` (`.mcp.json`), `warriorgpt` (`.mcp.json`), `cursor` (`.cursor/mcp.json`), `vscode`
 (`.vscode/mcp.json`) and `codex` (TOML, printed only; paste it into `~/.codex/config.toml`).
 
+#### One line for Claude Code
+
+If you would rather type it than generate it, this does the same as `install --client=claude --write`; project scope
+keeps it out of your other projects, and the same "do not commit it" warning applies:
+
+```
+claude mcp add --scope project advisor -e ADVISOR_ENABLED=1 -- php vendor/bin/advisor mcp
+```
+
+#### No PHP on your PATH? Use Docker
+
+If PHP is not on your PATH, point the client at Docker instead. Run it from the project root, the folder that holds
+`vendor/`, with a hand-written `.mcp.json` like this:
+
+```json
+{
+  "mcpServers": {
+    "advisor": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        ".:/app:ro",
+        "-w",
+        "/app",
+        "-e",
+        "ADVISOR_ENABLED=1",
+        "-e",
+        "ADVISOR_PROJECT_ROOT=/app",
+        "-e",
+        "ADVISOR_GROUPS=stack",
+        "-e",
+        "ADVISOR_READ_ONLY=1",
+        "composer:2.10.3",
+        "php",
+        "vendor/bin/advisor",
+        "mcp"
+      ]
+    }
+  }
+}
+```
+
+The container has no network, and the project is mounted read-only. `ADVISOR_GROUPS=stack` keeps the tools that start
+programs (proctor, upgrade_path) off, because those need the app's own PHP. Some clients want an absolute path in
+place of `.` for the mount; give them one. Advice comes in; nothing goes out. This file is written by hand, so keep it
+out of git like the generated one.
+
 `install` never replaces a different existing `advisor` entry unless you pass `--force`, keeps your other servers, and
 warns when the file is not in `.gitignore`. A client config starts a program on whoever opens the project, so do not
 commit a generated one; this repository ignores `.mcp.json` for that reason.
