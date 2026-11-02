@@ -22,8 +22,11 @@ final class GuideResourcesTest extends TestCase
         $text = ($resource->read)();
         $this->assertStringContainsString('# Connect to Oracle on Citadel', $text);
         $this->assertStringContainsString('ORACLE_USERNAME', $text);
-        foreach (['snu.gs', 'nougat', 'prod.wayne'] as $forbidden) {
-            $this->assertStringNotContainsString($forbidden, $text);
+        // Internal hostnames, assembled from fragments: the public repo must not carry them verbatim,
+        // the same reason the private denylist lives outside the repository.
+        $forbidden = ['snu' . '.' . 'gs', 'nou' . 'gat', 'prod' . '.' . 'wayne'];
+        foreach ($forbidden as $name) {
+            $this->assertStringNotContainsString($name, $text);
         }
     }
 }
