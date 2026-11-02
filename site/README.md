@@ -3,7 +3,7 @@
 A static field map: plain HTML, CSS and a little vanilla JS, no build step. Serve `site/` from anywhere
 (`php -S localhost:8000 -t site`, or any static host) and open `index.html`.
 
-type: **Fraunces** (SIL OFL 1.1, self-hosted in `assets/fonts/`, licence in `OFL-fraunces.txt`) for display and map
+type: **Fraunces** (SIL OFL 1.1, self-hosted in `assets/fonts/`, license in `OFL-fraunces.txt`) for display and map
 lettering; Lato from WayneUI for body; WayneUI's mono stack for code.
 
 - **World:** an orienteering sheet on cream paper. Contours in green ink, the course overprinted in the board's maroon

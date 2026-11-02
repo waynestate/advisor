@@ -1,12 +1,12 @@
 <div align="center">
-  <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="ADVISOR's front page: the headline 'ADVISOR', the line 'Answers, Directions, Versions, Integrations, Standards, Onboarding and Resources', the tagline 'What applies, and what's next.', the command composer require --dev waynestate/advisor, and the ADVISOR mark pinned at the centre of a compass rose on a topographic map, marked 'You are here'."></a>
+  <a href="site/index.html"><img src="docs/readme/hero.jpg" width="100%" alt="ADVISOR's front page: the headline 'ADVISOR', the line 'Answers, Directions, Versions, Integrations, Standards, Onboarding and Resources', the tagline 'What applies, and what's next.', the command composer require --dev waynestate/advisor, and the ADVISOR mark pinned at the center of a compass rose on a topographic map, marked 'You are here'."></a>
 </div>
 
 # ADVISOR
 
 <div align="center">
   <img src="docs/readme/badges/php.svg" alt="php ^8.3">
-  <img src="docs/readme/badges/license.svg" alt="licence MIT">
+  <img src="docs/readme/badges/license.svg" alt="license MIT">
   <img src="docs/readme/badges/mcp-sdk.svg" alt="mcp sdk 0.9.0">
   <a href="https://github.com/waynestate/advisor/actions/workflows/ci.yml"><img src="https://github.com/waynestate/advisor/actions/workflows/ci.yml/badge.svg" alt="GitHub CI"></a>
 </div>
@@ -208,7 +208,7 @@ front page's own route table sends:
 <div align="center"><img src="docs/readme/gallery.jpg" width="100%" alt="Three phone cuts of the front page: 'Ask the map', with the question box set to 'Which PHP can I build on?' and a row of sample questions; the Legend, listing the read-only tools list_projects, get_project_status and read_project_docs; and Directions, three turns from composer require to a working client config."></div>
 </details>
 
-Everything ADVISOR returns is labelled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.
+Everything ADVISOR returns is labeled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.
 
 ## Configuration
 
@@ -270,7 +270,7 @@ The advisor will see you now.
 The handbook, policy, project docs, the WayneUI markup contract and WayneUI's 1.x to 2.x migration guide in `data/`
 are generated from the sibling stack repositories by `content:generate` and verified at start-up against
 `data/manifest.json` (a SHA-256 for every file). If a file does not match, the server refuses to start rather than
-serve it. Files are cleaned on the way in: line endings are normalised and invisible characters (the TAG block,
+serve it. Files are cleaned on the way in: line endings are normalized and invisible characters (the TAG block,
 zero-width and bidirectional controls) are stripped. Each project entry also carries its version when the project
 publishes one (composer.json, else package.json, else the newest CHANGELOG heading).
 
@@ -332,7 +332,7 @@ Tests drive the real SDK server in-process with a small MCP client, snapshot `to
 
 - Off unless enabled; refuses production; refuses to start on a bad setting or a content file that fails its hash.
 - Read-only by default; no tool takes a command, a URL or a free path.
-- Every result is cleaned of invisible characters and labelled as data; secrets in PROCTOR output are redacted.
+- Every result is cleaned of invisible characters and labeled as data; secrets in PROCTOR output are redacted.
 - `run_proctor_check` runs one fixed program with an argument array and an allowlisted environment, never a shell.
 - `upgrade_path` runs Booster's read-only `plan` the same way: one fixed program, an argument array, an allowlisted command, never a shell. It plans; it never runs a hop.
 - No network calls, and no model calls, from ADVISOR itself.

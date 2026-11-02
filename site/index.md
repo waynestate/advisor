@@ -226,12 +226,12 @@ An advisor can tell you what's required. It cannot sit the exam for you, and thi
 - **Read-only.** No tool takes a command, a URL or a free path, and none of them writes a file in 0.1.
 - **No network, no model calls.** It serves a bundled copy of the stack's docs, so it works offline.
 - **Verified content.** At start-up, every bundled file is checked against a SHA-256 manifest. If one doesn't match, the server won't start.
-- **Answers are data.** Every result is labelled as reference text and cleaned of invisible characters. Pass or fail is PROCTOR's call in CI.
+- **Answers are data.** Every result is labeled as reference text and cleaned of invisible characters. Pass or fail is PROCTOR's call in CI.
 - **Two fixed programs.** `run_proctor_check` starts only your app's own PROCTOR, with an allowlisted environment. `upgrade_path` starts only Booster's read-only `plan`, never `run`. Both get an argument array and a timeout, and neither goes through a shell.
 
 Adjoining sheets
 
-## The neighbourhood
+## The neighborhood
 
 ADVISOR answers from a bundled copy of what these projects publish. Here is who lives where.
 
