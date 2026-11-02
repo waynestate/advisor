@@ -1,8 +1,8 @@
 # The CREED handbook
 
 The rules for the Wayne State app stack, chapter by chapter. Each chapter
-states what the ADRs have already decided, with the ADR number, and marks the
-rest as "To be decided".
+states what the ADRs have decided or what WSU's developer standards (2024)
+already require, and marks the rest as "To be decided".
 
 A line that reads "PROCTOR check: `<id>`" names the PROCTOR check that reports a breach of that rule.
 
@@ -16,4 +16,6 @@ A line that reads "PROCTOR check: `<id>`" names the PROCTOR check that reports a
 - [CI](ci.md)
 - [Accessibility](accessibility.md)
 - [Every OS](every-os.md)
+- [Secrets](secrets.md)
+- [Production](production.md)
 - [Overrides](overrides.md)

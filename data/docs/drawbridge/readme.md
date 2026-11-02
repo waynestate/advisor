@@ -10,8 +10,8 @@ Checks: `composer ci` (the same command runs on GitLab and GitHub). The containe
 
 Drawbridge is the sign-in gateway for the apps on Citadel, Wayne State's container platform. It is Apache with
 mod_auth_openidc, set up as one OpenID Connect client for Microsoft Entra ID. It is not live yet: its home will be
-`auth.apps.wayne.edu`, in front of every app on the platform, once the Citadel routing for it exists. Release 0.2 is
-unreleased; so far only the gateway image is built, and it will run as a service on Citadel. As a reverse proxy it
+`auth.apps.wayne.edu`, in front of every app on the platform, once the Citadel routing for it exists.
+The first release, 0.1.0, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
 checks that the visitor has a session, drops any identity header the visitor sent, and passes the app either a
 short-lived signed assertion that SESAME's `gateway` driver verifies, or plain `X-Authenticated-*` headers for apps
 that cannot verify a token yet. Which paths need a login, and which need an Entra authentication context on top, is
@@ -183,6 +183,19 @@ rig\run.ps1          # Windows
 
 ```sh
 sh rig/run.sh        # Linux, macOS
+```
+
+The `keycloak` argument swaps the mock for a pinned Keycloak started from `rig/keycloak/realm.json` and runs the
+sign-in, claims and logout tests against it. Unlike the mock, that provider checks the client secret and PKCE, signs
+in only the realm's two synthetic users, and refuses redirect URIs it was not given, so the run proves the round trip
+against a strict OpenID Connect implementation.
+
+```powershell
+rig\run.ps1 keycloak   # Windows
+```
+
+```sh
+sh rig/run.sh keycloak # Linux, macOS
 ```
 
 When the rig is green, the next step is the first real sign-in: [ENTRA_TEST.md](ENTRA_TEST.md).
@@ -398,7 +411,7 @@ unauthorized request answers 403, so the route is never advertised and never ser
 address is `REMOTE_ADDR` (the real client), never a client-supplied header, so a spoofed `X-Forwarded-For` cannot
 grant access, and the token is compared in constant time.
 
-Point a web server at `bin/metrics` for the path. In the rendered Apache config a location such as:
+When you wire it up yourself, point a web server at `bin/metrics` for the path. In Apache, a location such as:
 
 ```apache
 <Location "/metrics">
@@ -407,26 +420,31 @@ Point a web server at `bin/metrics` for the path. In the rendered Apache config 
 </Location>
 ```
 
-serves it (the `SetEnvIf` passes the bearer token through; without it only the allow list works).
+serves it (the `SetEnvIf` passes the bearer token through; without it only the allow list works). In the gateway
+image the endpoint is a php-cgi child: `render` maps `^/metrics$` to `bin/metrics` with a virtual-host-level
+`ScriptAliasMatch` beside the Location block that stands outside sign-in and signing, and a fixup hook hands the
+child the access rules, because Apache passes no server environment to a CGI child.
 
 The endpoint serves only what it can see truthfully:
 
 | Metric | Type | Meaning |
 |---|---|---|
 | `drawbridge_build_info{version}` | gauge | the gateway is up, and which version |
+| `drawbridge_signing_requests_total` | counter | signing requests the assertion signer received |
+| `drawbridge_assertions_signed_total` | counter | assertions the signer signed successfully |
+| `drawbridge_assertion_errors_total{reason}` | counter | signing requests the signer refused or failed, by reason |
 
-The assertion-signing counters (`drawbridge_signing_requests_total`, `drawbridge_assertions_signed_total`,
-`drawbridge_assertion_errors_total{reason}`) are kept in the signer for in-process use but are not registered on the
-endpoint until a shared store lets it see the signer's counters; a counter that is always zero is not shown. Apache,
-not PHP, serves the requests, so request counts by path class are not exposed here either, and public requests and
-sign-in failures never reach the PHP side; mod_auth_openidc would need its own status or log scraping to expose
-those. Labels carry no identity, claim, or token, and the `reason` label is folded to a fixed set, so it stays
-low-cardinality.
+The signing counters cross from the long-running signer to the per-request endpoint through a shared file-backed
+store: one JSON file per metric family in a directory (default `/tmp/drawbridge-metrics`, moved by
+`DRAWBRIDGE_METRICS_DIR`), written atomically while a per-family lock is held, so a reader always sees a whole file
+and two writers never lose an increment. Every process in the gateway container runs as the same UID, so plain file
+permissions are enough. Without a shared store the endpoint registers no counters at all, because a counter that is
+always zero is not shown.
 
-The counters live in the signer's memory. The endpoint is a separate, per-request process, so by default (the
-`InMemory` adapter) it reports build info only. To share the signer's live counters with the endpoint, pass the same
-shared adapter (for example `Prometheus\Storage\APCng`, which needs the APCu extension) to both; without a shared
-store, PHP's share-nothing model cannot see across processes.
+Apache, not PHP, serves the requests, so request counts by path class are not exposed here either, and public
+requests and sign-in failures never reach the PHP side; mod_auth_openidc would need its own status or log scraping
+to expose those. Labels carry no identity, claim, or token, and the `reason` label is folded to a fixed set
+(refused, failed, other), so it stays low-cardinality.
 
 ## Documents
 
@@ -455,7 +473,7 @@ On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a S
 It is a drawbridge, so it goes up on strangers and down on friends. If you find a header it should have caught,
 raise the issue. The moat is only as good as the people who keep reporting where it is shallow.
 
-## Licence
+## License
 
 MIT. Copyright Wayne State University.
 

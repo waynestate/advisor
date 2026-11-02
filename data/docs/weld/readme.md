@@ -35,6 +35,7 @@ Or clone it, if you want the history too, and it is yours to rename:
 git clone https://github.com/waynestate/weld.git my-app
 cd my-app
 composer install
+php vendor/bin/advisor install --client=claude --write
 npm ci
 # Windows (PowerShell):
 Copy-Item .env.example .env
@@ -42,6 +43,8 @@ Copy-Item .env.example .env
 cp .env.example .env
 php artisan key:generate
 ```
+
+The `advisor install` line writes `.mcp.json`, the MCP config that points Claude Code at ADVISOR's server; the file is git-ignored, because a committed `.mcp.json` would run a program on whoever opens the project. Set `ADVISOR_ENABLED=1` in `.env` to switch the advisor on. Running WELD through Docker instead? PHP is not on your host PATH, so `bin/weld.ps1 up` and `bin/weld.sh up` run the same install inside the app container for you (skip it with `--no-advisor`, or `-NoAdvisor` on Windows); see ADVISOR's README for the details.
 
 ## Clone it and rename
 
@@ -83,7 +86,7 @@ git remote set-url origin https://git.example.com/you/my-app.git
 
 Then re-run the checks the way CI does: `.\bin\weld.ps1 test` (or `bin/weld.sh test`), which runs `composer ci` in the container, plus `composer proctor` for the standards check. A photocopy is not a weld yet: when the checks pass under your name, the seam holds.
 
-Want a smaller starting point than a full Laravel app? `sourdough new` is the other route: today it generates a raw PHP app with SESAME, HELMET, PROCTOR and the Preflight components already in place, and the Laravel flavours are still on the way.
+Want a smaller starting point than a full Laravel app? Sourdough is the starter tool for every shape of Wayne State app: it makes raw PHP and Laravel with Blade apps today, and the Vue shapes are planned. WELD is the Inertia and Vue shape, already assembled and ready to clone, so you do not wait for the plan.
 
 ## What is welded in
 
@@ -211,7 +214,7 @@ Add `--json` to any of them for a machine-readable report.
 
 ## WELD and Sourdough
 
-Sourdough makes a new app in any of the stack's shapes: raw PHP, Laravel with Blade, Laravel with Inertia and Vue.
+Sourdough is the starter tool for every shape of Wayne State app. It makes raw PHP and Laravel with Blade today; the Vue shapes are planned.
 WELD is one of those shapes, Laravel with Inertia and Vue, with every part already joined and proved to work together.
 Pick Sourdough when you want a starter you shape yourself. Pick WELD when you want the finished piece.
 

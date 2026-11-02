@@ -70,7 +70,7 @@ Rollcall only reads from every source. The one thing it writes is its own snapsh
 composer require waynestate/rollcall
 ```
 
-Rollcall 0.1.6 is on Packagist. No extra repository needed. Requires PHP `^8.3`. The CLI is `vendor/bin/rollcall`.
+Rollcall 0.1.7 is on Packagist. No extra repository needed. Requires PHP `^8.3`. The CLI is `vendor/bin/rollcall`.
 
 ## Quick start
 
@@ -306,6 +306,9 @@ The GitLab pipeline (`.gitlab-ci.yml`) and the GitHub workflow (`.github/workflo
 on PHP 8.3, 8.4 and 8.5. git.wayne.edu has no runners yet; an instance runner there is strongly recommended so this
 check can run beside the code it protects.
 
+The front page has its own accessibility gate (axe-core in Playwright, run in Docker): `scripts/a11y.sh` on Linux
+and macOS, `scripts/a11y.ps1` on Windows; MAINTAINING.md says when to run it.
+
 ## Security notes
 
 - Read-only toward GitLab and everything else: one gate in the GitLab adapter allows only `GET` and `HEAD`, and a test
@@ -344,7 +347,7 @@ check can run beside the code it protects.
 This repository is published from Wayne State University's internal GitLab and mirrored to GitHub. Changes land there
 first; Wayne State developers open issues and merge requests on the internal project.
 
-Licence: MIT, Copyright Wayne State University.
+License: MIT, Copyright Wayne State University.
 
 <div align="center"><b>The whole class</b><br><sub>WayneUI and the stack. Everyone is here today; the ones in the back row know who they are.</sub></div>
 

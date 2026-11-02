@@ -93,6 +93,16 @@ include:
 | `image` | string | `composer:2@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc` | Docker image for the job. |
 | `working_dir` | string | `.` | Directory to run composer audit in, relative to the project root. |
 
+#### Run it on a schedule
+
+New advisories are published after code is merged, so a green pipeline today
+can be stale tomorrow. Create a weekly pipeline schedule on the default
+branch: project settings, Build, Pipeline schedules. The component needs
+nothing extra; it carries no `rules:` block, so it runs in scheduled
+pipelines like any other. Creating the schedule is a project setting, not a
+file in the app's repo, and someone with Maintainer rights on the app must
+do it. It is the one preflight check that books its own flight time.
+
 ### sbom
 
 Generates a CycloneDX SBOM with `cyclonedx/cyclonedx-php-composer`, validates it, and publishes it as an artifact. The plugin is installed globally, so the app's `composer.json` is never touched.
@@ -324,6 +334,15 @@ The component writes its `config.js` at job time, so the `registryAliases`
 entry for the GitLab instance comes from the predefined `CI_SERVER_FQDN`
 variable. No hostname is stored in this repository.
 
+## Keep the job token allowlist short
+
+An app that installs private packages from GitLab's package registry should
+list only the projects it really needs in its CI/CD job token allowlist
+(project settings, Settings, CI/CD, Job token permissions), use the
+fine-grained permissions where they fit, and review the list when a
+dependency is dropped. A leaked job token acts with the triggering user's
+access. This is a project setting, not a file Preflight can create or check.
+
 ## When the components run
 
 The components are ordinary jobs, so they run whenever the app's pipeline
@@ -371,12 +390,15 @@ Three project settings make the gates harder to skip. All three work on GitLab C
 ## Strongly recommended: a git.wayne.edu instance runner.
 
 Until git.wayne.edu has a runner, CI runs on the GitLab instance that has one, and Preflight and each
-app must live on or be mirrored to it. A git.wayne.edu instance runner is strongly recommended.
+app must live on or be mirrored to it. A git.wayne.edu instance runner is strongly recommended. Ask
+for a non-privileged Docker executor (no privileged mode, no Docker socket mount), a fresh ephemeral
+environment for every job, and no shell executor shared between projects; capacity and maintenance
+stay with ops. A job that needs the host's Docker socket to take off has skipped its own preflight.
 
 ## Shared conventions
 
 - Composer vendor: `waynestate/`
-- Licence: MIT
+- License: MIT
 - PHP floor: `^8.3`
 - JavaScript components install with `npm ci --ignore-scripts`. The job carries no token beyond `CI_JOB_TOKEN` (BEST_PRACTICES.md 4.12).
 

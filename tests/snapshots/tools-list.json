@@ -91,7 +91,9 @@
                         "deploy-gate",
                         "every-os",
                         "overrides",
+                        "production",
                         "runtime-and-headers",
+                        "secrets",
                         "versions",
                         "policy"
                     ],

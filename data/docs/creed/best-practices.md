@@ -22,7 +22,8 @@ Each practice has a reason, sources, and a tag that says how the stack holds it 
 | `Documented` | Written down only. |
 | `Not yet` | A gap. |
 
-Tags describe the repository and design documents as they stand on 2026-10-29. PROCTOR v0.1 is specified in
+Tags describe the repository and design documents as they stand on 2026-10-29. Practices 55 to 61 were added on
+2026-11-02. PROCTOR v0.1 is specified in
 `first-repos.md` and its checks are named below as specified. CREED's own pipeline includes the `php-test`,
 `composer-audit` and `proctor` components, pinned to Preflight 0.1.0; the `proctor` job checks `deploy/` and is
 allowed to fail while its current findings are fixed.
@@ -56,9 +57,9 @@ How the stack holds it: `Enforced`. `PolicySchemaTest` validates the bundled fil
 date, missing rules block, unknown key, string where an integer belongs). `composer validate-policy` runs the same
 check. Both run in the `php-test` component.
 
-Second pass: the schema does not list `security_until` as required, so a version without it passes the schema. Only the
-reader refuses it (practice 4, fixture `no-security-until.json`). The two checks together cover the case, but the schema
-alone does not.
+Second pass: the schema requires `security_until` on every line that is not `"current": true`, and rejects a current
+line that carries one (practice 4, fixtures `no-security-until.json` and `current-with-security-until.json`), so the
+schema and the reader agree.
 
 ### 3. Write dates as ISO 8601 days, never prose
 
@@ -343,7 +344,7 @@ Sources: [Composer CLI reference, `audit`](https://getcomposer.org/doc/03-cli.md
 [Composer releases](https://github.com/composer/composer/releases).
 
 Second pass: you may already have a choice without writing one. The current config page gives `audit.abandoned` a default
-of `fail` (since Composer 2.7; it was `report` in 2.6), and says the whole `audit` section is deprecated in favour of
+of `fail` (since Composer 2.7; it was `report` in 2.6), and says the whole `audit` section is deprecated in favor of
 `config.policy`, where blocking abandoned packages (`block`) is off by default. Composer 2.10 added `config.policy`
 (2.10.0 on 2026-05-28), with advisory, abandoned and malware blocks; the latest stable is 2.10.3. The same page says the
 legacy keys keep
@@ -663,7 +664,7 @@ not depend on them. Pipeline secret detection is listed for
 Free, Premium and Ultimate, but its findings in merge request reports and the vulnerability report are Ultimate only. GitLab
 accessibility testing (Pa11y) is listed for Free, Premium and Ultimate. The tier of git.wayne.edu was not checked.
 
-Why: a gate that needs a licence the instance may not have is a gate that never runs.
+Why: a gate that needs a license the instance may not have is a gate that never runs.
 
 Sources: [GitLab dependency scanning](https://docs.gitlab.com/user/application_security/dependency_scanning/),
 [GitLab security policies](https://docs.gitlab.com/user/application_security/policies/),
@@ -686,7 +687,7 @@ CVE-2024-55556).
 Why: deleting a commit does not rotate a key.
 
 Sources: [GitGuardian, exploiting public APP_KEY leaks](https://blog.gitguardian.com/exploiting-public-app_key-leaks/),
-[Gitleaks](https://github.com/gitleaks/gitleaks) (MIT licence; its page says it is feature complete and will get security
+[Gitleaks](https://github.com/gitleaks/gitleaks) (MIT license; its page says it is feature complete and will get security
 patches only. It is one option, not an endorsement. Windows support is not stated on the page, so check it before
 adopting).
 
@@ -856,6 +857,113 @@ Sources: [WCAG 2.2](https://www.w3.org/TR/WCAG22/).
 
 How the stack holds it: `Not yet`. The target level is not written anywhere in the handbook.
 
+## 11. WSU developer standards (2024)
+
+These practices come from the university's 2024 development standards. They were compared with CREED on 2026-11-02 and
+are now in the handbook; the full comparison is internal.
+
+### 55. Keep credentials and diagnostic output out of version control, the web root and the logs
+
+Credentials (database and service passwords, API keys, tokens) are never committed to version control, because history
+keeps them forever. Commit `.env.example` with placeholders instead. Credentials and sensitive data live outside any
+folder the web server serves. Logs and diagnostic output carry no credentials and no personally identifiable
+information, and that includes logged exceptions. A credential that was ever committed is treated as exposed and
+rotated.
+
+Why: a repository is copied to many machines, the web root is reachable by anyone, and a log outlives the session that
+wrote it. A leaked password is a bad encore: everyone remembers it, and nobody asked for a second showing.
+
+Sources: the WSU developer standards, 2024 (an internal WSU document), [OWASP ASVS](https://asvs.owasp.org/).
+
+How the stack holds it: `Documented`. `handbook/secrets.md` writes the rule. This extends practice 24, which stays
+`Not yet` because no scan exists.
+
+### 56. Validate every input and treat uploaded files as hostile
+
+All input (forms, API calls, headers, cookies, and data read from a database you do not control) is validated on the
+server. SQL uses bound parameters, and output is escaped for where it lands. Files from untrusted sources are checked
+against the expected type, are never passed to include, class-loading or reflection calls, are stored outside the
+served folder with limited permissions, and are never executable.
+
+Why: unvalidated input is how SQL injection and cross-site scripting happen, and an uploaded file that runs is a back
+door.
+
+Sources: the WSU developer standards, 2024 (an internal WSU document), [OWASP ASVS](https://asvs.owasp.org/).
+
+How the stack holds it: `Documented`. `handbook/code.md` writes the rule. The PHPStan ban on SQL built by joining
+strings is still planned.
+
+### 57. Check authentication first on every request, fail closed, and time out idle sessions
+
+Authentication is checked before any content is shown or any script function runs, on every request. Routes are
+protected unless listed as public, and an unauthenticated person is sent to sign in. When authentication or an
+authorization lookup fails, the result is fail closed: access is withheld. Idle sessions time out after a configurable
+period of inactivity. For APIs and other stateless requests, the standards ask for signed, short-lived bearer tokens,
+which matches the signed assertion the `gateway` driver accepts.
+
+Why: a page that shows content before checking who is asking shows it to everyone.
+
+Sources: the WSU developer standards, 2024 (an internal WSU document), [OWASP ASVS](https://asvs.owasp.org/).
+
+How the stack holds it: `Documented`. `handbook/auth.md` writes the rule, and its `gateway` driver takes only a signed
+assertion.
+
+### 58. Keep two environments, isolate each deployment, and write down backup and restore
+
+Keep at least a pre-production and a production environment, each with its own working copy of every piece, database
+and supporting services included. Each deployment is isolated from the others (one container per app), so one
+compromise does not become many. Back up anything kept outside source control, databases included, and say in the
+README how to restore one app.
+
+Why: a staging copy is where a broken deploy is noticed, and an isolated box is where a compromise stays.
+
+Sources: the WSU developer standards, 2024 (an internal WSU document).
+
+How the stack holds it: `Documented`. `handbook/production.md` writes the rule.
+
+### 59. Run as non-root, never use mode 777, and keep debug files out of the served folder
+
+The app and its scripts run as a non-root, non-administrator user with the least access they need. File permissions
+are set per path, write access for the web server goes to specific files or folders only, and mode `777` is never
+used. Debugging and diagnostic files, scripts, dumps and backups do not sit in the served folder.
+
+Why: root and world-writable files turn a small mistake into a full compromise, and debug files in the served folder
+are read by strangers.
+
+Sources: the WSU developer standards, 2024 (an internal WSU document).
+
+How the stack holds it: `Not yet`. `handbook/production.md` writes the rule. A PROCTOR check for the served-folder
+scan and one for permissions are proposed, neither is built.
+
+### 60. Monitor `/up`, rotate logs and keep an audit trail
+
+A monitor calls `/up` on a schedule and alerts someone when the app fails. Logs are rotated or removed at a set
+interval, temporary files are cleaned up, and uploaded files have a retention rule. Where it is practical, the app
+records an audit trail of changes to data and of successful and failed access to sensitive data.
+
+Why: a failure nobody hears about is a failure that lasts, and a log that grows forever fills the disk it was meant to
+protect.
+
+Sources: the WSU developer standards, 2024 (an internal WSU document), [OWASP ASVS](https://asvs.owasp.org/).
+
+How the stack holds it: `Documented`. `handbook/production.md` writes the rule.
+
+### 61. Keep the project readable: README, a Help Desk overview, reviewed merge requests, removed dead code
+
+Every repo's README says how to install, configure and deploy the code for local development, on every OS, and how to
+update an existing deployment. If the Help Desk might be contacted about the project, the repo keeps an overview: what
+it does, who uses it, known common issues and who to call for an incident. Every project has a defined,
+well-understood change-control process with change requests; review and approval of merge requests is change
+control only for simple projects, and the process is followed strictly. The change-request procedure on Citadel
+is currently broken and needs fixing there; until it is fixed, changes are recorded through reviewed merge
+requests. Code that no longer runs is removed, not commented out.
+
+Why: the next person to touch the code is the reader, and a project nobody can read is a project nobody can fix.
+
+Sources: the WSU developer standards, 2024 (an internal WSU document).
+
+How the stack holds it: `Documented`. `handbook/code.md` and `handbook/ci.md` write the rule.
+
 ## Checks against the web
 
 These are places where a source disagrees with the repository or with an earlier note.
@@ -865,6 +973,7 @@ These are places where a source disagrees with the repository or with an earlier
   2028-03-17 (the page shows bug fixes as "Q3 2027"; the policy holds 2027-09-30, recorded from endoflife.date on
   2026-10-29; see the resolved note below). Node 26: LTS from 2026-10-28, maintenance from 2027-10-20, end of life 2029-04-30.
   endoflife.date shows 2027-10-27 for the same field ([endoflife.date Node API](https://endoflife.date/api/v1/products/nodejs/)).
+  Settled 2026-11-02: the primary source, `schedule.json` in nodejs/Release, lists `"maintenance": "2027-10-20"` for v26, so the policy value is right and the aggregator differs.
   MySQL 9.7: Premier to 2031-04-30 and Extended to 2034-04-30 on endoflife.date. The stack's version policy says
 "Q1 2028" for Laravel 13;
   the page gives the day.
@@ -883,8 +992,8 @@ These are places where a source disagrees with the repository or with an earlier
 - **Composer audit exit codes: the sources differ because they come from different eras.** The 2.8.4 changelog says
   "1 for vulnerabilities and 2 for abandoned, 3 for both". The current CLI reference lists only 0 (no issues) and 1
   (found packages matching dependency policies, or missing required packages). The config page now describes a `policy`
-  system that replaced the old `audit` keys. Which behaviour a pipeline gets depends on the Composer version. Pin the
-  Composer version in CI and test the behaviour (practice 39).
+  system that replaced the old `audit` keys. Which behavior a pipeline gets depends on the Composer version. Pin the
+  Composer version in CI and test the behavior (practice 39).
 - **Policy "active" for Node and MySQL is a mapping.** `active_until` holds Node's maintenance start and MySQL's Premier
   end. This is a reasonable mapping and is not the vendors' own wording.
 
@@ -944,8 +1053,16 @@ Added in the second pass (2026-10-27):
     (practices 52 and 54).
 35. Add an accessibility job to Preflight, using Pa11y or another deterministic tool (practice 53).
 36. Done: the Laravel 13 `active_until` date (2027-09-30) carries its source, endoflife.date, in `policy/sources.json` (Checks against the web).
-37. Make `security_until` required in the schema, so the schema and the reader agree (practice 2). Do this together with
-    item 3, because lines with no published end date (Vue 3) need another way to be modelled.
+37. Done: the schema requires `security_until` on every line that is not `"current": true` (`policy/policy.schema.json`),
+    and `tests/PolicySchemaTest.php` rejects a line with neither (practice 2).
+
+Added from the WSU developer standards (2026-11-02):
+
+38. PROCTOR check for non-production files in the served folder (`phpinfo.php`, dumps, backups, `.env`, `.git`)
+    (practice 59).
+39. PROCTOR check for mode 777 and web-writable paths outside an allowed list (practice 59).
+40. A committed-secret scan in Preflight; extends items 10 and 25 and practice 55.
+41. Whether idle sessions get a stated time limit (practice 57).
 
 ## Sources
 
