@@ -15,7 +15,7 @@
             "source": "booster/BEST_PRACTICES.md"
         },
         "docs/booster/readme.md": {
-            "sha256": "17c66f85c1ebbc302f96d08a9390ba9045fd5690a12d358af85e92b8f91d3d94",
+            "sha256": "f07613c8ba3b14cb71ebe42dd3b71ba4c8640d5542ebcf4f92b0b268eada6d65",
             "source": "booster/README.md"
         },
         "docs/creed/best-practices.md": {
@@ -35,7 +35,7 @@
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
-            "sha256": "b9b79d1ac8fc1b5144d6571f54f3e3d6382560176482d1c93e48b33b2472a98f",
+            "sha256": "1e8b22b942cc8b3fa7e8db27f5e0254dc264989ae9accdb11ccc394f7b8d65f0",
             "source": "helmet/BEST_PRACTICES.md"
         },
         "docs/helmet/readme.md": {
@@ -51,15 +51,15 @@
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
-            "sha256": "ff982e77e6c3be52b3d47d5e40636fda93886b7a9f355e00eade1f91aa83ff90",
+            "sha256": "39486d5ffe8101e83a52afc3982a35c4e23ab05887745eec0f4c481191e65e1b",
             "source": "preflight/BEST_PRACTICES.md"
         },
         "docs/preflight/readme.md": {
-            "sha256": "0a4e9a9cd1c7791e46129e61c8c153ec3b39f7da3ac93376ee483ed906ca03e2",
+            "sha256": "35a498d2132be59f76fc2bbcdf8a437087c740415ad7f861ebef9cee48dee5e4",
             "source": "preflight/README.md"
         },
         "docs/proctor/best-practices.md": {
-            "sha256": "40e070427d44f610e4fb96c969d45327a718f0ad27cd5dc02fb655dda888de63",
+            "sha256": "6089b734548b4af6abaea98f77183ed8e6d30ede963a405a3ea0f153260eaf19",
             "source": "proctor/BEST_PRACTICES.md"
         },
         "docs/proctor/readme.md": {
@@ -75,7 +75,7 @@
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "bf038cb4a4328619c54470a45e5bd277ecfdeaf976e80e222665b207a964a134",
+            "sha256": "317a5abb79c652d73a2b801f7a24ff6e3ecdcdf58c18d97adafc2de47e53d38a",
             "source": "sesame/BEST_PRACTICES.md"
         },
         "docs/sesame/readme.md": {
@@ -187,7 +187,7 @@
             "source": "creed/policy/policy.json"
         },
         "projects.json": {
-            "sha256": "68edb65ec246708a2756bfe47bd3e8fa91615f35bcc7f04d4215138abd655cab",
+            "sha256": "4547beb50549dbd7435f2fa83f9f7bfccd42ab4d0651b7b6fe37f5c4a546beb7",
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {

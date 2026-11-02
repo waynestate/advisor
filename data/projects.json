@@ -121,7 +121,7 @@
             "role": "The coding standard: shared Pint and PHPStan presets, plus ESLint and Prettier configuration.",
             "state": "built",
             "package": "waynestate/pinstripe",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "php": "^8.3",
             "next_step": "Point Pint and PHPStan at its presets; one formatter per repository.",
             "docs": [
