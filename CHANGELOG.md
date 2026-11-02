@@ -9,6 +9,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Added: hand-written guides bundled from generator/guides/ and served as advisor://guide/<slug>; first guide: Connect to Oracle on Citadel.
 - Added: policy_lookup returns latest_patch; the bundled docs drop hero images, badges and GIFs.
 - Added: WayneUI's migration guide (MIGRATING.md) is bundled as the migrating doc, and every project entry carries its version when it publishes one (composer.json, else package.json, else the newest CHANGELOG heading).
+- Docs: a one-line `claude mcp add` and a Docker `.mcp.json` for machines without PHP.
 
 ### Changed
 
