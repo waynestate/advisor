@@ -169,7 +169,7 @@
             "role": "The Citadel auth gateway: one OpenID Connect client through Entra ID that hands each app a signed assertion for SESAME's gateway driver.",
             "state": "built",
             "package": "waynestate/drawbridge",
-            "version": "0.2.0",
+            "version": "0.1.0",
             "php": "^8.3",
             "next_step": "Apps on Citadel use SESAME's gateway driver; plan against the Drawbridge README.",
             "docs": [

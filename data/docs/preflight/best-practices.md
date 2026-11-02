@@ -1,8 +1,8 @@
 # Preflight best practices
 
 Status: draft, checked against sources on 2026-10-27, with a second research pass the same day (see "Second pass
-(2026-10-27)" near the end). Applies to the Preflight components `proctor`, `php-test` and `composer-audit` at the state
-of the repo on that date (tag 0.1.0 existed; the components added after it shipped in 0.1.1).
+(2026-10-27)" near the end). Applies to the Preflight components at the state of the repo today: the latest tag is
+0.1.2, and the six components added after 0.1.0 shipped in 0.1.1.
 
 ## What this covers
 
@@ -136,8 +136,9 @@ Sources: [StepSecurity: tj-actions breach](https://www.stepsecurity.io/blog/when
 The tj-actions details above come from search summaries of these pages and the NVD record could not be read in this
 pass, so treat the exact counts and dates as unverified.
 
-**How the stack holds it: Not yet.** Tags `0.1.0`, `0.1.1` and `0.1.2` exist, but no release note format records the SHA a consumer pins,
-and nothing yet says what to do when the next tag is cut.
+**How the stack holds it: Documented.** Tags `0.1.0`, `0.1.1` and `0.1.2` exist, and MAINTAINING.md documents the release process,
+including recording the tag's commit SHA in the CHANGELOG when a tag is cut. Apps still pin the tag in their component includes,
+and nothing checks an app's includes.
 
 ### 1.7 Give consumers a reviewed way to bump their pins
 A pin that nobody updates freezes security fixes. Offer a scheduled merge request or a bot that proposes new SHAs and new
@@ -152,7 +153,9 @@ Renovate's Docker docs confirm it can pin a digest, keep the tag for readability
 changes. Its GitLab include page lists only the `gitlab-tags` datasource and does not say whether it updates
 `component:` includes or SHA pins. That is unverified, so test it against a sample app before promising it.
 
-**How the stack holds it: Not yet.** No bump process or tool is documented for Preflight or for the apps that include it.
+**How the stack holds it: Documented.** The README's "Updating image pins" section says pins change only through a reviewed merge request,
+and the shared preset `renovate/default.json` provides the tooling for image digests, GitHub action SHAs and packages. Whether Renovate
+bumps `component:` includes is unverified: the preset carries no manager for them.
 
 ### 1.8 Say how a component is retired
 Before removing a component or turning off its Catalog toggle, announce it and keep the old tag working for a stated period.
@@ -179,9 +182,9 @@ the run.
 Sources: [GitLab: CI/CD inputs](https://docs.gitlab.com/ci/inputs/);
 [GitLab: component examples](https://docs.gitlab.com/ci/components/examples/).
 
-**How the stack holds it: Enforced.** All three templates use `spec:inputs` with types, descriptions and defaults.
-GitLab rejects a wrong type or an unknown input at pipeline creation. The first pipeline passed all six jobs
-with the array input.
+**How the stack holds it: Enforced.** All nine templates use `spec:inputs` with types, descriptions and defaults.
+GitLab rejects a wrong type or an unknown input at pipeline creation. The first pipeline, back when Preflight had
+three components, passed all six jobs with the array input.
 
 Second pass, limits to design around: GitLab's inputs page says a pipeline can take up to 20 inputs (it does not say
 whether that counts per include, so check on the real instance before adding many), a string that uses an input must be
@@ -209,7 +212,7 @@ untrusted values. New point: from GitLab 19.0 an array input with `options` make
 array item is not in the list. That would let `php_versions` accept only versions the policy lists (see 6.2), but it
 depends on the instance running 19.0 or later, which is unknown. GitLab's pipeline security page also says to avoid
 variables in container references because they can be changed to point at a malicious image. `php-test` builds its image
-from the matrix variable (`php:${PHP_VERSION}-cli`). The value comes from the `php_versions` input, so the risk is low,
+from the matrix variable (`php:${PHP_VERSION}-cli-trixie`). The value comes from the `php_versions` input, so the risk is low,
 but constraining that input closes it.
 
 ### 2.3 Keep settings in the job, and give each component one job purpose
@@ -219,7 +222,7 @@ Why: global keys leak into the consuming pipeline.
 
 Sources: [GitLab: component examples](https://docs.gitlab.com/ci/components/examples/).
 
-**How the stack holds it: Documented.** All three templates follow it, by convention. No lint fails if a template adds
+**How the stack holds it: Documented.** All nine templates follow it, by convention. No lint fails if a template adds
 a global key.
 
 ### 2.4 Make the stage an input
@@ -239,7 +242,8 @@ Why: two jobs with the same name merge into one.
 
 Sources: [GitLab: component examples, dynamic job names](https://docs.gitlab.com/ci/components/examples/).
 
-**How the stack holds it: Not yet.** The jobs are named `proctor`, `php-test` and `composer-audit`, fixed.
+**How the stack holds it: Not yet.** The jobs are named `proctor`, `php-test`, `composer-audit`, `sbom`, `pint`,
+`phpstan`, `eslint`, `package-publish` and `renovate`, fixed.
 
 ### 2.6 Offer a way to weaken a gate only where it is meant
 `composer-audit` has no `allow_failure` input, on purpose. `proctor` has one.
@@ -350,9 +354,10 @@ Sources: [GitLab: CI/CD variables, risks](https://docs.gitlab.com/ci/variables/)
 [OWASP CICD-SEC-4 and CICD-SEC-1](https://owasp.org/www-project-top-10-ci-cd-security-risks/);
 [GitLab: protected branches](https://docs.gitlab.com/user/project/repository/branches/protected/).
 
-**How the stack holds it: Not yet.** Protected branches with required merge requests are available on every tier. Code
-owner approval is Premium or Ultimate, so it is not available on Community Edition. No Preflight text recommends
-settings for app repos.
+**How the stack holds it: Documented.** Protected branches with required merge requests are available on every tier.
+Code owner approval is Premium or Ultimate, so it is not available on Community Edition. The README's "What the
+components cannot force" section recommends the settings for app repos: protect the default branch and require a
+merge request to change it.
 
 ### 3.3 Detect pipelines that skip or weaken Preflight
 A check or a fleet report should flag an app with no Preflight include, an unpinned include, `allow_failure: true` on a
@@ -392,8 +397,9 @@ On GitLab.com new projects default to `no_one_allowed`. On self-managed GitLab t
 Sources: [GitLab: CI/CD variables, pipeline variable restrictions](https://docs.gitlab.com/ci/variables/);
 [GitLab: CI/CD inputs](https://docs.gitlab.com/ci/inputs/).
 
-**How the stack holds it: Not yet.** The components use inputs, which is right. No text tells app owners to restrict
-pipeline variables.
+**How the stack holds it: Documented.** The components use inputs, which is right, and the README's "What the
+components cannot force" section tells app owners to set "Minimum role to use pipeline variables" to `no_one_allowed`
+unless the project needs pipeline variables.
 
 ### 3.6 Keep untrusted code away from secrets and from the install step
 Do not run fork merge request pipelines with protected variables. Review a fork's `.gitlab-ci.yml` before running it.
@@ -407,7 +413,8 @@ by a hostile `composer.json`, which is exactly what a contributed branch can car
 Sources: [GitLab: merge request pipelines](https://docs.gitlab.com/ci/pipelines/merge_request_pipelines/);
 [GitLab: CI/CD variables](https://docs.gitlab.com/ci/variables/).
 
-**How the stack holds it: Not yet.** The three templates use no secrets, which limits the harm. Nothing documents the rule.
+**How the stack holds it: Documented.** All nine templates use no secrets, which limits the harm, and the README
+documents the rule: review a fork's `.gitlab-ci.yml` before running its pipeline, and never give it protected variables.
 
 ---
 
@@ -423,14 +430,14 @@ Sources: [GitLab: pipeline security, Docker images](https://docs.gitlab.com/ci/p
 [OpenSSF Scorecard: Pinned-Dependencies](https://github.com/ossf/scorecard/blob/main/docs/checks.md).
 
 **How the stack holds it: Enforced.** The `proctor` and `composer-audit` image defaults carry a digest
-(`php:8.4-cli@sha256:...` and `composer:2@sha256:...`), and the README's "Updating image pins" says how to move them.
-The exception is `php-test`: its matrix image `php:${PHP_VERSION}-cli` is still a tag, because each version would need its own digest.
+(`php:8.4-cli-trixie@sha256:...` and `composer:2@sha256:...`), and the README's "Updating image pins" says how to move them.
+The exception is `php-test`: its matrix image `php:${PHP_VERSION}-cli-trixie` is still a tag, because each version would need its own digest.
 The template lint (`bin/lint-templates`, run by `composer ci`) fails on `latest` or tag-less images and warns on tag-only images, so a new template cannot drift back to an unpinned image without a reviewed `lint-allow.yml` entry.
 
 Second pass: GitLab's pipeline security page says "Always use SHA digests for Docker images". Renovate documents the
 usual way to live with that: keep the tag and add the digest (`image:tag@sha256:...`), and let a bot open a change when the
 digest moves. Be careful with automerge settings that skip review (see 1.7). A digest on a matrix image
-(`php:${PHP_VERSION}-cli`) needs one digest per version, so the matrix would need to carry the digest too.
+(`php:${PHP_VERSION}-cli-trixie`) needs one digest per version, so the matrix would need to carry the digest too.
 
 ### 4.2 Use images the instance controls, and test on the image family of the target you deploy to
 Pull through a registry or proxy under WSU's control, and test on the image family of the target you deploy to.
@@ -513,8 +520,8 @@ Sources: [Composer CLI: audit](https://getcomposer.org/doc/03-cli.md);
 
 **How the stack holds it: Checked.** The `composer-audit` job fails on Composer's exit code. Composer also fails on
 malware and, by its configured default, on abandoned packages, and PROCTOR's own audit check reads only advisories.
-The two can disagree. The job uses `composer:2`, a moving tag, so the rules depend on which Composer release the tag
-points at.
+The two can disagree. The job's image is digest-pinned (`composer:2@sha256:...`, see the README's "Updating image
+pins"), so the rules depend on the pinned digest, not on where the `composer:2` tag points.
 
 Second pass, corrections and detail from Composer's current docs:
 
@@ -621,8 +628,10 @@ images need `git` today (see the apt line in the templates), so check whether an
 Sources: [Packagist: supply chain security update](https://blog.packagist.com/an-update-on-composer-packagist-supply-chain-security);
 [Packagist: Composer 2.10 release](https://blog.packagist.com/composer-2-10-release/).
 
-**How the stack holds it: Not yet.** `php-test` and `proctor` install the latest Composer, so they pick up 2.10 behaviour
-by accident, and `composer-audit` depends on what `composer:2` points at. Nothing records the rule or tests it.
+**How the stack holds it: Checked.** `php-test` and `proctor` install the Composer release named by the `composer_version`
+input (default `2.10.3`), and `composer-audit` runs on a digest-pinned `composer:2` image, so the 2.10 behaviour is chosen,
+not picked up by accident. The `contract` job keeps the defaults matched to `contract/inputs.json`; reviewing lock
+changes after an `update` or `require` stays a human step.
 
 ### 4.12 When a JavaScript component arrives, install from the lock with scripts off
 For the Vue paths, a future Preflight job should use `npm ci`, turn off install scripts by default and allow them only
@@ -727,7 +736,7 @@ Sources: [GitLab: CI/CD variables](https://docs.gitlab.com/ci/variables/);
 [GitLab: pipeline security, secrets](https://docs.gitlab.com/ci/pipeline_security/);
 [OWASP CICD-SEC-6 Insufficient Credential Hygiene](https://owasp.org/www-project-top-10-ci-cd-security-risks/).
 
-**How the stack holds it: Not yet.** The three templates use no secrets, which is good. Nothing fails if a later
+**How the stack holds it: Not yet.** The nine templates use no secrets, which is good. Nothing fails if a later
 template adds one, and no secret scan runs on the Preflight repo.
 
 Second pass: GitLab's pipeline secret detection is available on Free, Premium and Ultimate. Its docs show
@@ -846,7 +855,7 @@ Second pass: php.net's supported versions page was re-read on 2026-10-27 and the
 | 8.4 | 2024-11-21 | 2026-12-31 | 2028-12-31 |
 | 8.5 | 2025-11-20 | 2027-12-31 | 2029-12-31 |
 
-Two consequences. First, 8.2 is still supported today, but only for security fixes and only for another 65 days. The
+Two consequences. First, 8.2 is still supported today, but only for security fixes, until 2026-12-31. The
 default list had to drop it in a release that ships before 2027-01-01, so apps have time to see it; the default has
 since dropped it. Second, 8.4 moves to
 security-only on the same day, so the "newest actively supported" version changes to 8.5 in 2027. The Docker Official
@@ -896,8 +905,9 @@ that conforms to WCAG 2.2 also conforms to WCAG 2.1, so meeting the 2.2 floor al
 Sources: [Campus Technology: DOJ extends Title II deadline](https://campustechnology.com/articles/2026/04/27/doj-extends-deadline-for-ada-title-ii-compliance.aspx).
 The Federal Register text itself was not read in this pass.
 
-**How the stack holds it: Not yet.** The scope note at the top of this guide says accessibility and contract suites come
-later. No component, input or text names the standard.
+**How the stack holds it: Documented.** The scope note at the top of this guide says accessibility and contract suites
+come later, and no component exists yet. The front page (`site/index.md`) names WCAG 2.2 Level AA as the floor the
+suite will aim at, with a manual review step kept.
 
 ---
 
@@ -910,8 +920,8 @@ Why: it exercises exactly what will be released.
 
 Sources: [GitLab: components, testing](https://docs.gitlab.com/ci/components/).
 
-**How the stack holds it: Checked.** `.gitlab-ci.yml` includes all three components at `$CI_COMMIT_SHA` against
-`tests/fixture-app`.
+**How the stack holds it: Checked.** `.gitlab-ci.yml` includes six components at `$CI_COMMIT_SHA` against
+`tests/fixture-app`, plus a `contract` job running the `tests/check-*.sh` scripts.
 
 ### 7.2 Test the failing cases, and that the expected jobs exist
 Each component needs a fixture that must fail it: a failing test, an advisory, a policy violation. A test can also
@@ -925,8 +935,9 @@ Sources: [GitLab: components, testing](https://docs.gitlab.com/ci/components/).
 `proctor` self-test cannot fail. The fixture has no advisory and no failing test.
 
 Second pass, checked in the main checkout: the stub is still a short shell script that prints `[]` and exits 0, and
-the fixture's `composer.json` requires only `php ^8.2` and `phpunit ^11.0`. Add fixtures for an advisory, an abandoned
-package and a malware-flagged version too (see 4.6 and 4.11), so each Composer policy result is recorded as a real exit code.
+the fixture's `composer.json` requires `php ^8.3`, with `phpunit ^11.0`, `laravel/pint ^1.32` and `phpstan/phpstan ^2.3`
+in require-dev. Add fixtures for an advisory, an abandoned package and a malware-flagged version too (see 4.6 and 4.11),
+so each Composer policy result is recorded as a real exit code.
 
 ### 7.3 Use the stack's own projects as the first users
 Each stack repo includes Preflight, pinned.
