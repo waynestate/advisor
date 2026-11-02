@@ -12,7 +12,7 @@ final class Advisor
 {
     public const NAME = 'advisor';
 
-    public const VERSION = '0.1.2';
+    public const VERSION = '0.1.3';
 
     /** Shown to the client as server instructions; short on purpose (clients cap them at 4,000 characters). */
     public const INSTRUCTIONS = "ADVISOR is the Wayne State app stack's read-only MCP server. "
