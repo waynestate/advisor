@@ -73,7 +73,7 @@
             "role": "The runtime baseline: security headers, CSP, session hardening, trusted proxies, a health check and a version warning.",
             "state": "built",
             "package": "waynestate/helmet",
-            "version": "0.2.5",
+            "version": "0.2.6",
             "php": "^8.3",
             "next_step": "Add it as a dependency and start from its presets; it reads the same policy as PROCTOR.",
             "docs": [

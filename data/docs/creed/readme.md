@@ -33,6 +33,22 @@ place, and every tool reads them from here.
 composer require waynestate/creed
 ```
 
+### Develop on it
+
+The same commands work in PowerShell and sh:
+
+- Windows (PowerShell): `composer install`, then `composer ci` for everything CI runs, or `composer test` for just the tests.
+- Linux and macOS (sh): the very same three commands, `composer install`, `composer ci`, `composer test`.
+
+With only Docker (the same line works in PowerShell and sh):
+
+```
+docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -w /app php:8.5-cli vendor/bin/phpunit
+```
+
+The whole band fits in three commands, and nobody needs a solo.
+
 ## Usage
 
 ```php

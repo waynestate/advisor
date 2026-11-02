@@ -15,7 +15,7 @@ The stack's version policy states:
   from the date, through the CREED reader. No other code decides state
   (the stack's version policy).
 - The PHP floor is `^8.2`, the oldest non-EOL version today (the stack's version policy). It
-  moves to `^8.3` on 2027-01-01.
+  moves to `^8.3` on 2027-01-01. PROCTOR check: `php-floor`.
 - Stack packages raise their own `php` floor in a new major when a PHP version
   reaches EOL, so security fixes require the upgrade (the stack's version policy).
 - `policy.json` is a contract, versioned like WayneUI's `/v2/`. Older Check
@@ -47,5 +47,5 @@ instead of inheriting the `fail` default (changelog:
 https://getcomposer.org/changelog/2.8.0).
 
 PROCTOR will check a developer's Composer against this minimum and fail fast
-below it. The minimum is a floor, not a ceiling: we do not go lower, no matter
-how the crowd sings for more.
+below it. PROCTOR check: `composer-version`. The minimum is a floor, not a
+ceiling: we do not go lower, no matter how the crowd sings for more.

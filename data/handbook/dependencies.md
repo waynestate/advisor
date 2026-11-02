@@ -3,12 +3,13 @@
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to be interpreted as described in RFC 2119.
 
 - No `dev-master`, `dev-*` or `*` constraints on runtime dependencies
-  (the stack's version policy).
-- A lock file is required and MUST be committed (the stack's version policy).
+  (the stack's version policy). PROCTOR check: `unbounded-constraints`.
+- A lock file is required and MUST be committed (the stack's version
+  policy). PROCTOR check: `lock-committed`.
 - `composer audit` MUST report no advisories at or above the policy's severity
-  threshold (the stack's version policy).
+  threshold (the stack's version policy). PROCTOR check: `composer-audit`.
 - `composer.json` `require.php` MUST NOT allow an EOL version as its lowest
-  bound (the stack's version policy).
+  bound (the stack's version policy). PROCTOR check: `php-floor`.
 - Every project is a framework-free core plus thin adapters. `composer.json`
   requires only `php` and PSR packages; Laravel, Inertia and Vue are
   `suggest` (the stack's core-plus-adapters design).
@@ -22,7 +23,8 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 - Credentials MUST NOT appear in any repository URL in `composer.json` or
   `composer.lock`, or as a literal value in a committed `.npmrc`. Tokens live
   in a gitignored `auth.json`, the npm user config, or a CI or build-time
-  secret (the stack's private-packages decision).
+  secret (the stack's private-packages decision). PROCTOR check:
+  `repo-url-credentials`.
 - Builds MUST use a read-only deploy token (`read_package_registry` only);
   personal access tokens MUST NOT be used in builds (the stack's
   private-packages decision).

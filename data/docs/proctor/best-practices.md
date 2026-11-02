@@ -300,7 +300,7 @@ JSON, not from the exit code alone. The threshold must be one of `low`, `medium`
 with a tool error.
 
 ### 4.2 Count an unknown severity as failing
-An advisory with no severity, or one the tool does not recognise, is treated as if it were at the threshold.
+An advisory with no severity, or one the tool does not recognize, is treated as if it were at the threshold.
 
 Why: unknown input must not turn into a pass.
 
@@ -663,7 +663,8 @@ Sources: [WCAG 2.2: Use of Color](https://www.w3.org/WAI/WCAG22/Understanding/us
 [NO_COLOR](https://no-color.org/).
 
 **How the stack holds it: Enforced.** `TextWriter` writes plain text with a status word on every line and emits no ANSI
-codes. No test asserts the absence of color, so this holds by construction only.
+codes. A CLI test runs a passing and a failing fixture app and asserts the text output carries no escape byte, and a
+writer test feeds an escape sequence and a carriage return through a finding message.
 
 ### 6.8 Escape strings that come from the app before printing them (second pass)
 Messages contain package names, constraints and override reasons, all read from files the app controls. Escape them
@@ -675,8 +676,11 @@ not find a primary source for raw terminal control characters in CI logs, so tha
 
 Sources: [Symfony Console: coloring and tags](https://symfony.com/doc/current/console/coloring.html).
 
-**How the stack holds it: Not yet.** `bin/proctor` passes the writer output straight to `$output->writeln()`. No test
-feeds a tag-like string through a finding.
+**How the stack holds it: Partially.** `TextWriter` now replaces terminal control characters (every C0 except newline
+and tab, plus DEL and the C1 block) with a visible `?` in finding messages, override reasons and approvers before
+printing, and a test feeds an escape sequence and a carriage return through a finding. Tag-like strings are still not
+escaped: `bin/proctor` passes the writer output straight to `$output->writeln()`, so a crafted package name could still
+open a formatting tag in a decorated terminal.
 
 ---
 
@@ -782,8 +786,11 @@ loads installed plugins, so this is a precaution.
 
 Sources: [Composer CLI: global options and environment variables](https://getcomposer.org/doc/03-cli.md).
 
-**How the stack holds it: Not yet.** `ProcessRunner` calls `proc_open` with no environment argument, so the child
-inherits everything, and the audit command line carries no `--no-plugins`. It does use an argument array (8.2).
+**How the stack holds it: Enforced.** The audit command line carries `--no-plugins` and `--no-interaction`, and the
+audit runs with an explicit minimal environment (PATH plus HOME, or APPDATA and USERPROFILE on Windows, COMPOSER_HOME,
+TEMP/TMP, SystemRoot on Windows), so the job around it cannot set `COMPOSER_NO_AUDIT` or friends. A test captures the
+command line and the environment. Other child processes (the composer version probe, the WayneUI release lookup) still
+inherit the caller's environment; this practice is about the audit. It uses an argument array (8.2).
 
 ### 8.7 Treat the CI platform as part of the trust base (second pass)
 Keep the GitLab instance and its runners on a patched release, and say so in the Preflight docs.
@@ -841,15 +848,17 @@ Added in the second pass (2026-10-27):
     empty file is parsed.
 29. 4.9: Flag `config.policy: false`, a disabled malware or advisory policy, and `COMPOSER_NO_BLOCKING` or
     `COMPOSER_NO_AUDIT` in the job environment.
-30. 8.6: Run Composer with `--no-plugins --no-interaction` and an explicit environment.
-31. 6.8: Escape app-supplied strings before printing, and add a test with a tag-like package name.
+30. 8.6: Done: the audit runs with `--no-plugins --no-interaction` and a minimal explicit environment (see 8.6).
+31. 6.8: Control characters are replaced with `?` and tested; what remains is escaping tag-like strings, and a test
+    with a tag-like package name.
 32. 5.8: Warn on an override that matches nothing and on one close to expiry.
 33. 2.7: Put the security-end date and days left in the security-only warning.
 34. 3.7: Document "install from the lock, never update" in the Preflight guide, and ask authors not to re-tag.
 35. 4.12: Decide in the policy whether `require-dev` packages count, then pass `--no-dev` or not.
 36. 8.7: Name a minimum patched GitLab version in the Preflight guide.
 37. 4.11: Re-read the Composer cooldown policy once 2.11 is stable, and decide whether to ask for it.
-38. 6.7 (tagged Enforced by construction): Add a test that the text output contains no ANSI escape codes.
+38. 6.7 (tagged Enforced by construction): Done: a CLI test asserts the text output carries no escape byte, and a
+    writer test feeds an escape sequence through a finding (see 6.7).
 
 ## Second pass (2026-10-27)
 
@@ -871,7 +880,7 @@ the Composer 2.11 lock check.
 - 6.1: the Semgrep page does not document a tool-error exit code, and Composer's own exit code 2 means something
   else. The PROCTOR design stands; the sources only partly support it.
 - 4.2: the Semgrep page is an analogy for unknown severities, not a source.
-- 4.4: the `audit.ignore` setting is deprecated in favour of `policy.advisories.ignore-id`, and `ignore-severity` and
+- 4.4: the `audit.ignore` setting is deprecated in favor of `policy.advisories.ignore-id`, and `ignore-severity` and
   `ignore-abandoned` also silence results.
 - 4.6: added the Composer 2.10.2 stdout fix, the current stable (2.10.3) and the 2.11.0-RC1 date.
 - 6.4: GitLab uploads report artifacts even when the job fails, so the empty file on exit 2 does reach GitLab.
@@ -904,7 +913,7 @@ All checked on 2026-10-27.
 | Composer 2.10 release (Packagist blog) | https://blog.packagist.com/composer-2-10-release/ |
 | GitLab: Code Quality | https://docs.gitlab.com/ci/testing/code_quality/ |
 | GitLab: CI/CD YAML reference | https://docs.gitlab.com/ci/yaml/ |
-| GitLab: use CI/CD configuration from other files (merge behaviour) | https://docs.gitlab.com/ci/yaml/includes/ |
+| GitLab: use CI/CD configuration from other files (merge behavior) | https://docs.gitlab.com/ci/yaml/includes/ |
 | GitLab: CI/CD components | https://docs.gitlab.com/ci/components/ |
 | GitLab: protected branches | https://docs.gitlab.com/user/project/repository/branches/protected/ |
 | PHP: supported versions | https://www.php.net/supported-versions.php |

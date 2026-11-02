@@ -14,3 +14,4 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
   (the stack's every-OS design).
 - Paths are built with the language's path functions, and subprocesses start
   with argument arrays, never shell strings (the stack's every-OS design).
+  PROCTOR check: `portability`.

@@ -310,7 +310,7 @@ The same works with `php:8.3-cli` in place of `php:8.4-cli`.
 
 Strongly recommended: a git.wayne.edu instance runner.
 
-## Licence
+## License
 
 MIT, Wayne State University, Enterprise Applications.
 
