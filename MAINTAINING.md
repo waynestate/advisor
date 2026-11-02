@@ -60,6 +60,9 @@ practices, or the projects seed. Commit the regenerated `data/` with the source 
 project to the parts list, add its `name` and `tagline` to `generator/projects.seed.json`, then regenerate and
 `stack-parts --write`.
 
+Hand-written guides live in `generator/guides/`, one Markdown file per slug, served as `advisor://guide/<slug>`.
+Edit them there, then run `content:generate`.
+
 ## Releasing
 
 ADVISOR is public, so its bundle must not carry internal names. The public-posture test always checks generic shapes;

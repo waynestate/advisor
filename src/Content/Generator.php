@@ -129,6 +129,18 @@ final class Generator
         $ownershipSource = dirname($this->seedFile) . '/ownership.json';
         $files['ownership.json'] = ['content' => Json::encode(Json::decodeFile($ownershipSource)), 'source' => 'generator/ownership.json'];
 
+        // Hand-written guides, kept beside the project seed like the ownership table. No folder means none.
+        $guidesDir = dirname($this->seedFile) . '/guides';
+        $guideFiles = glob($guidesDir . '/*.md') ?: [];
+        sort($guideFiles);
+        foreach ($guideFiles as $file) {
+            $name = basename($file, '.md');
+            $files['guides/' . $name . '.md'] = [
+                'content' => $this->clean((string) file_get_contents($file)),
+                'source' => 'generator/guides/' . $name . '.md',
+            ];
+        }
+
         ksort($files);
 
         return $files;

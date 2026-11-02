@@ -50,6 +50,8 @@ final class GeneratorTest extends TestCase
         $this->put($base . '/ownership.json', (string) json_encode(['topics' => [
             ['topic' => 'checks', 'owner' => 'PROCTOR', 'role' => 'Runs the checks.', 'also' => []],
         ]]));
+        // Hand-written guides live beside the project seed too, one Markdown file per slug.
+        $this->put($base . '/guides/connect-to-oracle-on-citadel.md', "# Connect to Oracle on Citadel\n\nSet `ORACLE_USERNAME`.\n");
     }
 
     private function generator(string $date = '2026-10-28', ?Denylist $denylist = null): Generator
@@ -162,6 +164,33 @@ final class GeneratorTest extends TestCase
         $this->assertStringContainsString('a design document', $readme);
         $this->assertStringContainsString('an ADR', $readme);
         $this->assertStringContainsString("the stack's design documents", $readme);
+    }
+
+    public function testBundlesHandWrittenGuidesFromBesideTheSeed(): void
+    {
+        $built = $this->generator()->build();
+
+        $this->assertArrayHasKey('guides/connect-to-oracle-on-citadel.md', $built);
+        $guide = $built['guides/connect-to-oracle-on-citadel.md'];
+        $this->assertSame('generator/guides/connect-to-oracle-on-citadel.md', $guide['source']);
+        $this->assertStringContainsString('# Connect to Oracle on Citadel', $guide['content']);
+        $this->assertStringContainsString('ORACLE_USERNAME', $guide['content']);
+        $this->assertStringEndsWith("\n", $guide['content']);
+    }
+
+    public function testNoGuidesFolderMeansNoGuideFiles(): void
+    {
+        $guidesDir = dirname($this->seed) . '/guides';
+        foreach (glob($guidesDir . '/*.md') ?: [] as $file) {
+            unlink($file);
+        }
+        rmdir($guidesDir);
+
+        $built = $this->generator()->build();
+
+        foreach (array_keys($built) as $name) {
+            $this->assertFalse(str_starts_with($name, 'guides/'), $name);
+        }
     }
 
     public function testMissingSourcesAreAnErrorNotAnEmptyBundle(): void

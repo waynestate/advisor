@@ -31,7 +31,7 @@
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "dfa5b228d953a9917bd85906a2fee4673f640ff80e8953189014ae5e15b5dde9",
+            "sha256": "8f19bd8095d0970d29cb0a50c8ad022cfea962600a744e11c8b9367cbdad446f",
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
@@ -113,6 +113,10 @@
         "docs/weld/readme.md": {
             "sha256": "76b28c50a71493dca0562058817bcbd8f74773a647a06ef9e204784d5a8e8f2c",
             "source": "weld/README.md"
+        },
+        "guides/connect-to-oracle-on-citadel.md": {
+            "sha256": "d913456c022b75ff8b4ab8d7bd1538cc8f56efd0178f5612cee036313756bcc8",
+            "source": "generator/guides/connect-to-oracle-on-citadel.md"
         },
         "handbook/README.md": {
             "sha256": "c9c229bc78ab706eba8eb478fec1588d63a0fe17aa5a1b4848b43674689bf622",

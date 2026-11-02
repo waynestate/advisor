@@ -112,4 +112,27 @@ final class ContentBundleTest extends TestCase
         $this->assertNull($bundle->handbook('../../composer'));
         $this->assertSame([], $bundle->docsFor('..'));
     }
+
+    public function testGuideLookupsReturnTextAndRejectOddSlugs(): void
+    {
+        $bundle = new ContentBundle(Advisor::dataDir());
+
+        $this->assertContains('connect-to-oracle-on-citadel', $bundle->guides());
+        $text = $bundle->guide('connect-to-oracle-on-citadel');
+        $this->assertIsString($text);
+        $this->assertStringContainsString('# Connect to Oracle on Citadel', $text);
+        $this->assertStringContainsString('ORACLE_USERNAME', $text);
+        $this->assertNull($bundle->guide('../x'));
+        $this->assertNull($bundle->guide('A B'));
+        $this->assertNull($bundle->guide('no-such-guide'));
+    }
+
+    public function testTheOracleGuideCarriesNoDashesOrPasswordValues(): void
+    {
+        $text = (new ContentBundle(Advisor::dataDir()))->guide('connect-to-oracle-on-citadel');
+
+        $this->assertNotNull($text);
+        $this->assertDoesNotMatchRegularExpression('/[\x{2014}\x{2013}]/u', $text, 'An em or en dash slipped into the guide.');
+        $this->assertDoesNotMatchRegularExpression('/^ORACLE_PASSWORD\s*=\s*\S/m', $text, 'A password value, not just a name.');
+    }
 }

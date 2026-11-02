@@ -77,6 +77,7 @@ ADVISOR 0.1 has nine tools. These six are the ones you'll use most; the others a
 
 - `advisor://policy` CREED's policy file
 - `advisor://creed/<chapter>` one per handbook chapter
+- `advisor://guide/<slug>` hand-written guides; first: Connect to Oracle on Citadel
 
 ### Map symbols
 

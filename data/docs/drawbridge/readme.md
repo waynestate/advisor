@@ -170,6 +170,23 @@ The secrets are never written into the rendered Apache config: it says `OIDCClie
 and Apache reads the value from its environment. Keys and secrets are never in git. `OPEN_QUESTIONS.md` lists where
 each real one comes from.
 
+### Try it without Entra
+
+The container rig is the local trial: the real gateway image, a mock OpenID Connect provider standing in for
+Entra, and a tiny echo app. It signs in synthetic users through the mock and checks protected and public paths,
+spoofed headers, forged callbacks, logout and step-up to an authentication context. Nothing in the rig reaches
+Entra.
+
+```powershell
+rig\run.ps1          # Windows
+```
+
+```sh
+sh rig/run.sh        # Linux, macOS
+```
+
+When the rig is green, the next step is the first real sign-in: [ENTRA_TEST.md](ENTRA_TEST.md).
+
 ### Register Drawbridge in Entra ID
 
 One app registration covers every app host. In the Entra admin center, under App registrations:
@@ -195,6 +212,9 @@ One app registration covers every app host. In the Entra admin center, under App
    `SESAME_OAUTH2_ISSUER`; see the WSU values (Playbook) section below.
 6. **Authentication contexts** (only if a path uses `auth_context`): in Conditional Access, create the context
    (`c1` ...), and a policy that targets it with whatever it should demand.
+
+Before the first real sign-in, walk [ENTRA_TEST.md](ENTRA_TEST.md): every setting by name, and what to check for
+each open question E-1 to E-8.
 
 ## Getting the image
 
@@ -411,6 +431,7 @@ store, PHP's share-nothing model cannot see across processes.
 ## Documents
 
 - `BEST_PRACTICES.md`: the short list of rules the gateway holds itself to.
+- `ENTRA_TEST.md`: the first real Entra test: what you need to do.
 - `OPEN_QUESTIONS.md`: what is unanswered, what is missing, what is not built yet.
 - `CHANGELOG.md`: what changed.
 - `site/`: the front page, a static sheet set for the gatehouse (`site/index.html`; see `site/README.md`).
