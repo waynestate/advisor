@@ -1,6 +1,6 @@
 {
     "schema_version": 1,
-    "generated_on": "2026-11-01",
+    "generated_on": "2026-11-02",
     "files": {
         "docs/advisor/best-practices.md": {
             "sha256": "58b060f8a34ef9d95b597f742ec8cb7362dcb43ff0c9871d366c9c3affa2fd8d",
@@ -63,7 +63,7 @@
             "source": "proctor/BEST_PRACTICES.md"
         },
         "docs/proctor/readme.md": {
-            "sha256": "52a043b58b76156133e9c5798e8ae82c47fa34e28ce55be610346edcc9e118b4",
+            "sha256": "c3b578b6b59fa44dc9734312b4a7bf520b008dc808e08dbd37433c00cae41573",
             "source": "proctor/README.md"
         },
         "docs/rollcall/best-practices.md": {
@@ -95,7 +95,7 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "5e6b485fffffe3e3c0d2f91e04dcbabc29e354a1d292b4f598fc51f9b4951205",
+            "sha256": "24965f38ef39a989f6b10818aee657e7fc68692556eeb31fc23b4ed87e17d5bc",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {
