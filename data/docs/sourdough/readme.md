@@ -4,7 +4,7 @@
 
 # Sourdough
 
-![php](docs/readme/badges/php.svg) ![licence](docs/readme/badges/license.svg) ![exit codes](docs/readme/badges/exit-codes.svg) [![GitHub CI](https://github.com/waynestate/sourdough/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/sourdough/actions/workflows/ci.yml)
+![php](docs/readme/badges/php.svg) ![license](docs/readme/badges/license.svg) ![exit codes](docs/readme/badges/exit-codes.svg) [![GitHub CI](https://github.com/waynestate/sourdough/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/sourdough/actions/workflows/ci.yml)
 
 **Feed it and it grows.**
 
@@ -80,7 +80,7 @@ The app name (from `--name`, from the plan, or from the basename of `<dir>`) mus
 | `--laravel --vue` | Laravel + Blade + Vue islands |
 | `--laravel --inertia` (or `--inertia`) | Laravel + Inertia/Vue |
 
-Only `--raw` generates in 0.1. The other permutations print the plan and exit `1` with "not available in this release"; later steps add them.
+`--raw` and `--laravel` generate in 0.1. The other permutations print the plan and exit `1` with "not available in this release"; later steps add them.
 
 Oracle is wired but dormant in every generated app. The settings `ORACLE_USERNAME`, `ORACLE_PASSWORD`, and either `ORACLE_TNS` or `ORACLE_HOST`, `ORACLE_PORT`, `ORACLE_SERVICE_NAME` ship commented out in `.env.example`; while they are empty, nothing connects and nothing errors. Once you fill them in, Laravel apps check the wiring with `php artisan oracle:check`, and raw PHP apps run queries through the `App\Oracle` helper, which takes values only as binds and answers mistakes with plain sentences.
 

@@ -244,7 +244,7 @@ session at logout. Laravel apps use Laravel's own CSRF token instead: the
 | `oidc` | Now. Browser sign-in with OpenID Connect (code flow with PKCE), Microsoft Entra ID first. Needs its own Entra registration per app; for apps off Citadel and APIs. Needs `league/oauth2-client`. |
 
 <details>
-<summary><b>Walk round the shop</b>: the front page's counter, pegboard and duplicator</summary>
+<summary><b>Walk around the shop</b>: the front page's counter, pegboard and duplicator</summary>
 <br>
 
 </details>

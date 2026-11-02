@@ -75,19 +75,19 @@
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "e977d06b858c014aa1ed58e8ab80f925af10d5b6321a2c07e8799fb5f93ac19c",
+            "sha256": "bf038cb4a4328619c54470a45e5bd277ecfdeaf976e80e222665b207a964a134",
             "source": "sesame/BEST_PRACTICES.md"
         },
         "docs/sesame/readme.md": {
-            "sha256": "ba7751ce3a511a4e75541b61983eedd141f6800b73a915576c7aede4022017c6",
+            "sha256": "3aae966b41b703d30363c90635af9832d53fec434c97ac288ccfd29774218c01",
             "source": "sesame/README.md"
         },
         "docs/sourdough/best-practices.md": {
-            "sha256": "3cdb633cd9b2b4f64e438321f7dd948ec7531edb5baf2255c68003053ff0fac8",
+            "sha256": "ab03272abfe2eab8062f8375bc70d4f9ccba9461fffce89e0bbadc7deb8da567",
             "source": "sourdough/BEST_PRACTICES.md"
         },
         "docs/sourdough/readme.md": {
-            "sha256": "ca6ee3953b58a7503ad8cd28c33164d5c3835bb0adbade4e86aa34a736bee914",
+            "sha256": "7b5c9a06b2dd7ffd4930b92eebe862cc6b88b63625e66a3f204096847cde269d",
             "source": "sourdough/README.md"
         },
         "docs/squire/best-practices.md": {
@@ -95,7 +95,7 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "f685edfeb3d4844f413825d1a8d353822008af8df251dc7626437f5477d3c884",
+            "sha256": "337ce44c1eeece7dc9a6acf2005ad94bc1e5bada76fb3613d738af077e42f62b",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {
