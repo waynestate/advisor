@@ -26,3 +26,32 @@ composer-ci:
   script:
     - composer install --no-interaction --no-progress --prefer-dist
     - composer ci
+
+# content-drift needs a schedule created in the project's CI settings by a maintainer
+# (Settings, CI/CD, Schedules), and the job token needs read access to the sibling repos.
+content-drift:
+  image: composer:2.10.3
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: always
+    - when: manual
+    - when: never
+  script:
+    - composer install --no-interaction --no-progress --prefer-dist
+    - mkdir -p stack
+    - |
+      php -r '
+        $data = json_decode(file_get_contents("data/projects.json"), true);
+        foreach ($data["projects"] as $project) {
+            $id = $project["id"];
+            $url = "https://gitlab-ci-token:" . getenv("CI_JOB_TOKEN") . "@" . getenv("CI_SERVER_HOST") . "/" . getenv("CI_PROJECT_NAMESPACE") . "/" . $id . ".git";
+            passthru("git clone --depth 1 " . escapeshellarg($url) . " " . escapeshellarg("stack/" . $id), $code);
+            if ($code !== 0) {
+                fwrite(STDERR, "Could not clone " . $id . "\n");
+                exit(1);
+            }
+        }
+      '
+    - export ADVISOR_STACK_DIR="$CI_PROJECT_DIR/stack"
+    - composer content:drift

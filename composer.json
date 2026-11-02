@@ -53,6 +53,10 @@
         "analyse": "phpstan analyse --memory-limit=1G",
         "content:generate": "@php bin/advisor content:generate",
         "content:verify": "@php bin/advisor content:verify",
+        "content:drift": [
+            "@php -r \"if(trim((string)getenv('ADVISOR_STACK_DIR'))===''){echo 'ADVISOR_STACK_DIR=<folder holding the stack repos> composer content:drift'.PHP_EOL;exit(1);}\"",
+            "@php bin/advisor content:generate --check"
+        ],
         "site:agent-ready": "php bin/agent-ready.php",
         "site:agent-ready-check": "php bin/agent-ready.php --check",
         "ci": [
@@ -68,6 +72,7 @@
     },
     "scripts-descriptions": {
         "ci": "Run every CI check: manifest, bundled content, tests, style, agent-ready files, static analysis, audit",
+        "content:drift": "Fail when data/ no longer matches the stack repos in ADVISOR_STACK_DIR; without the variable it prints how to run it and exits 1.",
         "site:agent-ready": "Rewrite the Markdown twins, llms.txt, llms-full.txt, robots.txt and sitemap.xml in site/ (Squire's agent-ready kit).",
         "site:agent-ready-check": "Fail when the agent-ready files are stale, a page lacks its Markdown link, a prompt drifts from the docs, or the kit was edited here."
     },

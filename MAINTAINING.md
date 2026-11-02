@@ -72,6 +72,21 @@ wayne-ui clone to that repository's main before a resync.
 Hand-written guides live in `generator/guides/`, one Markdown file per slug, served as `advisor://guide/<slug>`.
 Edit them there, then run `content:generate`.
 
+## Catch stale bundled docs
+
+`composer content:drift` compares `data/` with a checkout of the stack repos and exits 1 when they no longer agree.
+It takes the folder from `ADVISOR_STACK_DIR`; without it, it prints how to run it and exits 1:
+
+    ADVISOR_STACK_DIR=<folder holding the stack repos> composer content:drift
+
+It writes nothing. On drift it lists the files that moved; regenerate with `composer content:generate` and review
+the diff before committing.
+
+The GitLab job `content-drift` does the same in CI: it clones the repos listed in `data/projects.json` with the job
+token, puts them in one folder, sets `ADVISOR_STACK_DIR` and runs the check. It is manual or scheduled and allowed
+to fail, so it cannot block main. Run the drift check before every tag: a release must carry docs that still match
+the repos it advises on.
+
 ## Releasing
 
 ADVISOR is public, so its bundle must not carry internal names. The public-posture test always checks generic shapes;
