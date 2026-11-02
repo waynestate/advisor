@@ -24,7 +24,8 @@ Development happens on Wayne State's GitLab; this repository is a release mirror
 
 ADVISOR is an MCP server for the Wayne State application stack, a bit like Laravel Boost but for WSU. It orients a
 developer who is new to the stack and gives their coding agent nine read-only tools into it: the CREED standards and
-policy, PROCTOR results, the upgrade path, the WayneUI markup contract, SESAME and HELMET guidance, and the parts list.
+policy, PROCTOR results, the upgrade path, the WayneUI markup contract and migration guide, SESAME and HELMET
+guidance, and the parts list.
 Ask it "which PHP can I build on?" and it answers from the policy file, with the date and the source, instead of from
 whatever the model remembers.
 
@@ -114,9 +115,9 @@ Nine tools, all read-only. Each one says where its answer came from:
 
 | Tool | Does |
 |---|---|
-| `list_projects` | The stack's projects, WayneUI first, with built or proposed state. |
-| `get_project_status` | One project: state, package, PHP constraint, its floor under today's policy, next step. |
-| `read_project_docs` | A project's README, best practices, or (WayneUI only) markup contract, paged. |
+| `list_projects` | The stack's projects, WayneUI first, with built or proposed state, package and version. |
+| `get_project_status` | One project: state, package, version, PHP constraint, its floor under today's policy, next step. |
+| `read_project_docs` | A project's README, best practices, or (WayneUI only) markup contract and 1.x to 2.x migration guide, paged. |
 | `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. |
 | `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
 | `owner_of` | Answers "which project owns X?" from the bundled ownership table, with a fuzzy topic match. |
@@ -198,10 +199,12 @@ The advisor will see you now.
 
 ### Served content
 
-The handbook, policy, project docs and WayneUI contract in `data/` are generated from the sibling stack repositories by
-`content:generate` and verified at start-up against `data/manifest.json` (a SHA-256 for every file). If a file does not
-match, the server refuses to start rather than serve it. Files are cleaned on the way in: line endings are normalised
-and invisible characters (the TAG block, zero-width and bidirectional controls) are stripped.
+The handbook, policy, project docs, the WayneUI markup contract and WayneUI's 1.x to 2.x migration guide in `data/`
+are generated from the sibling stack repositories by `content:generate` and verified at start-up against
+`data/manifest.json` (a SHA-256 for every file). If a file does not match, the server refuses to start rather than
+serve it. Files are cleaned on the way in: line endings are normalised and invisible characters (the TAG block,
+zero-width and bidirectional controls) are stripped. Each project entry also carries its version when the project
+publishes one (composer.json, else package.json, else the newest CHANGELOG heading).
 
 Beside the generated docs, hand-written guides are kept by hand in `generator/guides/` (one Markdown file per slug),
 the same way the ownership table is kept. Each is bundled into `data/guides/` and served as `advisor://guide/`;

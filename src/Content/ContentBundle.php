@@ -20,7 +20,7 @@ final class ContentBundle
 {
     public const MANIFEST = 'manifest.json';
 
-    public const DOCS = ['readme' => 'md', 'best-practices' => 'md', 'contract' => 'json'];
+    public const DOCS = ['readme' => 'md', 'best-practices' => 'md', 'contract' => 'json', 'migrating' => 'md'];
 
     /**
      * Approved stack names that have no repository in the parts list yet. An

@@ -12,8 +12,9 @@ keeping its bundled content fresh.
 - Runtime dependencies: `mcp/sdk` (pinned), `opis/json-schema`, `symfony/console`, `symfony/process`,
   `composer/semver`, `psr/log`. No other stack package at runtime: the stack's content is bundled in `data/`.
 - **`data/` is generated, never hand-edited:** `policy.json` and `handbook/` from CREED, `projects.json` from each
-  project repo and `generator/projects.seed.json`, plus each project's README and best practices. `data/manifest.json`
-  holds a SHA-256 for every file, and the server refuses to start if one does not match.
+  project repo and `generator/projects.seed.json` (state, package, version, PHP floor), plus each project's README,
+  best practices and any extra docs its seed names: WayneUI's markup contract and its 1.x to 2.x migration guide.
+  `data/manifest.json` holds a SHA-256 for every file, and the server refuses to start if one does not match.
 - Every tool is read-only and says so (`readOnlyHint`). Nothing here needs a secret.
 
 ## Where it lives
@@ -56,9 +57,17 @@ step.
 ## Keeping the content fresh
 
 Run `content:generate` after any change that lands in CREED's policy or handbook, a project's README or best
-practices, or the projects seed. Commit the regenerated `data/` with the source commits in the message. To add a
-project to the parts list, add its `name` and `tagline` to `generator/projects.seed.json`, then regenerate and
-`stack-parts --write`.
+practices, an extra doc, or the projects seed. Commit the regenerated `data/` with the source commits in the message.
+To add a project to the parts list, add its `name` and `tagline` to `generator/projects.seed.json`, then regenerate
+and `stack-parts --write`.
+
+Beyond a project's README and best practices, a seed may bundle further files under `extra_docs` (a map of slug to
+path in the project); each lands in `data/docs/<id>/<slug>.md` and in the project's docs list, and a missing file is
+skipped, not an error. WayneUI's entry bundles its MIGRATING.md as the `migrating` doc.
+
+The generator reads each project's folder from beside the other repos, so a stale clone gives stale docs. WayneUI's
+development happens on its GitLab repository and the checked-out copy is only a mirror of it: fast-forward the local
+wayne-ui clone to that repository's main before a resync.
 
 Hand-written guides live in `generator/guides/`, one Markdown file per slug, served as `advisor://guide/<slug>`.
 Edit them there, then run `content:generate`.

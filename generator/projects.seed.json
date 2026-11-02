@@ -1,5 +1,5 @@
 {
-    "_comment": "The parts list. Hand-written roles and next steps; the generator adds state, package and PHP floor from each sibling repository.",
+    "_comment": "The parts list. Hand-written roles and next steps; the generator adds state, package, version and PHP floor from each sibling repository. A project may name further bundled files under extra_docs (slug to path in the project).",
     "projects": [
         {
             "id": "wayne-ui",
@@ -8,7 +8,10 @@
             "tagline": "interface (project 0)",
             "role": "The interface layer: brand tokens, CSS, Vue, Blade and raw-PHP components, and a runnable accessibility gate. Four consumer paths that must agree: static HTML, raw PHP, Laravel with Blade, and Vue (SPA or Inertia).",
             "next_step": "Build every screen from its components; read its markup contract before writing markup by hand.",
-            "contract": "contract/markup-contract.json"
+            "contract": "contract/markup-contract.json",
+            "extra_docs": {
+                "migrating": "MIGRATING.md"
+            }
         },
         {
             "id": "creed",

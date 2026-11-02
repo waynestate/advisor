@@ -900,7 +900,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:26"
+            "source": "handbook/databases.md:35"
         },
         {
             "id": "databases-2",
@@ -914,7 +914,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:29"
+            "source": "handbook/databases.md:38"
         },
         {
             "id": "databases-3",
@@ -926,7 +926,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:32"
+            "source": "handbook/databases.md:41"
         },
         {
             "id": "databases-4",
@@ -940,7 +940,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:34"
+            "source": "handbook/databases.md:43"
         },
         {
             "id": "databases-5",
@@ -954,7 +954,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:36"
+            "source": "handbook/databases.md:45"
         },
         {
             "id": "databases-6",
@@ -968,7 +968,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:38"
+            "source": "handbook/databases.md:47"
         },
         {
             "id": "databases-7",
@@ -982,7 +982,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:40"
+            "source": "handbook/databases.md:49"
         },
         {
             "id": "databases-8",
@@ -996,7 +996,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:43"
+            "source": "handbook/databases.md:52"
         },
         {
             "id": "databases-9",
@@ -1010,7 +1010,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:45"
+            "source": "handbook/databases.md:54"
         },
         {
             "id": "databases-10",
@@ -1024,7 +1024,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:52"
+            "source": "handbook/databases.md:61"
         },
         {
             "id": "databases-11",
@@ -1038,7 +1038,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:53"
+            "source": "handbook/databases.md:62"
         },
         {
             "id": "databases-12",
@@ -1052,7 +1052,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:54"
+            "source": "handbook/databases.md:63"
         },
         {
             "id": "databases-13",
@@ -1066,7 +1066,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:55"
+            "source": "handbook/databases.md:64"
         },
         {
             "id": "databases-14",
@@ -1080,7 +1080,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:56"
+            "source": "handbook/databases.md:65"
         },
         {
             "id": "databases-15",
@@ -1094,7 +1094,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:57"
+            "source": "handbook/databases.md:66"
         },
         {
             "id": "databases-16",
@@ -1108,7 +1108,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:58"
+            "source": "handbook/databases.md:67"
         },
         {
             "id": "databases-17",
@@ -1122,7 +1122,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:62"
+            "source": "handbook/databases.md:71"
         },
         {
             "id": "databases-18",
@@ -1136,7 +1136,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:63"
+            "source": "handbook/databases.md:72"
         },
         {
             "id": "databases-19",
@@ -1150,7 +1150,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:64"
+            "source": "handbook/databases.md:73"
         },
         {
             "id": "databases-20",
@@ -1164,7 +1164,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:65"
+            "source": "handbook/databases.md:74"
         },
         {
             "id": "databases-21",
@@ -1178,7 +1178,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:66"
+            "source": "handbook/databases.md:75"
         },
         {
             "id": "databases-22",
@@ -1192,7 +1192,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:70"
+            "source": "handbook/databases.md:79"
         },
         {
             "id": "databases-23",
@@ -1206,7 +1206,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:71"
+            "source": "handbook/databases.md:80"
         },
         {
             "id": "databases-24",
@@ -1218,7 +1218,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:93"
+            "source": "handbook/databases.md:102"
         },
         {
             "id": "databases-25",
@@ -1230,7 +1230,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:94"
+            "source": "handbook/databases.md:103"
         },
         {
             "id": "databases-26",
@@ -1242,7 +1242,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:96"
+            "source": "handbook/databases.md:105"
         },
         {
             "id": "databases-27",
@@ -1254,7 +1254,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:97"
+            "source": "handbook/databases.md:106"
         },
         {
             "id": "databases-28",
@@ -1266,7 +1266,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:99"
+            "source": "handbook/databases.md:108"
         },
         {
             "id": "databases-29",
@@ -1278,7 +1278,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:101"
+            "source": "handbook/databases.md:110"
         },
         {
             "id": "databases-30",
@@ -1292,7 +1292,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:103"
+            "source": "handbook/databases.md:112"
         },
         {
             "id": "databases-31",
@@ -1306,7 +1306,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:105"
+            "source": "handbook/databases.md:114"
         },
         {
             "id": "databases-32",
@@ -1320,7 +1320,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:107"
+            "source": "handbook/databases.md:116"
         },
         {
             "id": "databases-33",
@@ -1334,7 +1334,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:109"
+            "source": "handbook/databases.md:118"
         },
         {
             "id": "databases-34",
@@ -1348,7 +1348,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:111"
+            "source": "handbook/databases.md:120"
         },
         {
             "id": "databases-35",
@@ -1362,7 +1362,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:112"
+            "source": "handbook/databases.md:121"
         },
         {
             "id": "databases-36",
@@ -1376,7 +1376,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:114"
+            "source": "handbook/databases.md:123"
         },
         {
             "id": "databases-37",
@@ -1390,7 +1390,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:116"
+            "source": "handbook/databases.md:125"
         },
         {
             "id": "databases-38",
@@ -1404,7 +1404,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:117"
+            "source": "handbook/databases.md:126"
         },
         {
             "id": "databases-39",
@@ -1418,7 +1418,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:119"
+            "source": "handbook/databases.md:128"
         },
         {
             "id": "databases-40",
@@ -1432,7 +1432,21 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:120"
+            "source": "handbook/databases.md:129"
+        },
+        {
+            "id": "databases-41",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "MySQL 9.7, native pluggable authentication: https://dev.mysql.com/doc/refman/9.7/en/native-pluggable-authentication.html",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:131"
         },
         {
             "id": "dependencies-1",

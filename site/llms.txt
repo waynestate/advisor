@@ -14,7 +14,8 @@ Development happens on Wayne State's GitLab; this repository is a release mirror
 
 ADVISOR is an MCP server for the Wayne State application stack, a bit like Laravel Boost but for WSU. It orients a
 developer who is new to the stack and gives their coding agent nine read-only tools into it: the CREED standards and
-policy, PROCTOR results, the upgrade path, the WayneUI markup contract, SESAME and HELMET guidance, and the parts list.
+policy, PROCTOR results, the upgrade path, the WayneUI markup contract and migration guide, SESAME and HELMET
+guidance, and the parts list.
 Ask it "which PHP can I build on?" and it answers from the policy file, with the date and the source, instead of from
 whatever the model remembers.
 

@@ -72,6 +72,23 @@ final class ToolsTest extends TestCase
         $this->assertStringContainsString('contract', $outcome->text);
     }
 
+    public function testReadProjectDocsServesTheWayneUiMigrationGuide(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'read_project_docs', ['project' => 'wayne-ui', 'doc' => 'migrating']));
+
+        $this->assertStringStartsWith('# Upgrading from WayneUI 1.x', $data['text']);
+        $this->assertSame('wayne-ui/MIGRATING.md', $data['source']);
+    }
+
+    public function testAMissingMigratingDocNamesWhatIsAvailable(): void
+    {
+        $outcome = $this->call(Boot::core(), 'read_project_docs', ['project' => 'proctor', 'doc' => 'migrating']);
+
+        $this->assertTrue($outcome->isError);
+        $this->assertStringContainsString('migrating', $outcome->text);
+        $this->assertStringContainsString('readme, best-practices', $outcome->text);
+    }
+
     public function testGetProjectStatusReportsStateAndNextStep(): void
     {
         $data = $this->data($this->call(Boot::core(), 'get_project_status', ['project' => 'proctor']));
@@ -79,6 +96,26 @@ final class ToolsTest extends TestCase
         $this->assertSame('proctor', $data['project']);
         $this->assertNotEmpty($data['state']);
         $this->assertNotEmpty($data['next_step']);
+    }
+
+    public function testListProjectsShowsEachProjectsVersion(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'list_projects'));
+        $versions = [];
+        foreach ($data['projects'] as $project) {
+            $this->assertArrayHasKey('version', $project, $project['id']);
+            $versions[$project['id']] = $project['version'];
+        }
+
+        $this->assertSame('2.0.8', $versions['wayne-ui']);
+    }
+
+    public function testGetProjectStatusShowsTheVersion(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'get_project_status', ['project' => 'wayne-ui']));
+
+        $this->assertSame('waynestate/wayne-ui', $data['package']);
+        $this->assertSame('2.0.8', $data['version']);
     }
 
     public function testPolicyLookupUsesTheFixedDay(): void

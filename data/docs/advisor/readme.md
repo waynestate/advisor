@@ -126,7 +126,12 @@ The groups split by what they may start: `stack` never starts a program, `procto
 `vendor/bin/proctor`, and `booster` starts Booster's read-only `plan` (never `run`). Set `ADVISOR_GROUPS=stack`
 when you want ADVISOR as pure reference material.
 
-Resources: `advisor://policy` and one `advisor://creed/<chapter>` per handbook chapter.
+| Resource | Serves |
+|---|---|
+| `advisor://policy` | CREED's policy file. |
+| `advisor://creed/<chapter>` | One per handbook chapter. |
+| `advisor://guide/<slug>` | Hand-written guides; the first is "Connect to Oracle on Citadel". |
+
 Prompts: `orient_me` and `plan_upgrade`.
 
 Here is what that looks like when you ask. Each numbered control point is one of the tools above, with the arguments the
@@ -204,6 +209,10 @@ The handbook, policy, project docs and WayneUI contract in `data/` are generated
 `content:generate` and verified at start-up against `data/manifest.json` (a SHA-256 for every file). If a file does not
 match, the server refuses to start rather than serve it. Files are cleaned on the way in: line endings are normalised
 and invisible characters (the TAG block, zero-width and bidirectional controls) are stripped.
+
+Beside the generated docs, hand-written guides are kept by hand in `generator/guides/` (one Markdown file per slug),
+the same way the ownership table is kept. Each is bundled into `data/guides/` and served as `advisor://guide/<slug>`;
+the first is "Connect to Oracle on Citadel".
 
 To refresh it, with the stack repos checked out side by side:
 

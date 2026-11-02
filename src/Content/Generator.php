@@ -50,6 +50,8 @@ final class Generator
         ['#\bADR-\d{4}\b#', 'an ADR'],
         // "the coordination repo[itory]" -> "the stack's design documents"
         ['#\b(?:the )?coordination repo(?:sitory)?#', "the stack's design documents"],
+        // scheme://user:secret@host -> scheme://user:<token>@host; a credential never ships in the bundle
+        ['#([a-z][a-z0-9+.-]*://)([^/\s:@]+):([^/\s@"\']+)@#i', '$1$2:<token>@'],
     ];
 
     private readonly Denylist $denylist;
@@ -259,6 +261,19 @@ final class Generator
         if ($contractRelative !== null && is_file($dir . '/' . $contractRelative)) {
             $docs["docs/{$id}/contract.json"] = ['content' => $this->clean((string) file_get_contents($dir . '/' . $contractRelative)), 'source' => "{$id}/{$contractRelative}"];
         }
+        // A seed may name further files to bundle, as a map of slug to path inside the project.
+        // Each lands at docs/<id>/<slug>.md; a missing file is skipped, not an error.
+        $extraDocs = is_array($seed['extra_docs'] ?? null) ? $seed['extra_docs'] : [];
+        foreach ($extraDocs as $slug => $relative) {
+            if (!is_string($slug) || !is_string($relative) || $slug === '' || $relative === '') {
+                continue;
+            }
+            $path = $dir . '/' . $relative;
+            if (!is_file($path)) {
+                continue;
+            }
+            $docs["docs/{$id}/{$slug}.md"] = ['content' => $this->clean((string) file_get_contents($path)), 'source' => "{$id}/{$relative}"];
+        }
 
         $entry = [
             'id' => $id,
@@ -268,6 +283,7 @@ final class Generator
             'role' => (string) $seed['role'],
             'state' => $built ? 'built' : 'proposed',
             'package' => $package,
+            'version' => self::version($dir),
             'php' => $php,
             'next_step' => (string) $seed['next_step'],
             'docs' => array_map(
@@ -277,6 +293,53 @@ final class Generator
         ];
 
         return [$entry, $docs];
+    }
+
+    /**
+     * The project's own version, or null when none is published: the
+     * composer.json version key if present, else the package.json version,
+     * else the newest "## [x.y.z]" or "## x.y.z" heading in CHANGELOG.md.
+     * It never guesses.
+     */
+    private static function version(string $dir): ?string
+    {
+        $composer = $dir . '/composer.json';
+        if (is_file($composer)) {
+            try {
+                $data = Json::decodeFile($composer);
+            } catch (RuntimeException) {
+                $data = [];
+            }
+            if (is_string($data['version'] ?? null) && $data['version'] !== '') {
+                return $data['version'];
+            }
+        }
+        $package = $dir . '/package.json';
+        if (is_file($package)) {
+            try {
+                $data = Json::decodeFile($package);
+            } catch (RuntimeException) {
+                $data = [];
+            }
+            if (is_string($data['version'] ?? null) && $data['version'] !== '') {
+                return $data['version'];
+            }
+        }
+        $changelog = $dir . '/CHANGELOG.md';
+        if (is_file($changelog)) {
+            preg_match_all('/^## \[?(\d+\.\d+\.\d+)\]?/m', (string) file_get_contents($changelog), $matches);
+            $newest = null;
+            foreach ($matches[1] as $candidate) {
+                if ($newest === null || version_compare($candidate, $newest, '>')) {
+                    $newest = $candidate;
+                }
+            }
+            if ($newest !== null) {
+                return $newest;
+            }
+        }
+
+        return null;
     }
 
     private function read(string $relative): string

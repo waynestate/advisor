@@ -19,7 +19,7 @@ final class GetProjectStatus
         return new ToolDefinition(
             name: 'get_project_status',
             title: 'Get a project\'s status',
-            description: 'Reports one stack project\'s state (built or proposed), its Composer package, the PHP version it requires and whether that PHP floor is in security support today according to the bundled CREED policy, plus the suggested next step. Read-only. It describes the stack project, not your app; use run_proctor_check to measure your app.',
+            description: 'Reports one stack project\'s state (built or proposed), its Composer package, its version when it publishes one, the PHP version it requires and whether that PHP floor is in security support today according to the bundled CREED policy, plus the suggested next step. Read-only. It describes the stack project, not your app; use run_proctor_check to measure your app.',
             inputSchema: [
                 'type' => 'object',
                 'properties' => [
@@ -46,6 +46,7 @@ final class GetProjectStatus
                     'name' => $project['name'],
                     'state' => $project['state'],
                     'package' => $project['package'],
+                    'version' => $project['version'] ?? null,
                     'php_constraint' => $constraint,
                     'php_floor' => $floor,
                     'php_floor_state' => $floorState?->value,

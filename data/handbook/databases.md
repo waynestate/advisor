@@ -13,6 +13,15 @@ upgraded. They are a bridge, not the fix: the fix is the upgrade. Code that
 follows them runs unchanged on 8.4, so the move can be made With Arms Wide
 Open.
 
+## Which MySQL lines the policy lists
+
+The policy lists the LTS lines, 8.4 and 9.7, for current use. It keeps the
+older lines, 5.6, 5.7 and 8.0, only to say that they are end of life. In
+MySQL 8.4 and later the default authentication plugin is
+`caching_sha2_password`: `mysql_native_password` is disabled by default in
+8.4 and removed in 9.0. An app that MUST reach a server on the older plugin
+MUST set the server's plugin explicitly in its database config.
+
 ## Grace period
 
 An app MAY stay on a database version for 90 days after it leaves support, the
@@ -119,3 +128,5 @@ PROCTOR will flag the patterns in the avoid list above. Not yet.
 - Oracle MySQL end-of-life notices: https://www.mysql.com/support/eol-notice.html
 - MySQL 5.6 TLS protocols:
   https://docs.oracle.com/cd/E17952_01/mysql-5.6-en/encrypted-connection-protocols-ciphers.html
+- MySQL 9.7, native pluggable authentication:
+  https://dev.mysql.com/doc/refman/9.7/en/native-pluggable-authentication.html
