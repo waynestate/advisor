@@ -69,6 +69,18 @@ final class CoreModule implements Module
                 read: static fn(): string => $content->handbook($id) ?? '',
             );
         }
+        foreach ($content->guides() as $slug) {
+            $first = strtok((string) $content->guide($slug), "\n");
+            $title = is_string($first) && str_starts_with($first, '# ') ? trim(substr($first, 2)) : $slug;
+            $resources[] = new ResourceDefinition(
+                uri: 'advisor://guide/' . $slug,
+                name: 'guide-' . $slug,
+                title: $title,
+                description: 'A hand-written ADVISOR guide',
+                mimeType: 'text/markdown',
+                read: static fn(): string => $content->guide($slug) ?? '',
+            );
+        }
 
         return $resources;
     }
