@@ -1,6 +1,6 @@
 # WELD best practices
 
-Checked against the code on 2026-10-28. The Laravel base has landed since the research draft was written, so the tags below reflect what the repository does today, not what the draft planned.
+Checked against the code on 2026-11-02. The Laravel base has landed since the research draft was written, so the tags below reflect what the repository does today, not what the draft planned.
 
 ## What this covers
 
@@ -19,7 +19,7 @@ Each practice ends with exactly one tag.
 | `Documented` | Written down in the README or a config file, with no check behind it. |
 | `Not yet` | A gap. |
 
-The tags describe the repo as it stands on 2026-10-28. The Laravel base has landed: the starter kit is in, the password auth (register, login, password reset, two-factor) is removed on purpose, CI runs on both GitLab and GitHub from the same `composer ci` contract, and the stack defaults (PHP floor, stderr logging, database sessions and cache, the 191-character index cap) are set. The stack packages are partly wired in: SESAME and HELMET sit in `require`, CREED and PROCTOR in `require-dev`, and Preflight, Pinstripe and WayneUI are not yet Composer or npm dependencies, so the practices that depend on those three are `Not yet` and say which package they wait on. The `Stack:` line on each entry says what the tag should become and which tool owns it.
+The tags describe the repo as it stands on 2026-11-02. Since 2026-10-28 the Squire deploy kit in `deploy/` (refreshed to 0.4.0) brought a Dockerfile, an entrypoint and an idempotent release script for the Citadel path, Oracle wiring arrived (`yajra/laravel-oci8`, `php artisan oracle:check`, `compose.oracle.yaml`), PROCTOR moved to `^0.3` with the strict WayneUI copies gate, and the suite gained `StackIntegrationTest` and `ProctorCheckTest`. The Laravel base has landed: the starter kit is in, the password auth (register, login, password reset, two-factor) is removed on purpose, CI runs on both GitLab and GitHub from the same `composer ci` contract, and the stack defaults (PHP floor, stderr logging, database sessions and cache, the 191-character index cap) are set. The stack packages are partly wired in: SESAME and HELMET sit in `require`, CREED and PROCTOR in `require-dev`, and Preflight, Pinstripe and WayneUI are not yet Composer or npm dependencies, so the practices that depend on those three are `Not yet` and say which package they wait on. The `Stack:` line on each entry says what the tag should become and which tool owns it.
 
 ---
 
@@ -29,7 +29,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Remove the Laravel starter kit's Fortify routes and actions (`/login`, `/register`, `/forgot-password`, 2FA). SESAME's `findOrImportUser(Identity)` is the only way in.
 - **Why:** Two login systems mean two session rules and two audit trails, and the kit's Fortify registers its routes automatically.
 - **Sources:** [Laravel starter kits](https://laravel.com/docs/13.x/starter-kits) ("All starter kits use Laravel Fortify").
-- **Stack:** `Documented`. SESAME is a dependency (`composer.json:22`), the starter kit's Fortify routes are removed, and `tests/Feature/AuthRoutesTest.php` fails if WELD grows its own auth routes. Target `Checked`: a PROCTOR check and a feature test over `php artisan route:list --json`.
+- **Stack:** `Documented`. SESAME is a dependency (`composer.json:23`), the starter kit's Fortify routes are removed, and `tests/Feature/AuthRoutesTest.php` fails if WELD grows its own auth routes. Target `Checked`: a PROCTOR check and a feature test over `php artisan route:list --json`.
 
 ### W2. WayneUI is the only component source
 - **Practice:** Pages use WayneUI components and tokens. Do not keep the kit's shadcn-vue components or Tailwind theme as a second design system.
@@ -47,7 +47,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Use `@inertiajs/vue3` ^3 and `inertiajs/inertia-laravel` ^3. Do not import Axios, call `Inertia::lazy()` (use `Inertia::optional()`), read `data-page`, or `require()` Inertia packages.
 - **Why:** Inertia 3 removed all of these; code copied from older tutorials fails or half-works.
 - **Sources:** [Inertia v3 upgrade guide](https://inertiajs.com/docs/v3/getting-started/upgrade-guide.md).
-- **Stack:** `Not yet`. WELD is on Inertia 2, not 3: `composer.json:17` pins `inertiajs/inertia-laravel: ^2.0` and `package.json:27` pins `@inertiajs/vue3: ^2.0.0-beta.3`. The removed APIs are not used (no `axios` dependency, no `Inertia::lazy`, no `data-page`), so the migration is a version bump, not a rewrite. Target `Checked`: ESLint `no-restricted-imports` for `axios`, a grep check for `Inertia::lazy`, and Composer constraints.
+- **Stack:** `Not yet`. WELD is on Inertia 2, not 3: `composer.json:18` pins `inertiajs/inertia-laravel: ^2.0` and `package.json:27` pins `@inertiajs/vue3: ^2.0.0-beta.3`. The removed APIs are not used (no `axios` dependency, no `Inertia::lazy`, no `data-page`), so the migration is a version bump, not a rewrite. Target `Checked`: ESLint `no-restricted-imports` for `axios`, a grep check for `Inertia::lazy`, and Composer constraints.
 
 ### W5. Commit `.ai/rules`; ignore what Boost regenerates
 - **Practice:** Laravel Boost is a `require-dev` package. Commit `.ai/rules/` (project rules). Ignore `.mcp.json`, `boost.json` and the generated block of `CLAUDE.md`/`AGENTS.md`. WELD's own conventions go in `.ai/guidelines/` and each stack package may ship `resources/boost/guidelines/core.blade.php` and `resources/boost/skills/*/SKILL.md`.
@@ -59,7 +59,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Sail's own description is "Laravel's default Docker development environment". It is not a production image and WELD never deploys it.
 - **Why:** Sail's runtime images carry dev tooling and a bash-script CLI.
 - **Sources:** [Laravel Sail](https://laravel.com/docs/13.x/sail).
-- **Stack:** `Documented`. `composer.json:29` keeps `laravel/sail` in `require-dev`, so it is a local tool, not a runtime dependency. Target `Checked`: PROCTOR flags `laravel/sail` outside `require-dev` and any `vendor/laravel/sail` path in a production Dockerfile.
+- **Stack:** `Documented`. `composer.json:31` keeps `laravel/sail` in `require-dev`, so it is a local tool, not a runtime dependency. Target `Checked`: PROCTOR flags `laravel/sail` outside `require-dev` and any `vendor/laravel/sail` path in a production Dockerfile.
 
 ### W7. The supported dev path is Compose driven by native scripts, not Sail
 - **Practice:** Sail runs on Windows "via WSL2". The stack rule is that Windows needs no bash and no WSL. Ship `weld.ps1` and `weld.sh` (or one PHP command) over a plain `compose.yaml`; Sail stays an unsupported convenience.
@@ -71,7 +71,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Build one image. Run it as `web`, `worker` and `scheduler` by changing the command only (plus `ssr` when Inertia SSR is on). On Compose these are services; on OpenShift a Deployment, a Deployment and a CronJob.
 - **Why:** One build means one tested artifact, and the process types stay identical in code.
 - **Sources:** [Laravel queues](https://laravel.com/docs/13.x/queues), [scheduling](https://laravel.com/docs/13.x/scheduling), [Inertia SSR](https://laravel.com/docs/13.x/starter-kits).
-- **Stack:** `Not yet`. There is no Dockerfile yet. Target `Checked`: Preflight portability boots the image with each command.
+- **Stack:** `Not yet`. A Dockerfile now exists (`deploy/.squire/Dockerfile`, a local mirror of the image Citadel generates), but it runs one process type only: `CMD ["apache2-foreground"]` (`deploy/.squire/Dockerfile:40`), with no worker or scheduler variant. Target `Checked`: Preflight portability boots the image with each command.
 
 ## 2. The container contract
 
@@ -85,25 +85,25 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Build time may run `route:cache`, `view:cache`, `event:cache`. `php artisan optimize` at start is acceptable if the build did not freeze config.
 - **Why:** A build-time `config:cache` freezes the build machine's environment into the image.
 - **Sources:** [Laravel deployment](https://laravel.com/docs/13.x/deployment).
-- **Stack:** `Not yet`. There is no Dockerfile or entrypoint yet. Target `Checked`: PROCTOR scans the Dockerfile.
+- **Stack:** `Documented`. The image build runs no artisan commands: `deploy/build.sh:49-51` fails if app source is present at build time, and the release step runs `php artisan optimize` once the environment is in place (`deploy/scripts/release.sh:259-265`), so config is cached at deploy, never at build. Target `Checked`: PROCTOR scans the Dockerfile.
 
 ### W11. `/up` is the liveness endpoint, and it never checks the database
 - **Practice:** Keep Laravel's `/up` (200 when the app boots). It must answer for any `Host`, over plain HTTP, before trusted hosts, redirects, sessions, CSP and auth. Put database and cache checks on a separate `/ready` endpoint, through the `DiagnosingHealth` event or a package.
 - **Why:** A database blip must not make the orchestrator kill every web container.
 - **Sources:** [Laravel deployment: the health route](https://laravel.com/docs/13.x/deployment).
-- **Stack:** `Documented`. `bootstrap/app.php:13` sets the health route to `/up`, which answers 200 when the framework boots and touches no database. The `/ready` endpoint is not built yet. Target `Checked`: the portability job requests `/up` with `Host: 10.1.2.3:8080` and no forwarded headers, and again with the database stopped.
+- **Stack:** `Documented`. `bootstrap/app.php:15` sets the health route to `/up`, which answers 200 when the framework boots and touches no database. The `/ready` endpoint is not built yet. Target `Checked`: the portability job requests `/up` with `Host: 10.1.2.3:8080` and no forwarded headers, and again with the database stopped.
 
 ### W12. Image health check matches the platform
 - **Practice:** Put a `HEALTHCHECK` in the Dockerfile that calls `/up` with a tool the image has (`curl` or `wget`). On Coolify a Dockerfile `HEALTHCHECK` takes precedence over the dashboard check, and a dashboard check needs `curl` or `wget` inside the container.
 - **Why:** Traefik will not route to an unhealthy container, and a missing tool makes a healthy app look dead.
 - **Sources:** [Coolify health checks](https://coolify.io/docs/knowledge-base/health-checks).
-- **Stack:** `Not yet`. There is no Dockerfile yet. Target `Checked`: Preflight portability runs `docker inspect` for a health status of `healthy`.
+- **Stack:** `Documented`. The Dockerfile carries a `HEALTHCHECK` (`deploy/.squire/Dockerfile:37`) whose script asks the local web server for `/up` by default and reads no database (`deploy/health.php:27`, `deploy/health.php:13`). Target `Checked`: Preflight portability runs `docker inspect` for a health status of `healthy`.
 
 ### W13. Non-root, arbitrary UID in group 0, listen on 8080
 - **Practice:** Declare a non-root `USER`. Make writable paths group 0 and group-writable (`chgrp -R 0`, `chmod -R g=u`) for `storage/` and `bootstrap/cache/`. Do not depend on a `www-data` entry. Honour `PORT`.
 - **Why:** OpenShift runs a random UID in group 0 with all capabilities dropped.
 - **Sources:** [serversideup/php](https://serversideup.net/open-source/docker-php) (8080 and non-root). The OpenShift arbitrary-UID text on a primary Red Hat page was not verified in this pass.
-- **Stack:** `Not yet`. There is no Dockerfile yet. Target `Checked`: Preflight portability starts the image with a UID that has no `/etc/passwd` entry, `cap_drop: ALL`, `no-new-privileges` and a read-only root filesystem.
+- **Stack:** `Not yet`. A Dockerfile now exists (`deploy/.squire/Dockerfile`), but it is the Citadel Apache image: it declares no `USER`, the vhost listens on 80 (`deploy/.squire/vhost.conf:2`) and the fallback base exposes 80 (`deploy/.squire/base-fallback.Dockerfile:97`), so the non-root, group-0, 8080 contract is not held. Target `Checked`: Preflight portability starts the image with a UID that has no `/etc/passwd` entry, `cap_drop: ALL`, `no-new-privileges` and a read-only root filesystem.
 
 ### W14. Logs go to stderr; the app writes only where it may
 - **Practice:** Set `LOG_CHANNEL=stderr`. Nothing under `storage/logs`. Writes go to `storage/`, `bootstrap/cache/`, `/tmp` and declared volumes. Uploads go to object storage.
@@ -115,13 +115,13 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Use `SESSION_DRIVER=database` (or Redis) and a shared cache, even for one replica. Every host overlaps old and new containers during a deploy.
 - **Why:** A login must survive a hop between replicas.
 - **Sources:** [Laravel scheduling](https://laravel.com/docs/13.x/scheduling) (`onOneServer` needs a shared cache).
-- **Stack:** `Documented`. `.env.example:30` sets `SESSION_DRIVER=database` and `.env.example:55` sets `CACHE_STORE=database`; `config/session.php:21` and `config/cache.php:18` default to the same. Target `Checked`: the portability job logs in on replica A and reads the session on replica B.
+- **Stack:** `Documented`. `.env.example:38` sets `SESSION_DRIVER=database` and `.env.example:63` sets `CACHE_STORE=database`; `config/session.php:21` and `config/cache.php:18` default to the same. Target `Checked`: the portability job logs in on replica A and reads the session on replica B.
 
 ### W16. Stop cleanly on SIGTERM
 - **Practice:** Run PHP as PID 1 under a small init, or an entrypoint that `exec`s the server. Queue workers finish the current job on `SIGTERM`. Set the platform's grace period above the longest job `#[Timeout]`.
 - **Why:** A hard kill mid-job double-runs it after `retry_after`.
 - **Sources:** [Laravel queues](https://laravel.com/docs/13.x/queues) ("the worker will finish its current job before exiting").
-- **Stack:** `Not yet`. There is no Dockerfile or entrypoint yet. Target `Checked`: the portability job sends `SIGTERM` and requires exit 0 within the grace period.
+- **Stack:** `Documented`. The entrypoint replaces the shell with the server (`deploy/.squire/fallback/citadel-apache-entrypoint:18`), so `SIGTERM` reaches the foreground process directly; no queue worker process type exists yet, and the grace period is a platform setting. Target `Checked`: the portability job sends `SIGTERM` and requires exit 0 within the grace period.
 
 ### W17. Trust proxies by preset, never `*`
 - **Practice:** Select a HELMET preset (`citadel` or `docker`), or list the front proxy in `HELMET_PROXIES` on other platforms. Do not paste `trustProxies(at: '*')` from tutorials. Set `APP_URL` and trusted hosts; Laravel trusts subdomains of `APP_URL` unless `subdomains: false`.
@@ -135,7 +135,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** `QUEUE_CONNECTION=database`; run `php artisan queue:work --max-time=3600 --tries=3` as the `worker` process where the platform allows one. Use `#[Tries]`, `#[Timeout]` and `#[Backoff]` on jobs.
 - **Why:** It needs no extra service, and `--max-time` recycles memory.
 - **Sources:** [Laravel queues](https://laravel.com/docs/13.x/queues) (`--max-time`, job attributes, jobs table migration).
-- **Stack:** `Documented`. `.env.example:53` sets `QUEUE_CONNECTION=database`, `config/queue.php:16` defaults to it, and the jobs tables are migrated by `database/migrations/0001_01_01_000002_create_jobs_table.php:14`. No job classes exist yet, so the `#[Tries]`/`#[Timeout]`/`#[Backoff]` attributes are not in use. Target `Checked`: a test that every job class declares `#[Tries]` and `#[Timeout]`.
+- **Stack:** `Documented`. `.env.example:61` sets `QUEUE_CONNECTION=database`, `config/queue.php:16` defaults to it, and the jobs tables are migrated by `database/migrations/0001_01_01_000002_create_jobs_table.php:14`. No job classes exist yet, so the `#[Tries]`/`#[Timeout]`/`#[Backoff]` attributes are not in use. Target `Checked`: a test that every job class declares `#[Tries]` and `#[Timeout]`.
 
 ### W19. Where no worker can run, run the queue from the scheduler
 - **Practice:** On Citadel (no queue workers), schedule `queue:work --stop-when-empty --max-time=50 --tries=3` every minute with `withoutOverlapping` and a short expiry. Select it with `WELD_QUEUE_MODE=scheduled`.
@@ -159,7 +159,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** After a release run `php artisan queue:restart` (or `php artisan reload`), and `schedule:interrupt` when sub-minute tasks exist.
 - **Why:** Workers and a minute-long `schedule:run` keep the old code until they exit.
 - **Sources:** [Laravel queues](https://laravel.com/docs/13.x/queues), [deployment](https://laravel.com/docs/13.x/deployment), [scheduling](https://laravel.com/docs/13.x/scheduling).
-- **Stack:** `Not yet`. There is no release script yet. Target `Checked`: the release script lists the three commands; PROCTOR checks the file.
+- **Stack:** `Not yet`. The release script now exists (`deploy/scripts/release.sh`) but runs none of `queue:restart`, `reload` or `schedule:interrupt`. Target `Checked`: the release script lists the three commands; PROCTOR checks the file.
 
 ### W23. Make a silent scheduler visible
 - **Practice:** Record a heartbeat on every scheduler minute and fail `/ready` (not `/up`) when it is older than a few minutes. Export the age as a Prometheus gauge (off by default).
@@ -171,7 +171,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Use a Job, a pre-deploy hook (Coolify "Pre-deployment Command"), or `migrate --isolated`. Never run `migrate` in a per-replica entrypoint.
 - **Why:** Parallel replicas race on schema changes.
 - **Sources:** [Coolify](https://coolify.io/docs/knowledge-base/health-checks) (rolling update overlap).
-- **Stack:** `Not yet`. There is no release script or entrypoint yet. Target `Checked`: PROCTOR flags `migrate` in an entrypoint.
+- **Stack:** `Documented`. The release step runs `php artisan migrate --force` (`deploy/scripts/release.sh:254`) once per release, from the first-release hook (`deploy/deployments/001-first-release.sh:25`) and the Quick Update post-script (`deploy/scripts/release.sh:7`); the entrypoint itself runs no artisan commands (`deploy/.squire/fallback/citadel-apache-entrypoint`). Target `Checked`: PROCTOR flags `migrate` in an entrypoint.
 
 ## 4. Security
 
@@ -179,7 +179,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Require `laravel/framework` at or above the latest patched release, run `composer audit` in CI, and let CREED's `policy.json` name the minimum patch level. A critical TokenGuard authentication bypass was published on 2026-10-19 (fixed in 13.29.0 and 12.68.0).
 - **Why:** Framework advisories arrive several times a year.
 - **Sources:** [laravel/framework advisories](https://github.com/laravel/framework/security/advisories), [GHSA-f9x3-7vq9-cph6](https://github.com/laravel/framework/security/advisories/GHSA-f9x3-7vq9-cph6).
-- **Stack:** `Checked`. `composer.json:18` pins `laravel/framework: ^13.29` (at or above the patched release), `composer.json:61` runs `@composer audit` inside the `ci` script, and `.gitlab-ci.yml:9` includes the Preflight `composer-audit` component, so the audit runs in CI. CREED's `policy.json` is a dependency and PROCTOR measures against it.
+- **Stack:** `Checked`. `composer.json:19` pins `laravel/framework: ^13.29` (at or above the patched release), `composer.json:64` runs `@composer audit` inside the `ci` script, and `.gitlab-ci.yml:9` includes the Preflight `composer-audit` component, so the audit runs in CI. CREED's `policy.json` is a dependency and PROCTOR measures against it, now also inside the test suite (`tests/Feature/ProctorCheckTest.php`).
 
 ### W26. Debug is off outside local
 - **Practice:** `APP_DEBUG=false` in production. The debug page has had an XSS advisory (Low, 2026-09-10).
@@ -191,7 +191,7 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** Laravel 13 formalised request-forgery protection as `PreventRequestForgery` (origin-aware, still token-compatible). Any custom middleware stack or HELMET code must reference the new name.
 - **Why:** Code that removes or reorders the old name can silently drop protection.
 - **Sources:** [Laravel 13 release notes](https://laravel.com/docs/13.x/releases). Whether the old class name remains as an alias is not confirmed.
-- **Stack:** `Documented`. `bootstrap/app.php:25` appends to the default `web` middleware group, which carries `PreventRequestForgery` in Laravel 13, so the protection is in place by default. There is no feature test that posts without a token and expects 419. Target `Checked`: a feature test posts without a token and expects 419.
+- **Stack:** `Documented`. `bootstrap/app.php:27` appends to the default `web` middleware group, which carries `PreventRequestForgery` in Laravel 13, so the protection is in place by default. There is no feature test that posts without a token and expects 419. Target `Checked`: a feature test posts without a token and expects 419.
 
 ### W28. CSP works with Inertia 3 and Vite
 - **Practice:** HELMET sets the CSP header and calls `Vite::useCspNonce()`; Laravel then adds the nonce to the tags `@vite` emits. Inertia 3 puts initial page data in a JSON script element. Run the policy in report-only first.
@@ -211,32 +211,32 @@ The tags describe the repo as it stands on 2026-10-28. The Laravel base has land
 - **Practice:** `composer.json` requires `php: ^8.3` with `config.platform.php` `8.3.0`. Tests run on 8.3, 8.4 and 8.5. Laravel 13 needs 8.3 or newer.
 - **Why:** The stack's floor and the framework agree.
 - **Sources:** [Laravel 13 releases](https://laravel.com/docs/13.x/releases).
-- **Stack:** `Checked`. `composer.json:16` requires `php: ^8.3`, `composer.json:98` sets `config.platform.php` to `8.3.0`, and the CI matrix runs on 8.3, 8.4 and 8.5 (`.gitlab-ci.yml:8` and `.github/workflows/ci.yml:18`).
+- **Stack:** `Checked`. `composer.json:17` requires `php: ^8.3`, `composer.json:110` sets `config.platform.php` to `8.3.0`, and the CI matrix runs on 8.3, 8.4 and 8.5 (`.gitlab-ci.yml:8` and `.github/workflows/ci.yml:18`).
 
 ### W31. Keep dev tools inside the PHP floor
 - **Practice:** Pest 5 requires PHP `^8.4`. On a `^8.3` floor use Pest 4 or PHPUnit and cap the constraint.
 - **Why:** An unconstrained `composer require pestphp/pest` breaks installs on 8.3.
 - **Sources:** [Pest on Packagist](https://repo.packagist.org/p2/pestphp/pest.json); Pint 1.32.1 requires `^8.3` ([Pint](https://repo.packagist.org/p2/laravel/pint.json)).
-- **Stack:** `Checked`. WELD uses PHPUnit, not Pest: `composer.json:33` pins `phpunit/phpunit: ^12.0`, and the CI matrix starts at 8.3 (`.gitlab-ci.yml:8`), so `composer install` runs on 8.3 and would fail if a dev tool required 8.4 or newer.
+- **Stack:** `Checked`. WELD uses PHPUnit, not Pest: `composer.json:35` pins `phpunit/phpunit: ^12.0`, and the CI matrix starts at 8.3 (`.gitlab-ci.yml:8`), so `composer install` runs on 8.3 and would fail if a dev tool required 8.4 or newer.
 
 ### W32. Pinstripe owns style and static analysis
 - **Practice:** Use Pinstripe's Pint preset, PHPStan level 8 through Larastan, ESLint (flat config) and Prettier. No local overrides without a recorded reason.
 - **Why:** One standard across all stack repos.
 - **Sources:** [Larastan](https://repo.packagist.org/p2/larastan/larastan.json).
-- **Stack:** `Checked`, for the PHP side. `composer.json:51` runs `pint --test`, `composer.json:53` runs `phpstan analyse`, and both are in the `ci` script (`composer.json:56-62`), which CI runs; `pint.json:2` uses the `laravel` preset and `phpstan.neon:8` sets `level: 8`. The JS side is configured but not yet in the CI pipeline: `eslint.config.js` (flat config) and `.prettierrc` exist, but no CI job runs `npm run lint` or `npm run format:check`. Pinstripe is not a dependency yet, so the presets are copied, not included.
+- **Stack:** `Checked`, for the PHP side. `composer.json:53` runs `pint --test`, `composer.json:55` runs `phpstan analyse`, and both are in the `ci` script (`composer.json:58-65`), which CI runs; `pint.json:2` uses the `laravel` preset and `phpstan.neon:8` sets `level: 8`. The JS side is configured but not yet in the CI pipeline: `eslint.config.js` (flat config) and `.prettierrc` exist, but no CI job runs `npm run lint` or `npm run format:check`. Pinstripe is not a dependency yet, so the presets are copied, not included.
 
 ### W33. Pin shared CI components to a commit
 - **Practice:** Preflight components are referenced by commit SHA or a fixed tag, not a moving branch.
 - **Why:** A moved branch changes your pipeline without a review.
 - **Sources:** [GitLab CI/CD include](https://docs.gitlab.com/ci/yaml/include/).
-- **Stack:** `Documented`. `.gitlab-ci.yml:6` pins the `php-test` component to `@0.1.0` and `.github/workflows/ci.yml:16` pins the reusable workflow to a commit SHA, with a comment "Pinned to Preflight 0.1.0. Never use ~latest." There is no check that flags an unpinned include. Target `Checked`: PROCTOR flags `include:` entries without a SHA.
+- **Stack:** `Documented`. `.gitlab-ci.yml:6` pins the `php-test` component to `@0.1.0` and `.github/workflows/ci.yml:16` pins the reusable workflow to a commit SHA; the comment "Pinned to Preflight 0.1.0. Never use ~latest." sits at `.gitlab-ci.yml:2`. There is no check that flags an unpinned include. Target `Checked`: PROCTOR flags `include:` entries without a SHA.
 
 ## Gaps for the backlog
 
 The Laravel base has landed; the gaps below are the stack packages and the deploy path that have not.
 
 - The stack packages are dependencies now: SESAME and HELMET in `require`, CREED and PROCTOR in `require-dev`, all from Packagist. The items that waited on them (SESAME W1, HELMET W17 and W28, PROCTOR's `Checked` targets, CREED W25) can be checked against the installed packages. Preflight portability (W8, W10, W12, W13, W16, W24), Pinstripe (W2, W32) and WayneUI (W2) are not wired into WELD yet.
-- There is no Dockerfile, entrypoint or release script yet, so the whole container contract (W8, W10, W12, W13, W16, W22, W24) and the deploy-time queue/scheduler work (W19, W21, W23) are plans.
+- The Squire kit in `deploy/` now carries the Citadel deploy path: a Dockerfile mirroring the platform image, an entrypoint and an idempotent release script, so W10, W12, W16 and W24 hold for that path. Still plans: worker and scheduler process types (W8), the non-root, group-0, 8080 contract (W13), the restart commands in the release script (W22), and the deploy-time queue/scheduler work (W19, W21, W23).
 - The JS side of the coding standard (W32) is configured but not in CI.
 - Unverified: OpenShift arbitrary-UID text on a primary Red Hat page; `serversideup/php` behaviour under a random UID; Pest 4's PHP floor; `spatie/laravel-health` scheduler and queue checks; whether Laravel's health route runs before `TrustHosts`; whether the old CSRF middleware name is still an alias.
 - Decision needed: queue mode on Citadel (W19). The scheduled-worker pattern is a stopgap. Confirm with the deploy kit project whether Citadel can run a cron-driven `schedule:run` at all.
@@ -246,7 +246,7 @@ The Laravel base has landed; the gaps below are the stack packages and the deplo
 
 ## Sources
 
-Checked on 2026-10-28.
+Checked on 2026-11-02.
 
 - Laravel, [Release notes 13.x](https://laravel.com/docs/13.x/releases)
 - Laravel, [Starter kits](https://laravel.com/docs/13.x/starter-kits)

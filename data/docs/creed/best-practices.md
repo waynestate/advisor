@@ -461,9 +461,9 @@ Why: a rule that nothing runs is only a wish.
 
 Sources: [OWASP ASVS](https://asvs.owasp.org/).
 
-How the stack holds it: `Documented`. The stack's enforcement design defines the five points. The handbook chapters do
-not tag each rule
-with its point or its PROCTOR check name.
+How the stack holds it: `Partially`. The stack's enforcement design defines the five points. Rules that a PROCTOR check
+enforces now carry "PROCTOR check: `id`" in the handbook (versions, dependencies, auth, databases, ci, every-os,
+overrides). The chapters do not yet tag each rule with its enforcement point.
 
 ## 6. Writing the handbook
 
@@ -498,7 +498,9 @@ Why: a standard is a command that fails, not a sentence in a README.
 
 Sources: [OWASP ASVS](https://asvs.owasp.org/) (requirements written to be verified).
 
-How the stack holds it: `Not yet`. The handbook does not name check IDs.
+How the stack holds it: `Partially`. The handbook chapters on versions, dependencies, auth, databases, ci, every-os and
+overrides name the PROCTOR check beside each rule a check enforces. Rules no check covers are left without an ID.
+The code, runtime-and-headers and remaining chapters have not been walked yet.
 
 ### 33. Judge with deterministic checks only
 
@@ -902,7 +904,8 @@ These are places where a source disagrees with the repository or with an earlier
 10. Add a secrets chapter, and a secret-scanning job in Preflight (practice 24).
 11. Add a PHPStan rule for `env()` outside `config/` and put the rule in Pinstripe (practice 25).
 12. Add a `config` check that `APP_DEBUG` is false in production, and write the runtime and headers chapter (practice 26).
-13. Put the PROCTOR check ID next to every handbook rule (practices 29 and 32).
+13. Partly done: versions, dependencies, auth, databases, ci, every-os and overrides carry check IDs; the other chapters
+    are still to walk (practices 29 and 32).
 14. Done: `tests/OlderReaderContractTest.php` loads a future-shaped policy file with the reader and asserts every
     known line still answers the same (practice 10).
 15. Add stage dates (`report`, `warn`, `block`) to the schema (practice 28).

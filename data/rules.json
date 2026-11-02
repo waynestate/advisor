@@ -74,7 +74,7 @@
             "id": "auth-5",
             "chapter": "auth",
             "heading": "Auth",
-            "text": "Non-EOL PHP only, with no exceptions (the stack's auth design).",
+            "text": "Non-EOL PHP only, with no exceptions (the stack's auth design). PROCTOR check: `php-floor`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -96,13 +96,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:16"
+            "source": "handbook/auth.md:17"
         },
         {
             "id": "ci-1",
             "chapter": "ci",
             "heading": "CI",
-            "text": "CI is enforcement point (c): a red pipeline before merge (the stack's enforcement design).",
+            "text": "CI is enforcement point (c): a red pipeline before merge (the stack's enforcement design). PROCTOR check: `ci-pipelines`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -892,7 +892,7 @@
             "id": "databases-1",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
-            "text": "Set `Schema::defaultStringLength(191)` in `AppServiceProvider::boot()`, before any migration runs. 5.6 caps an indexed `utf8mb4` column at 767 bytes, which is 191 characters.",
+            "text": "Set `Schema::defaultStringLength(191)` in `AppServiceProvider::boot()`, before any migration runs. 5.6 caps an indexed `utf8mb4` column at 767 bytes, which is 191 characters. PROCTOR check: `mysql56`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -920,7 +920,7 @@
             "id": "databases-3",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
-            "text": "Store JSON as `text` or `longText`, with Eloquent `array` or `json` casts, and filter in PHP. 5.6 has no JSON column type.",
+            "text": "Store JSON as `text` or `longText`, with Eloquent `array` or `json` casts, and filter in PHP. 5.6 has no JSON column type. PROCTOR check: `mysql56`.",
             "applies_to": [
                 "laravel-blade",
                 "laravel-blade-vue",
@@ -946,7 +946,7 @@
             "id": "databases-5",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
-            "text": "Rename a column with raw `DB::statement('ALTER TABLE ... CHANGE ...')`. Avoid `renameColumn` and `renameIndex`, which emit 5.7 syntax.",
+            "text": "Rename a column with raw `DB::statement('ALTER TABLE ... CHANGE ...')`. Avoid `renameColumn` and `renameIndex`, which emit 5.7 syntax. PROCTOR check: `mysql56`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -968,7 +968,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:47"
+            "source": "handbook/databases.md:48"
         },
         {
             "id": "databases-7",
@@ -982,7 +982,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:49"
+            "source": "handbook/databases.md:50"
         },
         {
             "id": "databases-8",
@@ -996,7 +996,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:52"
+            "source": "handbook/databases.md:53"
         },
         {
             "id": "databases-9",
@@ -1010,7 +1010,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:54"
+            "source": "handbook/databases.md:55"
         },
         {
             "id": "databases-10",
@@ -1024,7 +1024,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:61"
+            "source": "handbook/databases.md:62"
         },
         {
             "id": "databases-11",
@@ -1038,7 +1038,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:62"
+            "source": "handbook/databases.md:63"
         },
         {
             "id": "databases-12",
@@ -1052,7 +1052,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:63"
+            "source": "handbook/databases.md:64"
         },
         {
             "id": "databases-13",
@@ -1066,7 +1066,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:64"
+            "source": "handbook/databases.md:65"
         },
         {
             "id": "databases-14",
@@ -1080,7 +1080,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:65"
+            "source": "handbook/databases.md:66"
         },
         {
             "id": "databases-15",
@@ -1094,7 +1094,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:66"
+            "source": "handbook/databases.md:67"
         },
         {
             "id": "databases-16",
@@ -1108,7 +1108,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:67"
+            "source": "handbook/databases.md:68"
         },
         {
             "id": "databases-17",
@@ -1122,7 +1122,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:71"
+            "source": "handbook/databases.md:72"
         },
         {
             "id": "databases-18",
@@ -1136,7 +1136,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:72"
+            "source": "handbook/databases.md:73"
         },
         {
             "id": "databases-19",
@@ -1150,7 +1150,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:73"
+            "source": "handbook/databases.md:74"
         },
         {
             "id": "databases-20",
@@ -1164,7 +1164,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:74"
+            "source": "handbook/databases.md:75"
         },
         {
             "id": "databases-21",
@@ -1178,7 +1178,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:75"
+            "source": "handbook/databases.md:76"
         },
         {
             "id": "databases-22",
@@ -1192,7 +1192,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:79"
+            "source": "handbook/databases.md:80"
         },
         {
             "id": "databases-23",
@@ -1206,7 +1206,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:80"
+            "source": "handbook/databases.md:81"
         },
         {
             "id": "databases-24",
@@ -1218,7 +1218,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:102"
+            "source": "handbook/databases.md:106"
         },
         {
             "id": "databases-25",
@@ -1230,7 +1230,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:103"
+            "source": "handbook/databases.md:107"
         },
         {
             "id": "databases-26",
@@ -1242,7 +1242,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:105"
+            "source": "handbook/databases.md:109"
         },
         {
             "id": "databases-27",
@@ -1254,7 +1254,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:106"
+            "source": "handbook/databases.md:110"
         },
         {
             "id": "databases-28",
@@ -1266,7 +1266,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:108"
+            "source": "handbook/databases.md:112"
         },
         {
             "id": "databases-29",
@@ -1278,7 +1278,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:110"
+            "source": "handbook/databases.md:114"
         },
         {
             "id": "databases-30",
@@ -1292,7 +1292,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:112"
+            "source": "handbook/databases.md:116"
         },
         {
             "id": "databases-31",
@@ -1306,7 +1306,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:114"
+            "source": "handbook/databases.md:118"
         },
         {
             "id": "databases-32",
@@ -1320,7 +1320,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:116"
+            "source": "handbook/databases.md:120"
         },
         {
             "id": "databases-33",
@@ -1334,7 +1334,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:118"
+            "source": "handbook/databases.md:122"
         },
         {
             "id": "databases-34",
@@ -1348,7 +1348,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:120"
+            "source": "handbook/databases.md:124"
         },
         {
             "id": "databases-35",
@@ -1362,7 +1362,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:121"
+            "source": "handbook/databases.md:125"
         },
         {
             "id": "databases-36",
@@ -1376,7 +1376,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:123"
+            "source": "handbook/databases.md:127"
         },
         {
             "id": "databases-37",
@@ -1390,7 +1390,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:125"
+            "source": "handbook/databases.md:129"
         },
         {
             "id": "databases-38",
@@ -1404,7 +1404,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:126"
+            "source": "handbook/databases.md:130"
         },
         {
             "id": "databases-39",
@@ -1418,7 +1418,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:128"
+            "source": "handbook/databases.md:132"
         },
         {
             "id": "databases-40",
@@ -1432,7 +1432,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:129"
+            "source": "handbook/databases.md:133"
         },
         {
             "id": "databases-41",
@@ -1446,13 +1446,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:131"
+            "source": "handbook/databases.md:135"
         },
         {
             "id": "dependencies-1",
             "chapter": "dependencies",
             "heading": "Dependencies",
-            "text": "No `dev-master`, `dev-*` or `*` constraints on runtime dependencies (the stack's version policy).",
+            "text": "No `dev-master`, `dev-*` or `*` constraints on runtime dependencies (the stack's version policy). PROCTOR check: `unbounded-constraints`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1466,7 +1466,7 @@
             "id": "dependencies-2",
             "chapter": "dependencies",
             "heading": "Dependencies",
-            "text": "A lock file is required and MUST be committed (the stack's version policy).",
+            "text": "A lock file is required and MUST be committed (the stack's version policy). PROCTOR check: `lock-committed`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1480,7 +1480,7 @@
             "id": "dependencies-3",
             "chapter": "dependencies",
             "heading": "Dependencies",
-            "text": "`composer audit` MUST report no advisories at or above the policy's severity threshold (the stack's version policy).",
+            "text": "`composer audit` MUST report no advisories at or above the policy's severity threshold (the stack's version policy). PROCTOR check: `composer-audit`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1488,13 +1488,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:8"
+            "source": "handbook/dependencies.md:9"
         },
         {
             "id": "dependencies-4",
             "chapter": "dependencies",
             "heading": "Dependencies",
-            "text": "`composer.json` `require.php` MUST NOT allow an EOL version as its lowest bound (the stack's version policy).",
+            "text": "`composer.json` `require.php` MUST NOT allow an EOL version as its lowest bound (the stack's version policy). PROCTOR check: `php-floor`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1502,7 +1502,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:10"
+            "source": "handbook/dependencies.md:11"
         },
         {
             "id": "dependencies-5",
@@ -1514,7 +1514,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:12"
+            "source": "handbook/dependencies.md:13"
         },
         {
             "id": "dependencies-6",
@@ -1528,7 +1528,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:15"
+            "source": "handbook/dependencies.md:16"
         },
         {
             "id": "dependencies-7",
@@ -1542,13 +1542,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:19"
+            "source": "handbook/dependencies.md:20"
         },
         {
             "id": "dependencies-8",
             "chapter": "dependencies",
             "heading": "Private packages",
-            "text": "Credentials MUST NOT appear in any repository URL in `composer.json` or `composer.lock`, or as a literal value in a committed `.npmrc`. Tokens live in a gitignored `auth.json`, the npm user config, or a CI or build-time secret (the stack's private-packages decision).",
+            "text": "Credentials MUST NOT appear in any repository URL in `composer.json` or `composer.lock`, or as a literal value in a committed `.npmrc`. Tokens live in a gitignored `auth.json`, the npm user config, or a CI or build-time secret (the stack's private-packages decision). PROCTOR check: `repo-url-credentials`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1556,7 +1556,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:22"
+            "source": "handbook/dependencies.md:23"
         },
         {
             "id": "dependencies-9",
@@ -1570,7 +1570,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:26"
+            "source": "handbook/dependencies.md:28"
         },
         {
             "id": "dependencies-10",
@@ -1584,7 +1584,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:29"
+            "source": "handbook/dependencies.md:31"
         },
         {
             "id": "dependencies-11",
@@ -1598,7 +1598,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:33"
+            "source": "handbook/dependencies.md:35"
         },
         {
             "id": "dependencies-12",
@@ -1612,7 +1612,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:36"
+            "source": "handbook/dependencies.md:38"
         },
         {
             "id": "dependencies-13",
@@ -1626,7 +1626,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:38"
+            "source": "handbook/dependencies.md:40"
         },
         {
             "id": "deploy-gate-1",
@@ -1800,7 +1800,7 @@
             "id": "every-os-5",
             "chapter": "every-os",
             "heading": "Every OS",
-            "text": "Paths are built with the language's path functions, and subprocesses start with argument arrays, never shell strings (the stack's every-OS design).",
+            "text": "Paths are built with the language's path functions, and subprocesses start with argument arrays, never shell strings (the stack's every-OS design). PROCTOR check: `portability`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1828,7 +1828,7 @@
             "id": "overrides-2",
             "chapter": "overrides",
             "heading": "Overrides",
-            "text": "An app keeps a `policy-overrides.json` with an expiry date and a reason (the stack's version policy).",
+            "text": "An app keeps a `policy-overrides.json` with an expiry date and a reason (the stack's version policy). PROCTOR check: `overrides`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1856,7 +1856,7 @@
             "id": "overrides-4",
             "chapter": "overrides",
             "heading": "Overrides",
-            "text": "An expired override is a failure (first-repos).",
+            "text": "An expired override is a failure (first-repos). PROCTOR check: `overrides`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1926,7 +1926,7 @@
             "id": "versions-2",
             "chapter": "versions",
             "heading": "Versions",
-            "text": "The PHP floor is `^8.2`, the oldest non-EOL version today (the stack's version policy). It moves to `^8.3` on 2027-01-01.",
+            "text": "The PHP floor is `^8.2`, the oldest non-EOL version today (the stack's version policy). It moves to `^8.3` on 2027-01-01. PROCTOR check: `php-floor`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",

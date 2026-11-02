@@ -3,7 +3,7 @@
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to be interpreted as described in RFC 2119.
 
 - CI is enforcement point (c): a red pipeline before merge (the stack's
-  enforcement design).
+  enforcement design). PROCTOR check: `ci-pipelines`.
 - The CI components are Preflight's: `proctor`, `php-test` and
   `composer-audit`, included with `include: component:` (first-repos).
 - CI judges with deterministic commands, never with a model. No gate depends

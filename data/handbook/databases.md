@@ -34,16 +34,17 @@ still the upgrade.
 
 - Set `Schema::defaultStringLength(191)` in `AppServiceProvider::boot()`,
   before any migration runs. 5.6 caps an indexed `utf8mb4` column at 767
-  bytes, which is 191 characters.
+  bytes, which is 191 characters. PROCTOR check: `mysql56`.
 - Keep `utf8mb4` and `utf8mb4_unicode_ci`, the defaults. Never use an
   8.0-only collation such as `utf8mb4_0900_ai_ci` (not yet confirmed on a
   5.6 server).
 - Store JSON as `text` or `longText`, with Eloquent `array` or `json` casts,
-  and filter in PHP. 5.6 has no JSON column type.
+  and filter in PHP. 5.6 has no JSON column type. PROCTOR check: `mysql56`.
 - Leave `use_upsert_alias` unset, so `upsert()` uses `VALUES()`. The row
   alias that setting switches to needs MySQL 8.0.19.
 - Rename a column with raw `DB::statement('ALTER TABLE ... CHANGE ...')`.
   Avoid `renameColumn` and `renameIndex`, which emit 5.7 syntax.
+  PROCTOR check: `mysql56`.
 - Use `Schema::hasTable` only. Column introspection is not reliable on 5.6
   (not yet confirmed on a 5.6 server).
 - Skip `db:show` and `db:monitor`, and run one database-queue worker (or
@@ -95,7 +96,10 @@ rather than wait for it.
 
 ## How the stack checks it
 
-PROCTOR will flag the patterns in the avoid list above. Not yet.
+PROCTOR's `mysql56` check flags the patterns in the avoid list above that
+fail on 5.6: JSON columns, generated columns, `renameColumn`, long indexed
+strings and a missing `Schema::defaultStringLength(191)`. The rest of the
+list is not checked yet.
 
 ## Sources
 
