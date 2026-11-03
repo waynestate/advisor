@@ -8,6 +8,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: the bundled data is resynced again (evening): PROCTOR composer-audit-off, not-audited, scoped overrides and the ignore-entries count; Pinstripe Node 22/24/26 matrix, the Laravel + Vue fixture and ADR-0001; plus the other projects docs that moved on main.
 - Changed: the bundled data is resynced with the stack's main branches (late evening of 2026-11-03): Sourdough (Playbook required by default, released HELMET/SESAME/PROCTOR pins in the templates, Preflight pinned to a SHA), Squire (release workflow, docs builder gates), WELD, HELMET 0.3, SESAME 0.4, Preflight, Booster and Drawbridge docs; ADVISOR's own version reads 0.1.5.
 - Changed: the bundled data is resynced again (night of 2026-11-03): the Pinstripe and Squire readmes moved; Booster, ROLLCALL and WELD docs were already current.
+- Changed: the bundled data is resynced again (late night of 2026-11-03): Sourdough (`composer playbook` script), HELMET, Preflight and Squire readmes moved; WELD docs were already current.
 ## [0.1.5] - 2026-11-03
 
 - Changed: the deploy layer requires HELMET ^0.3 and PROCTOR ^0.4 (locked at 0.3.0 and 0.4.0) and sets minimum-stability to stable, which clears PROCTOR 0.4's new minimum-stability warning. HELMET 0.3 reads an empty `HELMET_PROXIES=` as trust nobody; the front page sets only the `citadel` preset, so nothing changes for it. The front page site owes a Quick Update.
