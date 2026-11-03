@@ -27,11 +27,11 @@
             "source": "creed/README.md"
         },
         "docs/drawbridge/best-practices.md": {
-            "sha256": "2a5f44a688bd2ad2fc921fa5524e7bd44e97e98409459fedea3f1e0609b187d9",
+            "sha256": "e60ea73c5bab3d7257c6d80aa8fdb4042dfbb183422435e9ec4cf440d61a6589",
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "74a3461bd302c665537ccc1d8500308d48f630f7c574b668475d44db10ac2f95",
+            "sha256": "2499ee4b97457e503f40f9ca34df45c6f929ad1ec8762f082fb3d3f982428ea1",
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
@@ -75,11 +75,11 @@
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "87003ecc1ae6fa7a26efdee2a1f26f0004c51a7be0d7641cc374de063dd24d9d",
+            "sha256": "403cdbe90cbe4c979268ba2468c22034f3d89de28a4e1f9e7027825f6f2c407d",
             "source": "sesame/BEST_PRACTICES.md"
         },
         "docs/sesame/readme.md": {
-            "sha256": "b31c5072188bf4ccb0d20e54bc4e2a10f9855e31dc8338dc363d34a09aaf09f5",
+            "sha256": "7e9cbf18f76f88f081d6b4a9bc90075342946fd9881d8edf64be7613a06b1080",
             "source": "sesame/README.md"
         },
         "docs/sourdough/best-practices.md": {
