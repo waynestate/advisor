@@ -19,7 +19,11 @@ On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a S
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
-Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
+## Where the code lives
+
+The canonical repository is on nougat: [enterprise-apps/advisor](https://nougat.snu.gs/enterprise-apps/advisor). git.wayne.edu and GitHub ([waynestate/advisor](https://github.com/waynestate/advisor)) are read-only mirrors of it.
+Open issues and merge requests on nougat, not on the mirrors.
+This moves to git.wayne.edu once it has CI runners. Our advice: start at nougat.
 
 > Every WSU student has an advisor. Now every WSU app does too, and this one answers email.
 

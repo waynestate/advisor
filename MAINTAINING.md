@@ -19,9 +19,7 @@ keeping its bundled content fresh.
 
 ## Where it lives
 
-Development happens on Wayne State's GitLab. This GitHub repository is a read-only release mirror: `main` and tags are
-copied here automatically, and changes, issues and merge requests go to GitLab first. Nobody pushes to GitHub
-directly.
+Development happens on nougat, the canonical repository: [enterprise-apps/advisor](https://nougat.snu.gs/enterprise-apps/advisor). This GitHub repository and git.wayne.edu are read-only mirrors: `main` and tags are copied automatically. Changes, issues and merge requests go to nougat. Nobody pushes to the mirrors.
 
 ## Build and test
 
@@ -98,7 +96,7 @@ CI, a masked file-type variable). See "Releasing" in the README.
 2. With the denylist file present, regenerate: `php bin/advisor content:generate --sources=<stack folder>`, then
    `composer ci` (the public-posture test must pass).
 3. Both pipelines green for that commit. Run a secrets scan of the history.
-4. Tag `X.Y.Z` (no `v`) on GitLab. The mirror carries the tag to GitHub, and Packagist picks it up from there.
+4. Tag `X.Y.Z` (no `v`) on nougat. The mirror carries the tag to GitHub, and Packagist picks it up from there.
 5. A release needs a maintainer's approval. Never move or delete a published tag.
 
 ## Things that trip people up
