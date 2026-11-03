@@ -35,11 +35,11 @@
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
-            "sha256": "9cd74ac38f4853fe476752357d84567adfa7279b605b2bc90390849f851dd312",
+            "sha256": "12125eeb63acba3affdfcfd2140ac3118a0df13834abbb82fffd060e307651e8",
             "source": "helmet/BEST_PRACTICES.md"
         },
         "docs/helmet/readme.md": {
-            "sha256": "408beb1e56b6dbe69e97df0747a430b55c9765683c8c56c8b0820ef42f8e74b7",
+            "sha256": "cc2a5516c75fe071f980ae9855cc7579d94443f20fda6d19f6c5c5f6ba0ec697",
             "source": "helmet/README.md"
         },
         "docs/pinstripe/best-practices.md": {
@@ -75,11 +75,11 @@
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "62dd6ed24305072dee210dc2dfb9a4df911c6041951b91018978d6c6cce386f2",
+            "sha256": "9d8189716e1f54d21f8a937c223943d26c6dfe78c3624e5b4cd00990aea29d86",
             "source": "sesame/BEST_PRACTICES.md"
         },
         "docs/sesame/readme.md": {
-            "sha256": "00905a6221d026debcdfa3c3394f6b0f3277d8d817936ffa0c385a83f08f6b72",
+            "sha256": "c29e473bdb0ebd6958d6fc5f4fbfdb1ad4c264b9a4a7cc41bc1b1ed90df6a5da",
             "source": "sesame/README.md"
         },
         "docs/sourdough/best-practices.md": {
@@ -115,7 +115,7 @@
             "source": "weld/BEST_PRACTICES.md"
         },
         "docs/weld/readme.md": {
-            "sha256": "f2caecb81477f1f916608b215a64117d27fb6ad1134cb409106a8c9fc9f5768b",
+            "sha256": "9bd041faed5f7769a791e2cffe47a55a118d5f6e9df1845767caf3032aa4f5a4",
             "source": "weld/README.md"
         },
         "guides/connect-to-oracle-on-citadel.md": {

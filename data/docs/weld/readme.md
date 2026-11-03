@@ -222,6 +222,20 @@ Sourdough is the starter tool for every shape of Wayne State app. It makes raw P
 WELD is one of those shapes, Laravel with Inertia and Vue, with every part already joined and proved to work together.
 Pick Sourdough when you want a starter you shape yourself. Pick WELD when you want the finished piece.
 
+## Is WELD still Sourdough's Inertia shape?
+
+Sourdough writes a manifest of every file it generates (`.sourdough/manifest.json`: each path with its SHA-256).
+`bin/regen-check.php` compares that manifest with WELD file by file, skipping the product files WELD adds on top
+(listed in `.sourdough/product-files.json`) and any path with a `vendor` or `node_modules` segment. Each remaining
+path is reported as IDENTICAL, DIFFERS or MISSING_IN_WELD.
+
+The gate is a ratchet: `.sourdough/regen-baseline.json` records the drift already known and accepted, and the check
+fails only on new drift. CI runs it against a fresh `sourdough new --inertia` generation from Sourdough's main;
+locally, point it at your own generation:
+
+- Run the check: `php bin/regen-check.php --generated <dir>` (or `composer regen-check -- --generated <dir>`)
+- Record the current drift as accepted: add `--write-baseline`
+
 ## The cast
 
 <div align="center"><sub>Fourteen parts, one bead. The README art is cut from the front page by
