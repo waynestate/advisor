@@ -11,6 +11,7 @@ use Waynestate\Advisor\Content\ContentBundle;
 use Waynestate\Advisor\Module\Catalog;
 use Waynestate\Advisor\Module\ModuleContext;
 use Waynestate\Advisor\Module\ModuleLoader;
+use Waynestate\Advisor\Playbook\Settings;
 use Waynestate\Advisor\Security\PathGuard;
 use Waynestate\Advisor\Security\ProcessRunner;
 use Waynestate\Advisor\Security\SymfonyProcessRunner;
@@ -42,6 +43,7 @@ final class Runtime
             $clock ?? new SystemClock(),
             new PathGuard($config->projectRoot),
             $processes ?? new SymfonyProcessRunner(),
+            Settings::forProject($config->projectRoot),
         );
 
         $manifests = [$manifestFile ?? dirname(__DIR__, 2) . '/modules.json'];

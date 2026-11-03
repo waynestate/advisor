@@ -6,6 +6,7 @@ namespace Waynestate\Advisor\Module;
 
 use Waynestate\Advisor\Config;
 use Waynestate\Advisor\Content\ContentBundle;
+use Waynestate\Advisor\Playbook\Settings;
 use Waynestate\Advisor\Security\PathGuard;
 use Waynestate\Advisor\Security\ProcessRunner;
 use Waynestate\Advisor\Support\Clock;
@@ -19,5 +20,6 @@ final class ModuleContext
         public readonly Clock $clock,
         public readonly PathGuard $guard,
         public readonly ProcessRunner $processes,
+        public readonly Settings $settings,
     ) {}
 }
