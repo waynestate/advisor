@@ -6,7 +6,7 @@
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
-Squire is the Citadel kit: build.sh, the release script, the health check, and local parity on the real images. It is part of WELD, the Wayne State application stack, beside WayneUI (project 0, the interface layer), CREED, PROCTOR, Preflight, SESAME, HELMET, Pinstripe and Sourdough.
+Squire is the Citadel kit: build.sh, the release script, the health check, and local parity on the real images. Its docs builder turns `docs/` into the committed pages under `site/docs/`, with a changelog page generated from `CHANGELOG.md` when the nav lists one. It is part of WELD, the Wayne State application stack, beside WayneUI (project 0, the interface layer), CREED, PROCTOR, Preflight, SESAME, HELMET, Pinstripe and Sourdough.
 
 **Not to be confused with:** `squire doctor` checks deploy setup only; standards checks are PROCTOR's.
 
@@ -269,6 +269,18 @@ A plain run rewrites stale regions in the sources and then builds; `--check` rep
 A region whose name is not in `docs.json`, a block no page places, a block placed twice, and an opening marker with no
 closing marker are findings.
 
+### Changelog page
+
+When `docs/nav.json` lists a page whose path is `changelog`, the builder owns `docs/changelog.md`: a plain run writes
+it from the repo's `CHANGELOG.md` before building, and `--check` never writes. The page takes the usual front matter
+(`title: "Changelog"` and a description), a marker comment naming its source, and the changelog's body with its
+top-level heading dropped, so every version heading stays as written: `## Unreleased`, `## [Unreleased]`,
+`## 0.5.0 (2026-11-03)` and `## [0.1.9] - 2026-11-03` all keep their shape and get the page's usual anchors. Links
+follow the site's rules: an `http(s)` link stays, a relative link becomes a blob link under the nav.json `source`
+(`https://repo.example.com/acme/app/-/blob/main/README.md`) when there is one, and loses its link, keeping its label,
+when there is not. A nav entry without a `CHANGELOG.md` is a finding, and a changed `CHANGELOG.md` or a missing
+`docs/changelog.md` is drift.
+
 ### What the check proves
 
 - For a `symfony-commands` block, a code span or fenced line that starts with the CLI name must name a real command
@@ -284,6 +296,58 @@ closing marker are findings.
 - Every image a page references (a Markdown image or an HTML `<img>`) must name a file under `docs/`, resolved against
   the source page's folder, and the build copies it byte for byte to the same relative path under `site/docs/` so the
   built page's relative src still resolves; a missing image is a finding, and unreferenced files are never copied.
+- Every page carries the version stamp as a `docs-version` meta tag and in the footer, so a reader sees which release
+  the docs describe.
+- A `composer.json` with a `version` field must agree with the stamp; a different version is a finding.
+- `--require-release` fails when `CHANGELOG.md` has no released heading yet, because the stamp would be `unreleased`.
+- `--require-tag` fails when the repo's latest version tag does not match the stamp (a tag such as `v1.6.0` counts as
+  `1.6.0`); the flag is off by default, so an untagged repo builds clean.
+- When the nav lists a `changelog` page, `docs/changelog.md` mirrors `CHANGELOG.md` (front matter, marker comment, no
+  top-level heading); a changed `CHANGELOG.md` or a missing page is drift, and a nav entry without a `CHANGELOG.md` is
+  a finding.
+
+### Tested examples
+
+`php bin/docs-site.php --examples` runs the tagged command examples in the docs and fails when reality drifts from
+what they promise. A fenced block whose info string is `bash run`, `sh run`, `console run` or `shell run`
+(optionally `exit=N`, default 0) is a command block: each non-empty line is a command (a leading `$ ` is stripped),
+run in order in a fresh temp copy of the `examples.cwd` folder; the next fenced block, when its info string is exactly
+`output`, is the expected output (stdout then stderr). Both sides are normalized before the comparison: CRLF to LF,
+trailing spaces trimmed per line, trailing blank lines removed, the example working directory and the repo root
+rewritten to the placeholders below, plus every regex rule in `examples.normalize`:
+
+```
+<cwd>
+<root>
+```
+
+Every shell block (bash, sh, shell, console, powershell or pwsh) must be tagged `run` or carry an HTML comment line
+reading `docs-test: skip REASON` directly before it; a block with neither, and a marker without a reason, are
+findings naming the file and line. Skips are counted and grouped by the words before the first comma, case-folded, in
+the one-line summary (`Examples: 7 run, 12 skipped (reasons: needs network 5, needs Docker 4)`), and `examples.maxSkips`
+in `docs/docs.json` caps them. The other keys of `examples` are optional: `cwd` names the repo folder copied into each
+example working directory, `alias` replaces a matching first word with another command (a leading `php ` means the
+PHP binary, a relative script path resolves against the repo root), `env` adds environment variables, and `timeout`
+caps each command in seconds (default 60). Generated-block regions are ignored, and a plain build and `--check`
+never run examples.
+
+### JavaScript tests
+
+The kit's `docs.js` carries its own tests in `tests/js/` (node:test with jsdom, pinned exactly in `package.json` and
+`package-lock.json`), and they run the same way locally and in CI. With Node 22 on the PATH:
+
+```
+npm ci && npm test
+```
+
+or, with only Docker:
+
+```
+docker run --rm -v "$PWD:/app" -w /app node:22-alpine sh -c "npm ci && npm test"
+```
+
+The `js-tests` job runs the same two commands on GitLab and GitHub. It stays out of `composer ci` because the PHP
+image has no Node.
 
 ## Use Squire from your coding agent (ADVISOR)
 

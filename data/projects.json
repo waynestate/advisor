@@ -201,7 +201,7 @@
             "role": "This server: orients a developer and gives their coding agent read-only tools into the stack. It sits beside Laravel Boost and does not replace it.",
             "state": "built",
             "package": "waynestate/advisor",
-            "version": "0.1.4",
+            "version": "0.1.5",
             "php": "^8.3",
             "next_step": "Run `advisor install` to wire your agent, then start with list_projects.",
             "docs": [

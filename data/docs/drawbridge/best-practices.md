@@ -55,9 +55,12 @@ The rules Drawbridge holds itself to. Every rule names the tests that prove it, 
 12. **Run small and boring.** Non-root, port above 1024, state under `/tmp`, logs to stdout and stderr, no host paths
     in the image. It runs the same on Citadel, OpenShift, Coolify or plain Docker. Not tested: image properties are
     checked by the rig build, not by a unit test.
-13. **Bounded dependencies.** No `*` and no `dev-master`; `composer audit` is part of `composer ci`. Not tested:
-    nothing under `tests/` reads `composer.json`; the bound is enforced by `composer ci`, which ends in
-    `composer audit`.
+13. **Bounded dependencies.** No `*` and no `dev-master`; `composer audit` is part of `composer ci`. The gateway
+    image refuses to build when Debian serves apache2 or mod_auth_openidc below the tested versions: the Dockerfile
+    checks the installed versions with `dpkg --compare-versions` after the install and fails the build with a clear
+    message. Test: `DockerfileFloorTest::testTheDockerfileEnforcesAModuleFloor` pins the floor in the Dockerfile.
+    Not tested: nothing under `tests/` reads `composer.json`; the composer bound is enforced by `composer ci`,
+    which ends in `composer audit`.
 14. **Add headers, never overwrite.** The gateway's own response headers ride on proxied answers with `setifempty`,
     so an app that sends its own (through HELMET) keeps it; only the pages the gateway answers itself carry plain
     `set`. Tests: `RenderTest::testEveryAppHostAddsTheTwoSetIfEmptyHeaders` and

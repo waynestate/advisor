@@ -12,6 +12,8 @@
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
+Documentation: the docs live at [booster.apps.wayne.edu/docs/](https://booster.apps.wayne.edu/docs/) and are built from `docs/` by `bin/docs-site.php`.
+
 ## Where the code lives
 
 The canonical repository is on nougat: [enterprise-apps/booster](https://nougat.snu.gs/enterprise-apps/booster). git.wayne.edu and GitHub ([waynestate/booster](https://github.com/waynestate/booster)) are read-only mirrors of it.
@@ -22,6 +24,8 @@ This moves to git.wayne.edu once it has CI runners. Nougat is the shot; the mirr
 
 Front page: [`site/index.html`](site/index.html), a static page you can open in a browser or serve from `site/`.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+
+Docs: the same site serves the documentation at [`/docs/`](https://booster.apps.wayne.edu/docs/). It is built from [`docs/`](docs/) by `bin/docs-site.php` (`composer docs`), the built pages are committed, and `composer docs:check` (part of `composer ci`) fails when they drift from the sources.
 
 Booster is WELD's upgrade tool. It plans the hops that take a WSU PHP app from the PHP or Laravel version it runs now
 to one the version policy still supports, and it runs them one at a time: [Rector](https://getrector.com) rewrites the
@@ -168,6 +172,7 @@ booster plan   --path=../my-app        # the ordered hops to a supported version
 booster scan   --path=../my-app --php=<target>   # what will break on that newer PHP; advisory, changes nothing
 booster run    --path=../my-app --dry-run   # the diffs Rector would make; changes nothing
 booster run    --path=../my-app        # apply the plan, one hop at a time, with a test gate
+booster init   --path=../my-app        # optional: writes playbooks for AI coding tools into the app; commit them before a real run
 ```
 
 Replace `<target>` with the PHP version you are heading for, for example the one `plan` shows on its last step.
@@ -347,6 +352,7 @@ to reinstall Booster's dependencies (`composer install` in Booster's folder) or 
 The scan ignores `vendor/`, `node_modules/` and `storage/`, because those hold third-party code and generated files,
 not the app's. It reads the app only and changes nothing. `booster scan --path=../my-app --php=<target>` runs the same scan
 on its own, for any PHP version Booster knows, and exits 0 even when it finds a wall of removed functions.
+If the app's `composer.json` declares `ext-oci8` (in `require`, `require-dev` or `config.platform`), the scan leaves out the "`oci_*()` is removed since PHP 8.4" findings: PHP 8.4 moved oci8 out of the PHP download and into PECL, and an app that declares the extension installs the PECL one on purpose, so those lines would be false alarms. Every other finding stays.
 
 ### The PHPStan scan
 

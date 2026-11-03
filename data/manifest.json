@@ -15,7 +15,7 @@
             "source": "booster/BEST_PRACTICES.md"
         },
         "docs/booster/readme.md": {
-            "sha256": "6c535b29777a6bd2c794270bfab404717ba9c4b220a73141152090599489a542",
+            "sha256": "67d6cdc6efe410847e7fefb0fc12f1a5c4990a740cf620e0db8c9ff8cec84a90",
             "source": "booster/README.md"
         },
         "docs/creed/best-practices.md": {
@@ -27,19 +27,19 @@
             "source": "creed/README.md"
         },
         "docs/drawbridge/best-practices.md": {
-            "sha256": "2a5f44a688bd2ad2fc921fa5524e7bd44e97e98409459fedea3f1e0609b187d9",
+            "sha256": "e60ea73c5bab3d7257c6d80aa8fdb4042dfbb183422435e9ec4cf440d61a6589",
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "74a3461bd302c665537ccc1d8500308d48f630f7c574b668475d44db10ac2f95",
+            "sha256": "2499ee4b97457e503f40f9ca34df45c6f929ad1ec8762f082fb3d3f982428ea1",
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
-            "sha256": "bb9be9190f1c9aba7f71ce795056c14d330a37c473265efc1909a40d3f9486f9",
+            "sha256": "665a9b04e903f381660568c423d039230a22751fe4ac827de91e6334116a43bb",
             "source": "helmet/BEST_PRACTICES.md"
         },
         "docs/helmet/readme.md": {
-            "sha256": "7ab37912cbc607be484e0230460b93f764ab383b3c68f392959a63a8c5500f4c",
+            "sha256": "39de40b35d935dc9e1008a228e86b154b824b259beaf42123e66695540602529",
             "source": "helmet/README.md"
         },
         "docs/pinstripe/best-practices.md": {
@@ -51,11 +51,11 @@
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
-            "sha256": "0b70f29a9e8dbda7a902037e1c5b27a87f5f72e5868ce20ee9f43cd3f5187c71",
+            "sha256": "bb9f33148d5ae5470aeee49e0a66309ee19c90637952b9eaf778d02b1c0fceaa",
             "source": "preflight/BEST_PRACTICES.md"
         },
         "docs/preflight/readme.md": {
-            "sha256": "720fa2b7a19e7065d073b243519dfc2e2708dd4b3eb110d05e048f4eba9e121c",
+            "sha256": "fe3f571e5e201b5dc1687da4291cccb6f400f618023e42b5fcdd31a496d9b5e1",
             "source": "preflight/README.md"
         },
         "docs/proctor/best-practices.md": {
@@ -75,19 +75,19 @@
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "1b5f4e09462a3a6888f36be16a16ffafa765fe31bf7230e3e167b1ce2cd51b25",
+            "sha256": "403cdbe90cbe4c979268ba2468c22034f3d89de28a4e1f9e7027825f6f2c407d",
             "source": "sesame/BEST_PRACTICES.md"
         },
         "docs/sesame/readme.md": {
-            "sha256": "286729bb306075b6611ba1dbd5f5c5526ff005e36de738b6754cbf1da596e884",
+            "sha256": "7e9cbf18f76f88f081d6b4a9bc90075342946fd9881d8edf64be7613a06b1080",
             "source": "sesame/README.md"
         },
         "docs/sourdough/best-practices.md": {
-            "sha256": "ab03272abfe2eab8062f8375bc70d4f9ccba9461fffce89e0bbadc7deb8da567",
+            "sha256": "efbea6866b8a0292aafb06464eaf0dfd4657adb58692aa8092894ed9113dced8",
             "source": "sourdough/BEST_PRACTICES.md"
         },
         "docs/sourdough/readme.md": {
-            "sha256": "786dfd82298def5fce28c9dec08848566ac2f8de85034666f1b24dafc2a26f38",
+            "sha256": "5ecfe1958ec5b188726fe77358fa827c9548e6a9ec66869841c173050b38ca93",
             "source": "sourdough/README.md"
         },
         "docs/squire/best-practices.md": {
@@ -95,7 +95,7 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "3575070f33dd959eb40663bddc63e8f984cda7067417f137e288200b5ab65ada",
+            "sha256": "ece83a54802d68234ee7b118ad0d6d9a07cc10e5144ec82fce2310c042129160",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {
@@ -115,7 +115,7 @@
             "source": "weld/BEST_PRACTICES.md"
         },
         "docs/weld/readme.md": {
-            "sha256": "9bd041faed5f7769a791e2cffe47a55a118d5f6e9df1845767caf3032aa4f5a4",
+            "sha256": "6abd2a996cb2000e84befe3a46aa2738d48acbceb21db5f68c5ac4a95bc2a3db",
             "source": "weld/README.md"
         },
         "guides/connect-to-oracle-on-citadel.md": {
@@ -187,7 +187,7 @@
             "source": "creed/policy/policy.json"
         },
         "projects.json": {
-            "sha256": "021c688eb18ff49075b85c08b545aa74903a96721bc32a092fbf1becfd459f8d",
+            "sha256": "171a827af20eaf89aac3e212c76e78293a12afe41961eace28a27644321dcb71",
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {

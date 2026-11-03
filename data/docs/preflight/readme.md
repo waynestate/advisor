@@ -41,7 +41,7 @@ app's plugins and scripts never run inside the job.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
     inputs:
       proctor_command: vendor/bin/proctor check --format=codequality
 ```
@@ -62,7 +62,7 @@ Runs the test command on each supported PHP version through `parallel:matrix`.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
     inputs:
       test_command: vendor/bin/phpunit
 ```
@@ -111,7 +111,7 @@ Runs `composer audit --locked` and fails on advisories.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
     inputs:
       working_dir: .
 ```
@@ -139,7 +139,7 @@ Generates a CycloneDX SBOM with `cyclonedx/cyclonedx-php-composer`, validates it
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
     inputs:
       output: sbom.cdx.json
 ```
@@ -150,7 +150,7 @@ include:
 | `job_name` | string | `sbom` | Name of the job. Set it when you include this component more than once. |
 | `image` | string | `composer:2.10.3@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc` | Docker image for the job. |
 | `omit_dev` | boolean | `true` | Whether to omit dev dependencies from the SBOM. |
-| `output` | string | `sbom.cdx.json` | Path of the SBOM file to publish, relative to the project root. |
+| `output` | string | `sbom.cdx.json` | Path of the SBOM file to publish, relative to the project root. It must be a relative path; GitLab refuses the pipeline at creation if it is not. |
 
 ### pint
 
@@ -160,7 +160,7 @@ Runs the app's own [Laravel Pint](https://laravel.com/docs/12.x/pint) in test mo
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
     inputs:
       config: pint.json
 ```
@@ -170,7 +170,7 @@ include:
 | `stage` | string | `test` | Pipeline stage for the job. |
 | `job_name` | string | `pint` | Name of the job. Set it when you include this component more than once. |
 | `image` | string | `composer:2.10.3@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc` | Docker image for the job. |
-| `config` | string | `pint.json` | Path to the app's Pint config file. |
+| `config` | string | `pint.json` | Path to the app's Pint config file. It must be a relative path; GitLab refuses the pipeline at creation if it is not. |
 | `working_dir` | string | `.` | Directory to run Pint in, relative to the project root. |
 
 ### phpstan
@@ -181,7 +181,7 @@ Runs the app's own [PHPStan](https://phpstan.org/) and fails the pipeline on sta
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
     inputs:
       config: phpstan.neon
       memory_limit: 1G
@@ -192,8 +192,8 @@ include:
 | `stage` | string | `test` | Pipeline stage for the job. |
 | `job_name` | string | `phpstan` | Name of the job. Set it when you include this component more than once. |
 | `image` | string | `composer:2.10.3@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc` | Docker image for the job. |
-| `config` | string | `phpstan.neon` | Path to the app's PHPStan config file. |
-| `memory_limit` | string | `1G` | Memory limit passed to PHPStan. |
+| `config` | string | `phpstan.neon` | Path to the app's PHPStan config file. It must be a relative path; GitLab refuses the pipeline at creation if it is not. |
+| `memory_limit` | string | `1G` | Memory limit passed to PHPStan. A PHP size such as `1G`, `512M` or `-1`; GitLab refuses the pipeline at creation if it is not. |
 | `working_dir` | string | `.` | Directory to run PHPStan in, relative to the project root. |
 
 ### eslint
@@ -204,7 +204,7 @@ Runs the app's own [ESLint](https://eslint.org/) (and [Prettier](https://prettie
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
     inputs:
       eslint_args: .
 ```
@@ -231,7 +231,7 @@ curl and PHP, which the job uses for the registry round trip.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/package-publish@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/package-publish@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
     inputs:
       group_id: "<your group id>"
 ```
@@ -257,7 +257,7 @@ auto-merges and what waits.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
     inputs:
       git_author: "Preflight Bot <preflight-bot@example.com>"
 ```
@@ -339,7 +339,7 @@ on:
 
 jobs:
   ci:
-    uses: waynestate/preflight/.github/workflows/php-package.yml@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+    uses: waynestate/preflight/.github/workflows/php-package.yml@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
 ```
 
 This workflow ships in the `0.1.1` tag, so pin the full commit SHA of the
@@ -466,13 +466,13 @@ workflow:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@79029cc2300702d0d450c42cc699e12af1b731f8 # 0.1.4
 ```
 
 The `workflow:rules` block must live in the app's own file. A component
@@ -553,6 +553,7 @@ job names, because `portability-run` waits on `portability-build`.
 - License: MIT
 - PHP floor: `^8.3`
 - JavaScript components install with `npm ci --ignore-scripts`. The job carries no token beyond `CI_JOB_TOKEN` (BEST_PRACTICES.md 4.12).
+- Path-like inputs (`config` on phpstan and pint, `output` on sbom) must be relative paths, and `memory_limit` (phpstan) takes a PHP size such as `1G`, `512M` or `-1`. Each carries an input `regex`, so GitLab refuses the pipeline at creation when a value does not match.
 
 ## Updating image pins
 
