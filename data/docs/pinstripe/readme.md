@@ -47,9 +47,11 @@ On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a S
 Add Pinstripe as a dev dependency:
 
 ```
+composer config allow-plugins.phpstan/extension-installer true
 composer require --dev waynestate/pinstripe:^0.1
 ```
 
+Pinstripe loads its PHPStan rules through `phpstan/extension-installer`, and Composer will not ask when it cannot prompt.
 Pinstripe 0.1.2 is on Packagist, and the npm package, `@waynestate/pinstripe`, is at 0.1.0.
 
 Point PHPStan at the raw config. `phpstan.neon`:
@@ -123,9 +125,11 @@ Opt-in. Point `composer lint` and `composer fix` at the strict preset instead of
 Same, with the Laravel parts:
 
 ```
+composer config allow-plugins.phpstan/extension-installer true
 composer require --dev waynestate/pinstripe:^0.1 larastan/larastan
 ```
 
+Pinstripe loads its PHPStan rules through `phpstan/extension-installer`, and Composer will not ask when it cannot prompt.
 Pinstripe pulls in `phpstan/extension-installer`, which registers Larastan for you. When Composer asks, allow the
 plugin (`config.allow-plugins` in your `composer.json`). Your `phpstan.neon` includes
 `vendor/waynestate/pinstripe/phpstan/laravel.neon` and nothing else: there is no Larastan line to add, and the

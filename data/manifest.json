@@ -47,7 +47,7 @@
             "source": "pinstripe/BEST_PRACTICES.md"
         },
         "docs/pinstripe/readme.md": {
-            "sha256": "f5b84353b14cd2158035b9ec66fb3f9e7aca8851a7a48ddb79414a64d7df9203",
+            "sha256": "9f1087629ae472f038d8a7f28e98e7a3bfdf64f3014c6027c5c85b0e17dcd41a",
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
@@ -95,7 +95,7 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "ece83a54802d68234ee7b118ad0d6d9a07cc10e5144ec82fce2310c042129160",
+            "sha256": "ccf8390a685a46177867944c5ac7e57b2cfe6fdccf3b61f8d3d511da4cc3a571",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {
