@@ -15,7 +15,7 @@ Squire is the Citadel kit: build.sh, the release script, the health check, and l
 Front page: [`site/index.html`](site/index.html), a static page you can serve from anywhere.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Status: 0.4.0, tagged and on Packagist.
+Status: 0.5.0, tagged and on Packagist.
 
 ## Where the code lives
 
@@ -268,6 +268,15 @@ code reads that `describe` does not list, and a variable `describe` lists that n
 A plain run rewrites stale regions in the sources and then builds; `--check` reports a stale region instead of writing.
 A region whose name is not in `docs.json`, a block no page places, a block placed twice, and an opening marker with no
 closing marker are findings.
+
+### What the check proves
+
+- For a `symfony-commands` block, a code span or fenced line that starts with the CLI name must name a real command
+  (`help` and `list` always pass), and every `--option` on it must be an option of that command or an application
+  option; an unknown command or option is a finding.
+- Every command and every option the CLI keeps must appear in the docs at least once (the generated block counts);
+  a command or option nobody documented is a finding.
+- A fenced block whose info string contains `docs-test: skip` is not scanned, and plain prose is never scanned.
 
 ## Use Squire from your coding agent (ADVISOR)
 

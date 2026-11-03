@@ -35,11 +35,11 @@
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
-            "sha256": "b1083f3b05647414e6094bc74f6955b562990cf1f52b71bcf6aa708acadd1266",
+            "sha256": "bb9be9190f1c9aba7f71ce795056c14d330a37c473265efc1909a40d3f9486f9",
             "source": "helmet/BEST_PRACTICES.md"
         },
         "docs/helmet/readme.md": {
-            "sha256": "288f8e86ae7028238b8f02bc82c2f7fca2dbfaa56bb4ba871474bd62b4866f93",
+            "sha256": "7ab37912cbc607be484e0230460b93f764ab383b3c68f392959a63a8c5500f4c",
             "source": "helmet/README.md"
         },
         "docs/pinstripe/best-practices.md": {
@@ -75,11 +75,11 @@
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "1b5f4e09462a3a6888f36be16a16ffafa765fe31bf7230e3e167b1ce2cd51b25",
+            "sha256": "4c668ab3cce5ffdfaee7a3e8bcb2ff42da6dbd4b91b31c7fccb1385ff7f8ab8c",
             "source": "sesame/BEST_PRACTICES.md"
         },
         "docs/sesame/readme.md": {
-            "sha256": "286729bb306075b6611ba1dbd5f5c5526ff005e36de738b6754cbf1da596e884",
+            "sha256": "778b3dff38afe8af0bd996fd8a93d8bfab20afab9b2e19a054f9c217e8609f82",
             "source": "sesame/README.md"
         },
         "docs/sourdough/best-practices.md": {
@@ -95,7 +95,7 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "fa15e957278df3c516e95e8355e535cccaf5d1c76cb783b79625ca633f927ac9",
+            "sha256": "852482bf9a616e693ad5abc2de597f605b972db78fdc9e04a6a1e1e7b0286adf",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {
@@ -187,7 +187,7 @@
             "source": "creed/policy/policy.json"
         },
         "projects.json": {
-            "sha256": "77ad0318ec187378aabcde748ddc6d3f759f1e8aa80949a3f5d1034664a25a26",
+            "sha256": "021c688eb18ff49075b85c08b545aa74903a96721bc32a092fbf1becfd459f8d",
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {

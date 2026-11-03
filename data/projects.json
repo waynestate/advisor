@@ -185,7 +185,7 @@
             "role": "The Citadel kit: the app-side release script, local parity with the platform, and upstream merge requests. Platform-specific deploy code lives here and nowhere else.",
             "state": "built",
             "package": "waynestate/squire",
-            "version": "0.4.0",
+            "version": "0.5.0",
             "php": "^8.3",
             "next_step": "Use its release script for Citadel deploys; other platforms use their own targets.",
             "docs": [
@@ -217,7 +217,7 @@
             "role": "Wired, Everything, Linked, Deployed: one Laravel + Inertia/Vue app with every stack part already joined. A team clones it, renames it and deploys it.",
             "state": "built",
             "package": "waynestate/weld",
-            "version": "0.1.1",
+            "version": "0.1.2",
             "php": "^8.3",
             "next_step": "Clone it for a new Laravel + Inertia/Vue app; its front page shows how the parts fit.",
             "docs": [
