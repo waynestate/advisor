@@ -4,6 +4,10 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+- Changed: the bundled data is resynced with the stack's main branches of 2026-11-03 (afternoon): SESAME S45 and the DRAWBRIDGE module floor (from branch heads awaiting main), HELMET H42 4xx pages, H43, H53 and H41 notes; SESAME S4, S41, S42 and S27; plus the Booster, Preflight, PROCTOR and Squire docs that moved.
+- Changed: the bundled data is resynced again (evening): PROCTOR composer-audit-off, not-audited, scoped overrides and the ignore-entries count; Pinstripe Node 22/24/26 matrix, the Laravel + Vue fixture and ADR-0001; plus the other projects docs that moved on main.
+## [0.1.5] - 2026-11-03
+
 - Changed: the deploy layer requires HELMET ^0.3 and PROCTOR ^0.4 (locked at 0.3.0 and 0.4.0) and sets minimum-stability to stable, which clears PROCTOR 0.4's new minimum-stability warning. HELMET 0.3 reads an empty `HELMET_PROXIES=` as trust nobody; the front page sets only the `citadel` preset, so nothing changes for it. The front page site owes a Quick Update.
 - Changed: the deploy layer's Squire kit is refreshed to 0.5.0 (updated `base-fallback.Dockerfile`, `scripts/release.sh` and `scripts/parity.ps1`). The front page site owes a Quick Update.
 - Changed: the bundled data is resynced with the 2026-11-03 releases: Booster 1.8.0, Preflight 0.1.4, PROCTOR 0.4.0, Pinstripe 0.1.2, CREED 0.1.6, ROLLCALL 0.1.9, HELMET 0.3.0, SESAME 0.4.0, Drawbridge 0.1.1, Sourdough 0.1.5, Squire 0.5.0 and WELD 0.1.2 (versions in `projects.json`), and with each project's main since the last pass (PROCTOR's new `composer-config` and `composer-audit` rule ids, Booster's newcomer-friendly install and run notes, Preflight's `job_name` inputs, and updates to the Drawbridge, Pinstripe, ROLLCALL, SESAME, HELMET, Squire and Sourdough docs).
