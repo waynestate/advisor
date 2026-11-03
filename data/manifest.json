@@ -51,11 +51,11 @@
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
-            "sha256": "92d1a2d99453b53486cc1bd6ed39fc9569923df5fad7157f842d1e781fa44a02",
+            "sha256": "0b70f29a9e8dbda7a902037e1c5b27a87f5f72e5868ce20ee9f43cd3f5187c71",
             "source": "preflight/BEST_PRACTICES.md"
         },
         "docs/preflight/readme.md": {
-            "sha256": "fb2cc261f3c1aa9c71d31bd8754523def25717291797d65de166148fac8fb06a",
+            "sha256": "58a08516aafe6a17933f748364cb1810f54e6b7856f8123ba55d017d1f685c46",
             "source": "preflight/README.md"
         },
         "docs/proctor/best-practices.md": {
@@ -95,7 +95,7 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "b93bd05667607186c9d490d7bb532e67f71b75ea96cefb1a6283f90956ad69da",
+            "sha256": "fa15e957278df3c516e95e8355e535cccaf5d1c76cb783b79625ca633f927ac9",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {
