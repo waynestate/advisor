@@ -198,6 +198,22 @@ rig\run.ps1 keycloak   # Windows
 sh rig/run.sh keycloak # Linux, macOS
 ```
 
+The `rotation` argument walks a crypto passphrase change through the running gateway without recreating it. It signs
+in, saves the session cookie, re-renders the Apache config with the new passphrase while keeping the old one as
+mod_auth_openidc's documented previous value, sends Apache a graceful reload, and replays the saved cookie. The run
+documents what the pinned module actually does: it accepts the two values and starts, but its shared-memory session
+store is rebuilt empty on every reload, so the saved cookie is refused and the browser is sent to sign in again. The
+same refusal is then shown with the old passphrase dropped, and after the gateway container is recreated with a fresh
+sign-in, so the result is not an accident of the reload.
+
+```powershell
+rig\run.ps1 rotation   # Windows
+```
+
+```sh
+sh rig/run.sh rotation # Linux, macOS
+```
+
 When the rig is green, the next step is the first real sign-in: [ENTRA_TEST.md](ENTRA_TEST.md).
 
 ### Register Drawbridge in Entra ID
@@ -334,7 +350,8 @@ of the match. A path with an encoded slash, a backslash, a semicolon, a control 
 | `DRAWBRIDGE_COOKIE_SECURE` | `true` | Secure session cookie; `false` only for a plain-HTTP local rig |
 | `DRAWBRIDGE_TRUSTED_PROXIES` | empty | comma-separated CIDRs allowed to set `X-Forwarded-For`; empty trusts nobody |
 | `DRAWBRIDGE_OIDC_CLIENT_SECRET` | none, required | the Entra client secret (or whichever name `oidc.client_secret_env` gives) |
-| `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE` | none, required | encrypts state cookies and sessions; 32+ characters; changing it signs everyone out |
+| `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE` | none, required | encrypts state cookies and sessions; 32+ characters; changing it signs everyone out (the `rotation` rig run documents why a previous passphrase cannot keep them) |
+| `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS` | unset | an old passphrase, rendered as the second value (new first, old second); mod_auth_openidc accepts it, but sessions live in shared memory that every reload or restart empties, so today it keeps nobody signed in (see the `rotation` rig run); it becomes useful once sessions move to a shared store |
 | `DRAWBRIDGE_SIGNING_KEY_FILE` | `/run/drawbridge/signing.key` | ES256 private key for assertions (mounted) |
 | `DRAWBRIDGE_SIGNING_KEY_ID` | `drawbridge-1` | `kid` in each token header; change it when the key changes |
 | `DRAWBRIDGE_SESSION_CACHE_ENTRIES` | `1000` | entries in the shared-memory cache: sessions, nonces, provider metadata (minimum 10) |

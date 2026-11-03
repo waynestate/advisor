@@ -15,7 +15,7 @@
             "source": "booster/BEST_PRACTICES.md"
         },
         "docs/booster/readme.md": {
-            "sha256": "78264001883cf69a72e97642d7c371af0564a6d774ddbaa8ef943edf1e5626d5",
+            "sha256": "f954d93c54f4ee2ebf75d9450a156d56120b2fa8079b97bd33b9456c818678f1",
             "source": "booster/README.md"
         },
         "docs/creed/best-practices.md": {
@@ -31,15 +31,15 @@
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "21285eb49084b0910087942e83f29129dc445ad8392e633273767f8ec78cc56b",
+            "sha256": "71b03f3257010df652184f36036cbaaeab522be5dfbd2869ad7f030e6a016093",
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
-            "sha256": "1e8b22b942cc8b3fa7e8db27f5e0254dc264989ae9accdb11ccc394f7b8d65f0",
+            "sha256": "9cd74ac38f4853fe476752357d84567adfa7279b605b2bc90390849f851dd312",
             "source": "helmet/BEST_PRACTICES.md"
         },
         "docs/helmet/readme.md": {
-            "sha256": "a3b635df21d2c67fc938d76f79f71a88145f11823ef8bb7c93feccc735e91887",
+            "sha256": "1743fcbfe4342237bffeea42a606d32c0a6c0212d8b2f30bd069931f5ece875b",
             "source": "helmet/README.md"
         },
         "docs/pinstripe/best-practices.md": {
