@@ -18,7 +18,11 @@ PHP version.
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
-Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
+## Where the code lives
+
+The canonical repository is on nougat: [enterprise-apps/pinstripe](https://nougat.snu.gs/enterprise-apps/pinstripe). git.wayne.edu and GitHub ([waynestate/pinstripe](https://github.com/waynestate/pinstripe)) are read-only mirrors of it.
+Open issues and merge requests on nougat, not on the mirrors.
+This moves to git.wayne.edu once it has CI runners. The pinstripes are sewn on nougat; the mirrors are off-the-rack copies.
 
 Front page: [`site/index.html`](site/index.html), a static tailor's shop you can open in a browser or serve from `site/`.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.

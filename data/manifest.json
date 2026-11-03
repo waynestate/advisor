@@ -31,7 +31,7 @@
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "e7c3f7911b6b813a65ad37b4e5442a2129d47ca9bf782a5833be3eecbbefadc2",
+            "sha256": "580a9f40ec55991ad9297aae64833abf278f5ffe19ff6edb3864c76e53050708",
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
@@ -47,7 +47,7 @@
             "source": "pinstripe/BEST_PRACTICES.md"
         },
         "docs/pinstripe/readme.md": {
-            "sha256": "e1af3fb3213b767f63f0d8ec61efa09b411c4075064f68dcc7712a65ab1ea54f",
+            "sha256": "568d471bcb5c398cdd37402601b2ebd9f912d1993ed9bab1fd60051f3948ccce",
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {

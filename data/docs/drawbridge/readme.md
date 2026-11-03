@@ -108,7 +108,9 @@ scripts, no external assets, dark-mode aware, and no hostname or product name in
 path keeps its bare 401, because a script must never be handed an HTML login page, and the `/metrics` endpoint keeps
 its empty-body 403 (and 404), because a scrape must not look like a page. The endpoint is not routed by the gateway
 config, so these pages cannot reach it; if you wire it up as the Metrics section describes, keep the empty body
-inside that location.
+inside that location. `tests/Unit/ErrorPagesTest.php` also pins their accessibility: WCAG 2.2 AA text contrast in
+both color schemes, a viewport that does not block zoom, a visible focus outline of at least 2px, and a body text
+size of at least 16px with headings set in rem or em.
 
 ### Response headers
 
