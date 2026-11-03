@@ -2,25 +2,11 @@
 
 > ADVISOR is an MCP server for the Wayne State app stack. Your coding agent asks it about our standards, supported versions, docs and checks, and it answers read-only from the stack's own files.
 
-Front page: [`site/index.html`](https://github.com/waynestate/advisor/blob/HEAD/site/index.html), a static field map of the stack (open it in a browser).
+Front page: [`site/index.html`](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/site/index.html), a static field map of the stack (open it in a browser).
 
-On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](https://github.com/waynestate/advisor/blob/HEAD/deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
-
-Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
-
-> Every WSU student has an advisor. Now every WSU app does too, and this one answers email.
-
-ADVISOR is an MCP server for the Wayne State application stack, a bit like Laravel Boost but for WSU. It orients a
-developer who is new to the stack and gives their coding agent nine read-only tools into it: the CREED standards and
-policy, PROCTOR results, the upgrade path, the WayneUI markup contract and migration guide, SESAME and HELMET
-guidance, and the parts list.
-Ask it "which PHP can I build on?" and it answers from the policy file, with the date and the source, instead of from
-whatever the model remembers.
-
-It is read-only in 0.1. It cannot write a file, run a shell command, or call out to the network. The two things it
-can start are the app's own `vendor/bin/proctor` and Booster's read-only `plan`, both with a fixed argument shape.
 
 Every page below is Markdown. The HTML pages send the same Markdown to a client that asks for `text/markdown`. Written by Squire's agent-ready kit from the README and the pages; do not edit.
 
@@ -35,7 +21,7 @@ Every page below is Markdown. The HTML pages send the same Markdown to a client 
 
 ## Source
 
-- [README](https://github.com/waynestate/advisor/blob/HEAD/README.md): the project's README, with install, commands and checks
+- [README](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/README.md): the project's README, with install, commands and checks
 - [Everything in one file](https://advisor.apps.wayne.edu/llms-full.txt): the README and every page above, as one Markdown file
 
 ## Optional

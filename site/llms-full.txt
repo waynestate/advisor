@@ -8,17 +8,21 @@ The README and the Markdown twin of every page, joined. The index is https://adv
 
 ## README
 
-Source: https://github.com/waynestate/advisor/blob/HEAD/README.md
+Source: https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/README.md
 
 ## ADVISOR
 
-Front page: [`site/index.html`](https://github.com/waynestate/advisor/blob/HEAD/site/index.html), a static field map of the stack (open it in a browser).
+Front page: [`site/index.html`](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/site/index.html), a static field map of the stack (open it in a browser).
 
-On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](https://github.com/waynestate/advisor/blob/HEAD/deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
-Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
+### Where the code lives
+
+The canonical repository is on nougat: [enterprise-apps/advisor](https://nougat.snu.gs/enterprise-apps/advisor). git.wayne.edu and GitHub ([waynestate/advisor](https://github.com/waynestate/advisor)) are read-only mirrors of it.
+Open issues and merge requests on nougat, not on the mirrors.
+This moves to git.wayne.edu once it has CI runners. Our advice: start at nougat.
 
 > Every WSU student has an advisor. Now every WSU app does too, and this one answers email.
 
@@ -295,7 +299,7 @@ the `Waynestate\` namespace, and only if they implement the `Module` interface. 
 
 ### Running the checks
 
-Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](https://github.com/waynestate/advisor/blob/HEAD/MAINTAINING.md).
+Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/MAINTAINING.md).
 
 ```
 composer ci
