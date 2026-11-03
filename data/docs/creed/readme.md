@@ -20,9 +20,11 @@ Vue and Inertia, plus the rules every check runs against. A small
 framework-free PHP reader, `Waynestate\Creed\Policy`, answers the one question
 every tool needs: what state is this version in, on this date?
 
-This repository is published from Wayne State University's internal GitLab
-and mirrored here. Changes land there first; Wayne State developers open
-issues and merge requests on the internal project.
+## Where the code lives
+
+The canonical repository is on nougat: [enterprise-apps/creed](https://nougat.snu.gs/enterprise-apps/creed). git.wayne.edu and GitHub ([waynestate/creed](https://github.com/waynestate/creed)) are read-only mirrors of it.
+Open issues and merge requests on nougat, not on the mirrors.
+This moves to git.wayne.edu once it has CI runners. Creed Bratton would say the code lives wherever he last left it. Ours lives on nougat.
 
 No other code in the stack decides a version's state. The rules live in one
 place, and every tool reads them from here.
@@ -135,22 +137,33 @@ The rules, chapter by chapter, live in [`handbook/`](handbook/README.md).
 
 `bin/refresh-patches.php` re-reads the upstream feeds, rewrites the
 `latest_patch` fields in `policy/policy.json`, and proposes new Vue lines from
-endoflife.date. A scheduled CI job runs the refresh every Monday and is
-check-only: when the policy changed, the tool exits 3 and the job fails on the
-diff. The policy robot (`bin/policy-bot.php run`) is the committing path: it
-commits the data allowlist on `auto/policy-refresh` and pushes it as a merge
-request labeled `auto-data`; a data-only run is auto-merged, and missing CI
-variables stop the run before any push. A person runs it, or a schedule
-someone wires to it does; no pipeline in this repo runs it yet. Today the
-scheduled job only checks. Once a bot token is set as a masked, protected CI
-variable named `CREED_BOT_TOKEN`, the robot can open those merge requests; the
-token is requested from the GitLab administrator. The robot never tags or
-releases, and support dates stay hand-edited: a person reviews each
-support-date edit.
+endoflife.date. A scheduled CI job runs the refresh and is check-only: when
+the policy changed, the tool exits 3 and the job fails on the diff. The policy
+robot (`bin/policy-bot.php run`) is the committing path: it commits the data
+allowlist on `auto/policy-refresh` and pushes it as a merge request labeled
+`auto-data`; a data-only run is auto-merged, and missing CI variables stop the
+run before any push. The `policy-bot` job in `.gitlab-ci.yml` runs it: on its
+dedicated schedule (the one carrying `CREED_JOB=policy-bot`) and by hand from
+the web. Without the token the job prints "CREED_BOT_TOKEN not set; skipping
+the policy robot" and stays green. The robot never tags or releases, and
+support dates stay hand-edited: a person reviews each support-date edit.
 
-The schedule is a GitLab project setting, not a file in this repo: someone
-creates it under CI/CD > Schedules (weekly, Monday). The GitHub mirror runs the
-same check on a cron and on demand.
+To put the robot on the schedule, the owner creates three things on nougat
+(the canonical repository), all on the CREED project:
+
+1. A project access token (Settings > Access tokens): role Maintainer
+   (Developer works only if Developers may merge to the default branch),
+   scopes `api` and `write_repository`, an expiry of 90 days, then rotate.
+2. A CI/CD variable `CREED_BOT_TOKEN` holding the token: masked and hidden,
+   protected, not a file. The schedule runs on `main`, which is a protected
+   branch, so the protected variable is available there.
+3. A schedule on `main` (CI/CD > Schedules): weekly, Monday, with the variable
+   `CREED_JOB` = `policy-bot`. The existing check-only schedule (no variable)
+   can stay or be replaced by this one.
+
+The branch `auto/policy-refresh` must not be protected, or the robot cannot
+push it. The schedules are GitLab project settings, not files in this repo.
+The GitHub mirror runs the same check on a cron and on demand.
 
 ## Refreshing the policy
 

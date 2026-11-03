@@ -21,8 +21,11 @@ Why a moat and not a lock on every door: each app doing its own OpenID Connect i
 a state check or a token signature wrong. We'd rather get that right once, in a maintained module
 (mod_auth_openidc). Each app then checks one small signed token.
 
-Development happens on Wayne State's GitLab. This GitHub repository is a read-only release mirror: `main` and tags
-are copied here automatically, and changes, issues and merge requests go to GitLab first.
+## Where the code lives
+
+The canonical repository is on nougat: [enterprise-apps/drawbridge](https://nougat.snu.gs/enterprise-apps/drawbridge). git.wayne.edu and GitHub ([waynestate/drawbridge](https://github.com/waynestate/drawbridge)) are read-only mirrors of it.
+Open issues and merge requests on nougat, not on the mirrors.
+This moves to git.wayne.edu once it has CI runners. The drawbridge is down at nougat; the mirrors are across the moat.
 
 ## Where it fits in the stack
 

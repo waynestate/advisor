@@ -15,7 +15,13 @@ Squire is the Citadel kit: build.sh, the release script, the health check, and l
 Front page: [`site/index.html`](site/index.html), a static page you can serve from anywhere.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Status: 0.4.0, tagged and on Packagist. This repository is published from Wayne State University's internal GitLab and mirrored to GitHub.
+Status: 0.4.0, tagged and on Packagist.
+
+## Where the code lives
+
+The canonical repository is on nougat: [enterprise-apps/squire](https://nougat.snu.gs/enterprise-apps/squire). git.wayne.edu and GitHub ([waynestate/squire](https://github.com/waynestate/squire)) are read-only mirrors of it.
+Open issues and merge requests on nougat, not on the mirrors.
+This moves to git.wayne.edu once it has CI runners. Your squire serves one banner, and it flies over nougat.
 
 <details>
 <summary>Open the bag: two more cuts of the front page</summary>
@@ -170,6 +176,17 @@ A library package that carries the kit should keep it out of Composer downloads:
 ```
 
 so a `composer require` of the package never ships the kit. A squire packs what the knight will carry, and only that.
+
+## The docs builder
+
+`bin/docs-site.php` turns the Markdown under `docs/` into committed, accessible HTML pages under `site/docs/`: one page
+per file, in the order of `docs/nav.json`, with a sidebar, an "On this page" list, prev and next links, and the version
+stamped from the top of `CHANGELOG.md`. Pages are styled by WayneUI plus the kit's `docs.css` and `docs.js` in the site's
+`assets/` folder, so every stack repo reads the same way. Squire owns the kit, and a repo takes a new version from a
+Squire checkout with `php bin/docs-site.php --sync-to=<repo>`, which copies the kit and the tool itself. The repo then
+builds with `php bin/docs-site.php` (or `composer docs`) and commits `site/docs/`, and runs `--check` (or
+`composer docs:check`) in CI to fail when a page is stale or a finding is present. A squire keeps the map current, so the
+knight never asks for directions twice.
 
 ## Use Squire from your coding agent (ADVISOR)
 
@@ -352,6 +369,11 @@ docker run --rm -v "$PWD:/app" -w /app composer:2.10.3 sh -c "composer install -
 The shell templates are linted with shellcheck in Docker (`scripts/lint-shell.sh`, or `scripts/lint-shell.ps1` on
 Windows) and the PowerShell with PSScriptAnalyzer (`scripts/lint-powershell.ps1`). The tests run the real shell templates
 against stub `composer`, `curl`, `npm`, `corepack` and `proctor` programs, and start a PHP server to test `health.php`.
+
+The front page has its own accessibility gate: `scripts/a11y.sh` on Linux and macOS, `scripts\a11y.ps1` on Windows.
+It serves `site/`, opens it in a real Chromium (Playwright in Docker, so no host browser is needed) and runs
+axe-core against it with the WCAG 2.2 AA tag set, in light and dark mode at 360 px and 1280 px. It stays out of
+`composer ci` because CI has no browser; GitHub runs it as a separate `a11y` job.
 
 ## Known limits
 

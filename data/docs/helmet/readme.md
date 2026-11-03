@@ -23,9 +23,11 @@ Citadel needs before it serves a single page: it sends the security headers,
 hardens the session, decides whether the request really arrived over HTTPS,
 answers the load balancer's `/up` ping, and writes structured logs.
 
-This repository is published from Wayne State University's internal
-GitLab and mirrored here. Changes land there first; Wayne State
-developers open issues and merge requests on the internal project.
+## Where the code lives
+
+The canonical repository is on nougat: [enterprise-apps/helmet](https://nougat.snu.gs/enterprise-apps/helmet). git.wayne.edu and GitHub ([waynestate/helmet](https://github.com/waynestate/helmet)) are read-only mirrors of it.
+Open issues and merge requests on nougat, not on the mirrors.
+This moves to git.wayne.edu once it has CI runners. Nougat is the head this helmet fits; the mirrors are mannequins.
 
 It is the floor, not the ceiling. An app on raw PHP calls `helmet_boot()` once
 at the top of its front controller and is done. An app on Laravel or a PSR-15
@@ -152,6 +154,12 @@ address of whatever stands in front of the app container:
 | OpenShift | the OpenShift router | the router's pod network CIDR, from your cluster admin | `php://stderr` |
 | Coolify | Traefik or Caddy | the Docker network of the proxy | `php://stderr` |
 | Raw Docker behind a compose proxy | your proxy service | the compose network's subnet | `php://stderr` |
+
+One caveat about the `citadel` row: `172.18.0.1` is the Docker bridge
+gateway, and the `citadel` preset is safe only when the front proxy
+reaches the app over that bridge. A published app port that is
+source-NATed to the gateway address would make a direct client look like
+the proxy, so the platform must not publish the app's port.
 
 An explicit `HELMET_PROXIES` overrides the preset on every platform. With
 neither a preset nor a list, no address is trusted, so forwarded headers
@@ -454,7 +462,9 @@ terrible nonce.
 The middleware hands the per-request nonce to Laravel's Vite helper and
 injects a `csp-nonce` meta tag into `<head>`. `@vite` needs nothing. The meta
 tag lets Vite's dev runtime nonce the CSS and preload tags it adds after page
-load.
+load. When the request ends, HELMET resets the Vite nonce to a fresh random
+one, so a long-lived worker (Octane, Swoole, FrankenPHP) does not carry one
+request's nonce into the next.
 
 A few rules keep the CSP honest:
 

@@ -20,7 +20,11 @@ Front page: [`site/index.html`](site/index.html), a static page you can open in 
 
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-This repository is published from Wayne State University's internal GitLab and mirrored here. Changes land there first; Wayne State developers open issues and merge requests on the internal project.
+## Where the code lives
+
+The canonical repository is on nougat: [enterprise-apps/sourdough](https://nougat.snu.gs/enterprise-apps/sourdough). git.wayne.edu and GitHub ([waynestate/sourdough](https://github.com/waynestate/sourdough)) are read-only mirrors of it.
+Open issues and merge requests on nougat, not on the mirrors.
+This moves to git.wayne.edu once it has CI runners. Nougat is the starter culture; the mirrors are just slices.
 
 Sourdough is the app starter for the WSU stack. One command scaffolds a new app with SESAME (auth), HELMET (baseline runtime), PROCTOR (checks), and the Preflight CI components already in place. It is one PHP command, so it works on Windows, macOS, and Linux.
 
@@ -89,7 +93,7 @@ The app name (from `--name`, from the plan, or from the basename of `<dir>`) mus
 | `--laravel --vue` | Laravel + Blade + Vue islands |
 | `--laravel --inertia` (or `--inertia`) | Laravel + Inertia/Vue |
 
-`--raw`, `--laravel` and `--inertia` generate in 0.1. The remaining permutations (`--raw --vue`, `--laravel --vue`) print the plan and exit `1` with "not available in this release"; later steps add them.
+`--raw`, `--laravel`, `--laravel --vue` and `--inertia` generate in 0.1. The last permutation, `--raw --vue`, prints the plan and exits `1` with "not available in this release"; a later step adds it.
 
 Oracle is wired but dormant in every generated app. The settings `ORACLE_USERNAME`, `ORACLE_PASSWORD`, and either `ORACLE_TNS` or `ORACLE_HOST`, `ORACLE_PORT`, `ORACLE_SERVICE_NAME` ship commented out in `.env.example`; while they are empty, nothing connects and nothing errors. Once you fill them in, Laravel apps check the wiring with `php artisan oracle:check`, and raw PHP apps run queries through the `App\Oracle` helper, which takes values only as binds and answers mistakes with plain sentences.
 
@@ -180,6 +184,8 @@ docker run --rm -v "${PWD}:/app" -w /app php:8.4-cli vendor/bin/phpunit
 docker run --rm -v "${PWD}:/app" -w /app composer:2 composer validate --strict
 docker run --rm -v "${PWD}:/app" -w /app php:8.4-cli php bin/sourdough new /tmp/demo --dry-run
 ```
+
+The smoke gate bakes a shape for real and runs the generated app's own checks; see the "Smoke gate" section of [MAINTAINING.md](MAINTAINING.md) for the full recipe. On Windows, `.\scripts\smoke-shape.ps1 <shape>` runs it in one line.
 
 ## CI
 

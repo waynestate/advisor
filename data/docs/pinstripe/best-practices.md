@@ -12,6 +12,8 @@ Both run in CI on GitLab and GitHub, so a preset that stops working fails the pi
 | --- | --- | --- | --- |
 | `pint/per.json` | Pint | Enforced | `PresetsTest::testPintPerPresetAcceptsTheCleanFixture`, `PresetsTest::testPintPerPresetRejectsTheMessyFixture` |
 | `pint/laravel.json` | Pint | Enforced | `PresetsTest::testPintLaravelPresetAcceptsTheLaravelAppFixture` |
+| `pint/per-strict.json` | Pint | Enforced | `PresetsTest::testPintPerStrictPresetAcceptsTheStrictTypesCleanFixture`, `PresetsTest::testPintPerStrictPresetRejectsTheStrictTypesMissingFixture` |
+| `pint/laravel-strict.json` | Pint | Enforced | `PresetsTest::testPintLaravelStrictPresetRejectsTheStrictTypesMissingFixture` |
 | `phpstan/raw.neon` | PHPStan | Enforced | `PresetsTest::testPhpStanRawConfigAcceptsTheCleanFixture`, `PresetsTest::testPhpStanRawConfigReportsTheNullBug` |
 | `phpstan/laravel.neon` | PHPStan + Larastan | Enforced | `PresetsTest::testLaravelPresetLoadsLarastanThroughTheExtensionInstaller`, `PresetsTest::testPhpStanLaravelConfigAcceptsTheLaravelAppFixture`, `PresetsTest::testPhpStanLaravelConfigReportsTheUndefinedEloquentProperty` |
 | `rector/base.php` | Rector | Enforced | `PresetsTest::testRectorPresetAcceptsTheCleanFixture`, `PresetsTest::testRectorPresetReportsChangesOnTheOldFixture` |

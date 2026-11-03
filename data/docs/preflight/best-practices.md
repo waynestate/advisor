@@ -65,7 +65,7 @@ Sources: [GitLab: CI/CD components, versions](https://docs.gitlab.com/ci/compone
 [GitLab: pipeline security, includes](https://docs.gitlab.com/ci/pipeline_security/);
 [OpenSSF Scorecard: Pinned-Dependencies](https://github.com/ossf/scorecard/blob/main/docs/checks.md).
 
-**How the stack holds it: Documented.** The README pins `proctor` to `0.1.1`, the newest tag that changed a component. PROCTOR's own
+**How the stack holds it: Documented.** The README and examples now show SHA pins with the tag in a comment, and Renovate proposes the bumps for review. PROCTOR's own
 `.gitlab-ci.yml` pins a full SHA, with a comment against `~latest`. Nothing checks an app's includes.
 
 ### 1.2 Protect the component project's default branch and release tags
@@ -1033,8 +1033,9 @@ Added in the second pass (2026-10-27):
     the real audit exit codes. Settle the conflict on abandoned packages.
 29. Done: 1.7: The reviewed bump process is in place: Renovate runs from the private runner project, and the shared
     preset routes digest changes inside the templates, the contract and this repository's own pipeline, plus
-    component include version bumps, to a `needs-review` label that never auto-merges. Still open: confirm in
-    practice that Renovate's `gitlab-ci-include` manager bumps an app's own `component:` includes.
+    component include version bumps, to a `needs-review` label that never auto-merges. The `gitlabci` manager
+    extracts an app's own `component:` includes, and the preset routes those repository dep bumps to review;
+    `tests/check-renovate-review.sh` (and its `.ps1` twin) keeps that rule in place.
 30. 1.6: Put the commit SHA in every release note and tell apps to pin it.
 31. 4.11: Write the stack's rule for Composer malware, advisory and abandoned policy, and require Composer 2.10 or later.
 32. 4.10: Name the Debian release in image tags, or match the image family of the target you deploy to.

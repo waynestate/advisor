@@ -14,7 +14,11 @@ WELD is the whole Wayne State app stack joined into one application. Install it,
 hooked up: sign-in, security headers, checks, coding standards, CI and the WayneUI interface. Think of it as the
 Megazord, except it comes with a deploy script and nobody has to shout to make it combine.
 
-Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
+## Where the code lives
+
+The canonical repository is on nougat: [enterprise-apps/weld](https://nougat.snu.gs/enterprise-apps/weld). git.wayne.edu and GitHub ([waynestate/weld](https://github.com/waynestate/weld)) are read-only mirrors of it.
+Open issues and merge requests on nougat, not on the mirrors.
+This moves to git.wayne.edu once it has CI runners. The weld is made on nougat; the mirrors only get the polished bead.
 
 **Not to be confused with:** `weld:doctor` checks local setup only; standards checks are PROCTOR's.
 

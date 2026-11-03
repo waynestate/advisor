@@ -13,7 +13,11 @@ an SBOM, Pint, PHPStan and ESLint.
 Front page: [`site/index.html`](site/index.html), a static page; see [`site/README.md`](site/README.md).
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Development happens on Wayne State's GitLab; this repository is a release mirror. Changes land there first.
+## Where the code lives
+
+The canonical repository is on nougat: [enterprise-apps/preflight](https://nougat.snu.gs/enterprise-apps/preflight). git.wayne.edu and GitHub ([waynestate/preflight](https://github.com/waynestate/preflight)) are read-only mirrors of it.
+Open issues and merge requests on nougat, not on the mirrors.
+This moves to git.wayne.edu once it has CI runners. Cleared for takeoff from nougat; the mirrors are just other gates.
 
 <details>
 <summary><b>Walk round the aircraft</b>: the placards, the flight plan and the flight manual from the front page</summary>
@@ -37,7 +41,7 @@ app's plugins and scripts never run inside the job.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
     inputs:
       proctor_command: vendor/bin/proctor check --format=codequality
 ```
@@ -57,7 +61,7 @@ Runs the test command on each supported PHP version through `parallel:matrix`.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
     inputs:
       test_command: vendor/bin/phpunit
 ```
@@ -84,7 +88,7 @@ Runs `composer audit --locked` and fails on advisories.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
     inputs:
       working_dir: .
 ```
@@ -111,7 +115,7 @@ Generates a CycloneDX SBOM with `cyclonedx/cyclonedx-php-composer`, validates it
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
     inputs:
       output: sbom.cdx.json
 ```
@@ -131,7 +135,7 @@ Runs the app's own [Laravel Pint](https://laravel.com/docs/12.x/pint) in test mo
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
     inputs:
       config: pint.json
 ```
@@ -151,7 +155,7 @@ Runs the app's own [PHPStan](https://phpstan.org/) and fails the pipeline on sta
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
     inputs:
       config: phpstan.neon
       memory_limit: 1G
@@ -173,7 +177,7 @@ Runs the app's own [ESLint](https://eslint.org/) (and [Prettier](https://prettie
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
     inputs:
       eslint_args: .
 ```
@@ -199,7 +203,7 @@ curl and PHP, which the job uses for the registry round trip.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/package-publish@0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/package-publish@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
     inputs:
       group_id: "<your group id>"
 ```
@@ -218,13 +222,13 @@ Protect your release tags.
 Runs [Renovate](https://docs.renovatebot.com/) as a scheduled or manual job
 that bumps image digests, GitHub action SHAs and package versions across the
 group's repositories, and merges the green ones itself. Bumps of `component:`
-include pins are not covered yet: the preset carries no manager for them.
-Majors open a merge request and wait for a person. See
-[Renovate](#renovate) for what auto-merges and what waits.
+include pins are covered by the preset and wait for review. Majors open a
+merge request and wait for a person. See [Renovate](#renovate) for what
+auto-merges and what waits.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
     inputs:
       git_author: "Preflight Bot <preflight-bot@example.com>"
 ```
@@ -266,10 +270,13 @@ on:
 
 jobs:
   ci:
-    uses: waynestate/preflight/.github/workflows/php-package.yml@0.1.1
+    uses: waynestate/preflight/.github/workflows/php-package.yml@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
 ```
 
-This workflow ships in the `0.1.1` tag, so pin the tag or the tag's commit SHA.
+This workflow ships in the `0.1.1` tag, so pin the full commit SHA of the
+release tag and keep the tag in a trailing comment. A tag or branch can move;
+a SHA cannot. The Renovate preset (see the Renovate section) proposes the
+bumps, and they wait for review (the `needs-review` label).
 
 | Input | Type | Default | What it does |
 |-------|------|---------|--------------|
@@ -306,8 +313,9 @@ Digest updates, pin and pinDigest updates, and patch and minor version bumps
 auto-merge when the pipeline is green. Lock file maintenance runs weekly and
 auto-merges the same way. Every merge request carries the `auto-deps` label.
 The exception is Preflight's own pins: an update that touches the templates,
-the contract or this repository's own pipeline, and a bump of a component
-include version, never auto-merges (see What waits for review).
+the contract or this repository's own pipeline, a bump of a component include
+version, and a bump of the recorded Squire kit version, never auto-merge (see
+What waits for review).
 
 ### What waits
 
@@ -317,11 +325,15 @@ label and waits for a person.
 ### What waits for review
 
 Updates that change an image digest inside the templates, the contract, or
-this repository's own pipeline, and bumps of a Preflight component version in
-an app's `component:` include, carry the `needs-review` label and never
-auto-merge. They wait for a person because those pins are what every app
-pipeline runs: a changed digest here changes what every consuming pipeline
-executes, so it earns a human eye even when its own pipeline is green.
+this repository's own pipeline, bumps of a Preflight component version in an
+app's `component:` include, and bumps of the recorded Squire kit version
+(labelled `squire-kit`) carry the `needs-review` label and never auto-merge.
+They wait for a person because those pins are what every app pipeline runs:
+a changed digest here changes what every consuming pipeline executes, so it
+earns a human eye even when its own pipeline is green. The Squire kit version
+bump is refreshed by a person who runs `squire update` (with the right path
+for the repo), reviews the diff and commits it to the branch; the runner runs
+no commands, so the merge request carries no postUpgradeTasks.
 
 ### Why MySQL and HA-Proxy get digests only
 
@@ -353,8 +365,10 @@ stable author.
 
 | Variable | Required | What it does |
 |----------|----------|--------------|
-| `RENOVATE_TOKEN` | yes | Masked CI variable the component passes through as `RENOVATE_TOKEN`. A project access token with Developer, or Maintainer where only Maintainers may merge. |
-| `GITHUB_COM_TOKEN` | no | Masked CI variable passed through as `GITHUB_COM_TOKEN`, so lookups against github.com do not hit anonymous rate limits. |
+| `RENOVATE_TOKEN` | yes | Masked CI variable in the runner project; the job reads it straight from the project, the component does not map it. A project access token with Developer, or Maintainer where only Maintainers may merge. |
+| `GITHUB_COM_TOKEN` | no | Masked CI variable in the runner project; the job reads it straight from the project, the component does not map it. Lookups against github.com do not hit anonymous rate limits. |
+
+Do not add `RENOVATE_TOKEN: $RENOVATE_TOKEN` to your own `variables:`; that self-reference arrives as literal text.
 
 The component writes its `config.js` at job time, so the `registryAliases`
 entry for the GitLab instance comes from the predefined `CI_SERVER_FQDN`
@@ -382,13 +396,13 @@ workflow:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@0.1.1
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@0.1.1
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@0.1.1
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@0.1.1
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@0.1.1
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@0.1.1
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@331b44faa060f19241f44ba75fd4e4e78da7d320 # 0.1.1
 ```
 
 The `workflow:rules` block must live in the app's own file. A component

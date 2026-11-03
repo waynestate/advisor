@@ -77,6 +77,21 @@ Pinstripe ships `phpstan/phpstan-deprecation-rules`, loaded automatically by
 `phpstan/extension-installer`. Calling a `@deprecated` method fails the build.
 The tailor flags the old cut before the fabric is retired.
 
+## Require strict types
+
+Opt-in. Point `composer lint` and `composer fix` at the strict preset instead of `per.json`:
+
+```json
+{
+    "scripts": {
+        "lint": "pint --test --config vendor/waynestate/pinstripe/pint/per-strict.json",
+        "fix": "pint --config vendor/waynestate/pinstripe/pint/per-strict.json"
+    }
+}
+```
+
+`composer fix` adds `declare(strict_types=1);` to every file it touches, so run your tests first and commit the change on its own. For a big app, Rector's `SafeDeclareStrictTypesRector` is the careful route. Strict types leave no loose threads.
+
 ## Use it in a Laravel app
 
 Same, with the Laravel parts:
