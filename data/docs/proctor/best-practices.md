@@ -71,8 +71,12 @@ Why: the stack's version policy says older checkers must still read newer policy
 Sources: the stack's version-policy decision; [GitLab Code Quality format: only the listed fields are processed](https://docs.gitlab.com/ci/testing/code_quality/)
 (an example of a reader that ignores extras).
 
-**How the stack holds it: Not yet.** `Policy::fromFile()` (the generated `Waynestate\Proctor\Creed\Policy`) fails with "unsupported schema_version" unless the value is
-exactly `1`. That is the opposite of what the stack's version policy asks for.
+**How the stack holds it: Checked.** `Policy::__construct` (the generated `Waynestate\Proctor\Creed\Policy`) only
+requires `schema_version` to be present, takes any value, reads `components`, `tools` and `rules`, and ignores every
+other key, so a pinned older checker still reads a newer policy file and the check runs normally. A policy with no
+`schema_version` is still refused. Tests: `tests/PolicyVersionTest.php` (`testOlderReaderAcceptsNewerSchemaVersionAndUnknownKeys`,
+`testCheckRunsNormallyWithNewerPolicy`) load `tests/fixtures/policy-newer.json` (schema_version 2 plus unknown keys)
+and pass.
 
 ### 1.4 Read the banned-constraint list from the policy
 The policy has `rules.banned_constraints`. The check must use it, so a change to the rule needs no PROCTOR release.
@@ -566,10 +570,12 @@ the owner fixes the cause instead of finding a red build.
 Sources: [PHPStan: baseline](https://phpstan.org/user-guide/baseline).
 The warning-before-expiry part is my own suggestion and I have no prior-art source for the number of days.
 
-**How the stack holds it: Partially.** Since 0.2.3, `OverridesCheck` warns (`proctor/overrides/expiring`) for an active
-entry that expires within 14 days of `--today` (the expiry day counts). What remains: an override that targets a check
-that raised no failure is still not reported; `OverrideApplier` only downgrades failures it finds, and `OverridesCheck`
-reports only entries that have already expired or are close to it.
+**How the stack holds it: Checked.** `OverridesCheck` warns (`proctor/overrides/expiring`) for an active entry that
+expires within 14 days of `--today` (the expiry day counts), and `OverrideApplier::unusedWarnings()` warns
+(`proctor/overrides/unused`) for an active entry whose check raised no failure, so a stale approval is visible
+instead of silent. Both are warnings; neither changes the exit code. Tests: `tests/OverrideGuardsTest.php`
+(`testExpiringOverrideWarnsButStillPasses`, `testActiveOverrideThatMatchesNoFailureWarns`,
+`testOverrideThatDowngradesAFailureIsNotReportedAsUnused`).
 
 ---
 
@@ -725,9 +731,12 @@ check never runs.
 Sources: [OWASP CICD-SEC-4 Poisoned Pipeline Execution](https://owasp.org/www-project-top-10-ci-cd-security-risks/);
 [Composer CLI: `--no-plugins`, `--no-scripts`](https://getcomposer.org/doc/03-cli.md); the stack's deploy-gate decision.
 
-**How the stack holds it: Not yet.** The README tells apps to `composer require waynestate/proctor --dev`, and the
-`proctor` component runs `composer install` on the app first. That also adds `symfony/console` and `composer/semver`
-to the app's own dependency tree.
+**How the stack holds it: Partially.** PROCTOR builds as a single-file PHAR: `scripts/build-phar.ps1` and
+`scripts/build-phar.sh` produce `build/proctor.phar`, and the README has a "Single-file download" section.
+Preflight's `proctor` component (`templates/proctor/template.yml`) runs `composer install --no-interaction
+--no-progress --no-plugins --no-scripts` on the app first, so the app's plugins and scripts no longer run in that
+job. What remains: the PHAR is not published (there is no release step for it), the job still installs the app's
+dependencies, and the README still tells apps to `composer require waynestate/proctor --dev`.
 
 ### 8.2 Start child processes without a shell
 Pass arguments as an array so a path or value cannot become a command.
@@ -811,7 +820,7 @@ version.
 Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 
 1. 1.2: Bundle CREED's policy, and refuse `--policy` and `--today` in CI unless a trusted job sets them.
-2. 8.1: Run PROCTOR from its own install without `composer install` on the app (PHAR or separate install).
+2. 8.1: Partly done: the PHAR build exists and the Preflight job installs the app with `--no-plugins --no-scripts`; the PHAR is not published, the job still installs the app's dependencies, and the README still says `composer require` (see 8.1).
 3. 4.4: Report any `audit`/`policy` ignore entry in `composer.json` as a finding, and move ignores to the override file.
 4. 4.3: Make a skipped or failed audit a failure in CI, with a `not audited` message.
 5. 3.5: Done: the `lock-committed` check warns when the lock's `content-hash` differs from composer.json (rule id `proctor/lock-committed/out-of-sync`) (see 3.5).
@@ -824,7 +833,7 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 12. 5.4: Let an override name a package or advisory id.
 13. 5.5: Reject an `expires` date beyond a policy-set maximum.
 14. 5.7: Require an approver who is not the author (needs review rules on the app repo).
-15. 1.3: Accept newer policy schemas with unknown fields.
+15. 1.3: Done: the policy reader accepts a newer `schema_version` and ignores unknown keys, so a pinned older checker still reads a newer policy file (see 1.3).
 16. 3.3: Done: the `unbounded-constraints` check warns on committed `path` and `vcs` repositories (rule id `proctor/unbounded-constraints/repository`) and on a repository URL that is plain http (rule id `proctor/unbounded-constraints/insecure-url`) (see 3.3).
 17. 3.6: Done: the `composer-config` check (0.2.2) warns when `allow-plugins` is `true`, `secure-http` is `false` or `lock` is `false` (see 3.6).
 18. 2.4: Done: the `composer-config` check (0.2.2) notes when `require.php` is set without `config.platform.php` (see 2.4).
@@ -847,7 +856,7 @@ Added in the second pass (2026-10-27):
 30. 8.6: Done: the audit runs with `--no-plugins --no-interaction` and a minimal explicit environment (see 8.6).
 31. 6.8: Done: control characters are replaced with `?` in the text writer and the report is printed raw, so tag-like
     strings reach the log literally; a CLI test pins it (see 6.8).
-32. 5.8: Done: since 0.2.3 the `overrides` check warns (`proctor/overrides/expiring`) for an active entry that expires within 14 days of `--today`, the expiry day counting (see 5.8).
+32. 5.8: Done: the `overrides` check warns (`proctor/overrides/expiring`) for an active entry that expires within 14 days of `--today`, the expiry day counting, and the applier warns (`proctor/overrides/unused`) for an active entry that matched no failure (see 5.8).
 33. Done: the `php-floor` check prints the security-end date and the days left in the security-only warning (see 2.7).
 34. 3.7: Done: the Preflight guide documents installing from the lock and never running `composer update` in a deploy, and asks authors not to re-tag (see 3.7).
 35. 4.12: Decide in the policy whether `require-dev` packages count, then pass `--no-dev` or not.
