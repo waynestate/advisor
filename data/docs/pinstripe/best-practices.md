@@ -18,6 +18,7 @@ Both run in CI on GitLab and GitHub, so a preset that stops working fails the pi
 | `phpstan/raw.neon` | PHPStan | Enforced | `PresetsTest::testPhpStanRawConfigAcceptsTheCleanFixture`, `PresetsTest::testPhpStanRawConfigReportsTheNullBug` |
 | `phpstan/laravel.neon` | PHPStan + Larastan | Enforced | `PresetsTest::testLaravelPresetLoadsLarastanThroughTheExtensionInstaller`, `PresetsTest::testPhpStanLaravelConfigAcceptsTheLaravelAppFixture`, `PresetsTest::testPhpStanLaravelConfigReportsTheUndefinedEloquentProperty` |
 | `Larastan env() rule` | PHPStan + Larastan | Enforced | `PresetsTest::testLaravelPresetReportsAnEnvCallOutsideConfig`, `PresetsTest::testLaravelPresetAcceptsAConfigCallOutsideConfig` |
+| `PHPStan ignore comments` | PHPStan | Enforced | `PresetsTest::testPhpStanRawConfigReportsAnIgnoreWithoutAComment`, `PresetsTest::testPhpStanRawConfigReportsAnIgnoreThatMatchesNothing`, `PresetsTest::testPhpStanRawConfigAcceptsAnIgnoreWithAComment` |
 | `rector/base.php` | Rector | Enforced | `PresetsTest::testRectorPresetAcceptsTheCleanFixture`, `PresetsTest::testRectorPresetReportsChangesOnTheOldFixture` |
 | `eslint/javascript.js` | ESLint | Enforced | `tests/js/presets.test.mjs` (`npm test`) |
 | `eslint/typescript.js` | ESLint | Enforced | `tests/js/presets.test.mjs` (`npm test`) |

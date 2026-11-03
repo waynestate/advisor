@@ -249,8 +249,14 @@ authentication event through it:
 
 Each record carries `event`, `driver`, `username` and `at` (the time in UTC)
 in its context, and `sesame.logout` adds `reason` (`logout`, `idle_timeout`,
-`absolute_timeout`, `no_timestamps` or `user_gone`). The logger stays
-optional: without one, nothing is logged and nothing else changes.
+`absolute_timeout`, `no_timestamps` or `user_gone`). `sesame.login` and
+`sesame.logout` also carry `session_ref`: an opaque 16-character hex
+reference SESAME creates on every login (stored in the session under
+`sesame.session_ref`) that ties the login, timeouts and logout of one sign-in
+together in the log. It is not the session ID and never derived from it, and
+a value read back from the session that is not a 16-character lowercase hex
+string is ignored, so a tampered session cannot inject log text. The logger
+stays optional: without one, nothing is logged and nothing else changes.
 
 SESAME never logs tickets, session IDs, tokens or failure messages: a failed
 login records only the event, the driver and the time. Usernames have every
@@ -302,8 +308,16 @@ $config = Config::fromArray([
 
 // Any PSR-18 client works, for example Guzzle. Set a timeout: Guzzle has no
 // total timeout by default, so a hung CAS server would hold the request open
-// forever.
-$http = new \GuzzleHttp\Client(['timeout' => 10, 'connect_timeout' => 5]);
+// forever. Turn redirects off for the validation call (Guzzle follows up to
+// five by default, to any host or to plain http) and leave TLS verification
+// on (`verify` is true by default; never set it to false). PSR-18 has no
+// standard option for either, so the client you hand SESAME must carry them.
+$http = new \GuzzleHttp\Client([
+    'timeout' => 10,
+    'connect_timeout' => 5,
+    'allow_redirects' => false,
+    'verify' => true,
+]);
 
 $driver = DriverFactory::make($config, $http, new Psr17Factory());
 ```

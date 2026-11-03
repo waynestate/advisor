@@ -337,8 +337,12 @@ Why: they bypass the dated, visible override process the policy depends on.
 Sources: [Composer config: audit and policy](https://getcomposer.org/doc/06-config.md);
 [Composer 2.10 release](https://blog.packagist.com/composer-2-10-release/).
 
-**How the stack holds it: Not yet.** PROCTOR runs `composer audit` and acts on its output. It has no check that
-reports an ignore entry in `composer.json`, so an app can silence an advisory without any override.
+**How the stack holds it: Partially.** PROCTOR runs `composer audit` and acts on its output: an ignore that matches
+an advisory still downgrades that advisory to a warning, and a count warning (rule id
+`proctor/composer-audit/ignore-entries`) reports how many ignore entries the app keeps in `composer.json`, never
+naming an id, package or reason, so they move to the dated override file. What remains: `ignore-severity` and
+`ignore-abandoned` are not read, and the entries are reported, not moved or expired. Test:
+`tests/ComposerAuditCheckTest.php` (`testIgnoreEntriesInComposerJsonAreReportedAsOneWarningWithoutNamingThem`).
 
 ### 4.5 Cover malware and abandoned-package results
 Composer 2.10 audits malware by default. Abandoned packages also fail the audit by default: the Composer docs give
@@ -429,9 +433,12 @@ Sources: [Composer config: policy](https://getcomposer.org/doc/06-config.md);
 
 **How the stack holds it: Partially.** Since 0.2.2, the `composer-config` check reads the `config` block of
 composer.json: it warns when `allow-plugins` is `true`, `secure-http` is `false`, `lock` is `false` or
-`audit.block-insecure` is `false`, and notes `require.php` without `config.platform.php`. What remains: the process
-environment is still not read, so `COMPOSER_NO_BLOCKING`, `COMPOSER_NO_AUDIT` and `COMPOSER_AUDIT_ABANDONED` in a CI
-job are not findings.
+`audit.block-insecure` is `false`, when `config.policy` is `false` (rule id `proctor/composer-config/policy-off`) or
+when `policy.malware` or `policy.advisories` is the boolean `false` (rule ids
+`proctor/composer-config/policy-malware-off` and `proctor/composer-config/policy-advisories-off`; an object value for
+`policy.advisories` with ignore lists is not a finding), and notes `require.php` without `config.platform.php`. What
+remains: the process environment is still not read, so `COMPOSER_NO_BLOCKING`, `COMPOSER_NO_AUDIT` and
+`COMPOSER_AUDIT_ABANDONED` in a CI job are not findings.
 
 ### 4.10 Do not trust a clean JSON result when Composer's exit code is non-zero (second pass)
 If the JSON has no advisories but `composer audit` exited 1, treat it as a finding or a tool error. Composer 2.10.0
@@ -821,7 +828,7 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 
 1. 1.2: Bundle CREED's policy, and refuse `--policy` and `--today` in CI unless a trusted job sets them.
 2. 8.1: Partly done: the PHAR build exists and the Preflight job installs the app with `--no-plugins --no-scripts`; the PHAR is not published, the job still installs the app's dependencies, and the README still says `composer require` (see 8.1).
-3. 4.4: Report any `audit`/`policy` ignore entry in `composer.json` as a finding, and move ignores to the override file.
+3. 4.4: Partly done: a count warning (rule id `proctor/composer-audit/ignore-entries`) reports the ignore entries in `composer.json` without naming them, and an ignore that matches still downgrades the advisory to a warning; `ignore-severity` and `ignore-abandoned` are not read, and the entries are reported, not moved or expired (see 4.4).
 4. 4.3: Make a skipped or failed audit a failure in CI, with a `not audited` message.
 5. 3.5: Done: the `lock-committed` check warns when the lock's `content-hash` differs from composer.json (rule id `proctor/lock-committed/out-of-sync`) (see 3.5).
 6. 5.6: Reject an override that targets `overrides` or an unknown check name, and add tests.
@@ -851,8 +858,7 @@ Added in the second pass (2026-10-27):
 26. 4.8: Done: the `composer-version` check fails the Composer on PATH below the minimum (2.2.x below 2.2.24, any other 2.x below 2.7.7, or Composer 1) (see 4.8).
 27. 4.10 and 4.5: Done: the `composer-audit` check compares Composer's exit code with the parsed result and reads the abandoned and malware parts of the output (rule ids `proctor/composer-audit/abandoned`, `proctor/composer-audit/exit-code`) (see 4.10 and 4.5).
 28. 6.4 (raise priority): Done: a tool error (exit 2) still writes a valid report, so the artifact GitLab uploads parses (see 6.4).
-29. 4.9: Flag `config.policy: false`, a disabled malware or advisory policy, and `COMPOSER_NO_BLOCKING` or
-    `COMPOSER_NO_AUDIT` in the job environment.
+29. 4.9: Partly done: the `composer-config` check warns when `config.policy` is `false` (rule id `proctor/composer-config/policy-off`) or when `policy.malware` or `policy.advisories` is the boolean `false` (rule ids `proctor/composer-config/policy-malware-off`, `proctor/composer-config/policy-advisories-off`); `COMPOSER_NO_BLOCKING` and `COMPOSER_NO_AUDIT` in the job environment are still not findings (see 4.9).
 30. 8.6: Done: the audit runs with `--no-plugins --no-interaction` and a minimal explicit environment (see 8.6).
 31. 6.8: Done: control characters are replaced with `?` in the text writer and the report is printed raw, so tag-like
     strings reach the log literally; a CLI test pins it (see 6.8).

@@ -344,6 +344,13 @@ expressions. The longest rule wins, and an exact rule beats a prefix of the same
 of the match. A path with an encoded slash, a backslash, a semicolon, a control character or bad UTF-8 is treated as
 `login` (and the guard answers 400). `/_drawbridge` belongs to the gateway.
 
+### Session lifetimes
+
+The `gateway` block sets how long a sign-in lasts and how long it may sit unused: `session_seconds` (default 28800
+seconds, 300 to 604800) and `session_idle_seconds` (default 3600 seconds, 60 to 86400). Each app host renders them as
+mod_auth_openidc's `OIDCSessionMaxDuration` and `OIDCSessionInactivityTimeout`.
+
+
 ## Environment variables
 
 | Variable | Default | Meaning |

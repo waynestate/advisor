@@ -4,6 +4,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+- Changed: the bundled data is resynced with the 2026-11-03 releases: Booster 1.8.0, Preflight 0.1.4, PROCTOR 0.4.0, Pinstripe 0.1.2, CREED 0.1.6, ROLLCALL 0.1.9, HELMET 0.3.0, SESAME 0.4.0, Drawbridge 0.1.1 and Sourdough 0.1.5 (versions in `projects.json`), and with each project's main since the last pass (PROCTOR's new `composer-config` and `composer-audit` rule ids, Booster's newcomer-friendly install and run notes, Preflight's `job_name` inputs, and updates to the Drawbridge, Pinstripe, ROLLCALL, SESAME, HELMET and Sourdough docs).
 - Added: one Playbook settings resolver (`Waynestate\Advisor\Playbook\Settings`, ADR-0018). A name resolves from the real environment first, then the Playbook package, then a `.env.playbook` file in the project root; secret-looking names are still refused. `playbook_lookup` now uses it, so it answers from `.env.playbook` when the package is not installed (same output shape), and the "how to get it" text now includes the `.env.playbook` download for Linux, macOS and Windows.
 - Changed: `.env.playbook` is git-ignored; the agent-ready files (`site/llms.txt`, `site/llms-full.txt`) are regenerated.
 
