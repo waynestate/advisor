@@ -49,10 +49,37 @@ Blade and Vue islands, and Laravel with Inertia and Vue.
 
 ## Install
 
-Booster needs PHP 8.3 or newer, but the app it upgrades does not: Rector runs from Booster's own `vendor/`, so an app
-on PHP 7.4 is rewritten by a Rector that runs on 8.3 or newer.
+Run Booster from inside the app you want to upgrade: `--path` defaults to `.`, so `booster plan` needs no flags.
+Booster needs PHP 8.3 or newer on the machine; the app it upgrades does not, because Rector runs from Booster's own
+`vendor/`.
 
-Linux and macOS:
+### Single file (PHAR)
+
+```
+mkdir -p ~/bin
+curl -L -o ~/bin/booster.phar https://github.com/waynestate/booster/releases/latest/download/booster.phar
+alias booster='php ~/bin/booster.phar'    # put this line in ~/.bashrc or ~/.zshrc to keep it
+cd /path/to/your-app
+booster detect
+booster plan
+booster run --dry-run
+booster run
+```
+
+`detect` reads the app and prints its type and versions. `plan` lists the steps. `run --dry-run` previews the edits
+and changes nothing. `run` edits files and makes no commit. A real `run` also needs git, a clean git folder (commit
+or stash first) and a Docker daemon for its test gate.
+
+### Linux, macOS and WSL (Ubuntu): clone it
+
+```
+sudo apt install php-cli php-xml php-mbstring php-zip php-curl unzip git composer
+```
+
+Ubuntu splits the XML extension out of `php-cli`, and Composer's dev dependencies need it: when Composer says
+"ext-dom is missing", run the line above. On macOS: `brew install php composer git`. Ubuntu 22.04 ships PHP 8.1, too
+old for Booster: add the [ondrej/php PPA](https://launchpad.net/+ppas?field.name=php&field.status=active) or use
+the Docker route below. Then:
 
 ```
 git clone https://github.com/waynestate/booster.git
@@ -60,31 +87,46 @@ cd booster && composer install
 bin/booster --version
 ```
 
-Windows (PowerShell, no bash or WSL needed):
+Run Booster from its own folder with `--path` pointing at the app; never clone Booster inside an app:
+
+```
+bin/booster plan --path=/path/to/your-app
+```
+
+`--path` takes a full path, not `~`. In WSL, keep Booster and the app in your Linux home folder, not under `/mnt/c`
+(a Windows drive is slow from Linux); a Windows folder is `/mnt/c/Users/<you>/...`, and `run` needs Docker Desktop's
+WSL integration switched on.
+
+### Windows PowerShell, with PHP and Composer installed
 
 ```
 git clone https://github.com/waynestate/booster.git
 cd booster; composer install
-php vendor\bin\booster --version
+php bin\booster --version
+php bin\booster plan --path=..\my-app
 ```
 
-No PHP on the machine? Run it in Docker (the path after `-v` is where your app lives):
+### Docker only, no PHP (Windows or any OS)
 
 ```
 docker run --rm -v "${PWD}:/booster" -w /booster composer:2 composer install --no-interaction
-docker run --rm -v "${PWD}:/booster" -v "C:\path\to\app:/app" -w /booster php:8.4-cli php bin/booster plan --path=/app
+docker run --rm -v "${PWD}:/booster" -v "/path/to/app:/app" -w /booster php:8.4-cli php bin/booster plan --path=/app
 ```
 
-The `run` command's test gate starts Docker itself, so it needs a Docker daemon on the machine that runs Booster.
-When Booster itself runs in a container, use `--skip-gate` and run the tests yourself. Node hops run `npm` in a
+This route can run `detect`, `plan`, `scan` and `run --dry-run`. A real `run` starts Docker and uses git from inside
+Booster, which the `php:8.4-cli` image lacks, so for a real run use the single-file or clone route (in WSL on Windows). When
+Booster itself runs in a container, pass `--skip-gate` to `run` and run the tests yourself. Node hops run `npm` in a
 `node:26` container, so they need the same daemon but no Node installed on the machine.
+
+Booster is also on Packagist as `waynestate/booster`: give it its own folder, not your app's `vendor/`, because it
+needs PHP 8.3 even when your app doesn't. Clone it as above, or run
+`composer create-project waynestate/booster booster ^1.0`.
 
 ## Single-file download
 
-Booster also ships as a single-file PHAR, so Preflight and apps without Composer access can run it as one file. Every
-version tag publishes it: the GitLab release carries `booster.phar` as an asset, and the GitHub release at
-github.com/waynestate/booster carries the same file as an attachment. Download it from either release page and run it
-with `php booster.phar`.
+Booster ships as a single-file PHAR, so Preflight and apps without Composer access can run it as one file. The first route
+above downloads it; every version tag publishes the same `booster.phar`: the GitLab release carries it as an asset,
+and the GitHub release at github.com/waynestate/booster carries it as an attachment. Run it with `php booster.phar`.
 
 You can also build it from any commit, with the script for your OS (both need Docker, and no PHP or Composer on the
 host):
@@ -247,7 +289,7 @@ Options for `run`:
 | `--image` | Run the gate in this Docker image instead of building `booster-target` (it needs `php` and `composer` on `PATH`): one name, a `{php}` template or a version map (below) |
 | `--allow-failing-baseline` | Continue when the baseline fails; later gate failures are labelled as pre-existing |
 | `--allow-dirty` | Run even when the working copy has uncommitted changes |
-| `--test-command` | What runs the app's tests in the image (default `composer test`, else `vendor/bin/phpunit`) |
+| `--test-command` | What runs the app's tests in the image (default `composer test`, else `vendor/bin/phpunit`, else the built-in `php -l` syntax check when the app has no tests) |
 | `--test-env` | Environment variable (`KEY=VALUE`) passed to the baseline and every gate container with `-e`; repeat it. The report names the keys only, never the values |
 | `--proctor-command` | An extra command run in the image after the tests, for example a PROCTOR check |
 | `--proctor-advisory` | Report the PROCTOR result but do not fail the run on it. Applied automatically when the run stops before the final target (`--until`, `--only`, or a target past security support) |
@@ -379,10 +421,11 @@ tell you what is missing.
 
 ### The baseline
 
-Before the first hop, `run` runs the app's own tests on the PHP the app is on now, in the same `booster-target:<php>`
-image the gate uses. The point is to tell "Booster broke it" from "it was already broken": a red baseline means the
-suite was red before any change, so a later red gate is not proof of a bad hop. The baseline is recorded in the report
-(`passed`, `failed` or `skipped`, with the exit code and the last 20 lines of output).
+Before the first hop, `run` runs the app's own tests (or the built-in `php -l` syntax check when the app has no
+tests) on the PHP the app is on now, in the same `booster-target:<php>` image the gate uses. The point is to tell
+"Booster broke it" from "it was already broken": a red baseline means the suite was red before any change, so a
+later red gate is not proof of a bad hop. The baseline is recorded in the report (`passed`, `failed` or `skipped`,
+with the exit code and the last 20 lines of output).
 
 - A red baseline stops the run before the first hop, with a non-zero exit. `--allow-failing-baseline` lets it go on;
   each later gate failure is then labelled "the baseline was already failing" in the text and JSON output.
@@ -390,6 +433,10 @@ suite was red before any change, so a later red gate is not proof of a bad hop. 
 - A Mix app's `public/mix-manifest.json` is a build artifact, not committed source: a fresh clone has no manifest, so
   the suite can be red before any hop. Build the assets before the baseline (the app's usual `npm ci && npm run
   build`), or pass `--allow-failing-baseline` knowing why.
+- When the app has no tests of its own, the baseline and every gate run a built-in check instead: every PHP file
+  outside `vendor/` and `node_modules/` must still parse on the target PHP (`php -l`). That proves the code loads on
+  the new PHP, not that it works: click through the app before you ship. Pass `--test-command` to run something else,
+  or add a smoke test (below) to get the real gate back.
 
 ### A smoke test for WSU apps
 

@@ -15,7 +15,7 @@
             "source": "booster/BEST_PRACTICES.md"
         },
         "docs/booster/readme.md": {
-            "sha256": "2dfd16b52d3924d120ce1e03ad2eb66c91e6bddf01a427547d460da79c9b32d9",
+            "sha256": "78264001883cf69a72e97642d7c371af0564a6d774ddbaa8ef943edf1e5626d5",
             "source": "booster/README.md"
         },
         "docs/creed/best-practices.md": {
@@ -51,19 +51,19 @@
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
-            "sha256": "56fe3cc05f94514bc96c92aa0e8dab24b194acc6be320e68f6b78b6f3e134446",
+            "sha256": "962dafba0d3d40019d65ee947c5fe4f9411f897a4c98f5f7cab30cc78e9944da",
             "source": "preflight/BEST_PRACTICES.md"
         },
         "docs/preflight/readme.md": {
-            "sha256": "35a498d2132be59f76fc2bbcdf8a437087c740415ad7f861ebef9cee48dee5e4",
+            "sha256": "60ffd12cd1512b497e8210a6285dbc428c25b967cf6c672604c4fd7167bacf1f",
             "source": "preflight/README.md"
         },
         "docs/proctor/best-practices.md": {
-            "sha256": "6089b734548b4af6abaea98f77183ed8e6d30ede963a405a3ea0f153260eaf19",
+            "sha256": "91bbbd269d6f5a2ed2193647dc32959c59fbbe4d7ffddbc21b36992b28cf7b47",
             "source": "proctor/BEST_PRACTICES.md"
         },
         "docs/proctor/readme.md": {
-            "sha256": "3ebb05df6b77eaa6cdcaa930704d18653b45134936ff58619db9d2d9c5a049f3",
+            "sha256": "30ca894963d8e414ccad169b6f2bcbb5bd757fa4d89c0a88615ca0bb28a4d42f",
             "source": "proctor/README.md"
         },
         "docs/rollcall/best-practices.md": {
@@ -71,7 +71,7 @@
             "source": "rollcall/BEST_PRACTICES.md"
         },
         "docs/rollcall/readme.md": {
-            "sha256": "b9454af1e9aaaf4c676c9db6a3ede7b00ac3bf7791d142f2e8a0b2a43ebf9d6b",
+            "sha256": "79989c946f10804ad8bdf4bd6b9e81880ac138d7f2564e147c043f5658e5ac0e",
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
