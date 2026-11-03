@@ -75,6 +75,28 @@ Add Composer scripts that run on every OS:
 }
 ```
 
+### Show Pint findings in the merge request
+
+Add a second script that writes the report to a file:
+
+```json
+{
+    "scripts": {
+        "lint:gitlab": "pint --test --config vendor/waynestate/pinstripe/pint/per.json --format=gitlab > pint-codequality.json"
+    }
+}
+```
+
+Point GitLab at the artifact:
+
+```yaml
+artifacts:
+    reports:
+        codequality: pint-codequality.json
+```
+
+`--format=gitlab` writes GitLab's Code Quality JSON and `[]` when the code is clean, and Pinstripe tests both. Chalk marks wash out; these findings stay pinned to the merge request.
+
 `composer lint` fails on style. `composer fix` fixes it. Pint's `per` preset is the PER Coding Style, and `tests/fixtures/per` keeps a clean and a messy proof.
 `composer analyse` runs PHPStan at level 8, with deprecation checks too.
 Pinstripe ships `phpstan/phpstan-deprecation-rules`, loaded automatically by
@@ -257,6 +279,36 @@ Maintainers: how to build, test and release this project, and where its data com
 - eslint-plugin-vuejs-accessibility 2.6.3
 - typescript-eslint 8.72.1
 - Node 22.13 or newer
+
+## Tool floors
+
+Can your app run Pinstripe's tools? Each row shows the floor the locked package itself declares, read verbatim from `composer.lock` and `package-lock.json` today and checked against them by `tests/ToolFloorsTest.php`, so a dependency bump forces a README update in the same change.
+
+PHP tools:
+
+| Tool | Locked version | Needs |
+| --- | --- | --- |
+| `laravel/pint` | v1.32.1 | `^8.3.0` |
+| `phpstan/phpstan` | 2.3.3 | `^7.4\|^8.0` |
+| `phpstan/phpstan-strict-rules` | 2.1.0 | `^7.4 \|\| ^8.0` |
+| `phpstan/phpstan-deprecation-rules` | 2.0.5 | `^7.4 \|\| ^8.0` |
+| `larastan/larastan` | v3.13.2 | `^8.2` |
+| `rector/rector` | 2.8.2 | `^7.4\|^8.0` |
+
+Node tools:
+
+| Tool | Locked version | Needs |
+| --- | --- | --- |
+| `eslint` | 10.13.0 | `^20.19.0 \|\| ^22.13.0 \|\| >=24` |
+| `eslint-plugin-vue` | 10.12.0 | `^18.18.0 \|\| ^20.9.0 \|\| >=21.1.0` |
+| `typescript-eslint` | 8.72.1 | `^18.18.0 \|\| ^20.9.0 \|\| >=21.1.0` |
+| `prettier` | 3.9.10 | `>=14` |
+
+- Pinstripe itself needs PHP 8.3 or newer and Node 22.13 or newer, so the Pint floor is the binding PHP floor.
+- Pint only reads and rewrites files, so an app still on an older PHP can run Pint with a PHP 8.3 or newer binary (for example a container) while the app itself keeps its runtime.
+- ESLint 10 is what sets the Node floor: Node 20 before 20.19 is out.
+
+Measure twice, cut once: these floors are cut from the lock files, and the test keeps the hem honest.
 
 ## Coming next
 

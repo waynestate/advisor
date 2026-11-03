@@ -43,27 +43,27 @@
             "source": "helmet/README.md"
         },
         "docs/pinstripe/best-practices.md": {
-            "sha256": "4d9c9956c9f13096fd6488b2c6425684310ae2a105d1c154c26e1c0c7758cc51",
+            "sha256": "b51818f55e3e99c405f4a1dc82143a7245e186f9fc78ef7cad7c47c345f839f5",
             "source": "pinstripe/BEST_PRACTICES.md"
         },
         "docs/pinstripe/readme.md": {
-            "sha256": "a3b64fd324bdd3a5eb1d007d8207a3587263846904ac6bb18b37e6da54d4dd0d",
+            "sha256": "0a698f51fc78e82d69c64e2745eb25856796b1f26df9e437ff8db01aacbf6e86",
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
-            "sha256": "cddc4280bbc2e784b817de1ede67e4ee90dfa7623bf50c6d43b483a771143924",
+            "sha256": "92d1a2d99453b53486cc1bd6ed39fc9569923df5fad7157f842d1e781fa44a02",
             "source": "preflight/BEST_PRACTICES.md"
         },
         "docs/preflight/readme.md": {
-            "sha256": "8aebbba1d3b1b4fa9f331e851f3bc432c7abaca656293c485676010f9ded2ad6",
+            "sha256": "fb2cc261f3c1aa9c71d31bd8754523def25717291797d65de166148fac8fb06a",
             "source": "preflight/README.md"
         },
         "docs/proctor/best-practices.md": {
-            "sha256": "e3e177a2538ad4c7c1903a46abe93b1bab37623781ea952f785ed69d417a69eb",
+            "sha256": "80755153040dcb7d2794e5af94609a8908fc2f93b1093e4725fb993710e6853d",
             "source": "proctor/BEST_PRACTICES.md"
         },
         "docs/proctor/readme.md": {
-            "sha256": "9fb2cd9387f16a1ddc7f4d4a475ec82b16957b1cdf4901138e537d12b3de117d",
+            "sha256": "a7e96dd376b2f0470283721f8d5697fa3d5e6d90a124850bce461ceb74a89ba9",
             "source": "proctor/README.md"
         },
         "docs/rollcall/best-practices.md": {
