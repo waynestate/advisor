@@ -31,7 +31,7 @@
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "387872fa10094694bce6f118f878679852328cc4615c39683b5f2b7293c90938",
+            "sha256": "74a3461bd302c665537ccc1d8500308d48f630f7c574b668475d44db10ac2f95",
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
@@ -75,11 +75,11 @@
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "75478e7fd4b0e297a066dbc3ba3be480f3257dd2747d6dfd2bc708780e6dcd26",
+            "sha256": "1b5f4e09462a3a6888f36be16a16ffafa765fe31bf7230e3e167b1ce2cd51b25",
             "source": "sesame/BEST_PRACTICES.md"
         },
         "docs/sesame/readme.md": {
-            "sha256": "9d2af665f20de1c0dab5d0544ba173444dda5f0b4a9072a55ecc0fd41617bd63",
+            "sha256": "286729bb306075b6611ba1dbd5f5c5526ff005e36de738b6754cbf1da596e884",
             "source": "sesame/README.md"
         },
         "docs/sourdough/best-practices.md": {

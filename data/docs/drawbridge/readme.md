@@ -350,6 +350,30 @@ The `gateway` block sets how long a sign-in lasts and how long it may sit unused
 seconds, 300 to 604800) and `session_idle_seconds` (default 3600 seconds, 60 to 86400). Each app host renders them as
 mod_auth_openidc's `OIDCSessionMaxDuration` and `OIDCSessionInactivityTimeout`.
 
+### Three sessions, three clocks
+
+A signed-in visitor has up to three sessions at once. Each has its own lifetime and its own owner, and ending one does
+not end the others.
+
+| Layer | Default lifetime | What ends it | What the visitor sees next |
+|---|---|---|---|
+| Entra (the identity provider) | set by Entra and its Conditional Access policy, not by Drawbridge | Entra's own policy, or the visitor signing out of Entra | Entra may sign them in again without a prompt, or ask for credentials |
+| Gateway (mod_auth_openidc, one per app host) | 8 hours total, 1 hour idle (`session_seconds`, `session_idle_seconds`) | either clock, the `?logout=` link above, or a restart or reload of the gateway (the cache lives in shared memory and starts empty) | a protected path sends them to Entra; an `api` path answers 401 |
+| App (SESAME) | 720 minutes total, 120 minutes idle (`session.absolute_minutes`, `session.idle_minutes`) | either clock, or the app calling `sesame_logout()` | the app's login route asks the gateway for a fresh assertion |
+
+How they fit together:
+
+- The assertion is used once, when the app signs the visitor in (it lives 60 seconds and SESAME's replay guard refuses
+  a second use). After that the app's session runs on SESAME's clocks; a protected page reads SESAME's session, not the gateway.
+- So the app session can outlast the gateway session. With the defaults it can: the app allows 12 hours, the gateway 8.
+  The gateway session ending does not sign anyone out of the app; the visitor finds out the next time the app sends
+  them through its login route. To make the app never outlive the gateway sign-in, set the app's
+  `session.absolute_minutes` to `session_seconds / 60` or less (480 for the default).
+- Signing out through the `?logout=` link ends the gateway session and asks Entra to end its own for that browser, not
+  the app's. The app ends its own session first (`sesame_logout()`), then sends the browser to the link.
+- A gateway restart signs everyone out of the gateway layer only; apps keep their sessions until their own clocks run
+  out.
+
 
 ## Environment variables
 
