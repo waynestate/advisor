@@ -109,6 +109,10 @@ plugin (`config.allow-plugins` in your `composer.json`). Your `phpstan.neon` inc
 `vendor/waynestate/pinstripe/phpstan/laravel.neon` and nothing else: there is no Larastan line to add, and the
 scripts point at `vendor/waynestate/pinstripe/pint/laravel.json`.
 
+The Laravel preset also rejects `env()` outside `config/`: once the config is cached, `env()` returns null, so
+read config with `config()` instead. The rule is Larastan's, and `phpstan/laravel.neon` pins it on. The
+environment is not a hand-me-down: take the config out of the wardrobe.
+
 Proven on Laravel: `composer ci` lints a minimal Laravel 13 app (`tests/fixtures/laravel-app`) with
 `pint/laravel.json` and analyzes it with `phpstan/laravel.neon` on every run, and fails if the app stops
 passing. A smaller fixture (`tests/fixtures/laravel`) proves the preset really loads Larastan: it plants an

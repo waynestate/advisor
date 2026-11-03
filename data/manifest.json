@@ -15,7 +15,7 @@
             "source": "booster/BEST_PRACTICES.md"
         },
         "docs/booster/readme.md": {
-            "sha256": "0e0547795eac2ff54b727b821c50bd03ba4e7752a0a2fed07cfd571f6a0d7e79",
+            "sha256": "73f74093f33f36bb3d64ac88b35aabe89d564080c5f92bccec5269e342706fbc",
             "source": "booster/README.md"
         },
         "docs/creed/best-practices.md": {
@@ -43,11 +43,11 @@
             "source": "helmet/README.md"
         },
         "docs/pinstripe/best-practices.md": {
-            "sha256": "9f421eb4743770d5c6fbe0342842daff48a8bf2b3fa2fde10f37b5af576ef1e3",
+            "sha256": "4d9c9956c9f13096fd6488b2c6425684310ae2a105d1c154c26e1c0c7758cc51",
             "source": "pinstripe/BEST_PRACTICES.md"
         },
         "docs/pinstripe/readme.md": {
-            "sha256": "568d471bcb5c398cdd37402601b2ebd9f912d1993ed9bab1fd60051f3948ccce",
+            "sha256": "a3b64fd324bdd3a5eb1d007d8207a3587263846904ac6bb18b37e6da54d4dd0d",
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
@@ -59,11 +59,11 @@
             "source": "preflight/README.md"
         },
         "docs/proctor/best-practices.md": {
-            "sha256": "34e1fd47f0991295c54f353569fb115f91792c066599400c73619302d97a245c",
+            "sha256": "3b654c208841b9882b2c6b1b49ba3f81f2d86c74805052b5d5c4587302142a73",
             "source": "proctor/BEST_PRACTICES.md"
         },
         "docs/proctor/readme.md": {
-            "sha256": "d6b5732faba54b9f9227a2e4b93e9dc7d13351d453fd1c2fbeefb679d129db89",
+            "sha256": "9fb2cd9387f16a1ddc7f4d4a475ec82b16957b1cdf4901138e537d12b3de117d",
             "source": "proctor/README.md"
         },
         "docs/rollcall/best-practices.md": {
@@ -95,7 +95,7 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "e4d7b7cc17cfc548a52fd08799e5a64c7f8eb1e633aad844ed9a9da3c18c4877",
+            "sha256": "925c54bf3f757adf7d3218239fde0c16352db22c41af7cee34b1332a989cbdd4",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {
