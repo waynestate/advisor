@@ -11,13 +11,10 @@ use Waynestate\Advisor\Module\ToolDefinition;
 /** Shared values from Playbook, with the environment winning the argument. */
 final class PlaybookLookup
 {
-    /** Keys that look like secrets are never looked up or returned. */
-    private const SECRET_LIKE = '/(SECRET|PASSWORD|TOKEN|KEY)$/i';
-
-    private const HOW_TO_GET = 'composer require waynestate/playbook (VCS repository https://git.wayne.edu/enterprise-apps/playbook.git). PLAYBOOK is private on git.wayne.edu. If you get a 404, ask the Enterprise Applications team for read access.';
-
     public static function definition(ModuleContext $context): ToolDefinition
     {
+        $settings = $context->settings;
+
         return new ToolDefinition(
             name: 'playbook_lookup',
             title: 'Look up a shared value',
@@ -29,61 +26,30 @@ final class PlaybookLookup
                 ],
                 'additionalProperties' => false,
             ],
-            handler: static function (array $args): array {
-                // Plain string, not ::class: Playbook is a suggested package that
-                // CI never installs, so PHPStan must not look the class up.
-                $playbook = 'Waynestate\Playbook\Playbook';
-                if (!class_exists($playbook)) {
-                    return ['available' => false, 'how_to_get' => self::HOW_TO_GET];
+            handler: static function (array $args) use ($settings): array {
+                if (!$settings->available()) {
+                    return ['available' => false, 'how_to_get' => $settings->howToGet()];
                 }
 
                 $key = isset($args['key']) ? trim((string) $args['key']) : null;
                 if ($key !== null && $key === '') {
                     throw new ToolInputError('Give a key to look up, or call playbook_lookup without arguments for every key.');
                 }
-                if ($key !== null && preg_match(self::SECRET_LIKE, $key) === 1) {
-                    throw new ToolInputError('Refusing to look up a key that looks like a secret (it ends in SECRET, PASSWORD, TOKEN or KEY). ADVISOR never returns secret-looking values.');
-                }
 
                 if ($key === null) {
                     $entries = [];
-                    $all = $playbook::all();
-                    foreach (is_array($all) ? array_keys($all) : [] as $name) {
-                        $name = (string) $name;
-                        if (preg_match(self::SECRET_LIKE, $name) === 1) {
-                            continue;
-                        }
-                        $found = self::valueOf($playbook, $name);
-                        $entries[] = ['key' => $name, 'value' => $found['value'], 'source' => $found['source']];
+                    foreach ($settings->names() as $name) {
+                        $setting = $settings->resolve($name);
+                        $entries[] = ['key' => $name, 'value' => $setting->value, 'source' => $setting->source];
                     }
 
                     return ['available' => true, 'entries' => $entries];
                 }
 
-                $found = self::valueOf($playbook, $key);
+                $setting = $settings->resolve($key);
 
-                return ['available' => true, 'key' => $key, 'value' => $found['value'], 'source' => $found['source']];
+                return ['available' => true, 'key' => $key, 'value' => $setting->value, 'source' => $setting->source];
             },
         );
-    }
-
-    /**
-     * One key, environment first, then Playbook. $playbook is the fully
-     * qualified name of the Playbook class as a plain string.
-     *
-     * @return array{value: string|null, source: string}
-     */
-    private static function valueOf(string $playbook, string $key): array
-    {
-        $env = getenv($key);
-        if (is_string($env) && $env !== '') {
-            return ['value' => $env, 'source' => 'environment'];
-        }
-        $value = $playbook::get($key);
-        if (is_string($value) && $value !== '') {
-            return ['value' => $value, 'source' => 'playbook'];
-        }
-
-        return ['value' => null, 'source' => 'unset'];
     }
 }
