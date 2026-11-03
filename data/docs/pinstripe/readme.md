@@ -138,7 +138,10 @@ environment is not a hand-me-down: take the config out of the wardrobe.
 Proven on Laravel: `composer ci` lints a minimal Laravel 13 app (`tests/fixtures/laravel-app`) with
 `pint/laravel.json` and analyzes it with `phpstan/laravel.neon` on every run, and fails if the app stops
 passing. A smaller fixture (`tests/fixtures/laravel`) proves the preset really loads Larastan: it plants an
-undefined Eloquent property that only Larastan reports, and a clean twin it leaves alone.
+undefined Eloquent property that only Larastan reports, and a clean twin it leaves alone. The combined fixture
+`tests/fixtures/laravel-vue` is one app tree with both PHP and Vue files, with `resources/js` beside `app/`.
+`composer ci` lints its PHP side with Pint and PHPStan and its Vue side with ESLint and Prettier on every run,
+with one planted PHP error and two planted Vue defects that each preset must report.
 
 ## Use it for Vue
 
@@ -178,7 +181,7 @@ Add scripts that run on every OS:
 ```
 
 `npm run lint` fails on style and accessibility. `npm run format` fixes the layout. The preset is the off-the-rack
-suit: it fits every app, and you only add your own cufflinks.
+suit: it fits every app, and you only add your own cufflinks. If an app adopts Oxlint for speed, ESLint stays in the toolchain for `.vue` files, because Pinstripe's Vue and accessibility rules (eslint-plugin-vue and eslint-plugin-vuejs-accessibility) run only in ESLint.
 
 ## Use it for Rector
 
@@ -279,7 +282,7 @@ vendor/bin/pinstripe-baseline check --against=$CI_MERGE_REQUEST_DIFF_BASE_SHA ph
 ```
 
 A baseline is a tailor's chalk line, and this command is the tape measure: it fails the build the moment the line
-gets longer.
+gets longer. The policy behind this section is recorded in [docs/adr/0001-phpstan-level-and-baseline-policy.md](docs/adr/0001-phpstan-level-and-baseline-policy.md).
 
 ## Tested with
 
@@ -296,7 +299,7 @@ Maintainers: how to build, test and release this project, and where its data com
 - eslint-plugin-vue 10.12.0
 - eslint-plugin-vuejs-accessibility 2.6.3
 - typescript-eslint 8.72.1
-- Node 22.13 or newer
+- Node 22, 24 and 26 (the JS presets run in CI on all three; the floor stays 22.13)
 
 ## Tool floors
 

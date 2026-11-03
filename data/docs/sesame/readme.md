@@ -222,10 +222,6 @@ settings in `config/session.php`:
   Laravel does by default. A cross-site `POST` carries no `Lax` cookie at all,
   which is the defense you want; a future `saml` driver would need its own
   short-lived cookie for that reason (S35).
-- **Leave the session ID length alone** (S45). Do not set `session.sid_length` or
-  `session.sid_bits_per_character`: PHP's default ID is 32 hexadecimal characters
-  (128 bits), and on PHP 8.4 and later both settings are deprecated and raise
-  notices. A low value weakens the ID. Neither SESAME nor HELMET sets or checks them.
 
 On logout, both paths send `Cache-Control: no-store` and
 `Clear-Site-Data: "cache", "storage"` so a back button or a shared browser
@@ -270,17 +266,10 @@ authentication event through it:
 | `sesame.login_failed` | `warning` | The driver's login threw `AuthenticationFailed`. |
 | `sesame.login_refused` | `warning` | The resolver refused the identity and returned null. |
 | `sesame.logout` | `info` | The session was signed out (a logout, a timeout, or a deleted user). |
-| `sesame.session_anomaly` | `warning` | The session state looks wrong or tampered with: `reason` is `missing_timestamps` or `bad_session_ref`. |
 
 Each record carries `event`, `driver`, `username` and `at` (the time in UTC)
 in its context, and `sesame.logout` adds `reason` (`logout`, `idle_timeout`,
-`absolute_timeout`, `no_timestamps` or `user_gone`). `sesame.session_anomaly`
-adds `reason` (`missing_timestamps`, a user stored without the session's
-timestamps, or `bad_session_ref`, a stored reference that is not the
-16-character lowercase hex value login created) and carries `session_ref`
-when the stored value is still a valid 16-character lowercase hex string;
-when you see one, look at the `session_ref` and the user around it in the
-log to see what happened to the session. `sesame.login` and
+`absolute_timeout`, `no_timestamps` or `user_gone`). `sesame.login` and
 `sesame.logout` also carry `session_ref`: an opaque 16-character hex
 reference SESAME creates on every login (stored in the session under
 `sesame.session_ref`) that ties the login, timeouts and logout of one sign-in
@@ -343,9 +332,6 @@ $config = Config::fromArray([
 // five by default, to any host or to plain http) and leave TLS verification
 // on (`verify` is true by default; never set it to false). PSR-18 has no
 // standard option for either, so the client you hand SESAME must carry them.
-// SESAME treats any non-200 answer (including a redirect) as a failed login
-// and lets a client exception through, so a client that is set up wrong fails
-// the sign-in and never signs anyone in.
 $http = new \GuzzleHttp\Client([
     'timeout' => 10,
     'connect_timeout' => 5,

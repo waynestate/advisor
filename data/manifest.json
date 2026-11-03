@@ -15,7 +15,7 @@
             "source": "booster/BEST_PRACTICES.md"
         },
         "docs/booster/readme.md": {
-            "sha256": "d3ac92d46b56a4342b6369d7d3d08fecb3e48e7e7d123b56b39fc4cc57b241b5",
+            "sha256": "6c535b29777a6bd2c794270bfab404717ba9c4b220a73141152090599489a542",
             "source": "booster/README.md"
         },
         "docs/creed/best-practices.md": {
@@ -27,19 +27,19 @@
             "source": "creed/README.md"
         },
         "docs/drawbridge/best-practices.md": {
-            "sha256": "e60ea73c5bab3d7257c6d80aa8fdb4042dfbb183422435e9ec4cf440d61a6589",
+            "sha256": "2a5f44a688bd2ad2fc921fa5524e7bd44e97e98409459fedea3f1e0609b187d9",
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "2499ee4b97457e503f40f9ca34df45c6f929ad1ec8762f082fb3d3f982428ea1",
+            "sha256": "74a3461bd302c665537ccc1d8500308d48f630f7c574b668475d44db10ac2f95",
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
-            "sha256": "665a9b04e903f381660568c423d039230a22751fe4ac827de91e6334116a43bb",
+            "sha256": "bb9be9190f1c9aba7f71ce795056c14d330a37c473265efc1909a40d3f9486f9",
             "source": "helmet/BEST_PRACTICES.md"
         },
         "docs/helmet/readme.md": {
-            "sha256": "39de40b35d935dc9e1008a228e86b154b824b259beaf42123e66695540602529",
+            "sha256": "7ab37912cbc607be484e0230460b93f764ab383b3c68f392959a63a8c5500f4c",
             "source": "helmet/README.md"
         },
         "docs/pinstripe/best-practices.md": {
@@ -47,7 +47,7 @@
             "source": "pinstripe/BEST_PRACTICES.md"
         },
         "docs/pinstripe/readme.md": {
-            "sha256": "d41d924d1f9c9e90aaf76a75d0fa532834f332513a1e5c5b300f290b4097ce0f",
+            "sha256": "f5b84353b14cd2158035b9ec66fb3f9e7aca8851a7a48ddb79414a64d7df9203",
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
@@ -55,15 +55,15 @@
             "source": "preflight/BEST_PRACTICES.md"
         },
         "docs/preflight/readme.md": {
-            "sha256": "79c026715180b9357b4f0ce62c119022393ed7d0759b98445cde25d49dbcac80",
+            "sha256": "720fa2b7a19e7065d073b243519dfc2e2708dd4b3eb110d05e048f4eba9e121c",
             "source": "preflight/README.md"
         },
         "docs/proctor/best-practices.md": {
-            "sha256": "325b531a93e52902c56be814ae32232c88f73a1d35699f918acb424b588825c0",
+            "sha256": "ab70aff47542f7287fd816040564e0739341078bf29c16ef4192f99b7e54ba13",
             "source": "proctor/BEST_PRACTICES.md"
         },
         "docs/proctor/readme.md": {
-            "sha256": "613f3fff744fdf67007302568a8816a3dd840b42f4ff7b2ea902191307b8f941",
+            "sha256": "8e1d1c8d1774efaf938e012eb9a387bf92c02593c70af6d96cb21744c22e5593",
             "source": "proctor/README.md"
         },
         "docs/rollcall/best-practices.md": {
@@ -75,11 +75,11 @@
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "403cdbe90cbe4c979268ba2468c22034f3d89de28a4e1f9e7027825f6f2c407d",
+            "sha256": "1b5f4e09462a3a6888f36be16a16ffafa765fe31bf7230e3e167b1ce2cd51b25",
             "source": "sesame/BEST_PRACTICES.md"
         },
         "docs/sesame/readme.md": {
-            "sha256": "7e9cbf18f76f88f081d6b4a9bc90075342946fd9881d8edf64be7613a06b1080",
+            "sha256": "286729bb306075b6611ba1dbd5f5c5526ff005e36de738b6754cbf1da596e884",
             "source": "sesame/README.md"
         },
         "docs/sourdough/best-practices.md": {
@@ -95,7 +95,7 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "90ce3059d83915081e912a4e7a0ae8ded5cbea5b5dccc5fd9c96eb020ff93f26",
+            "sha256": "3575070f33dd959eb40663bddc63e8f984cda7067417f137e288200b5ab65ada",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {

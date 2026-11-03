@@ -269,12 +269,6 @@ docker inspect --format='{{index .RepoDigests 0}}' <this project's registry>/gat
 The image carries OCI labels (`org.opencontainers.image.source`, `.revision`, `.version`, `.licenses`) set from the
 pipeline's commit; a local `docker build` leaves them empty.
 
-The image also refuses to build if Debian serves apache2 or mod_auth_openidc below the versions the rig tested:
-the Dockerfile checks the installed versions with `dpkg --compare-versions` right after the install (apt-get has
-no `>=` syntax) and stops the build with a clear message when one is lower. The floor is apache2 2.4.69-1~deb13u1
-and mod_auth_openidc 2.4.17-1, checked 2026-11-03 against debian:trixie-slim. To raise it, bump the two versions
-in the Dockerfile's install step and in `tests/Unit/DockerfileFloorTest.php`, which pins them.
-
 ## WSU values (Playbook)
 
 A drawbridge lifts for barges it knows; these two settings tell it who is
