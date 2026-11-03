@@ -354,7 +354,7 @@ of the match. A path with an encoded slash, a backslash, a semicolon, a control 
 | `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS` | unset | an old passphrase, rendered as the second value (new first, old second); mod_auth_openidc accepts it, but sessions live in shared memory that every reload or restart empties, so today it keeps nobody signed in (see the `rotation` rig run); it becomes useful once sessions move to a shared store |
 | `DRAWBRIDGE_SIGNING_KEY_FILE` | `/run/drawbridge/signing.key` | ES256 private key for assertions (mounted) |
 | `DRAWBRIDGE_SIGNING_KEY_ID` | `drawbridge-1` | `kid` in each token header; change it when the key changes |
-| `DRAWBRIDGE_SESSION_CACHE_ENTRIES` | `1000` | entries in the shared-memory cache: sessions, nonces, provider metadata (minimum 10) |
+| `DRAWBRIDGE_SESSION_CACHE_ENTRIES` | `1000` | entries in the shared-memory cache: sessions, nonces, provider metadata (minimum 10; a smaller value or a non-number is refused when the config is rendered) |
 | `DRAWBRIDGE_RUN_DIR` | `/tmp/drawbridge` | scratch for rendered config, locks and the session cache |
 | `DRAWBRIDGE_LOG_LEVEL` | `warn` | Apache log level |
 | `DRAWBRIDGE_METRICS_TOKEN` | none | bearer token that may read `/metrics`; empty turns the endpoint off unless an allow list is set |
