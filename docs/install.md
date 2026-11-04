@@ -34,6 +34,9 @@ The command is then `php vendor/bin/advisor`. This works the same on Windows, ma
 
 ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.1`. No extra repository needed.
 
+> [!NOTE]
+> Native Windows is not yet proven. ADVISOR is one PHP command, so it is built to run the same everywhere, but it has not been proven on native Windows. If you are on Windows, [use Docker](guides/docker.md).
+
 ## Verify
 
 Check the install with:
