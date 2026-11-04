@@ -19,6 +19,8 @@ On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a S
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
+Documentation: the full docs live at [`site/docs/index.html`](site/docs/index.html), built from `docs/` by the shared docs builder (`composer docs`).
+
 ## Where the code lives
 
 The canonical repository is on nougat: [enterprise-apps/advisor](https://nougat.snu.gs/enterprise-apps/advisor). git.wayne.edu and GitHub ([waynestate/advisor](https://github.com/waynestate/advisor)) are read-only mirrors of it.

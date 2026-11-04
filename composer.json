@@ -28,6 +28,7 @@
     "require-dev": {
         "laravel/mcp": "1.1.2",
         "laravel/pint": "^1.32",
+        "league/commonmark": "^2.10",
         "orchestra/testbench": "^10.0",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^11.5",
@@ -60,6 +61,8 @@
         ],
         "site:agent-ready": "php bin/agent-ready.php",
         "site:agent-ready-check": "php bin/agent-ready.php --check",
+        "docs": "php bin/docs-site.php",
+        "docs:check": "php bin/docs-site.php --check",
         "ci": [
             "@composer validate --strict",
             "@php bin/advisor content:verify",
@@ -68,11 +71,14 @@
             "pint --test",
             "@site:agent-ready-check",
             "phpstan analyse --memory-limit=1G",
-            "@composer audit"
+            "@composer audit",
+            "@docs:check"
         ]
     },
     "scripts-descriptions": {
-        "ci": "Run every CI check: manifest, bundled content, tests, style, agent-ready files, static analysis, audit",
+        "ci": "Run every CI check: manifest, bundled content, tests, style, agent-ready files, the docs site, static analysis, audit",
+        "docs": "Build the docs site into site/docs/ from docs/ (Squire's shared builder).",
+        "docs:check": "Fail when site/docs/ is stale or a docs page has a broken link, block or nav entry.",
         "content:drift": "Fail when data/ no longer matches the stack repos in ADVISOR_STACK_DIR; without the variable it prints how to run it and exits 1.",
         "site:agent-ready": "Rewrite the Markdown twins, llms.txt, llms-full.txt, robots.txt and sitemap.xml in site/ (Squire's agent-ready kit).",
         "site:agent-ready-check": "Fail when the agent-ready files are stale, a page lacks its Markdown link, a prompt drifts from the docs, or the kit was edited here."

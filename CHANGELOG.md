@@ -4,6 +4,9 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Added
+
+- Added: a docs site (site/docs/) built by the shared docs builder from docs/, checked in composer ci.
 - Changed: the bundled data is resynced with the stack's main branches of 2026-11-03 (afternoon): SESAME S45 and the DRAWBRIDGE module floor (from branch heads awaiting main), HELMET H42 4xx pages, H43, H53 and H41 notes; SESAME S4, S41, S42 and S27; plus the Booster, Preflight, PROCTOR and Squire docs that moved.
 - Changed: the bundled data is resynced again (evening): PROCTOR composer-audit-off, not-audited, scoped overrides and the ignore-entries count; Pinstripe Node 22/24/26 matrix, the Laravel + Vue fixture and ADR-0001; plus the other projects docs that moved on main.
 - Changed: the bundled data is resynced with the stack's main branches (late evening of 2026-11-03): Sourdough (Playbook required by default, released HELMET/SESAME/PROCTOR pins in the templates, Preflight pinned to a SHA), Squire (release workflow, docs builder gates), WELD, HELMET 0.3, SESAME 0.4, Preflight, Booster and Drawbridge docs; ADVISOR's own version reads 0.1.5.
