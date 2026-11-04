@@ -8,11 +8,35 @@ On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](https://nouga
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
+Documentation: the full docs live at [`site/docs/index.html`](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/site/docs/index.html), built from `docs/` by the shared docs builder (`composer docs`).
+
 Every page below is Markdown. The HTML pages send the same Markdown to a client that asks for `text/markdown`. Written by Squire's agent-ready kit from the README and the pages; do not edit.
 
 ## Pages
 
 - [ADVISOR: What applies, and what's next.](https://advisor.apps.wayne.edu/index.md): ADVISOR is an MCP server for the Wayne State app stack. Your coding agent asks it about our standards, supported versions, docs and checks, and it answers read-only from the stack's own files.
+- [Changelog | ADVISOR docs](https://advisor.apps.wayne.edu/docs/changelog.md): All notable changes to this project.
+- [Contributing | ADVISOR docs](https://advisor.apps.wayne.edu/docs/contributing.md): How to work on ADVISOR.
+- [Refreshing the content | ADVISOR docs](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.md): How the bundled content is regenerated, verified and checked for drift.
+- [Releasing | ADVISOR docs](https://advisor.apps.wayne.edu/docs/deploying/releasing.md): How ADVISOR is released.
+- [One line for Claude Code | ADVISOR docs](https://advisor.apps.wayne.edu/docs/guides/claude-code.md): The one line that connects Claude Code to ADVISOR.
+- [No PHP? Use Docker | ADVISOR docs](https://advisor.apps.wayne.edu/docs/guides/docker.md): How to run ADVISOR with Docker when PHP is not on your PATH.
+- [When it does not show up | ADVISOR docs](https://advisor.apps.wayne.edu/docs/guides/doctor.md): What to do when the advisor server does not show up in your client.
+- [Laravel apps | ADVISOR docs](https://advisor.apps.wayne.edu/docs/guides/laravel.md): How ADVISOR works in a Laravel app.
+- [Modules | ADVISOR docs](https://advisor.apps.wayne.edu/docs/guides/modules.md): How ADVISOR modules extend what it can answer.
+- [Quick start | ADVISOR docs](https://advisor.apps.wayne.edu/docs/guides/quick-start.md): From install to a first question answered, in a few steps.
+- [Safety | ADVISOR docs](https://advisor.apps.wayne.edu/docs/guides/safety.md): How ADVISOR stays read-only and safe to run.
+- [Served content | ADVISOR docs](https://advisor.apps.wayne.edu/docs/guides/served-content.md): What content ADVISOR serves and where it comes from.
+- [What it offers | ADVISOR docs](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.md): The tools, prompts and resources ADVISOR offers.
+- [Where it sits in WELD | ADVISOR docs](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.md): Where ADVISOR sits among the stack's parts and in WELD.
+- [Overview | ADVISOR docs](https://advisor.apps.wayne.edu/docs/index.md): ADVISOR in one page: what it is, who it is for, and where to go next.
+- [Install | ADVISOR docs](https://advisor.apps.wayne.edu/docs/install.md): How to install ADVISOR in a project and what it needs.
+- [Best practices | ADVISOR docs](https://advisor.apps.wayne.edu/docs/reference/best-practices.md): The rules ADVISOR holds itself to, and the tests that prove them.
+- [Commands | ADVISOR docs](https://advisor.apps.wayne.edu/docs/reference/commands.md): Every advisor command and what it does.
+- [Configuration | ADVISOR docs](https://advisor.apps.wayne.edu/docs/reference/configuration.md): Every ADVISOR environment variable, its default and its meaning.
+- [Proof | ADVISOR docs](https://advisor.apps.wayne.edu/docs/reference/proof.md): How ADVISOR is checked: composer ci and what each check proves.
+- [Troubleshooting | ADVISOR docs](https://advisor.apps.wayne.edu/docs/troubleshooting.md): Symptoms, causes and fixes for ADVISOR.
+- [Upgrading | ADVISOR docs](https://advisor.apps.wayne.edu/docs/upgrading.md): How to upgrade ADVISOR, version by version.
 
 ## Prompts
 

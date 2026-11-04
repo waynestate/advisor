@@ -18,6 +18,8 @@ On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](https://nouga
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
+Documentation: the full docs live at [`site/docs/index.html`](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/site/docs/index.html), built from `docs/` by the shared docs builder (`composer docs`).
+
 ### Where the code lives
 
 The canonical repository is on nougat: [enterprise-apps/advisor](https://nougat.snu.gs/enterprise-apps/advisor). git.wayne.edu and GitHub ([waynestate/advisor](https://github.com/waynestate/advisor)) are read-only mirrors of it.
@@ -602,3 +604,1418 @@ The edges of the map. None of these is in 0.1, so none of them gets a command he
 - Coming soon
   ### HTTP transport
   stdio first. Remote needs a threat model before it needs a port.
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/changelog.html
+
+## Changelog | ADVISOR docs
+
+All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.
+
+### \[Unreleased\][#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
+
+#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
+
+- Added: a docs site (site/docs/) built by the shared docs builder from docs/, checked in composer ci.
+- Changed: the bundled data is resynced with the stack's main branches of 2026-11-03 (afternoon): SESAME S45 and the DRAWBRIDGE module floor (from branch heads awaiting main), HELMET H42 4xx pages, H43, H53 and H41 notes; SESAME S4, S41, S42 and S27; plus the Booster, Preflight, PROCTOR and Squire docs that moved.
+- Changed: the bundled data is resynced again (evening): PROCTOR composer-audit-off, not-audited, scoped overrides and the ignore-entries count; Pinstripe Node 22/24/26 matrix, the Laravel + Vue fixture and ADR-0001; plus the other projects docs that moved on main.
+- Changed: the bundled data is resynced with the stack's main branches (late evening of 2026-11-03): Sourdough (Playbook required by default, released HELMET/SESAME/PROCTOR pins in the templates, Preflight pinned to a SHA), Squire (release workflow, docs builder gates), WELD, HELMET 0.3, SESAME 0.4, Preflight, Booster and Drawbridge docs; ADVISOR's own version reads 0.1.5.
+- Changed: the bundled data is resynced again (night of 2026-11-03): the Pinstripe and Squire readmes moved; Booster, ROLLCALL and WELD docs were already current.
+- Changed: the bundled data is resynced again (late night of 2026-11-03): Sourdough (`composer playbook` script), HELMET, Preflight and Squire readmes moved; WELD docs were already current.
+
+### \[0.1.5\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-5-2026-11-03)
+
+- Changed: the deploy layer requires HELMET ^0.3 and PROCTOR ^0.4 (locked at 0.3.0 and 0.4.0) and sets minimum-stability to stable, which clears PROCTOR 0.4's new minimum-stability warning. HELMET 0.3 reads an empty `HELMET_PROXIES=` as trust nobody; the front page sets only the `citadel` preset, so nothing changes for it. The front page site owes a Quick Update.
+- Changed: the deploy layer's Squire kit is refreshed to 0.5.0 (updated `base-fallback.Dockerfile`, `scripts/release.sh` and `scripts/parity.ps1`). The front page site owes a Quick Update.
+- Changed: the bundled data is resynced with the 2026-11-03 releases: Booster 1.8.0, Preflight 0.1.4, PROCTOR 0.4.0, Pinstripe 0.1.2, CREED 0.1.6, ROLLCALL 0.1.9, HELMET 0.3.0, SESAME 0.4.0, Drawbridge 0.1.1, Sourdough 0.1.5, Squire 0.5.0 and WELD 0.1.2 (versions in `projects.json`), and with each project's main since the last pass (PROCTOR's new `composer-config` and `composer-audit` rule ids, Booster's newcomer-friendly install and run notes, Preflight's `job_name` inputs, and updates to the Drawbridge, Pinstripe, ROLLCALL, SESAME, HELMET, Squire and Sourdough docs).
+- Added: one Playbook settings resolver (`Waynestate\Advisor\Playbook\Settings`, ADR-0018). A name resolves from the real environment first, then the Playbook package, then a `.env.playbook` file in the project root; secret-looking names are still refused. `playbook_lookup` now uses it, so it answers from `.env.playbook` when the package is not installed (same output shape), and the "how to get it" text now includes the `.env.playbook` download for Linux, macOS and Windows.
+- Changed: `.env.playbook` is git-ignored; the agent-ready files (`site/llms.txt`, `site/llms-full.txt`) are regenerated.
+- Changed: docs and package metadata name nougat as the canonical repository, with git.wayne.edu and GitHub as read-only mirrors, until git.wayne.edu has CI runners.
+
+### \[0.1.4\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-4-2026-11-03)
+
+- Changed: CI pulls its Docker Hub images through the GitLab Dependency Proxy (the group's CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX), so pipelines no longer hit Docker Hub's anonymous pull limit.
+
+### \[0.1.3\] - 2026-11-02[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-3-2026-11-02)
+
+#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-1)
+
+- Added: hand-written guides bundled from generator/guides/ and served as advisor://guide/; first guide: Connect to Oracle on Citadel.
+- Added: policy_lookup returns latest_patch; the bundled docs drop hero images, badges and GIFs.
+- Added: WayneUI's migration guide (MIGRATING.md) is bundled as the migrating doc, and every project entry carries its version when it publishes one (composer.json, else package.json, else the newest CHANGELOG heading).
+- Docs: a one-line `claude mcp add` and a Docker `.mcp.json` for machines without PHP.
+- Added: composer content:drift and an optional CI job that fail when data/ no longer matches the sibling repos.
+
+#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
+
+- Changed: the deploy layer's Squire kit is refreshed to 0.3.3 (release options can now live in ./.env.squire).
+- Changed: the deploy layer's Squire kit is refreshed to 0.3.4 (the local .env.squire file is now git-ignored).
+
+### \[0.1.2\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-2-2026-10-29)
+
+#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-2)
+
+- Added: agent-ready site (prompt blocks, Markdown twins, llms.txt), from Squire's kit.
+- `playbook_lookup` tool: answers "what is the value of X?" for WSU shared values. An environment variable of the same name wins, then the private `waynestate/playbook` package (Playbook) supplies the rest; without it the tool says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are refused. `waynestate/playbook` is suggested, never required.
+
+#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-1)
+
+- Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.
+- Changed: project names written as words except acronyms.
+
+#### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
+
+- Fixed: stale capability claims in the site and docs.
+
+### \[0.1.1\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-1-2026-10-29)
+
+#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-3)
+
+- `owner_of` tool: answers "which project owns X?" from a new bundled `data/ownership.json` table (sourced from `generator/ownership.json`, verified by `content:verify`). Fuzzy match: every word of the topic must appear in a row's topic or role; a no-match answer lists every known topic.
+
+#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-2)
+
+- `upgrade_path` moves from the `stack` group to a new `booster` group, so `ADVISOR_GROUPS=stack` offers reference tools only and never starts a program. `ADVISOR_GROUPS` now accepts `stack`, `proctor` and `booster`.
+- PHPStan includes Pinstripe's `raw.neon` preset (`waynestate/pinstripe` 0.1.0 as a dev dependency) instead of a hand copy of its settings; two docblocks were tightened to satisfy the preset's method-signature checks. Pint already used the `per` preset, so `pint.json` is unchanged.
+
+### \[0.1.0\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-0-2026-10-29)
+
+First build, aimed at 0.1.0.
+
+#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-4)
+
+- Read-only MCP server over stdio (`php vendor/bin/advisor mcp`) on the official `mcp/sdk` 0.9.0, speaking both the legacy `initialize` handshake and the 2026-07-28 per-request form.
+- Seven tools: `list_projects`, `get_project_status`, `read_project_docs`, `policy_lookup`, `list_stack_rules`, `run_proctor_check`, `upgrade_path`. Resources `advisor://policy` and `advisor://creed/<chapter>`. Prompts `orient_me` and `plan_upgrade`.
+- `upgrade_path`: plans the app's PHP and/or Laravel upgrade, one supported hop at a time, by running BOOSTER's read-only `plan` (never `run`) against the bundled policy. New settings `ADVISOR_BOOSTER_TIMEOUT` (default 60) and `ADVISOR_BOOSTER_BIN` (fallback when the app has no `vendor/bin/booster` of its own).
+- Bundled, hash-verified content (CREED handbook and policy, project docs, the WayneUI markup contract) with a generator, `content:generate --check` and `content:verify`.
+- `advisor install` for Claude, WarriorGPT, Cursor, VS Code (written) and Codex (printed).
+- Laravel adapter on `laravel/mcp` (`php artisan mcp:start advisor`), so ADVISOR runs beside Laravel Boost.
+- Safety: off unless enabled, refuses production, read-only by default, path confinement, allowlisted child environment, redaction, invisible-character stripping, manifest-only module loading, argument-hash audit log.
+- `composer ci`: validate, content verify, PHPUnit, Pint, PHPStan level 8 (Pinstripe settings), audit. CI files for GitLab (PREFLIGHT 0.1.0) and GitHub.
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/contributing.html
+
+## Contributing[#](https://advisor.apps.wayne.edu/docs/contributing.html#contributing)
+
+This page tells you how to make a change to ADVISOR, what rules the change must keep, and what work is still open.
+
+### Where changes go[#](https://advisor.apps.wayne.edu/docs/contributing.html#where-changes-go)
+
+Development happens on nougat, the canonical repository: enterprise-apps/advisor. This GitHub repository and git.wayne.edu are read-only mirrors: `main` and tags are copied automatically. Changes, issues and merge requests go to nougat. Nobody pushes to the mirrors.
+
+### Build and test[#](https://advisor.apps.wayne.edu/docs/contributing.html#build-and-test)
+
+| Task | Command |
+| --- | --- |
+| Install | `composer install` |
+| All checks (what CI runs) | `composer ci` |
+| Regenerate `data/` from the stack repos | `php bin/advisor content:generate --sources=<folder holding the stack repos>` |
+| Check `data/` against the repos | add `--check` to the line above (exit 1 on drift) |
+| Check `data/` against its manifest | `composer content:verify` |
+| Regenerate the parts table in the README | `php bin/advisor stack-parts --write=README.md` |
+| Diagnose a client setup | `php vendor/bin/advisor doctor` (in an app) |
+
+`composer ci` runs `composer validate --strict`, `content:verify`, `stack-parts --check=README.md`, PHPUnit, Pint, PHPStan and `composer audit`. CI cannot see the sibling repos, so it verifies the manifest; regenerating is a local step.
+
+With only Docker:
+
+```
+docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+```
+
+Snapshot tests are updated with `ADVISOR_UPDATE_SNAPSHOTS=1` (`$env:ADVISOR_UPDATE_SNAPSHOTS = "1"` in PowerShell) before `vendor/bin/phpunit`.
+
+### Rules a change must keep[#](https://advisor.apps.wayne.edu/docs/contributing.html#rules-a-change-must-keep)
+
+Every change to ADVISOR must keep the following practices:
+
+1. **Read-only first.** Every tool states all four hints (read-only, destructive, idempotent, open-world). A tool that writes is left out unless `ADVISOR_READ_ONLY` is turned off, and that switch beats tool groups. Enforced (contract test).
+2. **Narrow tools, closed schemas.** No tool takes a command, a URL or a free path. Schemas set `additionalProperties: false`, and arguments are validated again on our side. Enforced (contract test).
+3. **Run other programs the safe way.** Fixed program, argument array, allowlisted environment, a timeout, and no shell. Paths are resolved and must stay inside the project root. Enforced.
+4. **Keep stdout clean.** Only protocol lines go to stdout; logs, warnings and stray output go to stderr. Enforced (subprocess test).
+5. **Strip invisible characters.** The TAG block, zero-width and bidirectional controls are removed from everything served and rejected in tool metadata. Enforced (contract test).
+6. **Load modules from a manifest only,** from the `Waynestate\` namespace, implementing `Module`. Never scan. Enforced.
+7. **Serve from verified data.** Bundled content is checked against a SHA-256 manifest at start-up and in CI; a mismatch stops the server. Enforced.
+8. **Review any change to the tool list.** `tools/list` is snapshotted; a changed description is a reviewed diff. Enforced (snapshot test).
+9. **Cite sources and date.** Policy answers carry the day they were worked out for and the file they came from. Enforced.
+
+### Keeping the content fresh[#](https://advisor.apps.wayne.edu/docs/contributing.html#keeping-the-content-fresh)
+
+Run `content:generate` after any change that lands in CREED's policy or handbook, a project's README or best practices, an extra doc, or the projects seed. Commit the regenerated `data/` with the source commits in the message. To add a project to the parts list, add its `name` and `tagline` to `generator/projects.seed.json`, then regenerate and `stack-parts --write`.
+
+Beyond a project's README and best practices, a seed may bundle further files under `extra_docs` (a map of slug to path in the project); each lands in `data/docs/<id>/<slug>.md` and in the project's docs list, and a missing file is skipped, not an error. WayneUI's entry bundles its MIGRATING.md as the `migrating` doc.
+
+Hand-written guides live in `generator/guides/`, one Markdown file per slug, served as `advisor://guide/<slug>`. Edit them there, then run `content:generate`.
+
+### Catch stale bundled docs[#](https://advisor.apps.wayne.edu/docs/contributing.html#catch-stale-bundled-docs)
+
+`composer content:drift` compares `data/` with a checkout of the stack repos and exits 1 when they no longer agree. It takes the folder from `ADVISOR_STACK_DIR`; without it, it prints how to run it and exits 1:
+
+```
+ADVISOR_STACK_DIR=<folder holding the stack repos> composer content:drift
+```
+
+It writes nothing. On drift it lists the files that moved; regenerate with `composer content:generate` and review the diff before committing.
+
+Run the drift check before every tag: a release must carry docs that still match the repos it advises on.
+
+### Releasing[#](https://advisor.apps.wayne.edu/docs/contributing.html#releasing)
+
+ADVISOR is public, so its bundle must not carry internal names. The public-posture test always checks generic shapes; private strings are loaded from a denylist file named by `ADVISOR_PRIVATE_DENYLIST`, kept outside the repository (in CI, a masked file-type variable).
+
+Warning
+
+The denylist file is never committed. The bundle is regenerated with the file present before every release.
+
+1. Move the lines under `## [Unreleased]` in `CHANGELOG.md` (Keep a Changelog) to a new `## [X.Y.Z] - YYYY-MM-DD` heading.
+2. With the denylist file present, regenerate: `php bin/advisor content:generate --sources=<stack folder>`, then `composer ci` (the public-posture test must pass).
+3. Both pipelines green for that commit. Run a secrets scan of the history.
+4. Tag `X.Y.Z` (no `v`) on nougat. The mirror carries the tag to GitHub, and Packagist picks it up from there.
+5. A release needs a maintainer's approval. Never move or delete a published tag.
+
+### Open work[#](https://advisor.apps.wayne.edu/docs/contributing.html#open-work)
+
+The following items are open questions or not yet built:
+
+- Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.
+- Signing of any state handed back to a client (no tool needs it in 0.1).
+- A threat model mapped to OWASP and NIST; a full-capture audit mode.
+- "Ask ADVISOR" web chat: needs a model, an open stack question and an accessibility pass of its own.
+- HTTP transport and OAuth: stdio first; remote needs a threat model.
+- Tools that write (scaffold with Sourdough, apply a Booster step): the approved list is read-only; the read-only switch and tool groups are built so they can arrive safely.
+- Per-project modules in their own repositories: the loader and `Module` interface exist and are tested; the other projects have not published modules.
+- WarriorGPT-backed features: no model calls until an open stack question is settled.
+- Plan handles, `requestState` signing and elicitation: no tool needs state or a question to the user yet.
+- Full-capture audit mode: hashes only by default; an opt-in needs a retention decision.
+- MCP Inspector in CI, native Windows and macOS CI.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/contributing.html#related)
+
+- [Upgrading](https://advisor.apps.wayne.edu/docs/upgrading.html)
+- [Releasing](https://advisor.apps.wayne.edu/docs/deploying/releasing.html)
+- [Best practices](https://advisor.apps.wayne.edu/docs/reference/best-practices.html)
+- [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html
+
+## Refreshing the content[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#refreshing-the-content)
+
+This page shows how to keep ADVISOR's bundled content in `data/` current with the stack: regenerate it, verify it, and check for drift.
+
+### What is generated[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#what-is-generated)
+
+The handbook, policy, project docs, the WayneUI markup contract and WayneUI's 1.x to 2.x migration guide in `data/` are generated from the sibling stack repositories by `content:generate` and verified at start-up against `data/manifest.json` (a SHA-256 for every file). If a file does not match, the server refuses to start rather than serve it. Files are cleaned on the way in: line endings are normalized and invisible characters (the TAG block, zero-width and bidirectional controls) are stripped. Each project entry also carries its version when the project publishes one (composer.json, else package.json, else the newest CHANGELOG heading).
+
+Beside the generated docs, hand-written guides are kept by hand in `generator/guides/` (one Markdown file per slug), the same way the ownership table is kept. Each is bundled into `data/guides/` and served as `advisor://guide/<slug>`; the first is "Connect to Oracle on Citadel".
+
+### Regenerate[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#regenerate)
+
+With the stack repos checked out side by side:
+
+```bash
+php vendor/bin/advisor content:generate --sources=/path/to/stack
+```
+
+`--sources` can also come from `ADVISOR_STACK_DIR`. Run `content:generate` after any change that lands in CREED's policy or handbook, a project's README or best practices, an extra doc, or the projects seed. Commit the regenerated `data/` with the source commits in the message.
+
+The generator reads each project's folder from beside the other repos, so a stale clone gives stale docs. WayneUI's development happens on its GitLab repository and the checked-out copy is only a mirror of it: fast-forward the local wayne-ui clone to that repository's main before a resync.
+
+To add a project to the parts list, add its `name` and `tagline` to `generator/projects.seed.json`, then regenerate and run `php bin/advisor stack-parts --write=README.md`.
+
+Beyond a project's README and best practices, a seed may bundle further files under `extra_docs` (a map of slug to path in the project); each lands in `data/docs/<id>/<slug>.md` and in the project's docs list, and a missing file is skipped, not an error. WayneUI's entry bundles its MIGRATING.md as the `migrating` doc.
+
+### Verify[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#verify)
+
+CI cannot see the sibling repositories, so `composer ci` runs `content:verify`, which needs none of them:
+
+```bash
+php vendor/bin/advisor content:verify
+```
+
+It checks the bundled `data/` against `data/manifest.json` (a SHA-256 for every file).
+
+### Check for drift[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#check-for-drift)
+
+`composer content:drift` compares `data/` with a checkout of the stack repos and exits 1 when they no longer agree. It takes the folder from `ADVISOR_STACK_DIR`; without it, it prints how to run it and exits 1:
+
+```bash
+ADVISOR_STACK_DIR=<folder holding the stack repos> composer content:drift
+```
+
+It writes nothing. On drift it lists the files that moved; regenerate with `composer content:generate` and review the diff before committing. You can also pass `--check` to `content:generate` directly:
+
+```bash
+php vendor/bin/advisor content:generate --sources=/path/to/stack --check
+```
+
+That exits 1 on drift.
+
+The GitLab job `content-drift` does the same in CI: it clones the repos listed in `data/projects.json` with the job token, puts them in one folder, sets `ADVISOR_STACK_DIR` and runs the check. It is manual or scheduled and allowed to fail, so it cannot block main. Run the drift check before every tag: a release must carry docs that still match the repos it advises on.
+
+### The private denylist[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#the-private-denylist)
+
+ADVISOR is a public repository, so the bundle must not carry internal names. The public-posture test always checks generic shapes (ADR numbers, open-question numbers, design-doc paths, the coordination repo). Private strings (hostnames, people) are loaded from the file named by `ADVISOR_PRIVATE_DENYLIST` and checked only when the file is present.
+
+To release with the denylist:
+
+1. Set `ADVISOR_PRIVATE_DENYLIST` to a file kept outside the repository (one literal or `regex:` pattern per line, `#` comments).
+2. In GitLab CI, the file comes from a masked file-type CI variable.
+3. Regenerate the bundle with the file present: `php vendor/bin/advisor content:generate --sources=/path/to/stack`.
+4. Run `composer ci` to confirm the public-posture test passes.
+
+Warning
+
+The denylist file is never committed. The bundle is regenerated with the file present before every release.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#related)
+
+- [Releasing](https://advisor.apps.wayne.edu/docs/deploying/releasing.html)
+- [Served content](https://advisor.apps.wayne.edu/docs/guides/served-content.html)
+- [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+- [Troubleshooting](https://advisor.apps.wayne.edu/docs/troubleshooting.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/deploying/releasing.html
+
+## Releasing[#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#releasing)
+
+This page gives the numbered steps for releasing ADVISOR, from the README's "Releasing" section and MAINTAINING.md.
+
+ADVISOR is public, so its bundle must not carry internal names. The public-posture test always checks generic shapes; private strings are loaded from a denylist file named by `ADVISOR_PRIVATE_DENYLIST`, kept outside the repository (in CI, a masked file-type variable). See "Releasing" in the README.
+
+Warning
+
+A release needs a maintainer's approval. Never move or delete a published tag.
+
+### Steps[#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#steps)
+
+1. Move the lines under `## [Unreleased]` in `CHANGELOG.md` (Keep a Changelog) to a new `## [X.Y.Z] - YYYY-MM-DD` heading.
+2. With the denylist file present, regenerate: `php bin/advisor content:generate --sources=<stack folder>`, then `composer ci` (the public-posture test must pass).
+3. Both pipelines green for that commit. Run a secrets scan of the history.
+4. Tag `X.Y.Z` (no `v`) on nougat. The mirror carries the tag to GitHub, and Packagist picks it up from there.
+5. A release needs a maintainer's approval. Never move or delete a published tag.
+
+### The denylist[#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#the-denylist)
+
+The public-posture test always checks generic shapes (ADR numbers, open-question numbers, design-doc paths, the coordination repo). Private strings (hostnames, people) are loaded from the file named by `ADVISOR_PRIVATE_DENYLIST` and checked only when the file is present. Set it to a file kept outside the repository (one literal or `regex:` pattern per line, `#` comments); in GitLab CI, the file comes from a masked file-type CI variable. The file is never committed. The bundle is regenerated with the file present before every release.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#related)
+
+- [Proof](https://advisor.apps.wayne.edu/docs/reference/proof.html)
+- [Refreshing the content](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html)
+- [Changelog](https://advisor.apps.wayne.edu/docs/changelog.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/guides/claude-code.html
+
+## One line for Claude Code[#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#one-line-for-claude-code)
+
+This page gives the one line that connects Claude Code to ADVISOR, and the `install` command that does the same thing.
+
+### The one line[#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#the-one-line)
+
+If you would rather type it than generate it, this does the same as `install --client=claude --write`; project scope keeps it out of your other projects, and the same "do not commit it" warning applies:
+
+```bash
+claude mcp add --scope project advisor -e ADVISOR_ENABLED=1 -- php vendor/bin/advisor mcp
+```
+
+### The install command[#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#the-install-command)
+
+The `install` command does the same thing and supports Claude among its clients:
+
+```bash
+php vendor/bin/advisor install [--client=claude] [--write] [--force] [--path=.]
+```
+
+`install` puts `ADVISOR_ENABLED` in the client config's env block and warns when the file is not in `.gitignore`.
+
+### Keep it out of git[#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#keep-it-out-of-git)
+
+Warning
+
+Approve it by name, and review the config like code. `.mcp.json` starts a program on whoever opens the project. Keep it out of git (this repo ignores it); `advisor install` warns when you have not.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#related)
+
+- [No PHP? Use Docker](https://advisor.apps.wayne.edu/docs/guides/docker.html)
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
+- [Install](https://advisor.apps.wayne.edu/docs/install.html)
+- [Laravel apps](https://advisor.apps.wayne.edu/docs/guides/laravel.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/guides/docker.html
+
+## No PHP? Use Docker[#](https://advisor.apps.wayne.edu/docs/guides/docker.html#no-php-use-docker)
+
+This page shows how to point your MCP client at Docker to run ADVISOR when PHP is not on your PATH.
+
+### Point the client at Docker[#](https://advisor.apps.wayne.edu/docs/guides/docker.html#point-the-client-at-docker)
+
+If PHP is not on your PATH, point the client at Docker instead. Run it from the project root, the folder that holds `vendor/`, with a hand-written `.mcp.json` like this:
+
+```json
+{
+  "mcpServers": {
+    "advisor": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--network",
+        "none",
+        "-v",
+        ".:/app:ro",
+        "-w",
+        "/app",
+        "-e",
+        "ADVISOR_ENABLED=1",
+        "-e",
+        "ADVISOR_PROJECT_ROOT=/app",
+        "-e",
+        "ADVISOR_GROUPS=stack",
+        "-e",
+        "ADVISOR_READ_ONLY=1",
+        "composer:2.10.3",
+        "php",
+        "vendor/bin/advisor",
+        "mcp"
+      ]
+    }
+  }
+}
+```
+
+### What the config does[#](https://advisor.apps.wayne.edu/docs/guides/docker.html#what-the-config-does)
+
+The container has no network, and the project is mounted read-only. `ADVISOR_GROUPS=stack` keeps the tools that start programs (proctor, upgrade_path) off, because those need the app's own PHP. Some clients want an absolute path in place of `.` for the mount; give them one. Advice comes in; nothing goes out.
+
+### Where to run it[#](https://advisor.apps.wayne.edu/docs/guides/docker.html#where-to-run-it)
+
+Run the client from the folder that holds `vendor/`. If it starts somewhere else, set `ADVISOR_PROJECT_ROOT`.
+
+### Keep it out of git[#](https://advisor.apps.wayne.edu/docs/guides/docker.html#keep-it-out-of-git)
+
+This file is written by hand, so keep it out of git like the generated one. `install` never replaces a different existing `advisor` entry unless you pass `--force`, keeps your other servers, and warns when the file is not in `.gitignore`.
+
+Warning
+
+A client config starts a program on whoever opens the project, so do not commit a generated one; this repository ignores `.mcp.json` for that reason.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/guides/docker.html#related)
+
+- [One line for Claude Code](https://advisor.apps.wayne.edu/docs/guides/claude-code.html)
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
+- [Install](https://advisor.apps.wayne.edu/docs/install.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/guides/doctor.html
+
+## When it does not show up[#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#when-it-does-not-show-up)
+
+This page is the one to follow when you added the config, opened the project, and the `advisor` server is not in the list.
+
+### Run the doctor[#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#run-the-doctor)
+
+```bash
+php vendor/bin/advisor doctor [--json]   # check the install when the server does not show up
+```
+
+It checks the four things that keep a server from appearing, in plain words, and changes nothing. `--json` prints the findings as JSON.
+
+### What it checks[#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#what-it-checks)
+
+- **php**: the PHP on your machine satisfies ADVISOR's own `composer.json` (8.3 or newer).
+- **content**: the bundled `data/` still matches its manifest.
+- **client:claude**, **client:warriorgpt**, **client:cursor**, **client:vscode**: each client's MCP config: is the file there, does it have the `advisor` entry, and is the script it points at in the project? A missing file is a warning, not a failure; you only need the one client you use.
+- **mcp**: the server actually starts. Doctor boots it in-process and asks for its tools.
+
+### Reading the result[#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#reading-the-result)
+
+A `fail` is something to fix; a `warn` is something you may not care about. The exit code is `0` when nothing failed and `1` when something did. If doctor itself cannot run, it reports a `doctor` failure and exits `2`.
+
+The advisor will see you now.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#related)
+
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
+- [One line for Claude Code](https://advisor.apps.wayne.edu/docs/guides/claude-code.html)
+- [No PHP? Use Docker](https://advisor.apps.wayne.edu/docs/guides/docker.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+- [Install](https://advisor.apps.wayne.edu/docs/install.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/guides/laravel.html
+
+## Laravel apps[#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#laravel-apps)
+
+This page shows how ADVISOR runs inside a Laravel app, beside Laravel Boost.
+
+### The Laravel adapter[#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#the-laravel-adapter)
+
+ADVISOR ships a Laravel adapter on `laravel/mcp`, auto-discovered by the service provider. With it, the same server runs as `php artisan mcp:start advisor`, beside Boost.
+
+Tip
+
+Boost knows the framework, ADVISOR knows WSU. They do not overlap, so run both.
+
+### Publish the config[#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#publish-the-config)
+
+Publish the config if you want it in the app:
+
+```
+php artisan vendor:publish --tag=advisor-config
+```
+
+### Settings[#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#settings)
+
+Settings come from the same `ADVISOR_*` variables, read through `config/advisor.php`.
+
+Warning
+
+The same rules apply: off unless `ADVISOR_ENABLED` is set, and never in production.
+
+### Registering the server[#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#registering-the-server)
+
+`advisor install` always writes the plain PHP command, `php vendor/bin/advisor mcp`. The artisan route, `php artisan mcp:start advisor`, is available through the service provider.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#related)
+
+- [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
+- [Safety](https://advisor.apps.wayne.edu/docs/guides/safety.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/guides/modules.html
+
+## Modules[#](https://advisor.apps.wayne.edu/docs/guides/modules.html#modules)
+
+This page explains how ADVISOR modules extend what it can answer and the rules that decide which modules load.
+
+### How modules load[#](https://advisor.apps.wayne.edu/docs/guides/modules.html#how-modules-load)
+
+Each stack project can later ship its own ADVISOR tools.
+
+Note
+
+Modules load only from a manifest (`modules.json`), only from the `Waynestate\` namespace, and only if they implement the `Module` interface. Nothing scans a folder.
+
+### The manifest[#](https://advisor.apps.wayne.edu/docs/guides/modules.html#the-manifest)
+
+The repository's own manifest is `modules.json` at the root:
+
+```json
+{
+    "modules": [
+        "Waynestate\\Advisor\\Module\\CoreModule"
+    ]
+}
+```
+
+It lists one module, `Waynestate\Advisor\Module\CoreModule`.
+
+### An extra manifest[#](https://advisor.apps.wayne.edu/docs/guides/modules.html#an-extra-manifest)
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `ADVISOR_MODULES_FILE` | none | An extra module manifest. |
+
+Set `ADVISOR_MODULES_FILE` to point at an extra module manifest; its default is none. An extra manifest is held to the same rules: manifest only, the `Waynestate\` namespace, and the `Module` interface.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/guides/modules.html#related)
+
+- [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+- [Safety](https://advisor.apps.wayne.edu/docs/guides/safety.html)
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/guides/quick-start.html
+
+## Quick start[#](https://advisor.apps.wayne.edu/docs/guides/quick-start.html#quick-start)
+
+This page takes you from a fresh install to the `advisor` server registered in your client.
+
+1. Print the config your MCP client needs, and read it:
+   ```bash
+   php vendor/bin/advisor install --client=claude
+   ```
+   Expected: it prints the config your MCP client needs.
+2. Write it into the project when you are happy with it:
+   ```bash
+   php vendor/bin/advisor install --client=claude --write
+   ```
+   Expected: it writes the config into the project.
+3. Open the project in your client and approve the `advisor` server by name when it asks.
+
+The command it registers is always the same fixed string, `php vendor/bin/advisor mcp`, with `ADVISOR_ENABLED=1` in its environment. Clients: `claude` (`.mcp.json`), `warriorgpt` (`.mcp.json`), `cursor` (`.cursor/mcp.json`), `vscode` (`.vscode/mcp.json`) and `codex` (TOML, printed only; paste it into `~/.codex/config.toml`).
+
+### What you built[#](https://advisor.apps.wayne.edu/docs/guides/quick-start.html#what-you-built)
+
+The `advisor` server is registered in your client, running `php vendor/bin/advisor mcp` with `ADVISOR_ENABLED=1` in its environment, and it is ready to answer questions about the stack.
+
+### Next steps[#](https://advisor.apps.wayne.edu/docs/guides/quick-start.html#next-steps)
+
+- [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html): the nine read-only tools.
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html): the environment variables.
+- [One line for Claude Code](https://advisor.apps.wayne.edu/docs/guides/claude-code.html): if you would rather type it than generate it.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/guides/quick-start.html#related)
+
+- [Install](https://advisor.apps.wayne.edu/docs/install.html)
+- [Overview](https://advisor.apps.wayne.edu/docs/index.html)
+- [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/guides/safety.html
+
+## Safety[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety)
+
+This page collects the safety rules ADVISOR enforces and the settings behind them, so you know what it will and will not do.
+
+### Safety, in short[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety-in-short)
+
+- Off unless enabled; refuses production; refuses to start on a bad setting or a content file that fails its hash.
+- Read-only by default; no tool takes a command, a URL or a free path.
+- Every result is cleaned of invisible characters and labeled as data; secrets in PROCTOR output are redacted.
+- `run_proctor_check` runs one fixed program with an argument array and an allowlisted environment, never a shell.
+- `upgrade_path` runs Booster's read-only `plan` the same way: one fixed program, an argument array, an allowlisted command, never a shell. It plans; it never runs a hop.
+- No network calls, and no model calls, from ADVISOR itself.
+
+### Settings that enforce it[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#settings-that-enforce-it)
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `ADVISOR_READ_ONLY` | on | Set to `0` or `false` to allow tools that write. None exist in 0.1. Read-only wins over `ADVISOR_GROUPS`. |
+| `ADVISOR_ENV` | `APP_ENV`, then `local` | `production` or `prod` always refuses to start. |
+| `ADVISOR_PROJECT_ROOT` | the working directory | The folder `run_proctor_check` may look inside. Paths outside it are refused. |
+| `ADVISOR_AUDIT_LOG` | off | A file for a one-line-per-call audit log: time, tool, a hash of the arguments, outcome, duration. Arguments are hashed, never written. |
+| `ADVISOR_GROUPS` | all | Comma list of tool groups to offer (`stack`, `proctor`, `booster`). The [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html) page says what each group may start. |
+
+Warning
+
+A bad value stops the server with a message on stderr. It does not guess.
+
+### Best practices[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#best-practices)
+
+From `BEST_PRACTICES.md`, the safety rules:
+
+- **Run it in development only.** It refuses to start unless `ADVISOR_ENABLED` is set and refuses in production. Enforced.
+- **Keep secrets out of what you ask.** Do not paste tokens into prompts. Audit logs hold hashes, never arguments, and PROCTOR output is redacted. Enforced.
+- **Read-only first.** Every tool states all four hints (read-only, destructive, idempotent, open-world). A tool that writes is left out unless `ADVISOR_READ_ONLY` is turned off, and that switch beats tool groups. Enforced (contract test).
+- **Narrow tools, closed schemas.** No tool takes a command, a URL or a free path. Schemas set `additionalProperties: false`, and arguments are validated again on our side. Enforced (contract test).
+- **Run other programs the safe way.** Fixed program, argument array, allowlisted environment, a timeout, and no shell. Paths are resolved and must stay inside the project root. Enforced.
+- **Strip invisible characters.** The TAG block, zero-width and bidirectional controls are removed from everything served and rejected in tool metadata. Enforced (contract test).
+- **Serve from verified data.** Bundled content is checked against a SHA-256 manifest at start-up and in CI; a mismatch stops the server. Enforced.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#related)
+
+- [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+- [Best practices](https://advisor.apps.wayne.edu/docs/reference/best-practices.html)
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
+- [Install](https://advisor.apps.wayne.edu/docs/install.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/guides/served-content.html
+
+## Served content[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#served-content)
+
+This page explains what content ADVISOR serves, where it comes from, and how to keep it fresh.
+
+### What is served[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#what-is-served)
+
+The handbook, policy, project docs, the WayneUI markup contract and WayneUI's 1.x to 2.x migration guide in `data/` are generated from the sibling stack repositories. `data/` is generated, never hand-edited: `policy.json` and `handbook/` from CREED, `projects.json` from each project repo and `generator/projects.seed.json` (state, package, version, PHP floor), plus each project's README, best practices and any extra docs its seed names.
+
+Each project entry also carries its version when the project publishes one (composer.json, else package.json, else the newest CHANGELOG heading).
+
+Beyond a project's README and best practices, a seed may bundle further files under `extra_docs` (a map of slug to path in the project); each lands in `data/docs/<id>/<slug>.md` and in the project's docs list, and a missing file is skipped, not an error. WayneUI's entry bundles its MIGRATING.md as the `migrating` doc.
+
+### Verified at start-up[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#verified-at-start-up)
+
+Content is generated by `content:generate` and verified at start-up against `data/manifest.json` (a SHA-256 for every file).
+
+Warning
+
+If a file does not match, the server refuses to start rather than serve it.
+
+Files are cleaned on the way in: line endings are normalized and invisible characters (the TAG block, zero-width and bidirectional controls) are stripped.
+
+### Hand-written guides[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#hand-written-guides)
+
+Beside the generated docs, hand-written guides are kept by hand in `generator/guides/` (one Markdown file per slug), the same way the ownership table is kept. Each is bundled into `data/guides/` and served as `advisor://guide/<slug>`; the first is "Connect to Oracle on Citadel". Edit them there, then run `content:generate`.
+
+### Refreshing the content[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#refreshing-the-content)
+
+To refresh it, with the stack repos checked out side by side:
+
+```
+php vendor/bin/advisor content:generate --sources=/path/to/stack
+php vendor/bin/advisor content:generate --sources=/path/to/stack --check   # exits 1 on drift
+```
+
+Run `content:generate` after any change that lands in CREED's policy or handbook, a project's README or best practices, an extra doc, or the projects seed. Commit the regenerated `data/` with the source commits in the message.
+
+The generator reads each project's folder from beside the other repos, so a stale clone gives stale docs. WayneUI's development happens on its GitLab repository and the checked-out copy is only a mirror of it: fast-forward the local wayne-ui clone to that repository's main before a resync.
+
+CI cannot see the sibling repositories, so `composer ci` runs `content:verify`, which needs none of them.
+
+### Catching drift[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#catching-drift)
+
+`composer content:drift` compares `data/` with a checkout of the stack repos and exits 1 when they no longer agree. It takes the folder from `ADVISOR_STACK_DIR`; without it, it prints how to run it and exits 1. It writes nothing. On drift it lists the files that moved; regenerate with `composer content:generate` and review the diff before committing.
+
+The GitLab job `content-drift` does the same in CI: it clones the repos listed in `data/projects.json` with the job token, puts them in one folder, sets `ADVISOR_STACK_DIR` and runs the check. It is manual or scheduled and allowed to fail, so it cannot block main. Run the drift check before every tag: a release must carry docs that still match the repos it advises on.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#related)
+
+- [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
+- [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+- [Releasing](https://advisor.apps.wayne.edu/docs/deploying/releasing.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html
+
+## What it offers[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#what-it-offers)
+
+ADVISOR gives a coding agent nine read-only tools, plus two prompts and three resource routes, and each answer says where it came from.
+
+### Tools[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#tools)
+
+Nine tools, all read-only. Each one says where its answer came from:
+
+| Tool | Does |
+| --- | --- |
+| `list_projects` | The stack's projects, WayneUI first, with built or proposed state, package and version. |
+| `get_project_status` | One project: state, package, version, PHP constraint, its floor under today's policy, next step. |
+| `read_project_docs` | A project's README, best practices, or (WayneUI only) markup contract and 1.x to 2.x migration guide, paged. |
+| `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. |
+| `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
+| `owner_of` | Answers "which project owns X?" from the bundled ownership table, with a fuzzy topic match. |
+| `playbook_lookup` | A shared value by key, or every key: an environment variable of the same name wins, then Playbook; secret-looking keys are refused. |
+| `run_proctor_check` | Runs the app's own `vendor/bin/proctor check` against the bundled policy and returns the findings. |
+| `upgrade_path` | Plans the app's PHP and/or Laravel upgrade, one supported hop at a time, via Booster's read-only `plan`. |
+
+Note
+
+Everything ADVISOR returns is labeled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.
+
+### Groups[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#groups)
+
+The groups split by what they may start: `stack` never starts a program, `proctor` starts the app's own `vendor/bin/proctor`, and `booster` starts Booster's read-only `plan` (never `run`). Set `ADVISOR_GROUPS=stack` when you want ADVISOR as pure reference material.
+
+### Resources[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#resources)
+
+| Resource | Serves |
+| --- | --- |
+| `advisor://policy` | CREED's policy file. |
+| `advisor://creed/<chapter>` | One per handbook chapter. |
+| `advisor://guide/<slug>` | Hand-written guides; the first is "Connect to Oracle on Citadel". |
+
+### Prompts[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#prompts)
+
+Prompts: `orient_me` and `plan_upgrade`.
+
+Here is what that looks like when you ask. Each numbered control point is one of the tools above, with the arguments the front page's own route table sends:
+
+![A topographic field map of the stack. Three questions are plotted from 'your app' through the ADVISOR advising office to the project that answers. 'Which PHP can I build on?' goes through policy_lookup (component: php) to CREED's policy.json. 'Which security headers do I need?' goes through list_stack_rules (chapter: runtime-and-headers) and read_project_docs (project: helmet) to HELMET. 'How do I get off PHP 8.2?' goes through the plan_upgrade prompt, policy_lookup, run_proctor_check and read_project_docs (project: booster) to Booster.](https://advisor.apps.wayne.edu/docs/readme/route.svg)
+
+### Related[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#related)
+
+- [Served content](https://advisor.apps.wayne.edu/docs/guides/served-content.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+- [Safety](https://advisor.apps.wayne.edu/docs/guides/safety.html)
+- [Best practices](https://advisor.apps.wayne.edu/docs/reference/best-practices.html)
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html
+
+## Where it sits in WELD[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#where-it-sits-in-weld)
+
+This page shows where ADVISOR sits among the parts of the Wayne State application stack and in WELD.
+
+### The stack and WELD[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#the-stack-and-weld)
+
+The stack is the Wayne State application stack. WELD, Wired, Everything, Linked, Deployed, is its Laravel starter app. You can add ADVISOR to a WELD app or to any other Wayne State PHP app, and in either case it is the part of the stack that talks to your coding agent.
+
+### The parts[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#the-parts)
+
+| Part | What it is |
+| --- | --- |
+| **WayneUI** | interface (project 0) |
+| **CREED** | version policy and written standards |
+| **PROCTOR** | checks an app |
+| **SESAME** | sign-in inside the app |
+| **HELMET** | runtime baseline |
+| **Sourdough** | starter |
+| **Preflight** | CI components |
+| **Pinstripe** | coding standard |
+| **Booster** | upgrades |
+| **Rollcall** | fleet census |
+| **Drawbridge** | sign-in gateway |
+| **Squire** | deploy kit |
+| **ADVISOR** | MCP server |
+| **WELD** | the Laravel starter app |
+
+### What each part is[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#what-each-part-is)
+
+ADVISOR serves a bundled copy of what these projects publish, so it works offline. Each part:
+
+- **WayneUI** is the interface, project 0 of the stack. ADVISOR bundles its markup contract and its 1.x to 2.x migration guide.
+- **CREED** is the version policy and the written standards. ADVISOR bundles its policy file and handbook.
+- **PROCTOR** checks an app.
+- **SESAME** handles sign-in inside the app.
+- **HELMET** is the runtime baseline.
+- **Sourdough** is the starter.
+- **Preflight** provides the CI components (php-test and composer-audit).
+- **Pinstripe** is the coding standard; PHPStan includes its raw preset.
+- **Booster** does the upgrades.
+- **Rollcall** is the fleet census.
+- **Drawbridge** is the sign-in gateway.
+- **Squire** is the deploy kit; the front page's deploy layer is generated with it.
+- **ADVISOR** is the MCP server, the part of the stack that talks to your coding agent.
+- **WELD** is the Laravel starter app: Wired, Everything, Linked, Deployed.
+
+Note
+
+ADVISOR does not replace Laravel Boost. Boost knows Laravel; ADVISOR knows WSU. Run both.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#related)
+
+- [Served content](https://advisor.apps.wayne.edu/docs/guides/served-content.html)
+- [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
+- [Install](https://advisor.apps.wayne.edu/docs/install.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/
+
+## Overview[#](https://advisor.apps.wayne.edu/docs/#overview)
+
+This page tells you what ADVISOR is, how to run it, and where to go next.
+
+**What applies, and what's next.**
+
+ADVISOR is an MCP server for the Wayne State application stack, a bit like Laravel Boost but for WSU. It orients a developer who is new to the stack and gives their coding agent nine read-only tools into it: the CREED standards and policy, PROCTOR results, the upgrade path, the WayneUI markup contract and migration guide, SESAME and HELMET guidance, and the parts list. Ask it "which PHP can I build on?" and it answers from the policy file, with the date and the source, instead of from whatever the model remembers.
+
+It is read-only in 0.1. It cannot write a file, run a shell command, or call out to the network. The two things it can start are the app's own `vendor/bin/proctor` and Booster's read-only `plan`, both with a fixed argument shape.
+
+> Every WSU student has an advisor. Now every WSU app does too, and this one answers email.
+
+### Install and run[#](https://advisor.apps.wayne.edu/docs/#install-and-run)
+
+Add it to the app as a dev dependency, then run it:
+
+```bash
+composer require --dev waynestate/advisor
+php vendor/bin/advisor
+```
+
+The command is `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.
+
+### Pick your path[#](https://advisor.apps.wayne.edu/docs/#pick-your-path)
+
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html): register the `advisor` server with your client.
+- [Install](https://advisor.apps.wayne.edu/docs/install.html): what it needs and how to add it to an app.
+- [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html): the nine read-only tools.
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html): the environment variables.
+
+### Status[#](https://advisor.apps.wayne.edu/docs/#status)
+
+Current release 0.1.5. PHP ^8.3, license MIT, MCP SDK 0.9.0. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
+
+### Related[#](https://advisor.apps.wayne.edu/docs/#related)
+
+- [Install](https://advisor.apps.wayne.edu/docs/install.html)
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
+- [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/install.html
+
+## Install[#](https://advisor.apps.wayne.edu/docs/install.html#install)
+
+This page shows what ADVISOR needs and how to add it to a Wayne State PHP app.
+
+### Requirements[#](https://advisor.apps.wayne.edu/docs/install.html#requirements)
+
+PHP 8.3 or newer (8.3, 8.4 and 8.5 are tested). The package requires:
+
+- PHP `^8.3`
+- extensions `ext-fileinfo`, `ext-json` and `ext-mbstring`
+- `composer/semver` `^3.0`
+- `mcp/sdk` `0.9.0`
+- `opis/json-schema` `^2.4`
+- `psr/log` `^3.0`
+- `symfony/console` `^7.4`
+- `symfony/process` `^7.4`
+
+The platform is pinned to PHP 8.3.0 in `composer.json`.
+
+### Install[#](https://advisor.apps.wayne.edu/docs/install.html#install-1)
+
+Add it to the app as a dev dependency:
+
+```bash
+composer require --dev waynestate/advisor
+```
+
+The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.
+
+ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.1`. No extra repository needed.
+
+Note
+
+Native Windows is not yet proven. ADVISOR is one PHP command, so it is built to run the same everywhere, but it has not been proven on native Windows. If you are on Windows, [use Docker](https://advisor.apps.wayne.edu/docs/guides/docker.html).
+
+### Verify[#](https://advisor.apps.wayne.edu/docs/install.html#verify)
+
+Check the install with:
+
+```bash
+php vendor/bin/advisor doctor
+```
+
+It checks the four things that keep a server from appearing, in plain words, and changes nothing:
+
+- **php**: the PHP on your machine satisfies ADVISOR's own `composer.json` (8.3 or newer).
+- **content**: the bundled `data/` still matches its manifest.
+- **client:claude**, **client:warriorgpt**, **client:cursor**, **client:vscode**: each client's MCP config.
+- **mcp**: the server actually starts. Doctor boots it in-process and asks for its tools.
+
+A `fail` is something to fix; a `warn` is something you may not care about. The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
+
+### Next steps[#](https://advisor.apps.wayne.edu/docs/install.html#next-steps)
+
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html): register the `advisor` server with a client.
+- [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html): the nine read-only tools.
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html): the environment variables.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/install.html#related)
+
+- [Overview](https://advisor.apps.wayne.edu/docs/index.html)
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+- [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/reference/best-practices.html
+
+## Best practices[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#best-practices)
+
+These are the rules ADVISOR holds itself to, the short version for people who use ADVISOR and people who add to it, with the test that enforces each rule where there is one.
+
+Tags: Enforced (code or CI stops the bad outcome), Documented (written down only), Not yet (a gap).
+
+### Approve it by name, and review the config like code[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#approve-it-by-name-and-review-the-config-like-code)
+
+`.mcp.json` starts a program on whoever opens the project. Keep it out of git (this repo ignores it); `advisor install` warns when you have not. Enforced (warning).
+
+### Treat answers as data[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#treat-answers-as-data)
+
+Every result says where it came from and that it is reference text. PROCTOR in CI decides pass or fail; ADVISOR never does. Enforced (labels), Documented (the rule).
+
+### Run it in development only[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#run-it-in-development-only)
+
+It refuses to start unless `ADVISOR_ENABLED` is set and refuses in production. Enforced.
+
+### Keep secrets out of what you ask[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#keep-secrets-out-of-what-you-ask)
+
+Do not paste tokens into prompts. Audit logs hold hashes, never arguments, and PROCTOR output is redacted. Enforced.
+
+### Run Boost beside it in Laravel apps[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#run-boost-beside-it-in-laravel-apps)
+
+Boost knows the framework, ADVISOR knows WSU. They do not overlap. Documented.
+
+### Read-only first[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#read-only-first)
+
+Every tool states all four hints (read-only, destructive, idempotent, open-world). A tool that writes is left out unless `ADVISOR_READ_ONLY` is turned off, and that switch beats tool groups. Enforced (contract test).
+
+### Narrow tools, closed schemas[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#narrow-tools-closed-schemas)
+
+No tool takes a command, a URL or a free path. Schemas set `additionalProperties: false`, and arguments are validated again on our side. Enforced (contract test).
+
+### Run other programs the safe way[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#run-other-programs-the-safe-way)
+
+Fixed program, argument array, allowlisted environment, a timeout, and no shell. Paths are resolved and must stay inside the project root. Enforced.
+
+### Keep stdout clean[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#keep-stdout-clean)
+
+Only protocol lines go to stdout; logs, warnings and stray output go to stderr. Enforced (subprocess test).
+
+### Strip invisible characters[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#strip-invisible-characters)
+
+The TAG block, zero-width and bidirectional controls are removed from everything served and rejected in tool metadata. Enforced (contract test).
+
+### Load modules from a manifest only[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#load-modules-from-a-manifest-only)
+
+From the `Waynestate\` namespace, implementing `Module`. Never scan. Enforced.
+
+### Serve from verified data[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#serve-from-verified-data)
+
+Bundled content is checked against a SHA-256 manifest at start-up and in CI; a mismatch stops the server. Enforced.
+
+### Review any change to the tool list[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#review-any-change-to-the-tool-list)
+
+`tools/list` is snapshotted; a changed description is a reviewed diff. Enforced (snapshot test).
+
+### Cite sources and date[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#cite-sources-and-date)
+
+Policy answers carry the day they were worked out for and the file they came from. Enforced.
+
+### Not yet[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#not-yet)
+
+- Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.
+- Signing of any state handed back to a client (no tool needs it in 0.1).
+- A threat model mapped to OWASP and NIST; a full-capture audit mode.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#related)
+
+- [Proof](https://advisor.apps.wayne.edu/docs/reference/proof.html)
+- [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
+- [Safety](https://advisor.apps.wayne.edu/docs/guides/safety.html)
+- [Changelog](https://advisor.apps.wayne.edu/docs/changelog.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/reference/commands.html
+
+## Commands[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#commands)
+
+Every command the `advisor` CLI takes, and what it does.
+
+### Running a command[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#running-a-command)
+
+Run any command with `php vendor/bin/advisor <command>`. This is one PHP command, not a shell script, so it works the same on Windows, macOS and Linux. The `mcp` command is started by your MCP client, not by you.
+
+```
+php vendor/bin/advisor mcp                          # serve over stdio (your client starts this)
+php vendor/bin/advisor install [--client=claude] [--write] [--force] [--path=.]
+php vendor/bin/advisor content:verify               # check the bundled content against its manifest
+php vendor/bin/advisor content:generate [--sources=<dir>] [--check]
+php vendor/bin/advisor stack-parts [--write=<readme>] [--check=<readme>]
+php vendor/bin/advisor doctor [--json]              # check the install when the server does not show up
+```
+
+Stdout carries only protocol messages. Logs, warnings and stray output go to stderr, so a client never sees garbage.
+
+### Commands[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#commands-1)
+
+| Command | What it does |
+| --- | --- |
+| `bin/advisor doctor` | Check the install: PHP, the bundled content, the client config, and the server. |
+| `bin/advisor install` | Print (or with --write, write) the MCP client config that starts ADVISOR. |
+| `bin/advisor mcp` | Serve ADVISOR to an MCP client over stdio (started by the client, not by hand). |
+| `bin/advisor stack-parts` | Render the stack parts table from the seed; write or check the marked block in a README. |
+| `bin/advisor content:generate` | Rebuild the bundled content from the stack repositories (--check only compares). |
+| `bin/advisor content:verify` | Check the bundled content against its manifest. |
+
+#### `bin/advisor doctor` [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#bin-advisor-doctor)
+
+Check the install: PHP, the bundled content, the client config, and the server.
+
+Usage: `bin/advisor doctor [--json]`
+
+| Option | Meaning | Default |
+| --- | --- | --- |
+| `--json` | Print the findings as JSON. |  |
+| `--silent` | Do not output any message |  |
+
+#### `bin/advisor install` [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#bin-advisor-install)
+
+Print (or with --write, write) the MCP client config that starts ADVISOR.
+
+Usage: `bin/advisor install [-c|--client CLIENT] [--write] [--force] [--path PATH]`
+
+| Option | Meaning | Default |
+| --- | --- | --- |
+| `-c`, `--client=VALUE` | claude, warriorgpt, cursor, vscode or codex. | `claude` |
+| `--write` | Write the file in the project instead of printing it. |  |
+| `--force` | Replace an existing, different "advisor" entry. |  |
+| `--path=VALUE` | Project folder to write into. | `.` |
+| `--silent` | Do not output any message |  |
+
+#### `bin/advisor mcp` [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#bin-advisor-mcp)
+
+Serve ADVISOR to an MCP client over stdio (started by the client, not by hand).
+
+Usage: `bin/advisor mcp`
+
+| Option | Meaning | Default |
+| --- | --- | --- |
+| `--silent` | Do not output any message |  |
+
+#### `bin/advisor stack-parts` [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#bin-advisor-stack-parts)
+
+Render the stack parts table from the seed; write or check the marked block in a README.
+
+Usage: `bin/advisor stack-parts [--write WRITE] [--check CHECK]`
+
+| Option | Meaning | Default |
+| --- | --- | --- |
+| `--write=VALUE` | Replace the block between the stack-parts markers in this file (repeatable) |  |
+| `--check=VALUE` | Exit 1 when the block in this file is stale (repeatable) |  |
+| `--silent` | Do not output any message |  |
+
+#### `bin/advisor content:generate` [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#bin-advisor-content-generate)
+
+Rebuild the bundled content from the stack repositories (--check only compares).
+
+Usage: `bin/advisor content:generate [-s|--sources SOURCES] [--check]`
+
+| Option | Meaning | Default |
+| --- | --- | --- |
+| `-s`, `--sources=VALUE` | Folder that holds the stack repositories (creed, proctor, wayne-ui, ...). Default: ADVISOR_STACK_DIR. |  |
+| `--check` | Exit 1 when the bundle differs from what the sources produce; write nothing. |  |
+| `--silent` | Do not output any message |  |
+
+#### `bin/advisor content:verify` [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#bin-advisor-content-verify)
+
+Check the bundled content against its manifest.
+
+Usage: `bin/advisor content:verify`
+
+| Option | Meaning | Default |
+| --- | --- | --- |
+| `--silent` | Do not output any message |  |
+
+#### Options every command accepts[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#options-every-command-accepts)
+
+| Option | Meaning | Default |
+| --- | --- | --- |
+| `-h`, `--help` | Display help for the given command. When no command is given display help for the list command |  |
+| `-q`, `--quiet` | Only errors are displayed. All other output is suppressed |  |
+| \`-v | -vv | -vvv`, `--verbose\` |
+| `-V`, `--version` | Display this application version |  |
+| `--ansi` | Force (or disable --no-ansi) ANSI output |  |
+| `--no-ansi` | Negate the "--ansi" option |  |
+| `-n`, `--no-interaction` | Do not ask any interactive question |  |
+
+### Exit codes[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#exit-codes)
+
+- `content:generate --check` exits `1` on drift, when the bundled content no longer matches the source repos.
+- `doctor` exits `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
+- `composer content:drift` exits `1` when `data/` no longer matches the stack repos, or when `ADVISOR_STACK_DIR` is not set.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#related)
+
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
+- [When it does not show up](https://advisor.apps.wayne.edu/docs/guides/doctor.html)
+- [Refreshing the content](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/reference/configuration.html
+
+## Configuration[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#configuration)
+
+ADVISOR reads the process environment only, never a file. This page lists every variable with its default and its meaning, and the placeholders are in `.env.example`. Nothing in 0.1 needs a secret, key, certificate, token or host, so every setting is optional.
+
+### Environment variables[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#environment-variables)
+
+| Variable | Meaning | Default | Read in |
+| --- | --- | --- | --- |
+| ADVISOR_AUDIT_LOG | A file for a one-line-per-call audit log: time, tool, a hash of the arguments, outcome, duration. Arguments are hashed, never written. | off | src/Config.php |
+| ADVISOR_BOOSTER_BIN | Where `upgrade_path` finds Booster when the app has no `vendor/bin/booster` of its own: the path to booster's `bin/booster` (or a `booster.phar`). The app's own `vendor/bin/booster` always wins. | none | src/Config.php |
+| ADVISOR_BOOSTER_TIMEOUT | Seconds before a Booster plan is stopped (1 to 900). A plan is local and fast, so the default is shorter than a PROCTOR run. | `60` | src/Config.php |
+| ADVISOR_ENABLED | Must be `1` or `true`, or the server refuses to start. `advisor install` sets it in the client config. | off | src/Command/ClientConfig.php |
+| ADVISOR_ENV | `production` or `prod` always refuses to start. | `APP_ENV`, then `local` | src/Config.php |
+| ADVISOR_GROUPS | Comma list of tool groups to offer (`stack`, `proctor`, `booster`). See below for what each group may start. | all | src/Config.php |
+| ADVISOR_LOG_LEVEL | Log level on stderr (`debug` to `emergency`). | `warning` | src/Config.php |
+| ADVISOR_MAX_CHARS | Largest piece of text one doc call returns (1000 to 45000). | `20000` | src/Config.php |
+| ADVISOR_MODULES_FILE | An extra module manifest (see "Modules"). | none | src/Config.php |
+| ADVISOR_PRIVATE_DENYLIST | A file (kept outside the repo) with private strings to strip from the bundle; used by `content:generate` and the public-posture test. See "Releasing". | none | src/Content/Denylist.php |
+| ADVISOR_PROCTOR_TIMEOUT | Seconds before a PROCTOR run is stopped (1 to 900). | `120` | src/Config.php |
+| ADVISOR_PROJECT_ROOT | The folder `run_proctor_check` may look inside. Paths outside it are refused. | the working directory | src/Command/DoctorCommand.php |
+| ADVISOR_READ_ONLY | Set to `0` or `false` to allow tools that write. None exist in 0.1. Read-only wins over `ADVISOR_GROUPS`. | on | src/Config.php |
+| ADVISOR_STACK_DIR | Folder holding the sibling stack repos; used only by `content:generate`. | none | src/Command/ContentGenerateCommand.php |
+
+### Example[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#example)
+
+A short example, with placeholder values:
+
+```bash
+ADVISOR_ENABLED=1
+ADVISOR_ENV=local
+ADVISOR_PROJECT_ROOT=/path/to/your/app
+ADVISOR_AUDIT_LOG=/path/to/advisor-audit.log
+```
+
+`advisor install` sets `ADVISOR_ENABLED` in the client config for you.
+
+Warning
+
+A bad value stops the server with a message on stderr. It does not guess.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#related)
+
+- [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
+- [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
+- [No PHP? Use Docker](https://advisor.apps.wayne.edu/docs/guides/docker.html)
+- [Safety](https://advisor.apps.wayne.edu/docs/guides/safety.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/reference/proof.html
+
+## Proof[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#proof)
+
+This page walks through `composer ci`, the one command that proves the build, and what each step of it proves.
+
+The same command runs on GitLab and GitHub.
+
+### The command[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#the-command)
+
+```
+composer ci
+```
+
+No PHP on your machine? Use Docker:
+
+```
+docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+```
+
+### composer validate --strict[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#composer-validate-strict)
+
+Runs `composer validate --strict` on the package metadata.
+
+### content:verify[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#content-verify)
+
+Runs `php bin/advisor content:verify`, which checks the bundled content against its manifest. CI cannot see the sibling repositories, so `composer ci` runs `content:verify`, which needs none of them.
+
+### stack-parts --check=README.md[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#stack-parts-check-readme-md)
+
+Runs `php bin/advisor stack-parts --check=README.md`, which proves the parts table in the README still matches `generator/projects.seed.json`.
+
+### PHPUnit[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#phpunit)
+
+Runs `phpunit`. Tests drive the real SDK server in-process with a small MCP client, snapshot `tools/list`, and start `bin/advisor mcp` as a subprocess to prove stdout stays clean.
+
+Tip
+
+To accept an intended change to the tool list, run `ADVISOR_UPDATE_SNAPSHOTS=1 vendor/bin/phpunit`, then review and commit the diff.
+
+### Pint[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#pint)
+
+Runs `pint --test`, the style check.
+
+### site:agent-ready-check[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#site-agent-ready-check)
+
+Fails when the agent-ready files are stale, a page lacks its Markdown link, a prompt drifts from the docs, or the kit was edited here.
+
+### PHPStan[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#phpstan)
+
+Runs `phpstan analyse --memory-limit=1G`: level 8, Pinstripe's raw preset, included from `vendor/waynestate/pinstripe`.
+
+### composer audit[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#composer-audit)
+
+Runs `composer audit`.
+
+### docs:check[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#docs-check)
+
+Fails when `site/docs/` is stale or a docs page has a broken link, block or nav entry.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#related)
+
+- [Best practices](https://advisor.apps.wayne.edu/docs/reference/best-practices.html)
+- [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
+- [Releasing](https://advisor.apps.wayne.edu/docs/deploying/releasing.html)
+- [Changelog](https://advisor.apps.wayne.edu/docs/changelog.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/troubleshooting.html
+
+## Troubleshooting[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#troubleshooting)
+
+This page lists the failure symptoms ADVISOR's own docs describe, with the cause, the fix and the command that checks it.
+
+#### The advisor server is not in the list[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-advisor-server-is-not-in-the-list)
+
+You added the config, opened the project, and the `advisor` server is not in the list.
+
+**Cause.** One of four things keeps a server from appearing:
+
+- **php**: the PHP on your machine satisfies ADVISOR's own `composer.json` (8.3 or newer).
+- **content**: the bundled `data/` still matches its manifest.
+- **client:claude**, **client:warriorgpt**, **client:cursor**, **client:vscode**: each client's MCP config: is the file there, does it have the `advisor` entry, and is the script it points at in the project? A missing file is a warning, not a failure; you only need the one client you use.
+- **mcp**: the server actually starts. Doctor boots it in-process and asks for its tools.
+
+**Fix.** Run doctor and fix anything it reports as a `fail`. A `fail` is something to fix; a `warn` is something you may not care about.
+
+**Check.**
+
+```bash
+php vendor/bin/advisor doctor
+```
+
+The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
+
+#### The server refuses to start because it is not enabled[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-because-it-is-not-enabled)
+
+**Cause.** `ADVISOR_ENABLED` defaults to off. It must be `1` or `true`, or the server refuses to start.
+
+**Fix.** Set `ADVISOR_ENABLED=1` in the client config's environment. `advisor install` sets it in the client config.
+
+**Check.**
+
+```bash
+php vendor/bin/advisor doctor
+```
+
+#### The server refuses to start in production[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-in-production)
+
+**Cause.** `ADVISOR_ENV` reads `APP_ENV`, then `local`. `production` or `prod` always refuses to start.
+
+**Fix.** Run ADVISOR in development only. It refuses to start in production by design.
+
+**Check.**
+
+```bash
+php vendor/bin/advisor doctor
+```
+
+#### A bad setting stops the server[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#a-bad-setting-stops-the-server)
+
+**Cause.** A bad value stops the server with a message on stderr. It does not guess.
+
+**Fix.** Read the message on stderr and correct the value. ADVISOR reads the process environment only, never a file.
+
+**Check.**
+
+```bash
+php vendor/bin/advisor doctor
+```
+
+#### The server refuses to start because a content file fails its hash[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-because-a-content-file-fails-its-hash)
+
+**Cause.** The bundled `data/` is verified at start-up against `data/manifest.json` (a SHA-256 for every file). If a file does not match, the server refuses to start rather than serve it.
+
+**Fix.** Regenerate the bundle from the sibling stack repositories with `content:generate`, then verify it.
+
+**Check.**
+
+```bash
+php vendor/bin/advisor content:verify
+```
+
+### Related[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#related)
+
+- [When it does not show up](https://advisor.apps.wayne.edu/docs/guides/doctor.html)
+- [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+- [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
+- [Served content](https://advisor.apps.wayne.edu/docs/guides/served-content.html)
+- [Refreshing the content](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html)
+- [Install](https://advisor.apps.wayne.edu/docs/install.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/upgrading.html
+
+## Upgrading[#](https://advisor.apps.wayne.edu/docs/upgrading.html#upgrading)
+
+This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
+
+### Unreleased[#](https://advisor.apps.wayne.edu/docs/upgrading.html#unreleased)
+
+A docs site built from `docs/` is added and checked in `composer ci`. The bundled data is resynced several times with the stack main branches of 2026-11-03, picking up changes in SESAME, HELMET, PROCTOR, Pinstripe, Sourdough, Squire, WELD, Booster, Preflight, Drawbridge, Rollcall, and others. ADVISOR's own version reads 0.1.5.
+
+### \[0.1.5\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-5-2026-11-03)
+
+No breaking changes are marked for this release.
+
+- The deploy layer requires HELMET ^0.3 and PROCTOR ^0.4 (locked at 0.3.0 and 0.4.0) and sets minimum-stability to stable, which clears PROCTOR 0.4's new minimum-stability warning. HELMET 0.3 reads an empty `HELMET_PROXIES=` as trust nobody; the front page sets only the `citadel` preset, so nothing changes for it.
+- The deploy layer's Squire kit is refreshed to 0.5.0 (updated `base-fallback.Dockerfile`, `scripts/release.sh` and `scripts/parity.ps1`).
+- The bundled data is resynced with the 2026-11-03 releases: Booster 1.8.0, Preflight 0.1.4, PROCTOR 0.4.0, Pinstripe 0.1.2, CREED 0.1.6, Rollcall 0.1.9, HELMET 0.3.0, SESAME 0.4.0, Drawbridge 0.1.1, Sourdough 0.1.5, Squire 0.5.0 and WELD 0.1.2, and with each project's main since the last pass.
+- One Playbook settings resolver (`Waynestate\Advisor\Playbook\Settings`, ADR-0018) is added. `playbook_lookup` now answers from `.env.playbook` when the package is not installed (same output shape).
+- `.env.playbook` is git-ignored; the agent-ready files (`site/llms.txt`, `site/llms-full.txt`) are regenerated.
+- Docs and package metadata name nougat as the canonical repository, with git.wayne.edu and GitHub as read-only mirrors, until git.wayne.edu has CI runners.
+
+### \[0.1.4\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-4-2026-11-03)
+
+No breaking changes are marked for this release.
+
+- CI pulls its Docker Hub images through the GitLab Dependency Proxy (the group's CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX), so pipelines no longer hit Docker Hub's anonymous pull limit.
+
+### \[0.1.3\] - 2026-11-02[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-3-2026-11-02)
+
+No breaking changes are marked for this release.
+
+- Hand-written guides are bundled from `generator/guides/` and served as `advisor://guide/<slug>`; the first guide is "Connect to Oracle on Citadel".
+- `policy_lookup` returns `latest_patch`; the bundled docs drop hero images, badges and GIFs.
+- WayneUI's migration guide (MIGRATING.md) is bundled as the `migrating` doc, and every project entry carries its version when it publishes one (composer.json, else package.json, else the newest CHANGELOG heading).
+- A one-line `claude mcp add` and a Docker `.mcp.json` for machines without PHP are documented.
+- `composer content:drift` and an optional CI job fail when `data/` no longer matches the sibling repos.
+- The deploy layer's Squire kit is refreshed to 0.3.4 (the local `.env.squire` file is now git-ignored).
+
+### \[0.1.2\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-2-2026-10-29)
+
+No breaking changes are marked for this release.
+
+- An agent-ready site (prompt blocks, Markdown twins, llms.txt) is added from Squire's kit.
+- The `playbook_lookup` tool answers "what is the value of X?" for WSU shared values. An environment variable of the same name wins, then the private `waynestate/playbook` package (Playbook) supplies the rest; without it the tool says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are refused. `waynestate/playbook` is suggested, never required.
+- Docs copies are resynced; proof results now live on the proof site.
+- Project names are written as words except acronyms.
+- Stale capability claims in the site and docs are fixed.
+
+### \[0.1.1\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-1-2026-10-29)
+
+No breaking changes are marked for this release.
+
+- The `owner_of` tool answers "which project owns X?" from a new bundled `data/ownership.json` table (sourced from `generator/ownership.json`, verified by `content:verify`). Fuzzy match: every word of the topic must appear in a row's topic or role; a no-match answer lists every known topic.
+- `upgrade_path` moves from the `stack` group to a new `booster` group, so `ADVISOR_GROUPS=stack` offers reference tools only and never starts a program. `ADVISOR_GROUPS` now accepts `stack`, `proctor` and `booster`.
+- PHPStan includes Pinstripe's `raw.neon` preset (`waynestate/pinstripe` 0.1.0 as a dev dependency) instead of a hand copy of its settings; two docblocks were tightened to satisfy the preset's method-signature checks. Pint already used the `per` preset, so `pint.json` is unchanged.
+
+### \[0.1.0\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-0-2026-10-29)
+
+This is the first release, so there is nothing to break.
+
+- Read-only MCP server over stdio (`php vendor/bin/advisor mcp`) on the official `mcp/sdk` 0.9.0, speaking both the legacy `initialize` handshake and the 2026-07-28 per-request form.
+- Seven tools: `list_projects`, `get_project_status`, `read_project_docs`, `policy_lookup`, `list_stack_rules`, `run_proctor_check`, `upgrade_path`. Resources `advisor://policy` and `advisor://creed/<chapter>`. Prompts `orient_me` and `plan_upgrade`.
+- `upgrade_path` plans the app's PHP and/or Laravel upgrade, one supported hop at a time, by running Booster's read-only `plan` (never `run`) against the bundled policy. New settings `ADVISOR_BOOSTER_TIMEOUT` (default 60) and `ADVISOR_BOOSTER_BIN` (fallback when the app has no `vendor/bin/booster` of its own).
+- Bundled, hash-verified content (CREED handbook and policy, project docs, the WayneUI markup contract) with a generator, `content:generate --check` and `content:verify`.
+- `advisor install` for Claude, WarriorGPT, Cursor, VS Code (written) and Codex (printed).
+- Laravel adapter on `laravel/mcp` (`php artisan mcp:start advisor`), so ADVISOR runs beside Laravel Boost.
+- Safety: off unless enabled, refuses production, read-only by default, path confinement, allowlisted child environment, redaction, invisible-character stripping, manifest-only module loading, argument-hash audit log.
+- `composer ci`: validate, content verify, PHPUnit, Pint, PHPStan level 8 (Pinstripe settings), audit. CI files for GitLab (Preflight 0.1.0) and GitHub.
+
+### Taking a new version[#](https://advisor.apps.wayne.edu/docs/upgrading.html#taking-a-new-version)
+
+ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.1`. No extra repository needed.
+
+The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.
+
+### Related[#](https://advisor.apps.wayne.edu/docs/upgrading.html#related)
+
+- [Install](https://advisor.apps.wayne.edu/docs/install.html)
+- [Changelog](https://advisor.apps.wayne.edu/docs/changelog.html)
+- [Releasing](https://advisor.apps.wayne.edu/docs/deploying/releasing.html)
+- [Refreshing the content](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html)

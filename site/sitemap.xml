@@ -2,4 +2,26 @@
 <!-- Written by Squire's agent-ready kit from the pages in the site folder; do not edit. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://advisor.apps.wayne.edu/</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/changelog.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/contributing.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/deploying/releasing.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/guides/claude-code.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/guides/docker.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/guides/doctor.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/guides/laravel.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/guides/modules.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/guides/quick-start.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/guides/safety.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/guides/served-content.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/install.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/reference/best-practices.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/reference/commands.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/reference/configuration.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/reference/proof.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/troubleshooting.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/upgrading.html</loc></url>
 </urlset>
