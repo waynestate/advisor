@@ -1,3 +1,76 @@
 {
-  "blocks": {}
+  "blocks": {
+    "commands": {
+      "type": "symfony-commands",
+      "run": "php bin/advisor",
+      "cli": "bin/advisor",
+      "level": 3
+    },
+    "env": {
+      "type": "env",
+      "scan": [
+        "src",
+        "bin"
+      ],
+      "prefix": "ADVISOR_",
+      "describe": {
+        "ADVISOR_ENABLED": [
+          "Must be `1` or `true`, or the server refuses to start. `advisor install` sets it in the client config.",
+          "off"
+        ],
+        "ADVISOR_ENV": [
+          "`production` or `prod` always refuses to start.",
+          "`APP_ENV`, then `local`"
+        ],
+        "ADVISOR_PROJECT_ROOT": [
+          "The folder `run_proctor_check` may look inside. Paths outside it are refused.",
+          "the working directory"
+        ],
+        "ADVISOR_READ_ONLY": [
+          "Set to `0` or `false` to allow tools that write. None exist in 0.1. Read-only wins over `ADVISOR_GROUPS`.",
+          "on"
+        ],
+        "ADVISOR_GROUPS": [
+          "Comma list of tool groups to offer (`stack`, `proctor`, `booster`). See below for what each group may start.",
+          "all"
+        ],
+        "ADVISOR_PROCTOR_TIMEOUT": [
+          "Seconds before a PROCTOR run is stopped (1 to 900).",
+          "`120`"
+        ],
+        "ADVISOR_BOOSTER_TIMEOUT": [
+          "Seconds before a Booster plan is stopped (1 to 900). A plan is local and fast, so the default is shorter than a PROCTOR run.",
+          "`60`"
+        ],
+        "ADVISOR_BOOSTER_BIN": [
+          "Where `upgrade_path` finds Booster when the app has no `vendor/bin/booster` of its own: the path to booster's `bin/booster` (or a `booster.phar`). The app's own `vendor/bin/booster` always wins.",
+          "none"
+        ],
+        "ADVISOR_MAX_CHARS": [
+          "Largest piece of text one doc call returns (1000 to 45000).",
+          "`20000`"
+        ],
+        "ADVISOR_AUDIT_LOG": [
+          "A file for a one-line-per-call audit log: time, tool, a hash of the arguments, outcome, duration. Arguments are hashed, never written.",
+          "off"
+        ],
+        "ADVISOR_LOG_LEVEL": [
+          "Log level on stderr (`debug` to `emergency`).",
+          "`warning`"
+        ],
+        "ADVISOR_STACK_DIR": [
+          "Folder holding the sibling stack repos; used only by `content:generate`.",
+          "none"
+        ],
+        "ADVISOR_PRIVATE_DENYLIST": [
+          "A file (kept outside the repo) with private strings to strip from the bundle; used by `content:generate` and the public-posture test. See \"Releasing\".",
+          "none"
+        ],
+        "ADVISOR_MODULES_FILE": [
+          "An extra module manifest (see \"Modules\").",
+          "none"
+        ]
+      }
+    }
+  }
 }
