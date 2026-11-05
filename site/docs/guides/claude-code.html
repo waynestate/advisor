@@ -30,11 +30,11 @@
 <p>This page gives the one line that connects Claude Code to ADVISOR, and the <code>install</code> command that does the same thing.</p>
 <h2 id="the-one-line">The one line<a class="docs-heading-link" aria-label="Link to this section" href="#the-one-line">#</a></h2>
 <p>If you would rather type it than generate it, this does the same as <code>install --client=claude --write</code>; project scope keeps it out of your other projects, and the same &quot;do not commit it&quot; warning applies:</p>
-<pre><code class="language-bash">claude mcp add --scope project advisor -e ADVISOR_ENABLED=1 -- php vendor/bin/advisor mcp
+<pre tabindex="0"><code class="language-bash">claude mcp add --scope project advisor -e ADVISOR_ENABLED=1 -- php vendor/bin/advisor mcp
 </code></pre>
 <h2 id="the-install-command">The install command<a class="docs-heading-link" aria-label="Link to this section" href="#the-install-command">#</a></h2>
 <p>The <code>install</code> command does the same thing and supports Claude among its clients:</p>
-<pre><code class="language-bash">php vendor/bin/advisor install [--client=claude] [--write] [--force] [--path=.]
+<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor install [--client=claude] [--write] [--force] [--path=.]
 </code></pre>
 <p><code>install</code> puts <code>ADVISOR_ENABLED</code> in the client config's env block and warns when the file is not in <code>.gitignore</code>.</p>
 <h2 id="keep-it-out-of-git">Keep it out of git<a class="docs-heading-link" aria-label="Link to this section" href="#keep-it-out-of-git">#</a></h2>

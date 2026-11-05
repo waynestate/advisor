@@ -6,7 +6,7 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Changelog | ADVISOR docs
+# Changelog[#](https://advisor.apps.wayne.edu/docs/changelog.html#changelog)
 
 All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.
 
@@ -14,12 +14,20 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
 
+- Added: an accessibility gate (scripts/a11y/check.mjs) that loads every HTML page under site/ in a real browser and fails on any axe-core WCAG violation, in light and dark themes at phone and desktop width, plus a reduced-motion pass; runs as the a11y job in GitLab CI.
 - Added: a docs site (site/docs/) built by the shared docs builder from docs/, checked in composer ci.
 - Changed: the bundled data is resynced with the stack's main branches of 2026-11-03 (afternoon): SESAME S45 and the DRAWBRIDGE module floor (from branch heads awaiting main), HELMET H42 4xx pages, H43, H53 and H41 notes; SESAME S4, S41, S42 and S27; plus the Booster, Preflight, PROCTOR and Squire docs that moved.
 - Changed: the bundled data is resynced again (evening): PROCTOR composer-audit-off, not-audited, scoped overrides and the ignore-entries count; Pinstripe Node 22/24/26 matrix, the Laravel + Vue fixture and ADR-0001; plus the other projects docs that moved on main.
 - Changed: the bundled data is resynced with the stack's main branches (late evening of 2026-11-03): Sourdough (Playbook required by default, released HELMET/SESAME/PROCTOR pins in the templates, Preflight pinned to a SHA), Squire (release workflow, docs builder gates), WELD, HELMET 0.3, SESAME 0.4, Preflight, Booster and Drawbridge docs; ADVISOR's own version reads 0.1.5.
 - Changed: the bundled data is resynced again (night of 2026-11-03): the Pinstripe and Squire readmes moved; Booster, ROLLCALL and WELD docs were already current.
 - Changed: the bundled data is resynced again (late night of 2026-11-03): Sourdough (`composer playbook` script), HELMET, Preflight and Squire readmes moved; WELD docs were already current.
+
+### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
+
+- Fixed: front-page scroll reveals start hidden from first paint (plain CSS under `html.motion`, set in `<head>` before the body parses) instead of fading out after load, so unscrolled below-the-fold content sits at opacity 0 rather than being caught mid-fade; the motion class is only set where IntersectionObserver exists, so a page that hides content can always bring it back.
+- Fixed: docs code blocks are keyboard focusable (`tabindex="0"`, the same treatment the table wrappers already had), satisfying the scrollable-region-focusable rule.
+- Fixed: the changelog docs page keeps its `# Changelog` heading, so the page has exactly one level-1 heading.
+- Fixed: table-of-contents sub-links carry the base `docs-toc__item` class again, so they get the block display and padding that keep them at or above the 24px target size (and their hover color).
 
 ## \[0.1.5\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-5-2026-11-03)
 
@@ -61,7 +69,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.
 - Changed: project names written as words except acronyms.
 
-### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
+### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-1)
 
 - Fixed: stale capability claims in the site and docs.
 

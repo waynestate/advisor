@@ -1372,8 +1372,10 @@ final class DocsSite
             return null;
         }
         $text = $this->normalise((string) file_get_contents($path));
-        $body = (string) preg_replace('/\A#[ \t]+\S[^\n]*\n+/', '', $text);
-        $body = rtrim($this->rewriteChangelogLinks($body), "\n");
+        // Keep the leading "# Changelog" heading: it is the page's h1. The docs
+        // shell renders no h1 of its own, so stripping it left the page with
+        // zero level-1 headings (axe rule h1-count).
+        $body = rtrim($this->rewriteChangelogLinks($text), "\n");
         $page = "---\ntitle: \"Changelog\"\ndescription: All notable changes to this project.\n---\n\n"
             ."<!-- Generated from CHANGELOG.md by bin/docs-site.php. Edit CHANGELOG.md, not this file. -->\n\n"
             .$body."\n";
@@ -2348,6 +2350,7 @@ final class DocsSite
         [$toc, $h1] = $this->decorate($document, $folder, $sources);
         $content = (string) (new HtmlRenderer($env))->renderDocument($document)->getContent();
         $content = $this->wrapTables($content);
+        $content = $this->focusableCodeBlocks($content);
 
         $title = trim((string) ($meta['title'] ?? ''));
         if ($title === '') {
@@ -2509,6 +2512,18 @@ final class DocsSite
         );
     }
 
+    private function focusableCodeBlocks(string $html): string
+    {
+        // Scrollable code blocks must be reachable by keyboard (axe rule
+        // scrollable-region-focusable), the same reason the table wrappers
+        // above carry tabindex="0".
+        return (string) preg_replace_callback(
+            '/<pre\b([^>]*)>/i',
+            static fn (array $m): string => str_contains($m[1], 'tabindex') ? $m[0] : '<pre tabindex="0"'.$m[1].'>',
+            $html,
+        );
+    }
+
     /** @return array{0: array<string, string>, 1: string} front matter keys and the body */
     private function frontMatter(string $raw): array
     {
@@ -2593,7 +2608,11 @@ final class DocsSite
         }
         $lines = '';
         foreach ($toc as $entry) {
-            $indent = $entry['level'] === 3 ? 'docs-toc__item--sub' : 'docs-toc__item';
+            // Sub items keep the docs-toc__item token: the pinned docs.css gives
+            // every .docs-toc__item a its block display and padding, which is
+            // what keeps the links at or above the 24px target size. The --sub
+            // token only adds the extra left padding.
+            $indent = $entry['level'] === 3 ? 'docs-toc__item docs-toc__item--sub' : 'docs-toc__item';
             $lines .= "<li class=\"{$indent}\"><a href=\"#{$entry['id']}\">".htmlspecialchars($entry['text'], ENT_QUOTES).'</a></li>';
         }
 

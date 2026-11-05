@@ -71,7 +71,7 @@
 </table></div>
 <p><code>composer ci</code> runs <code>composer validate --strict</code>, <code>content:verify</code>, <code>stack-parts --check=README.md</code>, PHPUnit, Pint, PHPStan and <code>composer audit</code>. CI cannot see the sibling repos, so it verifies the manifest; regenerating is a local step.</p>
 <p>With only Docker:</p>
-<pre><code>docker run --rm -v &quot;${PWD}:/app&quot; -w /app composer:2.10.3 sh -c &quot;composer install --no-interaction &amp;&amp; composer ci&quot;
+<pre tabindex="0"><code>docker run --rm -v &quot;${PWD}:/app&quot; -w /app composer:2.10.3 sh -c &quot;composer install --no-interaction &amp;&amp; composer ci&quot;
 </code></pre>
 <p>Snapshot tests are updated with <code>ADVISOR_UPDATE_SNAPSHOTS=1</code> (<code>$env:ADVISOR_UPDATE_SNAPSHOTS = &quot;1&quot;</code> in PowerShell) before <code>vendor/bin/phpunit</code>.</p>
 <h2 id="rules-a-change-must-keep">Rules a change must keep<a class="docs-heading-link" aria-label="Link to this section" href="#rules-a-change-must-keep">#</a></h2>
@@ -93,7 +93,7 @@
 <p>Hand-written guides live in <code>generator/guides/</code>, one Markdown file per slug, served as <code>advisor://guide/&lt;slug&gt;</code>. Edit them there, then run <code>content:generate</code>.</p>
 <h2 id="catch-stale-bundled-docs">Catch stale bundled docs<a class="docs-heading-link" aria-label="Link to this section" href="#catch-stale-bundled-docs">#</a></h2>
 <p><code>composer content:drift</code> compares <code>data/</code> with a checkout of the stack repos and exits 1 when they no longer agree. It takes the folder from <code>ADVISOR_STACK_DIR</code>; without it, it prints how to run it and exits 1:</p>
-<pre><code>ADVISOR_STACK_DIR=&lt;folder holding the stack repos&gt; composer content:drift
+<pre tabindex="0"><code>ADVISOR_STACK_DIR=&lt;folder holding the stack repos&gt; composer content:drift
 </code></pre>
 <p>It writes nothing. On drift it lists the files that moved; regenerate with <code>composer content:generate</code> and review the diff before committing.</p>
 <p>Run the drift check before every tag: a release must carry docs that still match the repos it advises on.</p>

@@ -39,32 +39,32 @@
 </ul>
 <p><strong>Fix.</strong> Run doctor and fix anything it reports as a <code>fail</code>. A <code>fail</code> is something to fix; a <code>warn</code> is something you may not care about.</p>
 <p><strong>Check.</strong></p>
-<pre><code class="language-bash">php vendor/bin/advisor doctor
+<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor doctor
 </code></pre>
 <p>The exit code is <code>0</code> when nothing failed and <code>1</code> when something did; <code>--json</code> prints the findings as JSON.</p>
 <h3 id="the-server-refuses-to-start-because-it-is-not-enabled">The server refuses to start because it is not enabled<a class="docs-heading-link" aria-label="Link to this section" href="#the-server-refuses-to-start-because-it-is-not-enabled">#</a></h3>
 <p><strong>Cause.</strong> <code>ADVISOR_ENABLED</code> defaults to off. It must be <code>1</code> or <code>true</code>, or the server refuses to start.</p>
 <p><strong>Fix.</strong> Set <code>ADVISOR_ENABLED=1</code> in the client config's environment. <code>advisor install</code> sets it in the client config.</p>
 <p><strong>Check.</strong></p>
-<pre><code class="language-bash">php vendor/bin/advisor doctor
+<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor doctor
 </code></pre>
 <h3 id="the-server-refuses-to-start-in-production">The server refuses to start in production<a class="docs-heading-link" aria-label="Link to this section" href="#the-server-refuses-to-start-in-production">#</a></h3>
 <p><strong>Cause.</strong> <code>ADVISOR_ENV</code> reads <code>APP_ENV</code>, then <code>local</code>. <code>production</code> or <code>prod</code> always refuses to start.</p>
 <p><strong>Fix.</strong> Run ADVISOR in development only. It refuses to start in production by design.</p>
 <p><strong>Check.</strong></p>
-<pre><code class="language-bash">php vendor/bin/advisor doctor
+<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor doctor
 </code></pre>
 <h3 id="a-bad-setting-stops-the-server">A bad setting stops the server<a class="docs-heading-link" aria-label="Link to this section" href="#a-bad-setting-stops-the-server">#</a></h3>
 <p><strong>Cause.</strong> A bad value stops the server with a message on stderr. It does not guess.</p>
 <p><strong>Fix.</strong> Read the message on stderr and correct the value. ADVISOR reads the process environment only, never a file.</p>
 <p><strong>Check.</strong></p>
-<pre><code class="language-bash">php vendor/bin/advisor doctor
+<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor doctor
 </code></pre>
 <h3 id="the-server-refuses-to-start-because-a-content-file-fails-its-hash">The server refuses to start because a content file fails its hash<a class="docs-heading-link" aria-label="Link to this section" href="#the-server-refuses-to-start-because-a-content-file-fails-its-hash">#</a></h3>
 <p><strong>Cause.</strong> The bundled <code>data/</code> is verified at start-up against <code>data/manifest.json</code> (a SHA-256 for every file). If a file does not match, the server refuses to start rather than serve it.</p>
 <p><strong>Fix.</strong> Regenerate the bundle from the sibling stack repositories with <code>content:generate</code>, then verify it.</p>
 <p><strong>Check.</strong></p>
-<pre><code class="language-bash">php vendor/bin/advisor content:verify
+<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor content:verify
 </code></pre>
 <h2 id="related">Related<a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></h2>
 <ul>
@@ -79,7 +79,7 @@
     </main>
     <nav class="docs-pager" aria-label="Pages"><a class="docs-pager__link" href="../docs/deploying/refreshing-the-content.html"><span class="docs-pager__dir">Previous</span><span class="docs-pager__title">Refreshing the content</span></a><a class="docs-pager__link docs-pager__link--next" href="../docs/upgrading.html"><span class="docs-pager__dir">Next</span><span class="docs-pager__title">Upgrading</span></a></nav>
   </div>
-  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item--sub"><a href="#the-advisor-server-is-not-in-the-list">The advisor server is not in the list</a></li><li class="docs-toc__item--sub"><a href="#the-server-refuses-to-start-because-it-is-not-enabled">The server refuses to start because it is not enabled</a></li><li class="docs-toc__item--sub"><a href="#the-server-refuses-to-start-in-production">The server refuses to start in production</a></li><li class="docs-toc__item--sub"><a href="#a-bad-setting-stops-the-server">A bad setting stops the server</a></li><li class="docs-toc__item--sub"><a href="#the-server-refuses-to-start-because-a-content-file-fails-its-hash">The server refuses to start because a content file fails its hash</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
+  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item docs-toc__item--sub"><a href="#the-advisor-server-is-not-in-the-list">The advisor server is not in the list</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#the-server-refuses-to-start-because-it-is-not-enabled">The server refuses to start because it is not enabled</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#the-server-refuses-to-start-in-production">The server refuses to start in production</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#a-bad-setting-stops-the-server">A bad setting stops the server</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#the-server-refuses-to-start-because-a-content-file-fails-its-hash">The server refuses to start because a content file fails its hash</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
 </div>
 <footer class="docs-footer">
   <span>Documents ADVISOR <span data-docs-version>0.1.5</span></span>

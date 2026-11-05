@@ -31,8 +31,12 @@
 <link rel="stylesheet" href="assets/advisor.css">
 <script>
   /* Plot routes with motion only for people who are happy with motion.
-     Everyone else gets the finished map: every label inked, every route drawn. */
-  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
+     Everyone else gets the finished map: every label inked, every route drawn.
+     The motion class also arms the CSS hidden state of the scroll reveals, so it
+     is only set where the reveal machinery (IntersectionObserver) can run: a page
+     that hides content must always be able to bring it back. */
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: no-preference)").matches
+      && "IntersectionObserver" in window) {
     document.documentElement.classList.add("motion");
   }
 </script>

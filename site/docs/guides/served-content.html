@@ -40,7 +40,7 @@
 <p>Beside the generated docs, hand-written guides are kept by hand in <code>generator/guides/</code> (one Markdown file per slug), the same way the ownership table is kept. Each is bundled into <code>data/guides/</code> and served as <code>advisor://guide/&lt;slug&gt;</code>; the first is &quot;Connect to Oracle on Citadel&quot;. Edit them there, then run <code>content:generate</code>.</p>
 <h2 id="refreshing-the-content">Refreshing the content<a class="docs-heading-link" aria-label="Link to this section" href="#refreshing-the-content">#</a></h2>
 <p>To refresh it, with the stack repos checked out side by side:</p>
-<pre><code>php vendor/bin/advisor content:generate --sources=/path/to/stack
+<pre tabindex="0"><code>php vendor/bin/advisor content:generate --sources=/path/to/stack
 php vendor/bin/advisor content:generate --sources=/path/to/stack --check   # exits 1 on drift
 </code></pre>
 <p>Run <code>content:generate</code> after any change that lands in CREED's policy or handbook, a project's README or best practices, an extra doc, or the projects seed. Commit the regenerated <code>data/</code> with the source commits in the message.</p>

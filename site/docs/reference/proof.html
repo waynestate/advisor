@@ -30,10 +30,10 @@
 <p>This page walks through <code>composer ci</code>, the one command that proves the build, and what each step of it proves.</p>
 <p>The same command runs on GitLab and GitHub.</p>
 <h2 id="the-command">The command<a class="docs-heading-link" aria-label="Link to this section" href="#the-command">#</a></h2>
-<pre><code>composer ci
+<pre tabindex="0"><code>composer ci
 </code></pre>
 <p>No PHP on your machine? Use Docker:</p>
-<pre><code>docker run --rm -v &quot;${PWD}:/app&quot; -w /app composer:2.10.3 sh -c &quot;composer install --no-interaction &amp;&amp; composer ci&quot;
+<pre tabindex="0"><code>docker run --rm -v &quot;${PWD}:/app&quot; -w /app composer:2.10.3 sh -c &quot;composer install --no-interaction &amp;&amp; composer ci&quot;
 </code></pre>
 <h2 id="composer-validate-strict">composer validate --strict<a class="docs-heading-link" aria-label="Link to this section" href="#composer-validate-strict">#</a></h2>
 <p>Runs <code>composer validate --strict</code> on the package metadata.</p>

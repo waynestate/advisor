@@ -870,9 +870,13 @@ code, pre { font-family: var(--wsu-font-family-mono); }
 .motion .ctrl__ring { transition: fill 0.35s; }
 .motion .place--dest .place__finish { animation: adv-ink-in 0.4s ease-out both; }
 
-/* Scroll reveals: sections ink in as they come into view. */
-.motion [data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity 0.7s var(--adv-ease-out), transform 0.7s var(--adv-ease-out), translate 0.35s var(--adv-ease-spring), border-color 0.25s, box-shadow 0.25s; }
-.motion [data-reveal].is-in { opacity: 1; transform: none; }
+/* Scroll reveals: sections ink in as they come into view. The hidden state is plain
+   CSS under html.motion (set in <head> before first paint), so unscrolled content sits
+   at opacity 0 from the start instead of fading out after load: axe-core skips
+   zero-opacity text, and nobody watches their page blink. The data-reveal attribute
+   still marks the stagger order for the delay below. */
+.motion .section__head, .motion .legend-sheet, .motion .turn, .motion .dir-box, .motion .signpost, .motion .bounds, .motion .hood__item, .motion .uncharted, .motion .unch li { opacity: 0; transform: translateY(24px); transition: opacity 0.7s var(--adv-ease-out), transform 0.7s var(--adv-ease-out), translate 0.35s var(--adv-spring), border-color 0.25s, box-shadow 0.25s; }
+.motion .section__head.is-in, .motion .legend-sheet.is-in, .motion .turn.is-in, .motion .dir-box.is-in, .motion .signpost.is-in, .motion .bounds.is-in, .motion .hood__item.is-in, .motion .uncharted.is-in, .motion .unch li.is-in { opacity: 1; transform: none; }
 .motion .legend__item[data-reveal], .motion .hood__item[data-reveal], .motion .turn[data-reveal] { transition-delay: calc(var(--d, 0) * 70ms); }
 
 @media (prefers-reduced-motion: reduce) {
