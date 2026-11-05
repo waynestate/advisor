@@ -167,7 +167,7 @@ async function main() {
         }
 
         // axe, WCAG tags only.
-        const results = await new AxeBuilder().withTags(AXE_TAGS).analyze(page);
+        const results = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
         const byRule = {};
         for (const v of results.violations) {
           byRule[v.id] = (byRule[v.id] ?? 0) + v.nodes.length;
