@@ -9,16 +9,29 @@
 <meta name="docs-version" content="0.1.5">
 <link rel="stylesheet" href="../../assets/wayne-ui/wayne-ui.css">
 <link rel="stylesheet" href="../../assets/docs.css">
+<link rel="stylesheet" href="../../docs/theme/advisor.css">
 <link rel="alternate" type="text/markdown" href="doctor.md">
 <script src="../../assets/docs.js" defer></script>
 </head>
 <body>
 <a class="wsu-skip-link" href="#main">Skip to content</a>
-<header class="docs-header">
-  <a class="docs-header__brand" href="../../docs/index.html">ADVISOR</a>
-  <span><a class="docs-header__home" rel="noopener" href="https://nougat.snu.gs/enterprise-apps/advisor">Source</a> <a class="docs-header__home" href="../../index.html">Back to ADVISOR</a></span>
-</header>
-<div class="docs-layout docs-layout--toc">
+<header class="sheet-head">
+  <div class="sheet-head__row">
+    <a class="brand" href="../../index.html">
+      <img src="../../brand/advisor-avatar-256.png" width="34" height="34" alt="">
+      <span class="brand__name">ADVISOR</span>
+    </a>
+    <nav class="sheet-nav" aria-label="Site">
+      <a href="../../index.html#ask">Ask the map</a>
+      <a href="../../index.html#legend">Legend</a>
+      <a href="../../index.html#directions">Directions</a>
+      <a href="../../index.html#briefings">Briefings</a>
+      <a href="../../index.html#neighbors">Neighbors</a>
+      <a href="../../docs/index.html" aria-current="page">Docs</a>
+    </nav>
+    <p class="sheet-head__meta"><span class="sheet-head__label">Sheet</span> 0.1.5</p>
+  </div>
+</header><div class="docs-layout docs-layout--toc">
   <details class="docs-menu">
     <summary>Menu</summary>
     <nav class="docs-nav" aria-label="Documentation"><ul class="docs-nav__list"><li class="docs-nav__group"><span class="docs-nav__label">Getting started</span><ul><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/install.html">Install</a></li><li><a href="../../docs/guides/quick-start.html">Quick start</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Guides</span><ul><li><a href="../../docs/guides/where-it-sits.html">Where it sits in WELD</a></li><li><a href="../../docs/guides/claude-code.html">One line for Claude Code</a></li><li><a href="../../docs/guides/docker.html">No PHP? Use Docker</a></li><li><a href="../../docs/guides/laravel.html">Laravel apps</a></li><li><a href="../../docs/guides/what-it-offers.html">What it offers</a></li><li><a href="../../docs/guides/served-content.html">Served content</a></li><li><a href="../../docs/guides/safety.html">Safety</a></li><li><a href="../../docs/guides/modules.html">Modules</a></li><li><a href="../../docs/guides/doctor.html" aria-current="page">When it does not show up</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Reference</span><ul><li><a href="../../docs/reference/configuration.html">Configuration</a></li><li><a href="../../docs/reference/commands.html">Commands</a></li><li><a href="../../docs/reference/best-practices.html">Best practices</a></li><li><a href="../../docs/reference/proof.html">Proof</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Deploying</span><ul><li><a href="../../docs/deploying/releasing.html">Releasing</a></li><li><a href="../../docs/deploying/refreshing-the-content.html">Refreshing the content</a></li></ul></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/upgrading.html">Upgrading</a></li><li><a href="../../docs/contributing.html">Contributing</a></li><li><a href="../../docs/changelog.html">Changelog</a></li></ul></nav>
@@ -29,7 +42,7 @@
       <article class="docs-article"><h1 id="when-it-does-not-show-up">When it does not show up<a class="docs-heading-link" aria-label="Link to this section" href="#when-it-does-not-show-up">#</a></h1>
 <p>This page is the one to follow when you added the config, opened the project, and the <code>advisor</code> server is not in the list.</p>
 <h2 id="run-the-doctor">Run the doctor<a class="docs-heading-link" aria-label="Link to this section" href="#run-the-doctor">#</a></h2>
-<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor doctor [--json]   # check the install when the server does not show up
+<pre><code class="language-bash">php vendor/bin/advisor doctor [--json]   # check the install when the server does not show up
 </code></pre>
 <p>It checks the four things that keep a server from appearing, in plain words, and changes nothing. <code>--json</code> prints the findings as JSON.</p>
 <h2 id="what-it-checks">What it checks<a class="docs-heading-link" aria-label="Link to this section" href="#what-it-checks">#</a></h2>

@@ -9,16 +9,29 @@
 <meta name="docs-version" content="0.1.5">
 <link rel="stylesheet" href="../../assets/wayne-ui/wayne-ui.css">
 <link rel="stylesheet" href="../../assets/docs.css">
+<link rel="stylesheet" href="../../docs/theme/advisor.css">
 <link rel="alternate" type="text/markdown" href="proof.md">
 <script src="../../assets/docs.js" defer></script>
 </head>
 <body>
 <a class="wsu-skip-link" href="#main">Skip to content</a>
-<header class="docs-header">
-  <a class="docs-header__brand" href="../../docs/index.html">ADVISOR</a>
-  <span><a class="docs-header__home" rel="noopener" href="https://nougat.snu.gs/enterprise-apps/advisor">Source</a> <a class="docs-header__home" href="../../index.html">Back to ADVISOR</a></span>
-</header>
-<div class="docs-layout docs-layout--toc">
+<header class="sheet-head">
+  <div class="sheet-head__row">
+    <a class="brand" href="../../index.html">
+      <img src="../../brand/advisor-avatar-256.png" width="34" height="34" alt="">
+      <span class="brand__name">ADVISOR</span>
+    </a>
+    <nav class="sheet-nav" aria-label="Site">
+      <a href="../../index.html#ask">Ask the map</a>
+      <a href="../../index.html#legend">Legend</a>
+      <a href="../../index.html#directions">Directions</a>
+      <a href="../../index.html#briefings">Briefings</a>
+      <a href="../../index.html#neighbors">Neighbors</a>
+      <a href="../../docs/index.html" aria-current="page">Docs</a>
+    </nav>
+    <p class="sheet-head__meta"><span class="sheet-head__label">Sheet</span> 0.1.5</p>
+  </div>
+</header><div class="docs-layout docs-layout--toc">
   <details class="docs-menu">
     <summary>Menu</summary>
     <nav class="docs-nav" aria-label="Documentation"><ul class="docs-nav__list"><li class="docs-nav__group"><span class="docs-nav__label">Getting started</span><ul><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/install.html">Install</a></li><li><a href="../../docs/guides/quick-start.html">Quick start</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Guides</span><ul><li><a href="../../docs/guides/where-it-sits.html">Where it sits in WELD</a></li><li><a href="../../docs/guides/claude-code.html">One line for Claude Code</a></li><li><a href="../../docs/guides/docker.html">No PHP? Use Docker</a></li><li><a href="../../docs/guides/laravel.html">Laravel apps</a></li><li><a href="../../docs/guides/what-it-offers.html">What it offers</a></li><li><a href="../../docs/guides/served-content.html">Served content</a></li><li><a href="../../docs/guides/safety.html">Safety</a></li><li><a href="../../docs/guides/modules.html">Modules</a></li><li><a href="../../docs/guides/doctor.html">When it does not show up</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Reference</span><ul><li><a href="../../docs/reference/configuration.html">Configuration</a></li><li><a href="../../docs/reference/commands.html">Commands</a></li><li><a href="../../docs/reference/best-practices.html">Best practices</a></li><li><a href="../../docs/reference/proof.html" aria-current="page">Proof</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Deploying</span><ul><li><a href="../../docs/deploying/releasing.html">Releasing</a></li><li><a href="../../docs/deploying/refreshing-the-content.html">Refreshing the content</a></li></ul></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/upgrading.html">Upgrading</a></li><li><a href="../../docs/contributing.html">Contributing</a></li><li><a href="../../docs/changelog.html">Changelog</a></li></ul></nav>
@@ -30,10 +43,10 @@
 <p>This page walks through <code>composer ci</code>, the one command that proves the build, and what each step of it proves.</p>
 <p>The same command runs on GitLab and GitHub.</p>
 <h2 id="the-command">The command<a class="docs-heading-link" aria-label="Link to this section" href="#the-command">#</a></h2>
-<pre tabindex="0"><code>composer ci
+<pre><code>composer ci
 </code></pre>
 <p>No PHP on your machine? Use Docker:</p>
-<pre tabindex="0"><code>docker run --rm -v &quot;${PWD}:/app&quot; -w /app composer:2.10.3 sh -c &quot;composer install --no-interaction &amp;&amp; composer ci&quot;
+<pre><code>docker run --rm -v &quot;${PWD}:/app&quot; -w /app composer:2.10.3 sh -c &quot;composer install --no-interaction &amp;&amp; composer ci&quot;
 </code></pre>
 <h2 id="composer-validate-strict">composer validate --strict<a class="docs-heading-link" aria-label="Link to this section" href="#composer-validate-strict">#</a></h2>
 <p>Runs <code>composer validate --strict</code> on the package metadata.</p>
