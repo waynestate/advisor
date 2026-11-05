@@ -9,8 +9,11 @@ use Waynestate\Advisor\Proof\ProofRunner;
 use Waynestate\Advisor\Tests\Support\TempDir;
 
 /**
- * The proof run against a tiny corpus on disk: a clean unit passes, a broken
- * advisor binary is a tool error, and a unit without PHP is not applicable.
+ * The proof run against a tiny corpus on disk: a clean unit passes, a failed
+ * PROCTOR check flags the unit, a broken advisor binary is a tool error, a
+ * unit without PHP is not applicable, secrets stay out of the scratch copy,
+ * the log holds no paths or unit directory names, and the exit code follows
+ * the tool errors.
  */
 final class ProofRunnerTest extends TestCase
 {
@@ -136,6 +139,131 @@ final class ProofRunnerTest extends TestCase
         $this->assertFileExists($out);
     }
 
+    public function testAFailedProctorCheckFlagsTheUnit(): void
+    {
+        $root = $this->tempDir();
+        $corpus = $root . '/corpus';
+        $unitId = 'demo-app';
+        $this->fixtureUnit($corpus, $unitId);
+        $units = $this->unitsFile($root, [[ $unitId, $unitId, 'app' ]]);
+        $proctor = $this->fakeProctor($root, 'proctor-fail.php', ['mysql56']);
+        $booster = $this->fakeBooster($root, 'booster.php');
+        $out = $root . '/out/proof.jsonl';
+        mkdir($root . '/out', 0775, true);
+
+        $result = ProofRunner::fromOptions($this->proofOptions($root, $units, $corpus, $proctor, $booster, [
+            'timeout' => '15',
+        ]))->run();
+
+        $this->assertSame(0, $result['exit'], 'A flagged unit is news, not a tool error.');
+        $line = $result['lines'][0];
+        $this->assertSame('flagged', $line['outcome']);
+        $detail = $line['detail'];
+        $this->assertSame(['mysql56'], $detail['proctor_failed_checks']);
+        $this->assertSame(6, $detail['proctor_findings']);
+        $this->assertTrue($detail['calls']['run_proctor_check']['ok']);
+        $this->assertFalse($detail['calls']['run_proctor_check']['refused']);
+        $this->assertSame(1, $result['summary']['all']['flagged']);
+        $this->assertFileExists($out);
+    }
+
+    public function testTheWorkCopyLeavesSecretsAndGitBehind(): void
+    {
+        $root = $this->tempDir();
+        $corpus = $root . '/corpus';
+        $unitId = 'demo-app';
+        $this->fixtureUnit($corpus, $unitId);
+        $this->put($corpus . '/' . $unitId . '/.env', "APP_KEY=topsecret\n");
+        $this->put($corpus . '/' . $unitId . '/.env.example', "APP_KEY=\n");
+        $this->put($corpus . '/' . $unitId . '/auth.json', "{}\n");
+        $this->put($corpus . '/' . $unitId . '/.git/config', "[core]\n");
+        $observed = $root . '/observed.txt';
+        $units = $this->unitsFile($root, [[ $unitId, $unitId, 'app' ]]);
+        $proctor = $this->observingProctor($root, 'proctor-observe.php', $observed);
+        $booster = $this->fakeBooster($root, 'booster.php');
+        $out = $root . '/out/proof.jsonl';
+        mkdir($root . '/out', 0775, true);
+
+        $result = ProofRunner::fromOptions($this->proofOptions($root, $units, $corpus, $proctor, $booster, [
+            'timeout' => '15',
+        ]))->run();
+
+        $this->assertSame('pass', $result['lines'][0]['outcome'], 'The observing proctor still reports a clean pass.');
+        $entries = file($observed, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $this->assertIsArray($entries, 'The proctor ran inside the scratch copy and wrote its observation.');
+        $this->assertContains('.env.example', $entries, '.env.example comes along with the copy.');
+        $this->assertContains('composer.json', $entries);
+        $this->assertNotContains('.env', $entries, '.env stays behind.');
+        $this->assertNotContains('auth.json', $entries, 'auth.json stays behind.');
+        $this->assertNotContains('.git', $entries, 'the git history stays behind.');
+    }
+
+    public function testTheLogHoldsNoPathsOrUnitNames(): void
+    {
+        $root = $this->tempDir();
+        $corpus = $root . '/corpus';
+        $unitId = 'first-unit';
+        $dirName = 'zeta-demo';
+        $this->fixtureUnit($corpus, $dirName);
+        $units = $this->unitsFile($root, [[ $unitId, $dirName, 'app' ]]);
+        $proctor = $this->fakeProctor($root, 'proctor.php');
+        $booster = $this->fakeBooster($root, 'booster.php');
+        $out = $root . '/out/proof.jsonl';
+        $work = $root . '/work';
+        mkdir($root . '/out', 0775, true);
+
+        $result = ProofRunner::fromOptions($this->proofOptions($root, $units, $corpus, $proctor, $booster, [
+            'timeout' => '15',
+        ]))->run();
+
+        $this->assertSame('pass', $result['lines'][0]['outcome']);
+        $this->assertSame($unitId, $result['lines'][0]['unit_id']);
+        $raw = (string) file_get_contents($out);
+        $this->assertStringNotContainsString($work, $raw, 'No work directory path may reach the log.');
+        $this->assertStringNotContainsString($corpus, $raw, 'No corpus path may reach the log.');
+        $this->assertStringNotContainsString($dirName, $raw, 'No unit directory name may reach the log.');
+    }
+
+    public function testTheExitCodeFollowsToolErrors(): void
+    {
+        // No tool error: the run exits 0.
+        $clean = $this->tempDir();
+        $corpus = $clean . '/corpus';
+        $unitId = 'demo-app';
+        $this->fixtureUnit($corpus, $unitId);
+        $units = $this->unitsFile($clean, [[ $unitId, $unitId, 'app' ]]);
+        $proctor = $this->fakeProctor($clean, 'proctor.php');
+        $booster = $this->fakeBooster($clean, 'booster.php');
+        mkdir($clean . '/out', 0775, true);
+
+        $result = ProofRunner::fromOptions($this->proofOptions($clean, $units, $corpus, $proctor, $booster, [
+            'timeout' => '15',
+        ]))->run();
+
+        $this->assertSame(0, $result['exit'], 'Without a tool error the run exits 0.');
+        $this->assertSame(0, $result['summary']['all']['tool-error']);
+
+        // A tool error: the run exits 1.
+        $broken = $this->tempDir();
+        $corpus = $broken . '/corpus';
+        $this->fixtureUnit($corpus, $unitId);
+        $units = $this->unitsFile($broken, [[ $unitId, $unitId, 'app' ]]);
+        $proctor = $this->fakeProctor($broken, 'proctor.php');
+        $booster = $this->fakeBooster($broken, 'booster.php');
+        $badAdvisor = $broken . '/broken-advisor.php';
+        $this->put($badAdvisor, "<?php\nthis is not valid php at all;\n");
+        mkdir($broken . '/out', 0775, true);
+
+        $result = ProofRunner::fromOptions($this->proofOptions($broken, $units, $corpus, $proctor, $booster, [
+            'advisor-bin' => $badAdvisor,
+            'timeout' => '15',
+        ]))->run();
+
+        $this->assertSame(1, $result['exit'], 'A tool error makes the whole run exit 1.');
+        $this->assertSame(1, $result['summary']['all']['tool-error']);
+        $this->assertSame('tool-error', $result['lines'][0]['outcome']);
+    }
+
     /**
      * @param list<array{0: string, 1: string, 2: string}> $rows
      */
@@ -160,15 +288,57 @@ final class ProofRunnerTest extends TestCase
         $this->put($corpus . '/' . $id . '/src/index.php', "<?php\n\n// A small app for the dress rehearsal.\necho 'hello';\n");
     }
 
-    private function fakeProctor(string $root, string $name): string
+    /**
+     * @param list<string> $failed
+     * @return list<array{check_id: string, status: string, message: string}>
+     */
+    private function proctorFindings(array $failed = []): array
     {
-        $path = $root . '/' . $name;
         $findings = [];
         foreach (['php-floor', 'unbounded-constraints', 'lock-committed', 'portability', 'mysql56', 'overrides'] as $check) {
-            $findings[] = ['check_id' => $check, 'status' => 'pass', 'message' => 'fine'];
+            $status = in_array($check, $failed, true) ? 'fail' : 'pass';
+            $findings[] = ['check_id' => $check, 'status' => $status, 'message' => $status === 'pass' ? 'fine' : 'needs attention'];
         }
+
+        return $findings;
+    }
+
+    /**
+     * A PROCTOR that reports the given checks as failed and exits 1, like the real one does.
+     *
+     * @param list<string> $failed
+     */
+    private function fakeProctor(string $root, string $name, array $failed = []): string
+    {
+        $path = $root . '/' . $name;
         $this->put($path, '<?php' . "\n"
-            . 'echo json_encode(' . var_export(['version' => '0.1.0', 'findings' => $findings], true) . ");\n"
+            . 'echo json_encode(' . var_export(['version' => '0.1.0', 'findings' => $this->proctorFindings($failed)], true) . ");\n"
+            . 'exit(' . ($failed === [] ? 0 : 1) . ");\n");
+
+        return $path;
+    }
+
+    /**
+     * A passing PROCTOR that first records the names it sees at the top of the
+     * app folder it was pointed at, so a test can inspect the scratch copy from inside.
+     */
+    private function observingProctor(string $root, string $name, string $observed): string
+    {
+        $path = $root . '/' . $name;
+        $this->put($path, '<?php' . "\n"
+            . '$appPath = "";' . "\n"
+            . 'foreach ($argv ?? [] as $arg) {' . "\n"
+            . '    if (str_starts_with($arg, "--path=")) {' . "\n"
+            . '        $appPath = substr($arg, 7);' . "\n"
+            . '    }' . "\n"
+            . '}' . "\n"
+            . '$entries = [];' . "\n"
+            . 'if ($appPath !== "" && is_dir($appPath)) {' . "\n"
+            . '    $entries = array_values(array_diff(scandir($appPath) ?: [], [".", ".."]));' . "\n"
+            . '    sort($entries);' . "\n"
+            . '}' . "\n"
+            . 'file_put_contents(' . var_export($observed, true) . ', implode("\n", $entries) . "\n");' . "\n"
+            . 'echo json_encode(' . var_export(['version' => '0.1.0', 'findings' => $this->proctorFindings()], true) . ");\n"
             . "exit(0);\n");
 
         return $path;

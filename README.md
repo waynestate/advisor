@@ -334,6 +334,18 @@ Tests drive the real SDK server in-process with a small MCP client, snapshot `to
 `bin/advisor mcp` as a subprocess to prove stdout stays clean. To accept an intended change to the tool list, run
 `ADVISOR_UPDATE_SNAPSHOTS=1 vendor/bin/phpunit`, then review and commit the diff.
 
+## Proof run
+
+The proof run is dev tooling, not part of the served product. It walks a corpus of app folders through the real
+`bin/advisor mcp` server over stdio and writes one JSONL line per app, whose outcome is `pass`, `flagged`,
+`tool-error` or `not-applicable`. Each unit is copied into a scratch folder before the server sees it; `.env`,
+`auth.json` and `.git` are left behind (`.env.example` comes along), and the copy is removed when the unit is judged.
+The log holds no paths and no unit directory names.
+
+```
+php bin/proof.php --units=FILE --corpus=DIR --work=DIR --out=FILE --proctor-bin=FILE --booster-bin=FILE
+```
+
 ## Accessibility check
 
 Every `*.html` page under `site/` (except `site/assets/`) is loaded in a real browser by `scripts/a11y/check.mjs`
