@@ -334,6 +334,19 @@ Tests drive the real SDK server in-process with a small MCP client, snapshot `to
 `bin/advisor mcp` as a subprocess to prove stdout stays clean. To accept an intended change to the tool list, run
 `ADVISOR_UPDATE_SNAPSHOTS=1 vendor/bin/phpunit`, then review and commit the diff.
 
+## Accessibility check
+
+Every `*.html` page under `site/` (except `site/assets/`) is loaded in a real browser by `scripts/a11y/check.mjs`
+and run through axe-core (WCAG tags only), in light and dark themes at phone (390 px) and desktop (1440 px) width,
+plus one reduced-motion pass. Each page must also have one `<h1>`, a `lang` attribute, a non-empty title, and no
+horizontal scroll at phone width. Run it from the repo root (works in PowerShell):
+
+```
+docker run --rm -v "${PWD}:/app" -w /app/scripts/a11y mcr.microsoft.com/playwright:v1.49.1-noble sh -c "npm install --no-audit --no-fund && node check.mjs"
+```
+
+It also runs as the `a11y` job in GitLab CI.
+
 ## Safety, in short
 
 - Off unless enabled; refuses production; refuses to start on a bad setting or a content file that fails its hash.

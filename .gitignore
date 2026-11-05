@@ -7,3 +7,4 @@
 /.cursor/
 /.vscode/mcp.json
 /advisor-audit.log
+/scripts/a11y/node_modules/
