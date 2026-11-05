@@ -1,0 +1,1127 @@
+/* ============================================================================
+   ADVISOR docs theme (2026-11-05): the docs are the map's back pages.
+
+   The front page (site/assets/advisor.css) is a printed orienteering sheet:
+   cream paper with a faint grain, contour green ink, the course overprinted
+   in maroon, gold for the lit waypoint. These pages are the same sheet's
+   reverse side: the same head, Fraunces titles over Lato, the legend's mono
+   caps for labels, commands on the map's dark code ground with the gold
+   Copy tab, and the green footer band. Nothing new was invented here; every
+   value below comes from the front page.
+
+   How it gets onto the pages: docs/docs.json "theme" names this file and
+   docs/_header.html. The docs builder copies this file to
+   site/docs/theme/advisor.css and links it after the kit's docs.css, so the
+   --dk-* tokens and the rules below win without !important. The kit's
+   docs.css stays byte for byte Squire's.
+
+   Dark: the front page has none, so the dark set is the front page's own
+   dark band (Directions) stretched over the whole sheet: deep green ground,
+   cream text, gold where the paper uses maroon. Reading the map by
+   headlamp, basically.
+
+   File map: 1. fonts and tokens  2. paper  3. sheet head  4. sidebar, menu
+             5. article  6. code  7. callouts, tabs  8. tables, quotes
+             9. toc, pager, footer  10. dark  11. responsive
+             12. motion (no-preference only)  13. print
+   ========================================================================== */
+
+/* ---------------------------------------------------- 1. fonts and tokens */
+
+@font-face {
+  font-family: Fraunces;
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../../assets/fonts/fraunces-latin-600-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Fraunces;
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("../../assets/fonts/fraunces-latin-800-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Fraunces;
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../assets/fonts/fraunces-latin-400-italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Fraunces;
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../../assets/fonts/fraunces-latin-600-italic.woff2") format("woff2");
+}
+
+:root {
+  /* The front page's palette, under the same names. */
+  --adv-green: #0c5449;
+  --adv-green-deep: #073a32;
+  --adv-gold: #ffcc33;
+  --adv-gold-soft: #ffe28a;
+  --adv-maroon: #8b2145;
+  --adv-maroon-soft: #f3dbe3;
+  --adv-paper: #f4f1ea;
+  --adv-paper-deep: #ebe5d8;
+  --adv-paper-hi: #fbf9f4;
+  --adv-ink: #1c2725;
+  --adv-ink-muted: #4a5552;
+  --adv-line: rgba(12, 84, 73, 0.22);
+  --adv-code-bg: #10201d;
+  --adv-code-text: #e3ece8;
+  --adv-code-dim: #9db3ac;
+  --adv-display: Fraunces, "Iowan Old Style", Georgia, serif;
+  --adv-body: var(--wsu-font-family-body, Lato, Calibri, "Helvetica Neue", Arial, sans-serif);
+  --adv-mono: var(--wsu-font-family-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  --adv-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --adv-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Roles. Light is the paper; section 10 flips these for the night sheet. */
+  --a-ground: var(--adv-paper);
+  --a-surface: var(--adv-paper-hi);
+  --a-surface-deep: var(--adv-paper-deep);
+  --a-ink: var(--adv-ink);
+  --a-muted: var(--adv-ink-muted);
+  --a-title: var(--adv-green-deep);
+  --a-link: var(--adv-green);
+  --a-link-hover: var(--adv-green-deep);
+  --a-course: var(--adv-maroon);        /* labels, routes, the current mark */
+  --a-course-wash: rgba(139, 33, 69, 0.07);
+  --a-line: var(--adv-line);
+  --a-wash: rgba(12, 84, 73, 0.07);     /* the answer box, hovers */
+  --a-gold-wash: rgba(255, 204, 51, 0.2);
+  --a-tip-ink: #6b4a00;                 /* the front page's "security" chip ink */
+  --a-inline-bg: rgba(12, 84, 73, 0.09);
+  --a-inline-ink: var(--adv-green-deep);
+  --a-head-bg: rgba(244, 241, 234, 0.92);
+  --a-grain-1: rgba(12, 84, 73, 0.05);
+  --a-grain-2: rgba(139, 33, 69, 0.035);
+  --a-card-shadow: 8px 8px 0 rgba(139, 33, 69, 0.14);
+
+  /* The kit's tokens, set from the roles above. */
+  --dk-bg: var(--a-ground);
+  --dk-ink: var(--a-ink);
+  --dk-muted: var(--a-muted);
+  --dk-rule: var(--a-line);
+  --dk-accent: var(--a-link);
+  --dk-on-accent: #ffffff;
+  --dk-note: var(--adv-green);
+  --dk-tip: var(--a-tip-ink);
+  --dk-warning: var(--adv-maroon);
+  --dk-danger: var(--adv-maroon);
+  --dk-code-bg: var(--a-inline-bg);
+  --dk-display: var(--adv-display);
+  --dk-mono: var(--adv-mono);
+  --dk-radius: 10px;
+  --dk-focus: var(--a-course);
+  --dk-focus-w: 3px;
+  --dk-focus-o: 3px;
+  --dk-sidebar: 15.5rem;
+  --dk-prose-max: 46rem;
+  --dk-gap: 1.75rem;
+
+  color-scheme: light;
+}
+
+/* --------------------------------------------------------------- 2. paper */
+
+html {
+  background: var(--a-ground);
+  overflow-x: clip;
+  scroll-padding-top: 1rem;
+}
+
+body {
+  margin: 0;
+  color: var(--a-ink);
+  font-family: var(--adv-body);
+  background-color: var(--a-ground);
+  /* The front page's paper grain: two crossing hairline grids, nothing that moves. */
+  background-image:
+    radial-gradient(var(--a-grain-1) 1px, transparent 1px),
+    radial-gradient(var(--a-grain-2) 1px, transparent 1px);
+  background-size: 22px 22px, 31px 31px;
+  background-position: 0 0, 11px 7px;
+  overflow-x: clip;
+}
+
+:where(a, button, summary, [tabindex]):focus-visible {
+  outline: var(--dk-focus-w) solid var(--dk-focus);
+  outline-offset: var(--dk-focus-o);
+}
+
+/* ---------------------------------------------------------- 3. sheet head */
+
+.sheet-head {
+  position: relative;
+  z-index: 5;
+  background: var(--a-head-bg);
+  border-bottom: 1px solid var(--a-line);
+}
+
+.sheet-head__row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-sizing: border-box;
+  max-inline-size: 100rem;
+  min-block-size: 64px;
+  margin-inline: auto;
+  padding-inline: var(--dk-gap);
+}
+
+.brand {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--a-title);
+  text-decoration: none;
+}
+
+.brand img {
+  border-radius: 8px;
+}
+
+.brand__name {
+  font-family: var(--adv-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.sheet-nav {
+  display: flex;
+  gap: 1.25rem;
+  margin-left: auto;
+}
+
+/* The front page's links: bold Lato, a maroon course line drawn in under the one you point at. */
+.sheet-nav a {
+  padding-block: 0.35rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--a-ink);
+  background: linear-gradient(var(--a-course), var(--a-course)) left bottom / 0 2px no-repeat;
+}
+
+.sheet-nav a:hover,
+.sheet-nav a[aria-current="page"] {
+  background-size: 100% 2px;
+}
+
+/* You are here: the Docs link stays inked. */
+.sheet-nav a[aria-current="page"] {
+  color: var(--a-title);
+}
+
+.sheet-head__meta {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0.15rem 0.6rem;
+  font-family: var(--adv-mono);
+  font-size: 0.8125rem;
+  color: var(--a-title);
+  border: 1.5px solid var(--a-link);
+  border-radius: 999px;
+}
+
+.sheet-head__label {
+  font-family: var(--adv-display);
+  font-style: italic;
+}
+
+/* --------------------------------------------------- 4. sidebar and menu */
+
+.docs-layout {
+  gap: 1.5rem clamp(1.75rem, 1rem + 2.5vw, 3.5rem);
+  padding-block: 2.25rem 3.5rem;
+  padding-inline: var(--dk-gap);
+}
+
+/* Group labels are the legend's group heads: mono caps in course maroon. */
+.docs-nav__label {
+  display: block;
+  margin: 1.5rem 0 0.4rem;
+  padding-inline: 0.75rem;
+  font-family: var(--adv-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--a-course);
+}
+
+.docs-nav__list > li:first-child > .docs-nav__label {
+  margin-top: 0;
+}
+
+/* Group lists are plain <ul> inside the kit's list: no bullets, no indent. */
+.docs-nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A group's pages hang off a contour line, so the top-level pages after it read as their own. */
+.docs-nav__group > ul {
+  margin-inline-start: 0.75rem;
+  border-inline-start: 1px solid var(--a-line);
+}
+
+.docs-nav__group + li:not(.docs-nav__group) {
+  margin-top: 1.25rem;
+  padding-top: 0.75rem;
+  border-top: 2px dotted var(--a-line);
+}
+
+.docs-nav a {
+  display: block;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.97rem;
+  line-height: 1.35;
+  color: var(--a-ink);
+  border-radius: 0 6px 6px 0;
+}
+
+.docs-nav a:hover {
+  color: var(--a-title);
+  background: var(--a-wash);
+}
+
+/* The current page: the course's maroon leg along its edge. */
+.docs-nav a[aria-current="page"] {
+  font-weight: 700;
+  color: var(--a-title);
+  background: var(--a-surface);
+  box-shadow: inset 3px 0 0 var(--a-course);
+}
+
+.docs-menu summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  min-block-size: 44px;
+  padding: 0.4rem 1rem;
+  font-family: var(--adv-display);
+  font-size: 1.0625rem;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--a-title);
+  background: var(--a-surface);
+  border: 1.5px solid var(--a-link);
+  border-radius: var(--dk-radius);
+  cursor: pointer;
+  list-style: none;
+}
+
+.docs-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.docs-menu summary::after {
+  content: "";
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-inline-end: 2px solid currentColor;
+  border-block-end: 2px solid currentColor;
+  rotate: 45deg;
+  translate: 0 -2px;
+}
+
+.docs-menu[open] summary::after {
+  rotate: 225deg;
+  translate: 0 2px;
+}
+
+.docs-menu[open] > .docs-nav {
+  padding: 0.75rem 0.25rem 0.75rem;
+}
+
+/* ------------------------------------------------------------- 5. article */
+
+.docs-article {
+  font-family: var(--adv-body);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--a-ink);
+}
+
+.docs-article h1,
+.docs-article h2,
+.docs-article h3 {
+  font-family: var(--adv-display);
+  color: var(--a-title);
+  scroll-margin-top: 1rem;
+  text-wrap: balance;
+}
+
+/* The section titles of the front page, with the plotted course under them:
+   a dotted maroon route that ends in a control circle. */
+.docs-article h1 {
+  margin: 0 0 1.75rem;
+  font-size: clamp(2.4rem, 1.8rem + 2.4vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+}
+
+.docs-article h1::after {
+  content: "";
+  display: block;
+  box-sizing: border-box;
+  /* Eleven whole dots (11px each), then the 16px control circle after a short gap. */
+  inline-size: calc(11px * 11 + 22px);
+  block-size: 16px;
+  margin-block-start: 0.9rem;
+  padding-inline-end: 22px;
+  background:
+    radial-gradient(circle closest-side, transparent 52%, var(--a-course) 56% 88%, transparent 94%) right center / 16px 16px no-repeat border-box,
+    radial-gradient(circle, var(--a-course) 2.3px, transparent 2.8px) left center / 11px 16px repeat-x content-box;
+}
+
+.docs-article h2 {
+  margin: 3rem 0 0.9rem;
+  padding-bottom: 0.45rem;
+  font-size: clamp(1.65rem, 1.35rem + 1vw, 2.15rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  border-bottom: 1px solid var(--a-line);
+}
+
+.docs-article h3 {
+  margin: 2.1rem 0 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.docs-article :is(h1, h2, h3) code {
+  font-size: 0.78em;
+  letter-spacing: 0;
+}
+
+.docs-heading-link {
+  color: var(--a-muted);
+  font-weight: 400;
+}
+
+.docs-article a {
+  color: var(--a-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.docs-article a:hover {
+  color: var(--a-link-hover);
+  text-decoration-thickness: 3px;
+}
+
+.docs-article strong {
+  color: var(--a-title);
+}
+
+.docs-article :is(ul, ol) {
+  padding-inline-start: 1.4rem;
+}
+
+.docs-article li {
+  margin-block: 0.3rem;
+}
+
+.docs-article li::marker {
+  color: var(--a-course);
+}
+
+.docs-article img {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+/* A margin rule on the map: a dotted contour. */
+.docs-article hr {
+  margin-block: 2.5rem;
+  border: 0;
+  border-block-start: 2px dotted var(--a-line);
+}
+
+/* ---------------------------------------------------------------- 6. code */
+
+.docs-article code {
+  padding: 0.05em 0.35em;
+  font-size: 0.9em;
+  color: var(--a-inline-ink);
+  background: var(--a-inline-bg);
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+
+/* What you type sits on the map's dark code ground, as on the front page.
+   Lines keep their shape, so a long one scrolls instead of wrapping. */
+.docs-article pre {
+  margin: 1.1rem 0 1.4rem;
+  padding: 0.85rem 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--adv-code-text);
+  background: var(--adv-code-bg);
+  border: 1px solid var(--adv-code-bg);
+  border-radius: var(--dk-radius);
+  tab-size: 4;
+  scrollbar-color: #3a524c transparent;
+}
+
+.docs-article pre code {
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  border-radius: 0;
+  overflow-wrap: normal;
+}
+
+/* With docs.js the block sits in .docs-copy: the dark ground moves to the
+   wrapper and the pre stops short of a gutter, so the gold Copy tab (the
+   front page's quick start button) never covers a command. */
+.docs-copy {
+  position: relative;
+  margin: 1.1rem 0 1.4rem;
+  background: var(--adv-code-bg);
+  border: 1px solid var(--adv-code-bg);
+  border-radius: var(--dk-radius);
+  box-shadow: 0 14px 34px -24px rgba(7, 58, 50, 0.45);
+}
+
+.docs-copy > pre {
+  margin: 0;
+  margin-inline-end: 5rem;
+  border: 0;
+  border-radius: var(--dk-radius) 0 0 var(--dk-radius);
+}
+
+/* The quick start's Copy: a flush gold tab in the block's top corner, as tall as one line of code. */
+.docs-copy__button {
+  inset-block-start: -1px;
+  inset-inline-end: -1px;
+  box-sizing: border-box;
+  min-inline-size: 4.75rem;
+  min-block-size: calc(1.7rem + 0.9375rem * 1.6 + 2px);
+  padding: 0 1rem;
+  font-family: var(--adv-body);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--adv-green-deep);
+  background: var(--adv-gold);
+  border: 0;
+  border-radius: 0 var(--dk-radius) 0 var(--dk-radius);
+}
+
+.docs-copy__button:hover {
+  color: var(--adv-green-deep);
+  background: var(--adv-gold-soft);
+}
+
+/* A maroon ring would vanish on the dark ground: deep green inside the gold tab. */
+.docs-copy__button:focus-visible {
+  outline: 3px solid var(--adv-green-deep);
+  outline-offset: -6px;
+}
+
+/* A block that scrolls sideways takes focus (docs.js): a gold ring inside the ground. */
+.docs-article pre:focus-visible {
+  outline: 3px solid var(--adv-gold);
+  outline-offset: -4px;
+}
+
+/* --------------------------------------------------- 7. callouts and tabs */
+
+/* Each callout is a mark from the map's legend: a note is the answer box
+   (green), a tip is the lit waypoint (gold), a warning is out-of-bounds
+   ground (maroon hatching), danger is the same ground fenced in. */
+.docs-callout {
+  margin: 1.5rem 0;
+  padding: 0.95rem 1.2rem 1rem;
+  color: var(--a-ink);
+  background: var(--a-wash);
+  border: 0;
+  border-inline-start: 4px solid var(--adv-green);
+  border-radius: 0 6px 6px 0;
+}
+
+.docs-callout__label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 0 0.4rem;
+  font-family: var(--adv-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.docs-callout__label::before {
+  content: "";
+  flex-shrink: 0;
+  box-sizing: border-box;
+  inline-size: 14px;
+  block-size: 14px;
+  border: 2.5px solid currentColor;
+  border-radius: 50%;
+}
+
+.docs-callout > :last-child {
+  margin-bottom: 0;
+}
+
+.docs-callout--note .docs-callout__label {
+  color: var(--dk-note);
+}
+
+.docs-callout--tip {
+  background: var(--a-gold-wash);
+  border-inline-start-color: var(--adv-gold);
+}
+
+.docs-callout--tip .docs-callout__label {
+  color: var(--dk-tip);
+}
+
+/* The "you are here" dot. */
+.docs-callout--tip .docs-callout__label::before {
+  background: var(--adv-gold);
+  border-color: var(--dk-tip);
+}
+
+.docs-callout--warning,
+.docs-callout--danger {
+  background:
+    repeating-linear-gradient(-45deg, var(--a-course-wash) 0 2px, transparent 2px 12px),
+    var(--a-surface);
+  border-inline-start-color: var(--a-course);
+}
+
+.docs-callout--danger {
+  border: 2px solid var(--a-course);
+  border-inline-start-width: 4px;
+}
+
+.docs-callout--warning .docs-callout__label,
+.docs-callout--danger .docs-callout__label {
+  color: var(--dk-warning);
+}
+
+/* Out of bounds: the crossed circle from the front page's bounds list. */
+.docs-callout--warning .docs-callout__label::before,
+.docs-callout--danger .docs-callout__label::before {
+  background: linear-gradient(-45deg, transparent 42%, currentColor 42% 60%, transparent 60%);
+}
+
+/* Code tabs, when the kit has them: the front page's dashed question chips. */
+.docs-tabs__tab {
+  font-family: var(--adv-body);
+  font-weight: 700;
+  color: var(--a-course);
+  background: var(--a-surface);
+  border: 1.5px dashed var(--a-course);
+  border-radius: 999px;
+}
+
+.docs-tabs__tab:hover {
+  color: var(--a-course);
+  background: var(--a-course-wash);
+  border-color: var(--a-course);
+  border-style: solid;
+}
+
+.docs-tabs__tab[aria-selected="true"] {
+  color: #ffffff;
+  background: var(--adv-maroon);
+  border-color: var(--adv-maroon);
+  border-style: solid;
+  box-shadow: none;
+}
+
+.docs-tabs__label {
+  font-family: var(--adv-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--a-course);
+}
+
+/* ------------------------------------------------------ 8. tables, quotes */
+
+/* A table is a control description sheet: paper, a heavy green head rule. */
+.docs-table {
+  margin: 1.25rem 0 1.6rem;
+  background: var(--a-surface);
+  border: 1px solid var(--a-line);
+  border-top: 2px solid var(--a-title);
+  border-radius: 0 0 6px 6px;
+}
+
+.docs-article table {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.docs-article th {
+  font-family: var(--adv-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--a-course);
+}
+
+.docs-article th,
+.docs-article td {
+  padding: 0.6rem 0.9rem;
+  vertical-align: top;
+  border-bottom: 1px solid var(--a-line);
+}
+
+/* An id or command keeps its shape in a cell: the column sizes to it, and
+   it only breaks if it would spill out of the table. */
+.docs-article td code {
+  overflow-wrap: break-word;
+}
+
+.docs-article tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* A plain quote reads like the route card's question: italic map lettering. */
+.docs-article blockquote {
+  margin: 1.5rem 0;
+  padding: 0.9rem 1.2rem;
+  font-family: var(--adv-display);
+  font-style: italic;
+  font-size: 1.125rem;
+  color: var(--a-ink);
+  background: var(--a-surface);
+  border-inline-start: 4px solid var(--a-title);
+  border-radius: 0 6px 6px 0;
+}
+
+.docs-article blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+/* ------------------------------------------------ 9. toc, pager, footer */
+
+/* "On this page" is an eyebrow: Fraunces italic in course maroon. */
+.docs-toc__title {
+  margin: 0 0 0.6rem;
+  font-family: var(--adv-display);
+  font-size: 1.0625rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--a-course);
+}
+
+/* The headings, plotted as a route: a dotted leg down the side. */
+.docs-toc__list {
+  border-left: 3px dotted var(--a-line);
+}
+
+.docs-toc__item a {
+  margin-inline-start: -3px;
+  padding-block: 0.3rem;
+  font-size: 0.93rem;
+  line-height: 1.4;
+  color: var(--a-muted);
+  border-inline-start: 3px solid transparent;
+}
+
+.docs-toc__item a:hover {
+  color: var(--a-title);
+  border-inline-start-color: var(--a-course);
+}
+
+.docs-pager {
+  gap: 1.25rem;
+  margin-top: 3.25rem;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Previous and next are route cards: paper, a green frame, the maroon offset shadow. */
+.docs-pager__link {
+  box-sizing: border-box;
+  flex: 1 1 0;
+  max-width: 22rem;
+  padding: 0.9rem 1.15rem 1rem;
+  color: var(--a-ink);
+  background: var(--a-surface);
+  border: 2px solid var(--a-title);
+  border-radius: 6px;
+  box-shadow: var(--a-card-shadow);
+}
+
+.docs-pager__link--next {
+  margin-inline-start: auto;
+}
+
+.docs-pager__dir {
+  font-family: var(--adv-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--a-course);
+}
+
+.docs-pager__title {
+  display: block;
+  margin-top: 0.2rem;
+  font-family: var(--adv-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--a-title);
+  text-decoration: none;
+}
+
+/* The sheet's foot: the front page's deep green band, full bleed, with its scale bar. */
+.docs-footer {
+  flex-wrap: wrap;
+  align-items: center;
+  padding-block: 2rem;
+  padding-inline: var(--dk-gap);
+  font-size: 0.9rem;
+  color: #f4f1ea;
+  background: var(--adv-green-deep);
+  border-top: 0;
+  box-shadow: 0 0 0 100vmax var(--adv-green-deep);
+  clip-path: inset(0 -100vmax);
+}
+
+.docs-footer::after {
+  content: "";
+  order: 3;
+  flex-basis: 100%;
+  block-size: 8px;
+  max-inline-size: 96px;
+  box-sizing: border-box;
+  border: 1.5px solid #f4f1ea;
+  background: linear-gradient(90deg, #f4f1ea 0 25%, transparent 25% 50%, #f4f1ea 50% 75%, transparent 75%);
+}
+
+/* Footer links stand apart and are tall enough to hit (WCAG 2.5.8). */
+.docs-footer a {
+  display: inline-block;
+  padding-block: 0.2rem;
+  margin-inline-end: 0.35rem;
+  font-weight: 700;
+  color: var(--adv-gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.docs-footer a:hover {
+  color: var(--adv-gold-soft);
+  text-decoration-thickness: 3px;
+}
+
+.docs-footer :focus-visible {
+  outline-color: var(--adv-gold);
+}
+
+/* ---------------------------------------------------------------- 10. dark */
+
+/* Derived: the front page's Directions band over the whole sheet. Deep green
+   ground, cream text, gold where the paper prints maroon. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --a-ground: #073a32;
+    --a-surface: #0b443b;
+    --a-surface-deep: #0e4b41;
+    --a-ink: #f4f1ea;
+    --a-muted: #c9d3cf;
+    --a-title: #fbf9f4;
+    --a-link: var(--adv-gold-soft);
+    --a-link-hover: #fff4cc;
+    --a-course: var(--adv-gold);
+    --a-course-wash: rgba(255, 204, 51, 0.07);
+    --a-line: rgba(244, 241, 234, 0.2);
+    --a-wash: rgba(244, 241, 234, 0.07);
+    --a-gold-wash: rgba(255, 204, 51, 0.1);
+    --a-tip-ink: var(--adv-gold);
+    --a-inline-bg: rgba(255, 255, 255, 0.12);
+    --a-inline-ink: #fff4cc;
+    --a-head-bg: rgba(7, 58, 50, 0.94);
+    --a-grain-1: rgba(244, 241, 234, 0.04);
+    --a-grain-2: rgba(255, 204, 51, 0.03);
+    --a-card-shadow: 8px 8px 0 rgba(0, 0, 0, 0.28);
+
+    --dk-note: #9fd8c9;
+    --dk-warning: var(--adv-maroon-soft);
+    --dk-danger: var(--adv-maroon-soft);
+    --dk-on-accent: #073a32;
+
+    color-scheme: dark;
+  }
+
+  :root:not([data-theme="light"]) .docs-callout {
+    border-inline-start-color: #5fae9c;
+  }
+
+  :root:not([data-theme="light"]) .docs-callout--tip {
+    border-inline-start-color: var(--adv-gold);
+  }
+
+  :root:not([data-theme="light"]) :is(.docs-callout--warning, .docs-callout--danger) {
+    border-color: #d0708f;
+  }
+
+  :root:not([data-theme="light"]) .docs-tabs__tab[aria-selected="true"] {
+    color: #073a32;
+    background: var(--adv-gold);
+    border-color: var(--adv-gold);
+  }
+
+  :root:not([data-theme="light"]) .docs-copy,
+  :root:not([data-theme="light"]) .docs-article pre {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  :root:not([data-theme="light"]) .docs-footer {
+    background: #052a24;
+    box-shadow: 0 0 0 100vmax #052a24;
+  }
+}
+
+:root[data-theme="dark"] {
+  --a-ground: #073a32;
+  --a-surface: #0b443b;
+  --a-surface-deep: #0e4b41;
+  --a-ink: #f4f1ea;
+  --a-muted: #c9d3cf;
+  --a-title: #fbf9f4;
+  --a-link: var(--adv-gold-soft);
+  --a-link-hover: #fff4cc;
+  --a-course: var(--adv-gold);
+  --a-course-wash: rgba(255, 204, 51, 0.07);
+  --a-line: rgba(244, 241, 234, 0.2);
+  --a-wash: rgba(244, 241, 234, 0.07);
+  --a-gold-wash: rgba(255, 204, 51, 0.1);
+  --a-tip-ink: var(--adv-gold);
+  --a-inline-bg: rgba(255, 255, 255, 0.12);
+  --a-inline-ink: #fff4cc;
+  --a-head-bg: rgba(7, 58, 50, 0.94);
+  --a-grain-1: rgba(244, 241, 234, 0.04);
+  --a-grain-2: rgba(255, 204, 51, 0.03);
+  --a-card-shadow: 8px 8px 0 rgba(0, 0, 0, 0.28);
+
+  --dk-note: #9fd8c9;
+  --dk-warning: var(--adv-maroon-soft);
+  --dk-danger: var(--adv-maroon-soft);
+  --dk-on-accent: #073a32;
+
+  color-scheme: dark;
+}
+
+:root[data-theme="dark"] .docs-callout {
+  border-inline-start-color: #5fae9c;
+}
+
+:root[data-theme="dark"] .docs-callout--tip {
+  border-inline-start-color: var(--adv-gold);
+}
+
+:root[data-theme="dark"] :is(.docs-callout--warning, .docs-callout--danger) {
+  border-color: #d0708f;
+}
+
+:root[data-theme="dark"] .docs-tabs__tab[aria-selected="true"] {
+  color: #073a32;
+  background: var(--adv-gold);
+  border-color: var(--adv-gold);
+}
+
+:root[data-theme="dark"] .docs-copy,
+:root[data-theme="dark"] .docs-article pre {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+:root[data-theme="dark"] .docs-footer {
+  background: #052a24;
+  box-shadow: 0 0 0 100vmax #052a24;
+}
+
+/* --------------------------------------------------------- 11. responsive */
+
+@media (min-width: 760px) {
+  /* The sidebar stays in reach while the page scrolls. */
+  .docs-nav--sidebar {
+    position: sticky;
+    top: 1.25rem;
+    align-self: start;
+    max-block-size: calc(100vh - 2.5rem);
+    overflow-y: auto;
+    padding-inline-end: 0.25rem;
+  }
+}
+
+/* As on the front page: below 900px the section links step aside and the
+   sheet number moves to the edge. The docs menu below carries the pages. */
+@media (max-width: 900px) {
+  .sheet-nav {
+    display: none;
+  }
+
+  .sheet-head__meta {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --dk-gap: 1rem;
+  }
+
+  .docs-layout {
+    padding-block-start: 1rem;
+  }
+
+  .docs-article pre {
+    font-size: 0.8125rem;
+  }
+
+  /* No room for a gutter: the Copy button drops under the code, full width,
+     the way the front page's quick start stacks on a phone. */
+  .docs-copy > pre {
+    margin-inline-end: 0;
+    border-radius: var(--dk-radius) var(--dk-radius) 0 0;
+  }
+
+  .docs-copy__button {
+    position: static;
+    display: block;
+    inline-size: 100%;
+    min-block-size: 44px;
+    border-radius: 0 0 var(--dk-radius) var(--dk-radius);
+  }
+
+  .docs-pager {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .docs-pager__link {
+    max-width: none;
+  }
+}
+
+/* ------------------------------------------- 12. motion (no-preference) */
+
+/* Without a motion preference the pages are the finished map. With one,
+   the title inks in and its course plots itself, like the front page. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .brand img {
+    transition: rotate 0.5s var(--adv-ease-spring);
+  }
+
+  .brand:hover img {
+    rotate: -12deg;
+  }
+
+  .sheet-nav a {
+    transition: background-size 0.3s var(--adv-ease-out);
+  }
+
+  .docs-article h1 {
+    animation: adv-ink-in 0.7s var(--adv-ease-out) 0.05s both;
+  }
+
+  .docs-article h1::after {
+    animation: adv-plot 0.9s cubic-bezier(0.45, 0, 0.25, 1) 0.45s both;
+  }
+
+  .docs-pager__link {
+    transition: translate 0.35s var(--adv-ease-spring), box-shadow 0.25s;
+  }
+
+  .docs-pager__link:hover {
+    translate: 0 -4px;
+  }
+
+  .docs-nav a,
+  .docs-copy__button,
+  .docs-toc__item a {
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+}
+
+@keyframes adv-ink-in {
+  from { opacity: 0; translate: 0 0.35em; filter: blur(3px); }
+  to { opacity: 1; translate: 0 0; filter: none; }
+}
+
+@keyframes adv-plot {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+/* -------------------------------------------------------------- 13. print */
+
+@media print {
+  body {
+    background: #ffffff;
+  }
+
+  .sheet-nav {
+    display: none;
+  }
+
+  .docs-article pre,
+  .docs-copy {
+    color: #1c2725;
+    background: #ffffff;
+    border-color: #c9c3b5;
+    box-shadow: none;
+  }
+
+  .docs-copy > pre {
+    margin-inline-end: 0;
+    white-space: pre-wrap;
+  }
+
+  .docs-copy__button {
+    display: none;
+  }
+
+  .docs-footer {
+    color: #1c2725;
+    background: #ffffff;
+    box-shadow: none;
+    clip-path: none;
+  }
+
+  .docs-footer a {
+    color: #0c5449;
+  }
+
+  .docs-footer::after {
+    display: none;
+  }
+}

@@ -9,16 +9,29 @@
 <meta name="docs-version" content="0.1.5">
 <link rel="stylesheet" href="../../assets/wayne-ui/wayne-ui.css">
 <link rel="stylesheet" href="../../assets/docs.css">
+<link rel="stylesheet" href="../../docs/theme/advisor.css">
 <link rel="alternate" type="text/markdown" href="refreshing-the-content.md">
 <script src="../../assets/docs.js" defer></script>
 </head>
 <body>
 <a class="wsu-skip-link" href="#main">Skip to content</a>
-<header class="docs-header">
-  <a class="docs-header__brand" href="../../docs/index.html">ADVISOR</a>
-  <span><a class="docs-header__home" rel="noopener" href="https://nougat.snu.gs/enterprise-apps/advisor">Source</a> <a class="docs-header__home" href="../../index.html">Back to ADVISOR</a></span>
-</header>
-<div class="docs-layout docs-layout--toc">
+<header class="sheet-head">
+  <div class="sheet-head__row">
+    <a class="brand" href="../../index.html">
+      <img src="../../brand/advisor-avatar-256.png" width="34" height="34" alt="">
+      <span class="brand__name">ADVISOR</span>
+    </a>
+    <nav class="sheet-nav" aria-label="Site">
+      <a href="../../index.html#ask">Ask the map</a>
+      <a href="../../index.html#legend">Legend</a>
+      <a href="../../index.html#directions">Directions</a>
+      <a href="../../index.html#briefings">Briefings</a>
+      <a href="../../index.html#neighbors">Neighbors</a>
+      <a href="../../docs/index.html" aria-current="page">Docs</a>
+    </nav>
+    <p class="sheet-head__meta"><span class="sheet-head__label">Sheet</span> 0.1.5</p>
+  </div>
+</header><div class="docs-layout docs-layout--toc">
   <details class="docs-menu">
     <summary>Menu</summary>
     <nav class="docs-nav" aria-label="Documentation"><ul class="docs-nav__list"><li class="docs-nav__group"><span class="docs-nav__label">Getting started</span><ul><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/install.html">Install</a></li><li><a href="../../docs/guides/quick-start.html">Quick start</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Guides</span><ul><li><a href="../../docs/guides/where-it-sits.html">Where it sits in WELD</a></li><li><a href="../../docs/guides/claude-code.html">One line for Claude Code</a></li><li><a href="../../docs/guides/docker.html">No PHP? Use Docker</a></li><li><a href="../../docs/guides/laravel.html">Laravel apps</a></li><li><a href="../../docs/guides/what-it-offers.html">What it offers</a></li><li><a href="../../docs/guides/served-content.html">Served content</a></li><li><a href="../../docs/guides/safety.html">Safety</a></li><li><a href="../../docs/guides/modules.html">Modules</a></li><li><a href="../../docs/guides/doctor.html">When it does not show up</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Reference</span><ul><li><a href="../../docs/reference/configuration.html">Configuration</a></li><li><a href="../../docs/reference/commands.html">Commands</a></li><li><a href="../../docs/reference/best-practices.html">Best practices</a></li><li><a href="../../docs/reference/proof.html">Proof</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Deploying</span><ul><li><a href="../../docs/deploying/releasing.html">Releasing</a></li><li><a href="../../docs/deploying/refreshing-the-content.html" aria-current="page">Refreshing the content</a></li></ul></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/upgrading.html">Upgrading</a></li><li><a href="../../docs/contributing.html">Contributing</a></li><li><a href="../../docs/changelog.html">Changelog</a></li></ul></nav>
@@ -33,7 +46,7 @@
 <p>Beside the generated docs, hand-written guides are kept by hand in <code>generator/guides/</code> (one Markdown file per slug), the same way the ownership table is kept. Each is bundled into <code>data/guides/</code> and served as <code>advisor://guide/&lt;slug&gt;</code>; the first is &quot;Connect to Oracle on Citadel&quot;.</p>
 <h2 id="regenerate">Regenerate<a class="docs-heading-link" aria-label="Link to this section" href="#regenerate">#</a></h2>
 <p>With the stack repos checked out side by side:</p>
-<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor content:generate --sources=/path/to/stack
+<pre><code class="language-bash">php vendor/bin/advisor content:generate --sources=/path/to/stack
 </code></pre>
 <p><code>--sources</code> can also come from <code>ADVISOR_STACK_DIR</code>. Run <code>content:generate</code> after any change that lands in CREED's policy or handbook, a project's README or best practices, an extra doc, or the projects seed. Commit the regenerated <code>data/</code> with the source commits in the message.</p>
 <p>The generator reads each project's folder from beside the other repos, so a stale clone gives stale docs. WayneUI's development happens on its GitLab repository and the checked-out copy is only a mirror of it: fast-forward the local wayne-ui clone to that repository's main before a resync.</p>
@@ -41,15 +54,15 @@
 <p>Beyond a project's README and best practices, a seed may bundle further files under <code>extra_docs</code> (a map of slug to path in the project); each lands in <code>data/docs/&lt;id&gt;/&lt;slug&gt;.md</code> and in the project's docs list, and a missing file is skipped, not an error. WayneUI's entry bundles its MIGRATING.md as the <code>migrating</code> doc.</p>
 <h2 id="verify">Verify<a class="docs-heading-link" aria-label="Link to this section" href="#verify">#</a></h2>
 <p>CI cannot see the sibling repositories, so <code>composer ci</code> runs <code>content:verify</code>, which needs none of them:</p>
-<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor content:verify
+<pre><code class="language-bash">php vendor/bin/advisor content:verify
 </code></pre>
 <p>It checks the bundled <code>data/</code> against <code>data/manifest.json</code> (a SHA-256 for every file).</p>
 <h2 id="check-for-drift">Check for drift<a class="docs-heading-link" aria-label="Link to this section" href="#check-for-drift">#</a></h2>
 <p><code>composer content:drift</code> compares <code>data/</code> with a checkout of the stack repos and exits 1 when they no longer agree. It takes the folder from <code>ADVISOR_STACK_DIR</code>; without it, it prints how to run it and exits 1:</p>
-<pre tabindex="0"><code class="language-bash">ADVISOR_STACK_DIR=&lt;folder holding the stack repos&gt; composer content:drift
+<pre><code class="language-bash">ADVISOR_STACK_DIR=&lt;folder holding the stack repos&gt; composer content:drift
 </code></pre>
 <p>It writes nothing. On drift it lists the files that moved; regenerate with <code>composer content:generate</code> and review the diff before committing. You can also pass <code>--check</code> to <code>content:generate</code> directly:</p>
-<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor content:generate --sources=/path/to/stack --check
+<pre><code class="language-bash">php vendor/bin/advisor content:generate --sources=/path/to/stack --check
 </code></pre>
 <p>That exits 1 on drift.</p>
 <p>The GitLab job <code>content-drift</code> does the same in CI: it clones the repos listed in <code>data/projects.json</code> with the job token, puts them in one folder, sets <code>ADVISOR_STACK_DIR</code> and runs the check. It is manual or scheduled and allowed to fail, so it cannot block main. Run the drift check before every tag: a release must carry docs that still match the repos it advises on.</p>
