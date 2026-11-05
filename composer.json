@@ -93,7 +93,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Waynestate\\Advisor\\Tests\\": "tests/"
+            "Waynestate\\Advisor\\Tests\\": "tests/",
+            "Waynestate\\Advisor\\Proof\\": "scripts/proof/"
         }
     },
     "extra": {

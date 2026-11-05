@@ -5,6 +5,8 @@ parameters:
     paths:
         - src
         - bin/advisor
+        - bin/proof.php
+        - scripts/proof
     phpVersion:
         min: 80300
         max: 80599
