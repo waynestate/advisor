@@ -1,3 +1,5 @@
+<!-- Keep this comment first: the shared docs builder drops a "# " heading only when it is the file's very first line,
+     and the changelog docs page needs this one as its h1 (the a11y gate wants exactly one per page). -->
 # Changelog
 
 All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.
@@ -18,8 +20,9 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 ### Fixed
 
 - Fixed: front-page scroll reveals start hidden from first paint (plain CSS under `html.motion`, set in `<head>` before the body parses) instead of fading out after load, so unscrolled below-the-fold content sits at opacity 0 rather than being caught mid-fade; the motion class is only set where IntersectionObserver exists, so a page that hides content can always bring it back.
-- Fixed: docs code blocks are keyboard focusable (`tabindex="0"`, the same treatment the table wrappers already had), satisfying the scrollable-region-focusable rule.
-- Fixed: the changelog docs page keeps its `# Changelog` heading, so the page has exactly one level-1 heading.
+- Fixed: docs code blocks that scroll sideways are keyboard focusable (`tabindex="0"`), satisfying the scrollable-region-focusable rule. Since the resync with Squire's unified docs builder, the kit's docs.js does this for every block that overflows, tabs included.
+- Fixed: the changelog docs page keeps its `# Changelog` heading, so the page has exactly one level-1 heading (a comment now sits above the heading in CHANGELOG.md, so the shared builder keeps it).
+- Changed: the docs builder and kit are resynced from Squire's unified builder (theme hook, callouts, code tabs, task lists, copy button fix).
 - Fixed: table-of-contents sub-links carry the base `docs-toc__item` class again, so they get the block display and padding that keep them at or above the 24px target size (and their hover color).
 ## [0.1.5] - 2026-11-03
 
