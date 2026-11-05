@@ -1,0 +1,24 @@
+<!--
+  The docs pages wear the front page's sheet head (site/index.html). The docs builder puts the header below in place
+  of its generic one on every page, rewrites the relative links (written as if from site/) to the page's depth, fills
+  the version placeholder and marks the Docs link aria-current. Styles: docs/theme/advisor.css.
+  Keep the links in step with the front page's sheet nav. The front page labels its nav "On this page"; here it leads
+  off the page, so it is "Site" (the docs' own contents are already "On this page").
+-->
+<header class="sheet-head">
+  <div class="sheet-head__row">
+    <a class="brand" href="index.html">
+      <img src="brand/advisor-avatar-256.png" width="34" height="34" alt="">
+      <span class="brand__name">ADVISOR</span>
+    </a>
+    <nav class="sheet-nav" aria-label="Site">
+      <a href="index.html#ask">Ask the map</a>
+      <a href="index.html#legend">Legend</a>
+      <a href="index.html#directions">Directions</a>
+      <a href="index.html#briefings">Briefings</a>
+      <a href="index.html#neighbors">Neighbors</a>
+      <a href="docs/index.html">Docs</a>
+    </nav>
+    <p class="sheet-head__meta"><span class="sheet-head__label">Sheet</span> {{version}}</p>
+  </div>
+</header>

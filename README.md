@@ -19,7 +19,7 @@ On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a S
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
-Documentation: the full docs live at [`site/docs/index.html`](site/docs/index.html), built from `docs/` by the shared docs builder (`composer docs`).
+Documentation: the full docs live at [`site/docs/index.html`](site/docs/index.html), built from `docs/` by the shared docs builder (`composer docs`). The docs wear the front page's look through the builder's `theme` key in `docs/docs.json`: [`docs/_header.html`](docs/_header.html) is the sheet head every docs page gets (keep its links in step with the front page's), and [`docs/theme/advisor.css`](docs/theme/advisor.css) holds the paper, Fraunces titles, code ground, callouts and the derived dark mode; the build copies it to `site/docs/theme/`. Edit those two files, never `site/assets/docs.css` or `docs.js` (Squire's kit), then run `composer docs`. The back of the map, now with the same legend as the front.
 
 ## Where the code lives
 
