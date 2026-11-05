@@ -32,6 +32,14 @@ composer-ci:
     - composer install --no-interaction --no-progress --prefer-dist
     - composer ci
 
+# The accessibility gate: every HTML page under site/ in a real browser, axe-core WCAG tags only.
+a11y:
+  image: mcr.microsoft.com/playwright:v1.49.1-noble
+  script:
+    - cd scripts/a11y
+    - npm install --no-audit --no-fund
+    - node check.mjs
+
 # content-drift needs a schedule created in the project's CI settings by a maintainer
 # (Settings, CI/CD, Schedules), and the job token needs read access to the sibling repos.
 content-drift:

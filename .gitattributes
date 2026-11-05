@@ -7,3 +7,4 @@
 # README art: generated images and their generator, not part of the package.
 /docs/readme export-ignore
 /scripts/readme-art export-ignore
+/scripts/a11y export-ignore
