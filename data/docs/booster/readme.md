@@ -25,7 +25,7 @@ This moves to git.wayne.edu once it has CI runners. Nougat is the shot; the mirr
 Front page: [`site/index.html`](site/index.html), a static page you can open in a browser or serve from `site/`.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Docs: the same site serves the documentation at [`/docs/`](https://booster.apps.wayne.edu/docs/). It is built from [`docs/`](docs/) by `bin/docs-site.php` (`composer docs`), the built pages are committed, and `composer docs:check` (part of `composer ci`) fails when they drift from the sources.
+Docs: the same site serves the documentation at [`/docs/`](https://booster.apps.wayne.edu/docs/). It is built from [`docs/`](docs/) by `bin/docs-site.php` (`composer docs`), the built pages are committed, and `composer docs:check` (part of `composer ci`) fails when they drift from the sources. The docs wear the front page's look through the builder's `theme` key in `docs/docs.json`: [`docs/_header.html`](docs/_header.html) is the masthead every docs page gets (keep its links in step with the front page's), and [`docs/theme/booster.css`](docs/theme/booster.css) holds the palette, type, code blocks and the derived dark mode; the build copies it to `site/docs/theme/`. Edit those two files, never `site/assets/docs.css` or `docs.js` (Squire's kit), then run `composer docs`. Like a booster shot, it only works if you actually take it.
 
 Booster is WELD's upgrade tool. It plans the hops that take a WSU PHP app from the PHP or Laravel version it runs now
 to one the version policy still supports, and it runs them one at a time: [Rector](https://getrector.com) rewrites the
@@ -180,6 +180,43 @@ Replace `<target>` with the PHP version you are heading for, for example the one
 A real run needs git and Docker on the machine that runs Booster. If you used the Docker-only route, the first four commands above work as they are, but the last one does not: its `php:8.4-cli` image has no git. Use the single-file or clone route for `booster run` (see Install).
 
 Booster prints its progress lines on standard error. In Windows PowerShell they print in red, as if they were errors. They are not errors; the exit code tells you whether the run worked.
+
+### What a run does by default
+
+You can run `detect`, `plan` and `run` on an app with nothing after `--path`. Booster then goes as far as it safely can on its own: it climbs to the newest PHP and Laravel that CREED's policy supports today, which is PHP 8.5 and Laravel 13 as of this writing (the policy file is the source of truth, not this page).
+
+| Command | With no other flags |
+| --- | --- |
+| `booster detect` | Reads `composer.json` and `composer.lock`, and reports PHP, Laravel, PHPUnit and the front-end setup. Changes nothing. |
+| `booster plan` | Starts from what `detect` found and plans every hop up to the newest PHP, Laravel and PHPUnit the policy supports. Changes nothing. |
+| `booster run` | Does the whole plan in one go, in order. |
+
+How many hops? One for every step on the way, never a jump:
+
+- one hop per PHP minor (8.1 to 8.2 is a hop, 8.2 to 8.3 is another),
+- one hop per Laravel major,
+- one hop per PHPUnit major.
+
+Booster interleaves them so the app sits on a PHP and Laravel pair that Laravel supports at every step: a Laravel step as soon as the current PHP allows it, a PHPUnit step when the PHP allows it, a PHP step otherwise. Two real examples: a Laravel 10 app on PHP 8.1 plans 11 hops, and a PHP 5.5 app with no framework plans 12 hops to PHP 8.5.
+
+Some hops come along by default, and some only when you ask:
+
+- The front-end Node hops (Mix to Vite, Tailwind, Vue) are in the plan by default. Pass any target (`--goal`, `--to-php`, `--to-laravel`, `--to-phpunit`, `--from-php`, `--from-laravel`) and they drop out with a warning, unless you add `--with-node`.
+- An app on PHPUnit 8 or older gets a manual PHPUnit 9 step before the first PHP 8 hop.
+- The SESAME move (`--sesame`) and the WayneUI move (`--wayneui`) are opt-in only.
+- `--skip <hop id>` drops a hop you do not want.
+- If a target is past security support, the plan stops at the policy limit and warns. If Rector has no ruleset for a step yet, the plan stops short and warns.
+
+`run` handles each hop the same way: a Rector preview, then the edits (if a hop would change more than 200 files it asks first, or stops when it cannot ask; `--max-changes` sets a hard limit), then the Composer constraints, then your tests in the target PHP image. That last part is the gate. The first hop that fails stops the run, and the hops after it are reported as "not run". Booster never commits; the changes sit in your working copy for you to review. Progress prints one line per hop, like `hop 3/11 <hop id>: <status>, 12 files, 41 s`, and ends with `run finished: 11 of 11 hops run, 0 stopped, ...`.
+
+Looking for a specific situation (only PHP, one hop at a time, backend only, a big app, no tests)? See [How do I...](docs/recipes.md).
+
+Want less than the whole climb (we will not judge, it is a long way up)?
+
+- `--dry-run` previews every hop and changes nothing.
+- `--until <hop id>` keeps that hop and everything before it.
+- `--only <hop id>` runs just that one hop.
+- `--to-php` and `--to-laravel` pick a lower target.
 
 The one-command form for a forced image upgrade:
 
@@ -530,7 +567,10 @@ under `Pre-pass fixes:`.
    change more than 200 files, unless an interactive run confirms it after showing the per-rule summary; an explicit
    `--max-changes` is a hard limit that never asks. An empty Rector report usually means the process ran out of memory,
    and the message points at `--memory-limit`.
-2. Rector runs for real, with only that hop's rules.
+2. Rector runs for real, with only that hop's rules. A rule that would change what the code does is never applied:
+   the PHP 8.0 set's switch-to-match rewrite is skipped, because `match` compares strictly and would stop a
+   `case 1:` from matching the string `"1"` a query string carries. Every run keeps Rector's and PHPStan's caches in
+   its own temp directory, removed at exit, so one run never reads another's.
 3. `composer.json` is edited: the `php` or `laravel/framework` constraint is raised, and `config.platform.php` moves
    with it when the app already pins it. Booster never creates that key.
 4. The gate runs the app's tests inside `booster-target:<php>-<stamp>`, a container built from `docker/Dockerfile`
@@ -577,7 +617,7 @@ The `--image` value names the image the baseline and every gate run in, and it t
 Booster never builds a `--image` image: it must exist locally or be pullable, and each resolved image is pulled at
 most once per run. On an arm64 Mac, Citadel's published images such as `citadel/php-apache:8.5r3` are amd64 only:
 pass an arm64 build via `--image`, or set `DOCKER_DEFAULT_PLATFORM=linux/amd64` and let Docker emulate.
-`booster-target` itself builds natively on arm64. And the old-PHP images (7.1 through 8.0) point apt at
+`booster-target` itself builds natively on arm64. And the old-PHP images (5.5 through 8.0) point apt at
 archive.debian.org, so they get no security updates: they exist to run the app's tests on the way up, not to serve
 traffic.
 
@@ -626,7 +666,7 @@ no `vendor/` and that repository cannot be reached the swap goes first instead, 
 composer to install and composer is blocked by that repository; this applies to an app already on PHP 8.3 or newer
 (SESAME needs 8.3, so below that the PHP hops still go first); the plan says so in a warning; `wayneui-1-to-2`
 (planned with `--wayneui` for an app that requires
-`cit-web-infra/wayne-ui`, after the last Laravel hop, on Laravel 11 or newer: swaps the Composer requirement for
+`cit-web-infra/wayne-ui`, after the last Laravel hop and before the Vue hops, on Laravel 11 or newer: swaps the Composer requirement for
 `waynestate/wayne-ui ^2.0`, rewrites the one-to-one rows (class tokens, icon names, the mapped brand hexes in style
 blocks and CSS, the `Breadcrumbs` calls and the `config/wayne-ui.php` keys) and lists the rest as manual lines; it
 leaves forked views under `resources/views/vendor/wayne-ui` and `public/vendor/wayne-ui` in place for a person to
@@ -746,6 +786,8 @@ docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install
 ## Proof
 
 Proof runs against real Wayne State applications are on a private site, [proof.apps.wayne.edu/booster](https://proof.apps.wayne.edu/booster/), behind a Wayne State employee sign-in.
+
+The [Real output page](https://booster.apps.wayne.edu/proof.html) shows `booster plan` and `booster run --dry-run` on each example app, captured from the real tool and rebuilt with `composer proof`; `composer ci` fails when it is stale.
 
 Proven how: the first full run with the gate on took a Laravel 12 app from PHP 8.2 to 8.4 in two hops, each gated by
 the app's 197-test suite, and it is written up in [research/booster-e2e-gate.md](research/booster-e2e-gate.md).

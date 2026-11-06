@@ -58,7 +58,7 @@ an address that belongs to the platform, not the app. The presets live in
 | `citadel` | the Docker bridge gateway to the HA-Proxy front (see "Running off Citadel") |
 | `docker` | none: a plain Docker network with no front proxy |
 
-Raw PHP passes the preset name:
+Raw PHP passes the preset name in the `preset` option:
 
 ```php
 $helmet = helmet_boot([
@@ -202,6 +202,21 @@ $helmet = helmet_boot([
 // $helmet['request_id'] is the ID stamped on this process's log records.
 ```
 
+Every other `helmet_boot()` option is covered in its own section below:
+`csp` (Customizing the CSP), `csp_report_uri` and `csp_report_only`
+(CSP reports), `coop`, `corp` and `permissions_policy` (Cross-origin
+isolation and feature policy), `hsts_max_age`, `hsts_include_subdomains`
+and `hsts_preload` (Configuring HSTS), `no_store` (the no-store rows of
+[Raw PHP and Laravel agree](#raw-php-and-laravel-agree)), `csrf`
+(The request-forgery guard), `health_path` (Health check without a front
+controller), `session` (The session, secure mode) and `error_handler`
+(A generic error page).
+
+The `log` option configures that logger: `channel` names it, `stream` is a
+stream or a file path, and `level` sets the minimum level. Set `request_id`
+to reuse an ID you already have (8 to 64 letters, digits, dots, underscores
+or dashes); otherwise HELMET generates one for the process.
+
 Each record is one JSON line:
 
 ```json
@@ -210,7 +225,7 @@ Each record is one JSON line:
 
 **Security events.**
 
-Three warnings carry HELMET's security events, and a logger that throws never
+Four warnings carry HELMET's security events, and a logger that throws never
 changes the answer: the `403` still goes out, the resolved client IP is still
 the peer, and the boot still finishes.
 
@@ -219,6 +234,7 @@ the peer, and the boot still finishes.
 | `helmet.request_refused` | the request-forgery guard answers `403` | `event` (`request_refused`), `method` (upper case), `path` (no query string), `sec_fetch_site` (`same-origin`, `same-site`, `cross-site`, `none`, `other`, or null when the header is absent), `origin_present` (bool) |
 | `helmet.forwarded_for_rejected` | `ClientIp::resolve()` fails closed on an unparseable `X-Forwarded-For` entry | `event` (`forwarded_for_rejected`), `reason` (`unparseable_entry`), `peer` (the trusted peer address) |
 | `helmet.debug_enabled_in_production` | the Laravel adapter boots with `app.debug` true in the production environment | `event` (`debug_enabled_in_production`) |
+| `helmet.broad_trusted_proxy` | the app boots with a broad entry in its trusted-proxy list (an IPv4 range shorter than `/16` or an IPv6 range shorter than `/48`) | `event` (`broad_trusted_proxy`), `entries` (the broad entries, as configured) |
 
 Never logged: the Origin value, cookies, Authorization, the `X-Forwarded-For`
 header, or the bad entry. The helmet takes the hit and reports it, without
@@ -233,9 +249,12 @@ Use a platform preset (for example `citadel`, which trusts the Docker bridge
 gateway), or list only the address the front proxy connects from, never a
 whole private range. A broad range such as `10.0.0.0/8` also trusts other
 containers on the same network, and any of them could then set
-`X-Forwarded-Proto`. An explicitly empty `HELMET_PROXIES` means trust
-nobody, even when a preset is set; only an unset variable falls back to the
-preset.
+`X-Forwarded-Proto`. When the list does hold a broad entry, an IPv4 range
+shorter than `/16` or an IPv6 range shorter than `/48`, `helmet_boot()` writes
+one `helmet.broad_trusted_proxy` warning through the configured logger; set
+`warn_broad_proxies` to `false` to silence it. An explicitly empty
+`HELMET_PROXIES` means trust nobody, even when a preset is set; only an unset
+variable falls back to the preset.
 
 The `citadel` preset trusts the container bridge gateway address, which is
 only correct while the app's port is not published to the host network,
@@ -250,7 +269,7 @@ the request ID so the rest of the app can use them.
 
 A raw PHP app has no framework to catch an uncaught exception, so PHP may print
 the message, the file path and a stack trace to the visitor. Turn on the
-opt-in handler and the visitor gets a short, fixed "Something went wrong"
+opt-in `error_handler` and the visitor gets a short, fixed "Something went wrong"
 page with status 500 and `Cache-Control: no-store`, while the full detail
 (class, message, file, line and trace) goes to the log at `error` level:
 
@@ -324,6 +343,71 @@ helmet_up();
 Squire's raw template ships this file. The probe only checks that the ball
 is in the air; it does not grade the play.
 
+#### Readiness is a separate check
+
+`/up` is liveness: "the process is running". Keep it free of dependency checks. If `/up` fails because the database is
+down, the platform restarts a healthy app and makes the outage worse. Put dependency checks on a different path, for
+example `/ready`, and point the load balancer's "send me traffic" probe at that one, not the restart probe.
+
+```php
+<?php // public/ready.php
+declare(strict_types=1);
+
+header('Content-Type: text/plain; charset=utf-8');
+header('Cache-Control: no-store');
+
+try {
+    $pdo = new PDO(getenv('DB_DSN'), getenv('DB_USER') ?: null, getenv('DB_PASSWORD') ?: null, [
+        PDO::ATTR_TIMEOUT => 2,
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    ]);
+    $pdo->query('SELECT 1');
+    echo 'ready';
+} catch (Throwable) {
+    http_response_code(503);
+    echo 'not ready';
+}
+```
+
+Keep the same rules as `/up`: a short body, `no-store`, and no detail about which dependency failed (log that, do not
+print it). Give the check a short timeout so a hung database cannot hang the probe. In Laravel, register a separate
+`/ready` route that runs the checks; do not put them in the `DiagnosingHealth` listener, because that event fires for
+`/up` and would turn the liveness probe into a readiness probe.
+#### Raw PHP with a Vue (Vite) build
+
+A raw PHP app that serves a built Vue/Vite SPA gives the bundler HELMET's
+nonce in two steps. At build time, set Vite's `html.cspNonce` to a
+placeholder:
+
+```js
+// vite.config.js
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+    html: {
+        cspNonce: 'CSP_NONCE_SLOT_FOR_HELMET',
+    },
+});
+```
+
+On every request, replace the placeholder with the nonce `helmet_boot()`
+returned before you echo the page:
+
+```php
+echo helmet_csp_nonce_swap(file_get_contents('dist/index.html'), $helmet['nonce']);
+```
+
+`helmet_csp_nonce_swap()` replaces every occurrence of the placeholder with
+the nonce, HTML-escaped exactly the way `helmet_csp_nonce_meta()` escapes
+it. A placeholder shorter than 16 characters throws, so it cannot collide
+with page text, an empty nonce throws, and a page that carries no
+placeholder is returned unchanged.
+
+One more setting keeps the CSP honest: Vite inlines small assets as `data:`
+URIs by default. The default policy already allows `data:` in `font-src` and
+`img-src`, so inlined fonts and images pass; if you would rather not inline
+at all, set `build.assetsInlineLimit: 0`.
+
 ### PSR-15 middleware
 
 The same core, mounted in a middleware pipeline:
@@ -345,6 +429,8 @@ $middleware = [
     new SecurityHeadersMiddleware($proxies),
 ];
 ```
+
+Order matters: `SecurityHeadersMiddleware` must be the outermost layer, so the error page your error middleware builds also carries the headers. In a Slim-style app, where the middleware added last runs first, add it after the error middleware; see [the PSR-15 guide](docs/guides/usage-psr15.md#put-helmet-outermost).
 
 `SecurityHeadersMiddleware` sets the request attribute `helmet.csp_nonce` so a
 downstream handler can read the same nonce the CSP header carries.
@@ -440,7 +526,13 @@ its last value when the request comes from a trusted proxy. A single value
 is left alone, and requests from untrusted peers are ignored as before.
 
 As in the raw PHP section, use a preset or list only the address your front
-proxy connects from, never a whole private range.
+proxy connects from, never a whole private range. When the resolved list does
+hold a broad entry, an IPv4 range shorter than `/16` or an IPv6 range shorter
+than `/48`, the provider writes one `helmet.broad_trusted_proxy` warning at
+boot; set `HELMET_WARN_BROAD_PROXIES=false` to silence it once you have
+reviewed the range.
+
+Keep `/up` for liveness only; readiness checks (database, cache) belong on a separate `/ready` route (see [Readiness is a separate check](#readiness-is-a-separate-check)).
 
 The `/up` health route is Laravel's own: keep `health: '/up'` in
 `withRouting()`. The adapter registers no route.
@@ -452,6 +544,7 @@ The `/up` health route is Laravel's own: keep `health: '/up'` in
 | `HELMET_SCOPE` | `helmet.scope` | `global` | `global` puts `SecurityHeaders` in the kernel's global middleware; `web` keeps it in the `web` group only. `InjectRibbon` always stays in `web`. |
 | `HELMET_PRESET` | `helmet.preset` | none | A platform preset name (`citadel` or `docker`) that supplies the trusted proxies. Read from the environment, else from Playbook (see [WSU values (Playbook)](#wsu-values-playbook)). `HELMET_PROXIES` wins when both are set. An unknown name throws, even when `HELMET_PROXIES` is set. |
 | `HELMET_PROXIES` | `helmet.proxies` | none | Comma-separated IPs or CIDR ranges allowed to set `X-Forwarded-Proto`. Wins over `HELMET_PRESET`. Also copied to `trustedproxy.proxies` when the app has not set it. An explicitly empty value (`HELMET_PROXIES=`) trusts nobody, even when `HELMET_PRESET` is set; only an unset variable falls back to the preset. |
+| `HELMET_WARN_BROAD_PROXIES` | `helmet.warn_broad_proxies` | `true` | Set `false` to silence the `helmet.broad_trusted_proxy` boot warning when the trusted-proxy list holds a broad entry (an IPv4 range shorter than `/16` or an IPv6 range shorter than `/48`). |
 | `HELMET_CSP` | `helmet.csp` | the core default policy | A JSON policy array, merged over the default (see below). Empty or invalid JSON keeps the default. |
 | `HELMET_HSTS_MAX_AGE` | `helmet.hsts` | `31536000` | The HSTS `max-age` in seconds, sent on HTTPS only. It must not be negative. |
 | `HELMET_HSTS_INCLUDE_SUBDOMAINS` | `helmet.hsts_include_subdomains` | `true` | Set `false` to omit the HSTS `includeSubDomains` directive. |
@@ -808,9 +901,9 @@ the new name and starts a fresh one.
 Citadel, HA-Proxy ends TLS before the request reaches PHP, so the request
 looks plain even though the client connected over HTTPS; there, set
 `HELMET_SESSION_SECURE=always` so the cookie keeps its `Secure` flag. In
-Laravel the value lands in `helmet.session.secure`; in raw PHP pass
-`'session' => ['secure' => 'always']` to `helmet_boot()`, and a Laravel app
-that boots through `helmet_boot()` can hand it
+Laravel the value lands in `helmet.session.secure`; in raw PHP pass the
+`session` option, `'session' => ['secure' => 'always']`, to `helmet_boot()`,
+and a Laravel app that boots through `helmet_boot()` can hand it
 `config('helmet.session.secure')`. The cookie name still follows the request,
 so it never takes the `__Host-` prefix on a plain-HTTP request, and plain
 HTTP development keeps `auto`.
@@ -943,6 +1036,8 @@ The response carries a `helmet_info` gauge with the PHP and HELMET versions,
 and a `helmet_php_version_status` gauge when a `PolicySource` is available.
 No personal data in labels; labels stay low-cardinality.
 
+A Grafana dashboard for these metrics ships in [`docs/grafana/helmet.json`](docs/grafana/helmet.json), ready to import as soon as a Prometheus server exists.
+
 The endpoint is the only place in HELMET that says "I am still here" without
 saying "here is your page". A lullaby, in a way.
 
@@ -971,6 +1066,15 @@ docker run --rm -v "$PWD:/app" -w /app php:8.5-cli vendor/bin/phpunit
 docker run --rm -v "$PWD:/app" -w /app php:8.4-cli vendor/bin/phpunit
 docker run --rm -v "$PWD:/app" -w /app php:8.3-cli vendor/bin/phpunit
 ```
+
+### One contract, every path
+
+`tests/Contract/HeaderContractTest.php` sends the same request and the same config through all four ways HELMET ships
+headers: raw PHP (`helmet_boot()` in a `php -S` child, probed over real HTTP), the PSR-15 middleware, the Laravel `web`
+group (HTML) and a Laravel JSON answer. It proves that the contract headers (Content-Security-Policy with a fresh nonce
+and `'strict-dynamic'`, Strict-Transport-Security on HTTPS only, `nosniff`, Referrer-Policy, Cross-Origin-Opener-Policy,
+Permissions-Policy, X-Frame-Options, no X-Powered-By) are byte-equal across the HTML paths once the nonce is swapped for
+a fixed token. Run it with the Docker lines above plus `vendor/bin/phpunit tests/Contract`. Four doors, one lock.
 
 Style and static analysis come from [Pinstripe](https://github.com/waynestate/pinstripe),
 the stack's coding standard: `phpstan.neon` includes

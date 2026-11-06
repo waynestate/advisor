@@ -22,6 +22,8 @@ sesame.
 Front page: [`site/index.html`](site/index.html), a static page you can open in a browser or serve from `site/`.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
+Documentation: the opening of this README is the [Overview](site/docs/index.html) page of the docs site. Squire's docs builder renders [`docs/`](docs/) into [`site/docs/`](site/docs/index.html); `composer docs` rebuilds it, and `composer docs:check` fails when the build or the generated environment reference has drifted. The docs pages wear the front page's key shop: to change their look, edit [`docs/_header.html`](docs/_header.html) (the shop sign and main menu) and [`docs/theme/sesame.css`](docs/theme/sesame.css) (palette, type, dark mode), then rebuild. Never edit the kit's `site/assets/docs.css` or `docs.js`; those are Squire's bytes.
+
 ## Where the code lives
 
 The canonical repository is on nougat: [enterprise-apps/sesame](https://nougat.snu.gs/enterprise-apps/sesame). git.wayne.edu and GitHub ([waynestate/sesame](https://github.com/waynestate/sesame)) are read-only mirrors of it.
@@ -181,6 +183,25 @@ or be shared between providers. For the cas driver that identifier is the
 the oidc section keys on `iss` plus `sub`, or `tid` plus `oid`, never the
 username alone.
 
+### Refusing a sign-in
+
+A verified identity is not a permission to use your app. To refuse the
+person, return `null` from `findOrImportUser`. When you do, SESAME stores
+nothing, does not regenerate the session, returns `null` from `login()`, and
+logs `sesame.login_refused` (with the username made safe) when a logger is
+set. Your app then shows one generic "you do not have access" page, never the
+reason, and must not start its own session for that person. Do not throw for
+a normal deny: throwing is for errors, and a refused sign-in is not one.
+
+```php
+// A resolver that refuses: null when the account is not found or disabled.
+public function findOrImportUser(Identity $identity): mixed
+{
+    $account = Account::findByKey($identity->driver, $identity->username);
+    return $account !== null && $account->enabled ? $account : null;
+}
+```
+
 The app owns the session: start it with `session_start()`, and let HELMET set
 the cookie flags. SESAME regenerates the session ID on login and stores the
 user and identity in it, but it never starts a session and never touches a
@@ -191,6 +212,16 @@ reads the user with `sesame_user()`:
 ```php
 $user = sesame_user();
 ```
+
+**Session regeneration grace.** On login SESAME regenerates the session ID.
+For the native session the old ID is not deleted at once: it is marked with
+a "destroyed at" time and the new ID and kept for a 60 second grace, so a
+user whose browser is still sending the old ID after a slow network does not
+lose the login. After the grace, any use of the old ID is treated as a
+possible hijack: the session is retired, a clean one is started, and
+`sesame.session_anomaly` is logged as a warning with `reason`
+`destroyed_session_reused`. Pass `graceSeconds: 0` to `new NativeSession()`
+to restore the old behavior, where the old session is deleted at once.
 
 > **Set `session.gc_maxlifetime` to at least SESAME's idle timeout.** PHP's
 > default is 1440 seconds (24 minutes), and PHP's garbage collector deletes
@@ -258,6 +289,67 @@ session at logout. Laravel apps use Laravel's own CSRF token instead: the
 `POST /logout` route is in the `web` middleware group, so a form needs
 `@csrf`.
 
+### Single-page apps: who am I
+
+A single-page app that renders its own signed-in state needs a JSON answer to
+"who is signed in?". SESAME answers it two ways: `sesame_status()` in raw PHP
+and the `GET /sesame/status` route in Laravel. Both send the session facts
+with a 200 when someone is signed in, and `{"signedIn":false}` with a 401
+when no one is:
+
+```json
+{
+    "signedIn": true,
+    "username": "jdoe",
+    "driver": "cas",
+    "authenticatedAt": "2026-11-03T09:15:00+00:00",
+    "authTime": null,
+    "amr": [],
+    "idleExpiresAt": "2026-11-03T11:15:00+00:00",
+    "absoluteExpiresAt": "2026-11-04T09:15:00+00:00",
+    "logoutToken": "3f7a1c9e8b2d4a6f",
+    "user": null
+}
+```
+
+The times are always UTC. Every answer carries `Cache-Control: no-store`,
+`Content-Type: application/json; charset=utf-8` and `X-Content-Type-Options:
+nosniff`, so a browser or proxy never caches who is signed in.
+
+In raw PHP, put the function at the end of a small endpoint script, after
+the same bootstrap a protected page uses:
+
+```php
+// status.php
+require __DIR__.'/bootstrap.php'; // your usual session_start() and sesame($sesame)
+
+sesame_status();
+```
+
+`sesame_status()` stops the script after the answer, so nothing after it runs
+in that request. Only GET (and HEAD) ask the question; any other method
+answers 405 (`Allow: GET, HEAD`) and leaves the session alone. In Laravel the
+route is registered with the login and logout routes (in the `web` group, so
+the session is available; a GET needs no CSRF token), and
+`SESAME_ROUTES=false` takes it away with them.
+
+**Read it on page load and after sign-in, not on a timer.** A poll counts as
+activity: reading the status moves the session's `last_seen`, so polling on a
+timer would keep a session alive past the idle timeout. Read it when the app
+loads and after a sign-in, and let the `idleExpiresAt` and
+`absoluteExpiresAt` in the answer tell you how long the state can be trusted.
+
+**Add your own user fields.** Pass a closure that returns an array of extra
+fields for the app's user: `sesame_status(fn ($user) => ['name' => $user->name])`
+in raw PHP, or bind the closure as `sesame.describe_user` in Laravel. Its
+array fills the answer's `user` field (null without a closure); the session
+facts stay untouched, and the identity provider's raw attributes are never
+part of the answer.
+
+**Sign out with the existing POST.** The answer's `logoutToken` is the token
+the sign-out form posts: the same POST-only, CSRF-checked logout described
+above, nothing new to wire up.
+
 ### Logging
 
 The facade takes an optional sixth constructor argument: a PSR-3 logger
@@ -270,7 +362,7 @@ authentication event through it:
 | `sesame.login_failed` | `warning` | The driver's login threw `AuthenticationFailed`. |
 | `sesame.login_refused` | `warning` | The resolver refused the identity and returned null. |
 | `sesame.logout` | `info` | The session was signed out (a logout, a timeout, or a deleted user). |
-| `sesame.session_anomaly` | `warning` | The session state looks wrong or tampered with: `reason` is `missing_timestamps` or `bad_session_ref`. |
+| `sesame.session_anomaly` | `warning` | The session state looks wrong or tampered with: `reason` is `missing_timestamps`, `bad_session_ref` or `destroyed_session_reused` (an old session ID used after its grace; see [Session timeouts](docs/guides/session-timeouts.md)). |
 
 Each record carries `event`, `driver`, `username` and `at` (the time in UTC)
 in its context, and `sesame.logout` adds `reason` (`logout`, `idle_timeout`,
@@ -957,8 +1049,9 @@ fails the check.
 
 The Laravel adapter is a service provider that binds the core into the
 container, registers the `auth.sesame` and `wayne.cas` middleware aliases,
-and, unless the app has taken the routes over, registers the login and logout
-routes. It holds no rules of its own: every rule lives in the core.
+and, unless the app has taken the routes over, registers the login, logout
+and status routes. It holds no rules of its own: every rule lives in the
+core.
 
 The provider is discovered automatically. Publish the config with:
 
@@ -998,7 +1091,7 @@ Config keys (in `config/sesame.php`):
 | `session.absolute_minutes` | `SESAME_SESSION_ABSOLUTE_MINUTES` | `720` | End the session this long after sign-in, in minutes. |
 | `mfa.max_age` | `SESAME_MFA_MAX_AGE` | `28800` | The longest a user's last MFA sign-in may be, in seconds. |
 | `mfa.on_failure` | `SESAME_MFA_ON_FAILURE` | `deny` | `deny` answers a 403; `reauth` redirects to the login route. |
-| `routes` | `SESAME_ROUTES` | `true` | Register the login and logout routes. |
+| `routes` | `SESAME_ROUTES` | `true` | Register the login, logout and status routes. |
 | `log` | `SESAME_LOG` | `true` | Log the sign-in and sign-out events through the app's PSR-3 logger. Set to `false` to turn them off. |
 | `user_resolver` | `SESAME_USER_RESOLVER` | none | The class that resolves a verified identity to the app's user. Required. |
 
@@ -1008,6 +1101,7 @@ The routes, when `routes` is true:
 |---|---|---|
 | `GET` | `/login` | `sesame.login` |
 | `POST` | `/logout` | `sesame.logout` (in the `web` group, so Laravel's CSRF check applies; a form needs `@csrf`) |
+| `GET` | `/sesame/status` | `sesame.status` (the single-page app's "who am I" JSON answer, in "Single-page apps: who am I") |
 | `GET` | `/login/callback` | `sesame.callback` (oidc driver only) |
 
 Set `SESAME_ROUTES=false` when the app defines its own login and logout

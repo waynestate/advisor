@@ -99,7 +99,7 @@ Why: the catalog gives typed discovery and lets consumers pin an exact or partia
 
 Sources: [GitLab: components, publishing](https://docs.gitlab.com/ci/components/).
 
-**How the stack holds it: Not yet.** The layout is right (`templates/<name>/template.yml`, a README). Tags `0.1.0`, `0.1.1` and `0.1.2` exist; the `release` job is still to be confirmed.
+**How the stack holds it: Documented.** The layout is right (`templates/<name>/template.yml`, a README), and the tag-triggered `release` job now exists in this repository's own pipeline: pushing a protected tag creates the GitLab Release with the commit SHA in its notes, after the test and audit stages. The Catalog entry still depends on the first tag run, because the release job has not run for a tag yet.
 The README examples pin `@0.1.1` for every component and the GitHub workflow.
 
 ### 1.4 Keep inputs and job names stable inside a major version
@@ -141,8 +141,9 @@ The tj-actions details above come from search summaries of these pages and the N
 pass, so treat the exact counts and dates as unverified.
 
 **How the stack holds it: Documented.** Tags `0.1.0`, `0.1.1` and `0.1.2` exist, and MAINTAINING.md documents the release process,
-including recording the tag's commit SHA in the CHANGELOG when a tag is cut. Apps still pin the tag in their component includes,
-and nothing checks an app's includes.
+including recording the tag's commit SHA in the CHANGELOG when a tag is cut. The tag-triggered `release` job now puts the
+commit SHA in the GitLab Release notes on every tag (the first run is still to come), so new releases carry the SHA from
+the start. Apps still pin the tag in their component includes, and nothing checks an app's includes.
 
 ### 1.7 Give consumers a reviewed way to bump their pins
 A pin that nobody updates freezes security fixes. Offer a scheduled merge request or a bot that proposes new SHAs and new
@@ -203,7 +204,7 @@ Why: GitLab calls `posix_escape` best effort and says to use `type`, `regex` or 
 Sources: [GitLab: CI/CD inputs, guidance](https://docs.gitlab.com/ci/inputs/);
 [OWASP CICD-SEC-4 Poisoned Pipeline Execution](https://owasp.org/www-project-top-10-ci-cd-security-risks/).
 
-**How the stack holds it: Partially.** Every `working_dir` input (six components carry one) is constrained by
+**How the stack holds it: Documented.** Every `working_dir` input (six components carry one) is constrained by
 `regex: '^(\.|[A-Za-z0-9_-][A-Za-z0-9._/-]*)$'` and quoted at its only use, `cd "$[[ inputs.working_dir ]]"`. The two
 `composer_version` inputs match `^2\.\d+\.\d+$`, and `renovate`'s `dry_run` matches `^(null|lookup|full)$`. The four
 path-like inputs that reach a shell line are now constrained too: `phpstan` `config` and `pint` `config` and `sbom`
@@ -304,7 +305,7 @@ A job timeout cannot exceed the runner's timeout.
 
 Sources: [GitLab: CI/CD YAML, `timeout` and `interruptible`](https://docs.gitlab.com/ci/yaml/).
 
-**How the stack holds it: Partially.** All nine templates set `interruptible: true` and a `timeout` of their own:
+**How the stack holds it: Documented.** All nine templates set `interruptible: true` and a `timeout` of their own:
 `10m` for pint and phpstan, `15m` for eslint, `30 minutes` for composer-audit, package-publish, php-test, proctor and
 sbom, and `1 hour` for renovate. What stays open is the cancellation half: whether a superseded pipeline is actually
 canceled still needs `workflow:auto_cancel` in the app's own file, which a component cannot force (see 3.1).
@@ -466,7 +467,7 @@ deploy image in extensions and settings.
 Sources: [GitLab: dependency proxy for container images (all tiers)](https://docs.gitlab.com/user/packages/dependency_proxy/);
 [Docker: build best practices](https://docs.docker.com/build/building/best-practices/).
 
-**How the stack holds it: Partially.** The templates use the official `php` images from Docker Hub, the default for
+**How the stack holds it: Documented.** The templates use the official `php` images from Docker Hub, the default for
 raw Docker, OpenShift and Coolify. For the `citadel` target, the jobs should run on Citadel's own images; the
 templates do not switch on the target yet.
 
@@ -497,7 +498,7 @@ Why: install runs the app's scripts and plugins with the job's access.
 Sources: [Composer CLI: `install`, `--no-plugins`, `--no-scripts`](https://getcomposer.org/doc/03-cli.md);
 [OWASP CICD-SEC-4](https://owasp.org/www-project-top-10-ci-cd-security-risks/).
 
-**How the stack holds it: Partially.** The templates use `composer install`, which is right, and the `proctor`
+**How the stack holds it: Documented.** The templates use `composer install`, which is right, and the `proctor`
 job now installs with `--no-plugins --no-scripts`, because the job only inspects the app; a contract test
 (`tests/check-proctor-install-flags.sh` and its `.ps1` twin) pins those flags. What remains is running PROCTOR
 without installing the app at all (gap item 5 option B), which is behind the PROCTOR PHAR work. An app on an
@@ -580,7 +581,7 @@ Why: pipelines run faster, and an unreviewed branch cannot poison the cache that
 
 Sources: [GitLab: caching](https://docs.gitlab.com/ci/caching/).
 
-**How the stack holds it: Checked.** `php-test` caches Composer downloads in `.composer-cache/`, keyed on `composer.lock` and prefixed with the PHP version, so a dependency change invalidates the cache and each PHP version gets its own cache. `tests/check-php-test-cache.sh` (and its `.ps1` twin) fail if the key stops depending on `composer.lock` or the prefix stops including the PHP version. `proctor` and `composer-audit` still define no cache.
+**How the stack holds it: Checked.** `php-test` and `proctor` cache Composer downloads in `.composer-cache/`, keyed on `composer.lock`, so a dependency change invalidates the cache; `php-test` prefixes the key with the PHP version, so each PHP version gets its own cache. `tests/check-php-test-cache.sh` (and its `.ps1` twin) fail if the key stops depending on `composer.lock` or the prefix stops including the PHP version, and `tests/check-proctor-cache.sh` (and its `.ps1` twin) fail if the proctor key stops depending on `composer.lock` or the prefix stops being `proctor`. `composer-audit` still defines no cache.
 
 Second pass: GitLab appends `-protected` or `-non_protected` to every cache key. Pipelines on protected branches or tags,
 and pipelines started by a Maintainer or Owner, get `-protected`. The separation is on by default and GitLab calls it
@@ -753,7 +754,7 @@ Sources: [GitLab: CI/CD variables](https://docs.gitlab.com/ci/variables/);
 [GitLab: pipeline security, secrets](https://docs.gitlab.com/ci/pipeline_security/);
 [OWASP CICD-SEC-6 Insufficient Credential Hygiene](https://owasp.org/www-project-top-10-ci-cd-security-risks/).
 
-**How the stack holds it: Partially.** The nine templates use no secrets, which is good. Nothing fails if a later
+**How the stack holds it: Documented.** The nine templates use no secrets, which is good. Nothing fails if a later
 template adds one. The repository's own pipeline now runs GitLab's pipeline secret detection as an advisory job
 (`secret_detection` with `allow_failure: true`, kept in place by `tests/check-secret-detection.sh` and its `.ps1`
 twin); the plan is to make it blocking after a week of green pipelines. Whether it runs on the git.wayne.edu
@@ -865,7 +866,7 @@ Why: a hard-coded list goes stale when a version reaches end of life.
 Sources: [PHP supported versions](https://www.php.net/supported-versions.php);
 [GitLab: CI/CD YAML, `parallel:matrix`](https://docs.gitlab.com/ci/yaml/).
 
-**How the stack holds it: Partially.** The default list is `["8.3", "8.4", "8.5"]`, so 8.2 is already out, and the
+**How the stack holds it: Documented.** The default list is `["8.3", "8.4", "8.5"]`, so 8.2 is already out, and the
 floor in the README is `^8.3`. Both are still hard-coded values rather than derived from CREED's policy, and 8.6 has
 not been added anywhere. PHP 8.2 reaches end of life on 2026-12-31, and PHP 8.3 is already past active support.
 
@@ -1003,7 +1004,7 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
    contract and this repository's own pipeline, and for component include version bumps, labelling them
    `needs-review`; `tests/check-renovate-review.sh` (and its `.ps1` twin) keeps the rules in place.
 5. Done (option A): 4.4: the `proctor` job installs with `--no-plugins --no-scripts`, pinned by a contract test. Option B remains: run PROCTOR without installing the app at all (behind the PROCTOR PHAR work).
-6. 1.3: Confirm the `release` job and publish the Catalog entry for the current tag (`0.1.2`); the components added after `0.1.0` already shipped in `0.1.1`.
+6. Done: 1.3: The `release` job exists and runs on every tag after the test and audit stages, creating the GitLab Release through the Releases API; the `Catalog entry` still depends on the first tag run, because no release job has run for a tag yet. The components added after `0.1.0` already shipped in `0.1.1`.
 7. Done: 1.2: Recorded the project's branch and tag protection as the README's "Protection checklist": protected
    default branch with a required merge request, protected release tags, merge request approvals of at least one,
    `no_one_allowed` pipeline variables, and no protected variables in fork pipelines. Checking them stays a human
@@ -1019,7 +1020,7 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 13. 3.2: Recommend branch and CI-file protection for app repos.
 14. 3.4: Add a `workflow:rules` example to the README.
 15. Done: 2.5: Build job names from an input so one project can include a component twice.
-16. 4.8: Add a Composer cache keyed on `composer.lock`.
+16. Done: 4.8: `php-test` and `proctor` carry a Composer cache keyed on `composer.lock`, kept in place by `tests/check-php-test-cache` and `tests/check-proctor-cache`.
 17. Done (advisory): 5.1: Added secret detection to Preflight's own pipeline as an advisory job (`allow_failure:
     true`); it turns blocking after a week of green pipelines.
 18. Done: 5.2: Documented the job token allowlist rule in the README: list only the projects a private-package install
@@ -1049,7 +1050,7 @@ Added in the second pass (2026-10-27):
     component include version bumps, to a `needs-review` label that never auto-merges. The `gitlabci` manager
     extracts an app's own `component:` includes, and the preset routes those repository dep bumps to review;
     `tests/check-renovate-review.sh` (and its `.ps1` twin) keeps that rule in place.
-30. 1.6: Put the commit SHA in every release note and tell apps to pin it.
+30. Done: 1.6: The tag-triggered `release` job puts the commit SHA in every GitLab Release note from the first tag run on, and the README and examples already tell apps to pin the SHA with the tag in a trailing comment.
 31. 4.11: Write the stack's rule for Composer malware, advisory and abandoned policy, and require Composer 2.10 or later.
 32. 4.10: Name the Debian release in image tags, or match the image family of the target you deploy to.
 33. 2.9 (done): Add `timeout` and `interruptible` to each job.

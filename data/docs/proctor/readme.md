@@ -21,6 +21,7 @@ passed with `--policy`; PROCTOR itself holds no policy of its own.
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub). Front page: [`site/index.html`](site/index.html).
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+Documentation: [proctor.apps.wayne.edu/docs](https://proctor.apps.wayne.edu/docs/).
 
 ## Where the code lives
 
@@ -38,21 +39,30 @@ The command is then `vendor/bin/proctor`.
 
 ## Single-file download
 
-PROCTOR can also be built as a single-file PHAR, so Preflight and apps without
-Composer access can run it as one file. Build it with the script for your OS
-(both need Docker, and no PHP or Composer on the host):
+The single-file PHAR is how Preflight and apps without Composer access run
+PROCTOR as one file, and from the next release it is attached to each GitLab
+Release with its `proctor.phar.sha256` checksum file. Both files come from the
+`release-phar` job in `.gitlab-ci.yml`; the lead tags, and no tag means no
+release. The `composer require` install above stays the current method; the
+phar is the one-file alternative.
 
-Windows (PowerShell):
+Download both files for the tag you want, verify the checksum, then run it.
+Replace `<release>` with the base URL of the release's asset links (the
+release page lists both files).
 
-    .\scripts\build-phar.ps1
+Linux / macOS (sh), one line:
 
-Linux / macOS:
+    curl -fsSL -o proctor.phar "<release>/proctor.phar" -o proctor.phar.sha256 "<release>/proctor.phar.sha256" && sha256sum -c proctor.phar.sha256 && php proctor.phar --version
 
-    scripts/build-phar.sh
+Windows (PowerShell), one line, no bash needed:
 
-Each script writes `build/proctor.phar` and verifies it by printing PROCTOR's
-version. The phar is not published yet (there is no release step), so build it
-from a checkout rather than downloading it.
+    Invoke-WebRequest "<release>/proctor.phar" -OutFile proctor.phar; Invoke-WebRequest "<release>/proctor.phar.sha256" -OutFile proctor.phar.sha256; if ((Get-FileHash proctor.phar -Algorithm SHA256).Hash -ne (Get-Content proctor.phar.sha256 -TotalCount 1).Trim().Split(' ')[0]) { throw "sha256 mismatch" }; php proctor.phar --version
+
+Until the first tagged release that runs the job, build it from a checkout
+with the script for your OS (both need Docker, and no PHP or Composer on the
+host): `.\scripts\build-phar.ps1` on Windows, `scripts/build-phar.sh` on
+Linux / macOS. Each script writes `build/proctor.phar` and verifies it by
+printing PROCTOR's version.
 
 ## Usage
 
@@ -62,8 +72,8 @@ vendor/bin/proctor check [--path=.] [--format=text|json|codequality|sarif] [--po
 
 - `--path`: path to the application to check (default `.`).
 - `--format`: output format: `text` (default), `json`, `codequality`, or `sarif`.
-- `--policy`: path to the CREED-format policy file. Optional: without it, PROCTOR resolves the policy from the `PROCTOR_POLICY` environment variable, then the app's `vendor/waynestate/creed/policy/policy.json`, then the copy bundled with PROCTOR (see [Policy](#policy)).
-- `--today`: override today's date (YYYY-MM-DD) so runs are deterministic.
+- `--policy`: path to the CREED-format policy file. Optional: without it, PROCTOR resolves the policy from the `PROCTOR_POLICY` environment variable, then the app's `vendor/waynestate/creed/policy/policy.json`, then the copy bundled with PROCTOR (see [Policy](#policy)). In CI this option is refused unless a trusted job sets `PROCTOR_ALLOW_OVERRIDES=1`.
+- `--today`: override today's date (YYYY-MM-DD) so runs are deterministic. In CI this option is refused unless a trusted job sets `PROCTOR_ALLOW_OVERRIDES=1`.
 - `--php-runtime`: the PHP version that will serve the app (X.Y.Z), used by the `unpatched` check. CI should pass the deploy image's PHP, not the runner's.
 
 ## Checks
@@ -81,7 +91,7 @@ vendor/bin/proctor check [--path=.] [--format=text|json|codequality|sarif] [--po
 - `destructive-deploy`: fails when a deploy script runs an artisan command that drops or rebuilds the database (`migrate:fresh`, `migrate:refresh`, `migrate:reset`, `db:wipe`), which erases production data on every deploy. Scans `.sh` and `.php` files under a top-level `deployments/`, `deploy_scripts/`, `deploy/` or `scripts/` directory, the top-level `build.sh`, `release.sh` and `.gitlab-ci.yml`, and the `scripts` section of composer.json; shell comments are ignored. Fix by running plain `php artisan migrate --force` in the deploy.
 - `ci-pipelines`: for stack packages (composer.json `name` starting with `waynestate/`), fails when `.gitlab-ci.yml` or `.github/workflows/ci.yml` is missing or runs no `composer ci`; for any other project, a missing or incomplete `.gitlab-ci.yml` is a warning and `.github/workflows/ci.yml` is optional. A private stack package that sets `extra.proctor.github-mirror` to `false` in composer.json must never be on GitHub: a missing `.github/workflows/ci.yml` then gives no finding, and a present one warns (`proctor/ci-pipelines/github-private`) along with the warning-only rules. Warns when a GitHub `uses:` ref is not a 40-hex commit SHA. Warns (`proctor/ci-pipelines/composer-audit-off`) when the pipeline environment switches Composer's audit or blocking policy off: `COMPOSER_NO_AUDIT` or `COMPOSER_NO_BLOCKING` set to anything but an empty string, `0` or `false`, or `COMPOSER_AUDIT_ABANDONED` set to `ignore`, in the GitLab top-level or job `variables:` (a scalar or a map with a `value` key) or the GitHub top-level, job or step `env:`. A warning, never a fail, for stack packages and other projects alike. The proctor fails the stack's own exam halls, and only leaves a note for everyone else's.
 - `preflight-pinned`: warns, never fails, when an app includes a Preflight component at a moving ref or re-declares what an included Preflight job runs. A Preflight include is an `include:` entry whose `component:` path contains `/preflight/`; when the ref after the last `@` is not a 40-lowercase-hex commit SHA it warns (`proctor/preflight-pinned/unpinned`), and a tag, a branch, `~latest` or no `@` at all all count as moving. Pin the commit SHA of the release tag; the tag itself can ride in a trailing comment. When the app declares one of the Preflight job names (`proctor`, `php-test`, `composer-audit`, `sbom`, `pint`, `phpstan`, `eslint`, `renovate`, `package-publish`) with `script`, `before_script` or `after_script` while a Preflight component is included, it warns (`proctor/preflight-pinned/script-override`). With nothing to flag it passes: `Preflight includes are pinned`, or `no Preflight components included` when there is no pipeline, a parse error or no Preflight include. The proctor checks the boarding pass against the manifest, so the app cannot board a different flight mid-run.
-- `composer-audit`: fails for advisories at or above the policy's `audit_severity_threshold`, warns for lower ones, and reports info when composer or the lock file is absent. When the audit runs but its stdout is not parseable JSON, the check fails (rule id `proctor/composer-audit/could-not-run`) with a message that starts with `not audited:` and carries the first stderr line, because a green run that audited nothing is worse than a red one. Each finding names the package, the version locked in composer.lock, the advisory's CVE (or its advisory id when there is no CVE), its title and its severity. An advisory the app ignores in its own composer.json (`config.policy.advisories.ignore-id`, `config.policy.advisories.ignore`, or the legacy `config.audit.ignore`) is a warning, not a fail, and so is anything composer has already moved to its ignored section; abandoned packages are warnings too. A package pattern in `config.policy.advisories.ignore` may use `*`, matched the way composer does, case-insensitively. Since Composer 2.10 the audit exits 1 when anything failed it, so a non-zero exit whose JSON lists nothing PROCTOR can read (a malware or policy block, or an error) is itself a fail (`proctor/composer-audit/exit-code`), and only a clean exit with a clean result passes. A warning (`proctor/composer-audit/ignore-entries`) reports the number of ignore entries in composer.json: `config.policy.advisories.ignore-id`, `config.policy.advisories.ignore`, `config.policy.advisories.ignore-severity`, `config.policy.abandoned.ignore`, or the legacy `config.audit.ignore`, `config.audit.ignore-severity` and `config.audit.ignore-abandoned` (the two legacy fallbacks count only while their matching `config.policy` block is absent), so they move to the dated override file. The proctor checks the invigilator's mark against its own answer sheet, and refuses to sign a green for a red pen.
+- `composer-audit`: fails for advisories at or above the policy's `audit_severity_threshold`, warns for lower ones, and fails with a message that starts with `not audited:` when the composer executable is not on PATH or the app has no composer.lock (rule id `proctor/composer-audit/skipped`): install Composer, commit the lock, or record an active `composer-audit` override in policy-overrides.json with a reason and an expiry to downgrade the fail to a warning. An advisory on a package that composer.lock lists only in packages-dev is a warning at any severity (its message ends in ` [dev dependency]`), while a runtime advisory fails at or above the threshold. When the audit runs but its stdout is not parseable JSON, the check fails (rule id `proctor/composer-audit/could-not-run`) with a message that starts with `not audited:` and carries the first stderr line, because a green run that audited nothing is worse than a red one. Each finding names the package, the version locked in composer.lock, the advisory's CVE (or its advisory id when there is no CVE), its title and its severity. An advisory the app ignores in its own composer.json (`config.policy.advisories.ignore-id`, `config.policy.advisories.ignore`, or the legacy `config.audit.ignore`) is a warning, not a fail, and so is anything composer has already moved to its ignored section; abandoned packages are warnings too. A package pattern in `config.policy.advisories.ignore` may use `*`, matched the way composer does, case-insensitively. Since Composer 2.10 the audit exits 1 when anything failed it, so a non-zero exit whose JSON lists nothing PROCTOR can read (a malware or policy block, or an error) is itself a fail (`proctor/composer-audit/exit-code`), and only a clean exit with a clean result passes. A warning (`proctor/composer-audit/ignore-entries`) reports the number of ignore entries in composer.json: `config.policy.advisories.ignore-id`, `config.policy.advisories.ignore`, `config.policy.advisories.ignore-severity`, `config.policy.abandoned.ignore`, or the legacy `config.audit.ignore`, `config.audit.ignore-severity` and `config.audit.ignore-abandoned` (the two legacy fallbacks count only while their matching `config.policy` block is absent), so they move to the dated override file. An ignore entry that no active `composer-audit` override in policy-overrides.json backs is a fail of its own (`proctor/composer-audit/unbacked-ignore`): an override backs the entry when its `advisory` field equals the entry's advisory id case-insensitively, its `package` field matches the entry's package the way composer matches patterns, or it carries no scope at all, and a backing override is not reported unused. The proctor checks the invigilator's mark against its own answer sheet, and refuses to sign a green for a red pen.
 - `composer-version`: fails when the Composer on PATH carries the command-injection holes CVE-2024-35241 and CVE-2024-35242 (2.2.x below 2.2.24, or any other 2.x below 2.7.7) or is Composer 1, which is end of life; warns when composer cannot be run. The invigilator checks its own pen: [GHSA-47f6-5gq3-vx9c](https://github.com/advisories/GHSA-47f6-5gq3-vx9c) and [GHSA-v9qv-c7wm-wgmf](https://github.com/advisories/GHSA-v9qv-c7wm-wgmf).
 - `repo-url-credentials`: warns when a credential is written into a package source URL: a deploy token in the userinfo of a composer.json repository URL or a composer.lock source/dist URL (`https://gitlab+deploy-token-12:<token>@host/group/lib.git`), a bare token user of 20+ characters, a `private_token`, `access_token`, `token` or `password` query parameter, or a `.npmrc` line that sets `_authToken`, `_auth` or `_password` to a literal value (`${SOME_VAR}` is fine). The secret is masked as `***` in the message, so the report itself is safe to hand back. Warning, not failure. Fix by moving the token to `auth.json`, which is gitignored, or a CI variable, and using one registry URL without credentials. The proctor spots the answer key taped inside the desk before the student does.
 - `instant-client-committed`: warns when Oracle Instant Client is committed to the repo: an `instantclient*.zip` or `instantclient*.rpm` archive, any file under a directory named `instantclient` or `instantclient_*` (an unzipped install), or a loose client library such as `libclntsh.so`, `libociei.so` or `oci.dll`. Only committed files count: the git-tracked files when the app path sits in a git repository and git can be run, otherwise the files on disk. Skipped at any depth: `vendor/`, `node_modules/` and `.git/`. One warning per match: the archive, the topmost matching directory, or the loose file, each reported with its total size in MB. Warning, not failure: Citadel's images already include Instant Client, and the WSU Sail and Docker images will too. Fix by deleting it, running `git rm -r --cached` on the path PROCTOR reports, and adding that path to .gitignore. The proctor takes the 60-to-126-MB textbook off the student's desk: the exam hall already keeps a copy on the shelf.
@@ -199,6 +209,7 @@ The full set, grouped by check:
 | `composer-audit` | `proctor/composer-audit/could-not-run` |
 | `composer-audit` | `proctor/composer-audit/exit-code` |
 | `composer-audit` | `proctor/composer-audit/ignore-entries` |
+| `composer-audit` | `proctor/composer-audit/unbacked-ignore` |
 | `composer-version` | `proctor/composer-version` |
 | `composer-version` | `proctor/composer-version/not-found` |
 | `composer-version` | `proctor/composer-version/could-not-determine` |
@@ -325,6 +336,21 @@ bundled one is skipped the same way. An explicit source (`--policy` or
 `PROCTOR_POLICY`) that points at a missing or invalid file is still an error
 (exit 2).
 
+In CI (any of `CI`, `GITLAB_CI` or `GITHUB_ACTIONS` set to a value other than
+`0` or `false`), `--policy` and `--today` are refused with a tool error (exit
+2): in CI the policy and the date must come from the stack, not from the app
+being checked, so a pipeline that could pass its own policy or date could
+grade itself. The `PROCTOR_POLICY` environment variable stays allowed in CI;
+it is how a trusted job names a policy. A trusted job (a protected or
+group-level CI variable, never the app's own `.gitlab-ci.yml`) can allow the
+options by setting `PROCTOR_ALLOW_OVERRIDES` to exactly `1`:
+
+```yaml
+# Group Settings > CI/CD > Variables: name PROCTOR_ALLOW_OVERRIDES, value 1,
+# type Variable, scope Protected. Never in the app's own .gitlab-ci.yml.
+PROCTOR_ALLOW_OVERRIDES: "1"
+```
+
 Every report names the policy it used: origin (`option`, `env`, `vendor` or
 `bundled`), path, `refreshed_on` and the age in days. The `policy-age` check
 warns when the policy is more than 60 days old, or when a non-bundled policy
@@ -340,6 +366,24 @@ running CREED's `bin/export.php` against `src/Creed/`.
 ## Proof
 
 Proof runs against real Wayne State applications are on a private site, [proof.apps.wayne.edu/proctor](https://proof.apps.wayne.edu/proctor/), behind a Wayne State employee sign-in.
+
+## Docs
+
+The documentation lives at [proctor.apps.wayne.edu/docs](https://proctor.apps.wayne.edu/docs/) and is built from `docs/` by Squire's docs builder:
+
+```
+composer docs
+```
+
+renders the pages into `site/docs/` and fills the generated command and environment reference from the CLI and the source. The pages are committed, so the site stays static. Check without writing:
+
+```
+composer docs:check
+```
+
+which runs as part of `composer ci`.
+
+The docs pages wear the front page: the same masthead and main menu, ruled paper, Young Serif titles under a red pen stroke, the install slab for commands and the green footer band, in light and dark. That look lives in two files, `docs/_header.html` (the masthead) and `docs/theme/proctor.css` (the palette and type, mapped onto the kit's `--dk-*` tokens), named by the `theme` key in `docs/docs.json`. Edit those, never the vendored kit (`bin/docs-site.php`, `site/assets/docs.css`, `site/assets/docs.js`), which comes from Squire with `--sync-to`.
 
 ## Running the tests in Docker
 

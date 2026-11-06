@@ -19,4 +19,4 @@ A leaked password is a bad encore: everyone remembers it, and nobody asked for a
 
 ## Not decided here
 
-- Which HELMET header rules and runtime refusals apply is still to be decided. See `runtime-and-headers.md`.
+- The HELMET header rules and runtime refusals are written in `runtime-and-headers.md`.

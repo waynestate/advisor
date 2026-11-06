@@ -321,11 +321,12 @@ Why: a green run that audited nothing is worse than a red one.
 Sources: [Composer CLI: audit (`--ignore-unreachable`)](https://getcomposer.org/doc/03-cli.md);
 [OpenSSF Scorecard: Vulnerabilities](https://github.com/ossf/scorecard/blob/main/docs/checks.md).
 
-**How the stack holds it: Partially.** Unparsable audit output fails (rule id `proctor/composer-audit/could-not-run`)
+**How the stack holds it: Checked.** Unparsable audit output fails (rule id `proctor/composer-audit/could-not-run`)
 with a message that starts with `not audited:` and carries the first stderr line, so a run whose audit produced nothing
-readable is red instead of green. What remains: a missing `composer` or lock still gives an `info` finding that exits
-0, and the owner cannot choose otherwise in CI. Preflight's `composer-audit` job covers part of this because it fails
-on Composer's own exit code.
+readable is red instead of green. A missing `composer` or a missing lock fails the same way (rule id
+`proctor/composer-audit/skipped`, message `not audited: ...`). The owner chooses otherwise by recording a
+`composer-audit` entry in `policy-overrides.json` with a reason and an expiry, which turns the failure into a warning
+until it expires (Adam's decision of 2026-11-03). Preflight's `composer-audit` job also fails on Composer's own exit code.
 
 ### 4.4 Keep advisory ignores out of `composer.json`
 Composer lets an app silence advisories in its own `composer.json` (`config.audit.ignore`, or in Composer 2.10
@@ -339,13 +340,13 @@ Why: they bypass the dated, visible override process the policy depends on.
 Sources: [Composer config: audit and policy](https://getcomposer.org/doc/06-config.md);
 [Composer 2.10 release](https://blog.packagist.com/composer-2-10-release/).
 
-**How the stack holds it: Partially.** PROCTOR runs `composer audit` and acts on its output: an ignore that matches
+**How the stack holds it: Checked.** PROCTOR runs `composer audit` and acts on its output: an ignore that matches
 an advisory still downgrades that advisory to a warning, and a count warning (rule id
 `proctor/composer-audit/ignore-entries`) reports how many ignore entries the app keeps in `composer.json`
 (`config.policy.advisories.ignore-id`, `config.policy.advisories.ignore`, `config.policy.advisories.ignore-severity`,
 `config.policy.abandoned.ignore`, or the legacy `config.audit.ignore`, `config.audit.ignore-severity` and
 `config.audit.ignore-abandoned` while their matching `config.policy` block is absent), never naming an id, package
-or reason, so they move to the dated override file. What remains: the entries are reported, not moved or expired.
+or reason, so they move to the dated override file. Since the next release, each entry must also be backed by an active `composer-audit` override (rule id `proctor/composer-audit/unbacked-ignore`): an unbacked entry fails, a backed one warns. Tests: `tests/IgnoreBackingTest.php`.
 Tests: `tests/ComposerAuditCheckTest.php` (`testIgnoreEntriesInComposerJsonAreReportedAsOneWarningWithoutNamingThem`,
 `testSeverityAndAbandonedIgnoresAreCountedInTheIgnoreEntriesWarning`, `testLegacyAuditSeverityAndAbandonedIgnoresAreCounted`,
 `testAuditFallbacksAreIgnoredWhenThePolicyBlockExists`).
@@ -480,6 +481,8 @@ Sources: [Composer changelog, 2.11.0-RC1](https://raw.githubusercontent.com/comp
 The claim that most compromises are found within days is mine and is not backed by a source I read.
 
 **How the stack holds it: Not yet.** Do not require it until 2.11 is stable and the base images ship it.
+Decision (Adam, 2026-11-03): when Composer 2.11 is stable and in the base images, Sourdough apps set a 3-day cooldown and
+PROCTOR warns when an app has none. Nothing is built before then.
 
 ### 4.12 Decide whether dev dependencies count (second pass)
 `composer audit --locked` audits `require-dev` packages too. Composer offers `--no-dev`, and `--direct` from
@@ -842,7 +845,7 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 
 1. 1.2: Bundle CREED's policy, and refuse `--policy` and `--today` in CI unless a trusted job sets them.
 2. 8.1: Partly done: the PHAR build exists and the Preflight job installs the app with `--no-plugins --no-scripts`; the PHAR is not published, the job still installs the app's dependencies, and the README still says `composer require` (see 8.1).
-3. 4.4: Partly done: a count warning (rule id `proctor/composer-audit/ignore-entries`) reports the ignore entries in `composer.json` (`config.policy.advisories.ignore-id`, `config.policy.advisories.ignore`, `config.policy.advisories.ignore-severity`, `config.policy.abandoned.ignore`, or the legacy `config.audit.ignore`, `config.audit.ignore-severity` and `config.audit.ignore-abandoned` while their matching `config.policy` block is absent) without naming them, and an ignore that matches still downgrades the advisory to a warning; the entries are reported, not moved or expired (see 4.4).
+3. 4.4: Done (unreleased): a count warning (rule id `proctor/composer-audit/ignore-entries`) reports the ignore entries in `composer.json` (`config.policy.advisories.ignore-id`, `config.policy.advisories.ignore`, `config.policy.advisories.ignore-severity`, `config.policy.abandoned.ignore`, or the legacy `config.audit.ignore`, `config.audit.ignore-severity` and `config.audit.ignore-abandoned` while their matching `config.policy` block is absent) without naming them, and an ignore that matches still downgrades the advisory to a warning; the entries are reported, not moved or expired (see 4.4).
 4. 4.3: Partly done: unparsable audit output fails with a message that starts with `not audited:` (rule id `proctor/composer-audit/could-not-run`); a missing composer or lock is still an info note that exits 0, and the owner cannot choose otherwise in CI (see 4.3).
 5. 3.5: Done: the `lock-committed` check warns when the lock's `content-hash` differs from composer.json (rule id `proctor/lock-committed/out-of-sync`) (see 3.5).
 6. 5.6: Reject an override that targets `overrides` or an unknown check name, and add tests.

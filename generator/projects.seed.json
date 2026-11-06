@@ -50,8 +50,8 @@
             "name": "Sourdough",
             "kind": "starters",
             "tagline": "starter",
-            "role": "The starters: `sourdough new --raw` generates the raw PHP starter today; the Laravel permutations print their plan and stop until a later release.",
-            "next_step": "Start new raw PHP apps with `sourdough new --raw`; keep an app honest with `sourdough manifest --check` (`feed` is a later release)."
+            "role": "The starters: one command generates a new app in the shape you pick: raw PHP (`sourdough new --raw`), Laravel with Blade (`--laravel`), Laravel with Blade and Vue islands (`--laravel --vue`) or Laravel with Inertia and Vue (`--inertia`). Only `--raw --vue` is not available yet. `--sail` or `--docker` adds a local runtime to the Laravel shapes.",
+            "next_step": "Start a new app with `sourdough new` and the shape flag you need; keep an app honest with `sourdough manifest --check` (`feed` is a later release)."
         },
         {
             "id": "preflight",

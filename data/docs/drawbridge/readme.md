@@ -11,15 +11,18 @@ Checks: `composer ci` (the same command runs on GitLab and GitHub). The containe
 Drawbridge is the sign-in gateway for the apps on Citadel, Wayne State's container platform. It is Apache with
 mod_auth_openidc, set up as one OpenID Connect client for Microsoft Entra ID. It is not live yet: its home will be
 `auth.apps.wayne.edu`, in front of every app on the platform, once the Citadel routing for it exists.
-The first release, 0.1.0, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
-checks that the visitor has a session, drops any identity header the visitor sent, and passes the app either a
-short-lived signed assertion that SESAME's `gateway` driver verifies, or plain `X-Authenticated-*` headers for apps
-that cannot verify a token yet. Which paths need a login, and which need an Entra authentication context on top, is
-declared per app in a config file. Nothing else decides it.
+The latest release, 0.2.0, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
+checks that the visitor has a session, drops any identity header the visitor sent, and passes the app a
+short-lived signed assertion that SESAME's `gateway` driver verifies. Which paths need a login, and which need an
+Entra authentication context on top, is declared per app in a config file. Nothing else decides it.
 
 Why a moat and not a lock on every door: each app doing its own OpenID Connect is another chance to get a nonce,
 a state check or a token signature wrong. We'd rather get that right once, in a maintained module
 (mod_auth_openidc). Each app then checks one small signed token.
+
+## Documentation
+
+This page summarizes the gateway; the [docs site](site/docs/index.html) holds the full version, from [getting started](site/docs/install.html) and the guides through the [configuration](site/docs/reference/configuration.html) and [commands](site/docs/reference/commands.html) reference to [deploying](site/docs/deploying/getting-the-image.html) and releasing.
 
 ## Where the code lives
 
@@ -66,7 +69,8 @@ browser --> Apache httpd (Drawbridge) --> app container
   (60 seconds by default), `jti`; `auth_time`, `amr` and `acrs` when the ID token carries them; `email`, `name` and
    `affiliations` when configured; and any `extra_claims` (for example `wsu_roles`). A new one is signed for every
    request, and only from an ID token whose `iss` is the configured provider.
-- If the signer cannot sign, the answer is 503. Nothing reaches the app unsigned.
+- If the signer cannot sign, the answer is 503 and the request does not reach the app. There is no
+  unsigned mode: an app gets the signed assertion or nothing (the header modes were removed for 1.0).
 - Header stripping: the guard removes every inbound `X-Authenticated-*`, `X-Sesame-*`, `X-Drawbridge-*`,
   `OIDC_CLAIM_*`, `OIDC_access_token` (and the module's other token names), `Remote-User`, `X-Forwarded-*`,
   `Forwarded` and similar header, in any hyphen or underscore spelling, on every request, before authentication
@@ -98,6 +102,8 @@ the gateway session for that host and sends the browser through Entra's sign-out
 discovery document) back to the address. An address on another host is refused, so the link cannot be used to bounce
 visitors elsewhere.
 
+Signing in is held the same way: a sign-in started with a `target_link_uri` on another host (written plainly, protocol-relative or with a userinfo trick) never sends the visitor there, and the answer never names that host. The rig proves it (`GatewayTest::testLoginReturnsOnlyToTheSameHost`).
+
 ### Error pages
 
 The errors the gateway answers itself get a small page of their own instead of Apache's default English wall: 403
@@ -119,6 +125,11 @@ adds `X-Content-Type-Options: nosniff` and `Referrer-Policy: strict-origin-when-
 an app that sends either keeps its own. When the public scheme is https it also adds
 `Strict-Transport-Security: max-age=31536000` the same way, with no `includeSubDomains` and no `preload`: the gateway
 serves many hosts and must not decide subdomain or preload policy for them.
+
+Protected and api paths also get `Cache-Control: no-store` with `setifempty`, so a signed-in page an app leaves
+uncached cannot be served by a shared cache after the session ends. Public paths are untouched: the gateway adds no
+`Cache-Control` there, and an app that wants its protected assets cached sends its own `Cache-Control`, which the
+gateway never overrides.
 
 The pages the gateway answers itself are not behind HELMET and carry their own headers, set plainly because no app
 header is expected there. The `/_drawbridge/` locations it owns (the OpenID Connect endpoint on each app host, the
@@ -332,7 +343,7 @@ apps:
   - id: app1
     host: app1.apps.wayne.edu
     upstream: http://app1:8080
-    mode: assertion          # or "headers", or "both"
+    mode: assertion          # the only mode
     default: login           # what a path with no rule gets
     public: [/up, /assets/]
     protected: [/admin/, {path: /admin/payroll/, auth_context: c1}]
@@ -380,6 +391,20 @@ How they fit together:
 - A gateway restart signs everyone out of the gateway layer only; apps keep their sessions until their own clocks run
   out.
 
+### Session store
+
+The `gateway` block decides where the gateway sessions are kept:
+
+- `shm` (the default): Apache's shared memory, encrypted per host. One instance, zero extra parts; a restart or
+  graceful reload rebuilds the store empty, so everyone signs in again. Removing the setting returns to this
+  behavior.
+- `redis`: the sessions live in a Redis server named by `redis_host` (and `redis_port`, default 6379). Sessions
+  then survive a restart and a graceful passphrase rotation, and more than one gateway instance can serve the same
+  hosts when every instance points at the same Redis and uses the same passphrase. The password never goes in the
+  config file: it comes from `DRAWBRIDGE_REDIS_PASSWORD`.
+
+Redis is not a revocation list: it holds the sessions, but Drawbridge still cannot end one user's sessions from
+outside (per-user revocation needs an index that is not built).
 
 ## Environment variables
 
@@ -394,6 +419,9 @@ How they fit together:
 | `DRAWBRIDGE_OIDC_CLIENT_SECRET` | none, required | the Entra client secret (or whichever name `oidc.client_secret_env` gives) |
 | `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE` | none, required | encrypts state cookies and sessions; 32+ characters; changing it signs everyone out (the `rotation` rig run documents why a previous passphrase cannot keep them) |
 | `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS` | unset | an old passphrase, rendered as the second value (new first, old second); mod_auth_openidc accepts it, but sessions live in shared memory that every reload or restart empties, so today it keeps nobody signed in (see the `rotation` rig run); it becomes useful once sessions move to a shared store |
+| `DRAWBRIDGE_OIDC_CLIENT_SECRET_FILE` | unset | path to a file holding the client secret (Docker secrets, Kubernetes volumes); used only when `DRAWBRIDGE_OIDC_CLIENT_SECRET` is unset or empty |
+| `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_FILE` | unset | the same for the crypto passphrase |
+| `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS_FILE` | unset | the same for the previous passphrase |
 | `DRAWBRIDGE_SIGNING_KEY_FILE` | `/run/drawbridge/signing.key` | ES256 private key for assertions (mounted) |
 | `DRAWBRIDGE_SIGNING_KEY_ID` | `drawbridge-1` | `kid` in each token header; change it when the key changes |
 | `DRAWBRIDGE_SESSION_CACHE_ENTRIES` | `1000` | entries in the shared-memory cache: sessions, nonces, provider metadata (minimum 10; a smaller value or a non-number is refused when the config is rendered) |
@@ -401,6 +429,8 @@ How they fit together:
 | `DRAWBRIDGE_LOG_LEVEL` | `warn` | Apache log level |
 | `DRAWBRIDGE_METRICS_TOKEN` | none | bearer token that may read `/metrics`; empty turns the endpoint off unless an allow list is set |
 | `DRAWBRIDGE_METRICS_ALLOW` | none | comma list of client IPs/CIDRs allowed to read `/metrics`; empty trusts no address |
+
+The file form is for platforms that hand secrets over as files. The gateway image reads the file at start, strips the trailing newline, and stops with a clear message (naming the variable, never the path or the contents) if the file is unreadable or empty. A plain variable always wins when both are set. The file form applies to these three default names only; a custom `oidc.client_secret_env` name keeps working as a plain environment variable.
 
 ## Commands
 
@@ -538,4 +568,4 @@ MIT. Copyright Wayne State University.
 
 <div align="center"><b>Same castle, every sheet</b><br><sub>WayneUI and the stack. Drawbridge minds the gate.</sub></div>
 
-<div align="center"><sub>Images are regenerated from the front page and the source by <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>. Drawn, not quartered.</sub></div>
+<div align="center"><sub>Images are regenerated from the front page and the source by <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>. Moat sold separately.</sub></div>

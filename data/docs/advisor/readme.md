@@ -10,6 +10,8 @@ On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a S
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
+Documentation: the full docs live at [`site/docs/index.html`](site/docs/index.html), built from `docs/` by the shared docs builder (`composer docs`). The docs wear the front page's look through the builder's `theme` key in `docs/docs.json`: [`docs/_header.html`](docs/_header.html) is the sheet head every docs page gets (keep its links in step with the front page's), and [`docs/theme/advisor.css`](docs/theme/advisor.css) holds the paper, Fraunces titles, code ground, callouts and the derived dark mode; the build copies it to `site/docs/theme/`. Edit those two files, never `site/assets/docs.css` or `docs.js` (Squire's kit), then run `composer docs`. The back of the map, now with the same legend as the front.
+
 ## Where the code lives
 
 The canonical repository is on nougat: [enterprise-apps/advisor](https://nougat.snu.gs/enterprise-apps/advisor). git.wayne.edu and GitHub ([waynestate/advisor](https://github.com/waynestate/advisor)) are read-only mirrors of it.
@@ -322,6 +324,31 @@ docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install
 Tests drive the real SDK server in-process with a small MCP client, snapshot `tools/list`, and start
 `bin/advisor mcp` as a subprocess to prove stdout stays clean. To accept an intended change to the tool list, run
 `ADVISOR_UPDATE_SNAPSHOTS=1 vendor/bin/phpunit`, then review and commit the diff.
+
+## Proof run
+
+The proof run is dev tooling, not part of the served product. It walks a corpus of app folders through the real
+`bin/advisor mcp` server over stdio and writes one JSONL line per app, whose outcome is `pass`, `flagged`,
+`tool-error` or `not-applicable`. Each unit is copied into a scratch folder before the server sees it; `.env`,
+`auth.json` and `.git` are left behind (`.env.example` comes along), and the copy is removed when the unit is judged.
+The log holds no paths and no unit directory names.
+
+```
+php bin/proof.php --units=FILE --corpus=DIR --work=DIR --out=FILE --proctor-bin=FILE --booster-bin=FILE
+```
+
+## Accessibility check
+
+Every `*.html` page under `site/` (except `site/assets/`) is loaded in a real browser by `scripts/a11y/check.mjs`
+and run through axe-core (WCAG tags only), in light and dark themes at phone (390 px) and desktop (1440 px) width,
+plus one reduced-motion pass. Each page must also have one `<h1>`, a `lang` attribute, a non-empty title, and no
+horizontal scroll at phone width. Run it from the repo root (works in PowerShell):
+
+```
+docker run --rm -v "${PWD}:/app" -w /app/scripts/a11y mcr.microsoft.com/playwright:v1.49.1-noble sh -c "npm install --no-audit --no-fund && node check.mjs"
+```
+
+It also runs as the `a11y` job in GitLab CI.
 
 ## Safety, in short
 

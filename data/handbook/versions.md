@@ -36,6 +36,23 @@ with a warning, and a php.net / endoflife.date disagreement is reported but
 never fails the run. Run it with `--dry-run` to preview, or `--offline <dir>`
 to test against saved feeds.
 
+## Base images
+
+A base image MUST be rebuilt when the policy's `latest_patch` for its branch
+changes; the policy robot opens that change, so an image never sits behind the
+patch level the policy records (the stack's version policy). Every such change
+to `latest_patch` is a rebuild. An image MUST NOT be pinned to a branch the
+policy marks EOL (the stack's version policy).
+
+`images.docker` names the official image for a plain Docker target. Citadel
+names its own images, so `images.citadel` stays unset until Citadel publishes
+names. `openshift` and `coolify` are not filled yet.
+
+## Node
+
+The policy lists even Node majors only, because even majors are the LTS lines;
+odd majors MUST NOT be a target and are not listed (the stack's version policy).
+
 ## Tool minimums
 
 The `tools` block sets a minimum version for a developer tool. Each key is a

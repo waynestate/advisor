@@ -4,6 +4,8 @@
 
 **Suits you up for deploy day.** A squire carries the kit, readies the armor and gets the knight on the field.
 
+Documentation: [squire.apps.wayne.edu/docs/](https://squire.apps.wayne.edu/docs/)
+
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
 Squire is the Citadel kit: build.sh, the release script, the health check, and local parity on the real images. Its docs builder turns `docs/` into the committed pages under `site/docs/`, with a changelog page generated from `CHANGELOG.md` when the nav lists one. It is part of WELD, the Wayne State application stack, beside WayneUI (project 0, the interface layer), CREED, PROCTOR, Preflight, SESAME, HELMET, Pinstripe and Sourdough.
@@ -32,6 +34,10 @@ This moves to git.wayne.edu once it has CI runners. Your squire serves one banne
 <summary>The kit bag's label: the brand board</summary>
 
 </details>
+
+## Docs
+
+The pages under `docs/` build into the committed site at `site/docs/`: rebuild with `composer docs`, check with `composer docs:check`.
 
 ## What it does
 
@@ -184,7 +190,9 @@ per file, in the order of `docs/nav.json`, with a sidebar, an "On this page" lis
 stamped from the top of `CHANGELOG.md`. The optional `source` and `mirrors` keys in `docs/nav.json` render a Source link
 in the header and footer, with the mirrors beside it, so the canonical repo home is one config value, never a hard-coded
 URL. Pages are styled by WayneUI plus the kit's `docs.css` and `docs.js` in the site's
-`assets/` folder, so every stack repo reads the same way. Squire owns the kit, and a repo takes a new version from a
+`assets/` folder, so every stack repo reads the same way. `docs.js` adds a copy button to every code block (it says
+Copied or Copy failed, and tells screen readers too) and puts a block that scrolls sideways in the tab order, so a
+keyboard can reach it (a block inside a code tab is measured again when its tab shows). Squire owns the kit, and a repo takes a new version from a
 Squire checkout with `php bin/docs-site.php --sync-to=<repo>`, which copies the kit and the tool itself. The repo then
 builds with `php bin/docs-site.php` (or `composer docs`) and commits `site/docs/`, and runs `--check` (or
 `composer docs:check`) in CI to fail when a page is stale or a finding is present. A squire keeps the map current, so the
@@ -296,6 +304,99 @@ The marker is case-insensitive and one of `[!NOTE]`, `[!TIP]`, `[!WARNING]` or `
 and the body below it, and drops the marker line from the body. A blockquote without a marker, or with a marker that
 is not one of the four, stays a plain blockquote. The kit's `docs.css` styles all four kinds from WayneUI tokens, in
 light and dark themes.
+
+### Code tabs
+
+Consecutive fenced code blocks whose info string carries tab="LABEL" (double quotes, label up to 40 characters) render as
+one labeled tab set instead of separate code blocks:
+
+````
+```bash tab="composer"
+composer install
+```
+
+```bash tab="sail"
+./vendor/bin/sail up
+```
+````
+
+The word before tab="..." stays the language, so the first panel keeps its `language-bash` class. The builder wraps the
+run in a `docs-tabs` element keyed by the lowercased labels joined by `|` (`data-tabs="composer|sail"`), and gives each
+panel a `docs-tabs__panel` element carrying its label and the code escaped exactly like a plain fenced block, so every
+example reads without JavaScript. A lone tab="..." block renders as a plain code block with the tab="..." word dropped
+from its language class, and a run broken by anything else becomes separate sets. The kit's `docs.js` turns each set into
+an accessible tablist (click, arrow keys, Home and End), remembers the chosen label per key in `localStorage`, and keeps
+every set sharing a key in step; `docs.css` styles the tabs from WayneUI tokens, and print shows every panel.
+
+### Task lists
+
+A GitHub task list item (`- [ ] Protect the default branch`) renders a disabled checkbox. The builder wraps the checkbox
+and the item's own text in a `<label class="docs-task">`, so the checkbox is named by what it checks; a nested list or a
+second paragraph stays outside the label.
+
+### Theme
+
+An optional `theme` key in `docs/docs.json` wears the site's own brand on the pages, without touching the kit:
+
+```json
+{
+    "theme": {
+        "css": "docs-theme.css",
+        "header": "_header.html"
+    }
+}
+```
+
+Both members are optional and independent, and both are plain relative paths against `docs/`: no leading slash, no
+drive letter, no `..` segment, no backslash. A non-object `theme`, a non-string member, an unknown key, an empty string
+or a path that does not exist is a tool error naming the key.
+
+`css` names a stylesheet the builder copies byte for byte to `site/docs/theme/<basename>` and links after `docs.css` on
+every page, so its rules win. It is a builder-owned file like a copied image: `--check` compares it, reports it stale
+when it differs, and flags a copy under `site/docs/theme/` as a leftover once the key goes away. The builder never reads
+the CSS: colors, fonts and every `--dk-*` override live there, and its `url()` values are written relative to
+`site/docs/theme/`. Dark mode lives in the theme CSS too (`prefers-color-scheme` and a `data-theme` override), not in
+the builder.
+
+`header` names an HTML fragment with exactly one `<header>...</header>` element. It replaces the generic docs header in
+place, after the skip link; the skip link, the mobile menu, the sidebar, the pager and the footer stay. The fragment may
+not carry a `<script>`, an `id="main"`, a `wsu-skip-link`, a `docs-menu` or a `<main>`: those belong to the builder.
+Relative `href`, `src` and `srcset` URLs in the partial are written against `site/` (the way the front page writes
+them), and the builder prefixes each with the page depth; `#`, `/`, `//` and scheme URLs stay put. On every page the
+first link to `docs/index.html` or `docs/` gets `aria-current="page"`, unless it already carries an `aria-current`. The
+placeholders `{{project}}` (the HTML-escaped project name) and `{{version}}` (the docs stamp) are filled; any other
+`{{...}}` fails the build, naming it. With no `theme` key, or an empty one, every generated byte matches the unthemed
+build.
+
+A small, realistic partial:
+
+```html
+<header class="brand-header">
+  <a class="brand-mark" href="index.html#top"><img src="brand/mark-256.png" alt=""></a>
+  <span class="brand-name">{{project}}</span>
+  <nav aria-label="Site">
+    <a href="index.html#start">Start</a>
+    <a href="docs/index.html">Docs</a>
+  </nav>
+</header>
+```
+
+Squire's own docs wear this hook: `docs/_header.html` is the front page's masthead (the satchel, SQUIRE, the same
+links and the version tag) and `docs/theme/squire.css` carries the front page's canvas, leather, Arvo titles, luggage
+tags and terminals, with a derived dark set. To change how Squire's docs look, edit those two files and rebuild; never
+edit the kit.
+
+### Dark mode
+
+The kit's `docs.css` holds every color behind a `--dk-*` alias as `var(--wsu-token, fallback)`, and the fallbacks follow
+WayneUI's own resolution order: an explicit choice first (`data-theme="dark"` or `data-theme="light"` on the root
+element, which WayneUI writes from the reader's saved preference), then the reader's system setting through a
+`prefers-color-scheme: dark` query scoped to `:root:not([data-theme="light"])`, else light. The light `:root` block stays
+the default; `:root[data-theme="dark"]` and the media-query block carry the dark fallbacks, and each declares
+`color-scheme` so form controls and scrollbars follow the theme. With WayneUI loaded its tokens resolve instead and it
+switches them itself, so the hex fallbacks only apply when WayneUI is absent. Every text pair (ink, muted, links,
+callout labels, code, and the accent's on-color) meets WCAG AA contrast in both themes, and nothing outside the three
+alias blocks carries a hard-coded color.
 
 ### What the check proves
 

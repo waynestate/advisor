@@ -217,7 +217,7 @@ The tags describe the repo as it stands on 2026-11-02. Since 2026-10-28 the Squi
 - **Practice:** Pest 5 requires PHP `^8.4`. On a `^8.3` floor use Pest 4 or PHPUnit and cap the constraint.
 - **Why:** An unconstrained `composer require pestphp/pest` breaks installs on 8.3.
 - **Sources:** [Pest on Packagist](https://repo.packagist.org/p2/pestphp/pest.json); Pint 1.32.1 requires `^8.3` ([Pint](https://repo.packagist.org/p2/laravel/pint.json)).
-- **Stack:** `Checked`. WELD uses PHPUnit, not Pest: `composer.json:35` pins `phpunit/phpunit: ^12.0`, and the CI matrix starts at 8.3 (`.gitlab-ci.yml:8`), so `composer install` runs on 8.3 and would fail if a dev tool required 8.4 or newer.
+- **Stack:** `Checked`. WELD adopted Pest 4 on 2026-11-03: `composer.json` requires `pestphp/pest ^4` (Pest 5 needs PHP `^8.4`, and the CI matrix starts at 8.3, `.gitlab-ci.yml:8`), the PHPUnit tests still run unchanged, and new tests are written in Pest.
 
 ### W32. Pinstripe owns style and static analysis
 - **Practice:** Use Pinstripe's Pint preset, PHPStan level 8 through Larastan, ESLint (flat config) and Prettier. No local overrides without a recorded reason.

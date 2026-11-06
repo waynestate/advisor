@@ -171,7 +171,7 @@ Every setting is an environment variable. `.env.example` holds placeholders; nev
 | `ROLLCALL_GITLAB_PROJECTS` | Comma-separated full `group/project` paths; when set, only those projects are scanned and no group is listed | none |
 | `ROLLCALL_IMAGES_FILE` | Export of the app list: `{"apps": [{"project": "group/project", "image": "php:8.4-apache"}]}` | none |
 | `ROLLCALL_PROCTOR_DIR` | PROCTOR JSON reports, one per app: `group/project` is read from `group__project.json` | none |
-| `ROLLCALL_AUTH_PACKAGES` | Comma-separated Composer packages that count as an auth package | the built-in list |
+| `ROLLCALL_AUTH_PACKAGES` | Comma-separated Composer packages that count as an auth package. An entry without a slash matches that package under any vendor (`wayne-cas` matches `anyvendor/wayne-cas`); an entry with a slash matches exactly. First match in list order wins | `waynestate/sesame`, `waynestate/wayne-cas`, `apereo/phpcas`, `jasig/phpcas`, `subfission/cas`, `wayne-cas`, `simplecas` |
 | `ROLLCALL_RETENTION_DAYS` | How many days of snapshots to keep; the newest is never deleted | `90` (0 keeps everything) |
 | `ROLLCALL_METRICS_ENABLED` | Turn metrics on (`CLI report --format=prometheus` and `/metrics`) | `false` |
 | `ROLLCALL_METRICS_TOKEN` | Bearer token a scraper must present | none |
@@ -350,6 +350,11 @@ from `php bin/rollcall list --format=json`, and the environment table is scanned
 
 The pages are committed because the deploy server serves `site/` without building. Every page links back to its
 Markdown, and the footer stamps the version the docs describe. Roll call: the docs answer present too.
+
+The docs pages wear the front page's look: the same masthead and menu, ruled paper, Caslon titles and the green
+back cover. To change it, edit `docs/_header.html` (the masthead, links written as if from `site/`) and
+`docs/theme/rollcall.css` (the front page's tokens mapped onto the kit's `--dk-*`, plus a derived dark mode), then
+run `composer docs`. Never edit `site/assets/docs.css` or `docs.js`: they are Squire's kit and a sync overwrites them.
 
 ## Run the checks
 

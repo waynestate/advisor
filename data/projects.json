@@ -41,7 +41,7 @@
             "role": "One command that measures a PHP app against policy.json and prints a JSON, text or Code Quality report. It reports; CI decides.",
             "state": "built",
             "package": "waynestate/proctor",
-            "version": "0.4.0",
+            "version": "0.5.0",
             "php": "^8.3",
             "next_step": "Run run_proctor_check on the app, fix the failing checks, and keep `proctor check` in CI.",
             "docs": [
@@ -86,12 +86,12 @@
             "name": "Sourdough",
             "kind": "starters",
             "tagline": "starter",
-            "role": "The starters: `sourdough new --raw` generates the raw PHP starter today; the Laravel permutations print their plan and stop until a later release.",
+            "role": "The starters: one command generates a new app in the shape you pick: raw PHP (`sourdough new --raw`), Laravel with Blade (`--laravel`), Laravel with Blade and Vue islands (`--laravel --vue`) or Laravel with Inertia and Vue (`--inertia`). Only `--raw --vue` is not available yet. `--sail` or `--docker` adds a local runtime to the Laravel shapes.",
             "state": "built",
             "package": "waynestate/sourdough",
             "version": "0.1.5",
             "php": "^8.3",
-            "next_step": "Start new raw PHP apps with `sourdough new --raw`; keep an app honest with `sourdough manifest --check` (`feed` is a later release).",
+            "next_step": "Start a new app with `sourdough new` and the shape flag you need; keep an app honest with `sourdough manifest --check` (`feed` is a later release).",
             "docs": [
                 "readme",
                 "best-practices"
@@ -121,7 +121,7 @@
             "role": "The coding standard: shared Pint and PHPStan presets, plus ESLint and Prettier configuration.",
             "state": "built",
             "package": "waynestate/pinstripe",
-            "version": "0.1.2",
+            "version": "0.1.3",
             "php": "^8.3",
             "next_step": "Point Pint and PHPStan at its presets; one formatter per repository.",
             "docs": [
@@ -137,7 +137,7 @@
             "role": "The upgrade tool: Rector recipes and checks that move an app one PHP or Laravel version at a time.",
             "state": "built",
             "package": "waynestate/booster",
-            "version": "1.8.0",
+            "version": "1.8.3",
             "php": "^8.3",
             "next_step": "Plan one hop at a time with `upgrade_path`, and read its README for the Rector recipes.",
             "docs": [
@@ -169,7 +169,7 @@
             "role": "The Citadel auth gateway: one OpenID Connect client through Entra ID that hands each app a signed assertion for SESAME's gateway driver.",
             "state": "built",
             "package": "waynestate/drawbridge",
-            "version": "0.1.1",
+            "version": "0.2.0",
             "php": "^8.3",
             "next_step": "Apps on Citadel use SESAME's gateway driver; plan against the Drawbridge README.",
             "docs": [

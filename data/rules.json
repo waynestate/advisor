@@ -3,8 +3,8 @@
         {
             "id": "accessibility-1",
             "chapter": "accessibility",
-            "heading": "Accessibility",
-            "text": "WayneUI is the component library the stack builds on.",
+            "heading": "Target",
+            "text": "Every public page of a stack app targets WCAG 2.2 Level AA (the stack's accessibility design).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -12,7 +12,119 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/accessibility.md:10"
+            "source": "handbook/accessibility.md:7"
+        },
+        {
+            "id": "accessibility-2",
+            "chapter": "accessibility",
+            "heading": "Target",
+            "text": "W3C says content conforming to 2.2 also conforms to 2.1 and 2.0, so the target meets the WCAG 2.1 AA floor named in the ADA Title II web rule (the stack's accessibility design).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/accessibility.md:8"
+        },
+        {
+            "id": "accessibility-3",
+            "chapter": "accessibility",
+            "heading": "Components",
+            "text": "WayneUI is the stack's component library; pages built from its components start from markup and tokens already checked by WayneUI's own runnable accessibility gate (the stack's accessibility design).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/accessibility.md:13"
+        },
+        {
+            "id": "accessibility-4",
+            "chapter": "accessibility",
+            "heading": "Components",
+            "text": "An app MUST NOT fork or restyle a WayneUI component in a way that removes focus indicators, labels or contrast (the stack's accessibility design). PROCTOR check: `wayneui-forked-views` catches forked views.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/accessibility.md:15"
+        },
+        {
+            "id": "accessibility-5",
+            "chapter": "accessibility",
+            "heading": "Checks",
+            "text": "An automated accessibility check SHOULD run in CI on the app's key pages. GitLab's accessibility testing uses Pa11y and is available on every self-managed tier (the stack's accessibility design).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/accessibility.md:20"
+        },
+        {
+            "id": "accessibility-6",
+            "chapter": "accessibility",
+            "heading": "Checks",
+            "text": "An automated tool catches regressions; it is not proof of conformance, and it never replaces a manual keyboard and screen reader pass before launch (the stack's accessibility design).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/accessibility.md:22"
+        },
+        {
+            "id": "accessibility-7",
+            "chapter": "accessibility",
+            "heading": "Checks",
+            "text": "Preflight has no accessibility component yet (not built yet).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/accessibility.md:24"
+        },
+        {
+            "id": "accessibility-8",
+            "chapter": "accessibility",
+            "heading": "Not decided here",
+            "text": "Whether and when the ADA Title II web rule applies to a given WSU unit. The rule applies WCAG 2.1 AA to public entities on dates that depend on the entity's size; the answer is for WSU's counsel and accessibility office, and this chapter does not decide it.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/accessibility.md:28"
+        },
+        {
+            "id": "accessibility-9",
+            "chapter": "accessibility",
+            "heading": "Not decided here",
+            "text": "Which pages need a manual audit.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/accessibility.md:31"
         },
         {
             "id": "auth-1",
@@ -1798,9 +1910,11 @@
             "id": "dependencies-5",
             "chapter": "dependencies",
             "heading": "Dependencies",
-            "text": "Every project is a framework-free core plus thin adapters. `composer.json` requires only `php` and PSR packages; Laravel, Inertia and Vue are `suggest` (the stack's core-plus-adapters design).",
+            "text": "Apps SHOULD set a Composer cooldown of 3 days, once Composer 2.11 is stable and in the base images; until then no cooldown is set (the stack's dependency decision, 2026-11-03). A PROCTOR check for a missing cooldown is planned, not built.",
             "applies_to": [
+                "raw-php",
                 "raw-php-vue",
+                "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
@@ -1808,6 +1922,18 @@
         },
         {
             "id": "dependencies-6",
+            "chapter": "dependencies",
+            "heading": "Dependencies",
+            "text": "Every project is a framework-free core plus thin adapters. `composer.json` requires only `php` and PSR packages; Laravel, Inertia and Vue are `suggest` (the stack's core-plus-adapters design).",
+            "applies_to": [
+                "raw-php-vue",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/dependencies.md:17"
+        },
+        {
+            "id": "dependencies-7",
             "chapter": "dependencies",
             "heading": "Dependencies",
             "text": "Adapters call the core and never re-implement it (the stack's core-plus-adapters design).",
@@ -1818,27 +1944,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:16"
-        },
-        {
-            "id": "dependencies-7",
-            "chapter": "dependencies",
-            "heading": "Dependencies",
-            "text": "Before adding a third-party package, check it comes from a trusted source, and where the source is open, read enough of it to judge it sound and fit (SHOULD). The audit and abandoned-package rules in this chapter apply after that choice (WSU developer standards, 2024).",
-            "applies_to": [
-                "raw-php",
-                "raw-php-vue",
-                "laravel-blade",
-                "laravel-blade-vue",
-                "laravel-inertia-vue"
-            ],
-            "source": "handbook/dependencies.md:17"
+            "source": "handbook/dependencies.md:20"
         },
         {
             "id": "dependencies-8",
             "chapter": "dependencies",
-            "heading": "Private packages",
-            "text": "Internal-only packages MUST be installed from one GitLab package registry per ecosystem (Composer, npm), not from one `vcs`, `path` or `artifact` repository entry per package (the stack's private-packages decision).",
+            "heading": "Dependencies",
+            "text": "Before adding a third-party package, check it comes from a trusted source, and where the source is open, read enough of it to judge it sound and fit (SHOULD). The audit and abandoned-package rules in this chapter apply after that choice (WSU developer standards, 2024).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1852,6 +1964,20 @@
             "id": "dependencies-9",
             "chapter": "dependencies",
             "heading": "Private packages",
+            "text": "Internal-only packages MUST be installed from one GitLab package registry per ecosystem (Composer, npm), not from one `vcs`, `path` or `artifact` repository entry per package (the stack's private-packages decision).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/dependencies.md:25"
+        },
+        {
+            "id": "dependencies-10",
+            "chapter": "dependencies",
+            "heading": "Private packages",
             "text": "Credentials MUST NOT appear in any repository URL in `composer.json` or `composer.lock`, or as a literal value in a committed `.npmrc`. Tokens live in a gitignored `auth.json`, the npm user config, or a CI or build-time secret (the stack's private-packages decision). PROCTOR check: `repo-url-credentials`.",
             "applies_to": [
                 "raw-php",
@@ -1860,10 +1986,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:24"
+            "source": "handbook/dependencies.md:28"
         },
         {
-            "id": "dependencies-10",
+            "id": "dependencies-11",
             "chapter": "dependencies",
             "heading": "Private packages",
             "text": "Builds MUST use a read-only deploy token (`read_package_registry` only); personal access tokens MUST NOT be used in builds (the stack's private-packages decision).",
@@ -1874,27 +2000,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:29"
-        },
-        {
-            "id": "dependencies-11",
-            "chapter": "dependencies",
-            "heading": "Private packages",
-            "text": "The private Composer registry entry MUST be canonical, and the Packagist entry SHOULD exclude the internal vendor names, so a public package with the same name can never be installed instead (the stack's private-packages decision).",
-            "applies_to": [
-                "raw-php",
-                "raw-php-vue",
-                "laravel-blade",
-                "laravel-blade-vue",
-                "laravel-inertia-vue"
-            ],
-            "source": "handbook/dependencies.md:32"
+            "source": "handbook/dependencies.md:33"
         },
         {
             "id": "dependencies-12",
             "chapter": "dependencies",
             "heading": "Private packages",
-            "text": "A released version MUST map to one commit for ever: tags are protected, and a version is never republished from a different commit (the stack's private-packages decision).",
+            "text": "The private Composer registry entry MUST be canonical, and the Packagist entry SHOULD exclude the internal vendor names, so a public package with the same name can never be installed instead (the stack's private-packages decision).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1908,6 +2020,20 @@
             "id": "dependencies-13",
             "chapter": "dependencies",
             "heading": "Private packages",
+            "text": "A released version MUST map to one commit for ever: tags are protected, and a version is never republished from a different commit (the stack's private-packages decision).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/dependencies.md:40"
+        },
+        {
+            "id": "dependencies-14",
+            "chapter": "dependencies",
+            "heading": "Private packages",
             "text": "Public code MUST NOT go through the private registry; it is published to Packagist or npm (the stack's private-packages decision).",
             "applies_to": [
                 "raw-php",
@@ -1916,10 +2042,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:39"
+            "source": "handbook/dependencies.md:43"
         },
         {
-            "id": "dependencies-14",
+            "id": "dependencies-15",
             "chapter": "dependencies",
             "heading": "Private packages",
             "text": "Apps SHOULD NOT proxy or mirror public registries in v1 (the stack's private-packages decision).",
@@ -1930,7 +2056,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/dependencies.md:41"
+            "source": "handbook/dependencies.md:45"
         },
         {
             "id": "deploy-gate-1",
@@ -2425,7 +2551,7 @@
         {
             "id": "runtime-and-headers-1",
             "chapter": "runtime-and-headers",
-            "heading": "Runtime and headers",
+            "heading": "Enforcement",
             "text": "The runtime (Baseline) is enforcement point (a): it warns, and refuses only for unsafe config (the stack's enforcement design).",
             "applies_to": [
                 "raw-php",
@@ -2434,13 +2560,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:10"
+            "source": "handbook/runtime-and-headers.md:7"
         },
         {
             "id": "runtime-and-headers-2",
             "chapter": "runtime-and-headers",
-            "heading": "Runtime and headers",
-            "text": "The HELMET header work is to be decided.",
+            "heading": "Headers",
+            "text": "Every response carries the same headers from HELMET (the stack's runtime and headers design): Content-Security-Policy: the WayneUI default policy plus a per-request nonce and `strict-dynamic`, with `frame-ancestors 'self'`, `base-uri 'self'`, `object-src 'none'` and `form-action 'self'` added. X-Content-Type-Options `nosniff`. X-Frame-Options `SAMEORIGIN`. Referrer-Policy `strict-origin-when-cross-origin`. Permissions-Policy, with camera, geolocation, microphone, payment and usb denied by default. Cross-Origin-Opener-Policy `same-origin`. Strict-Transport-Security `max-age=31536000; includeSubDomains`, on HTTPS responses only.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2449,6 +2575,186 @@
                 "laravel-inertia-vue"
             ],
             "source": "handbook/runtime-and-headers.md:12"
+        },
+        {
+            "id": "runtime-and-headers-3",
+            "chapter": "runtime-and-headers",
+            "heading": "Headers",
+            "text": "Cross-Origin-Resource-Policy is off by default (the stack's runtime and headers design).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:21"
+        },
+        {
+            "id": "runtime-and-headers-4",
+            "chapter": "runtime-and-headers",
+            "heading": "Headers",
+            "text": "An app SHOULD NOT weaken the default Content-Security-Policy with `'unsafe-inline'` for scripts; it uses the nonce instead (the stack's runtime and headers design).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:22"
+        },
+        {
+            "id": "runtime-and-headers-5",
+            "chapter": "runtime-and-headers",
+            "heading": "Proxy trust",
+            "text": "Behind a proxy the app sees the proxy's address, so `X-Forwarded-Proto` is honored only from a trusted proxy (the stack's runtime and headers design).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:30"
+        },
+        {
+            "id": "runtime-and-headers-6",
+            "chapter": "runtime-and-headers",
+            "heading": "Proxy trust",
+            "text": "A platform preset (`citadel` or `docker`) names the trusted proxies; off the platform the app passes its own list. An unknown preset throws at boot (the stack's runtime and headers design).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:32"
+        },
+        {
+            "id": "runtime-and-headers-7",
+            "chapter": "runtime-and-headers",
+            "heading": "Proxy trust",
+            "text": "No Strict-Transport-Security is sent for a request that was not really secure (the stack's runtime and headers design).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:34"
+        },
+        {
+            "id": "runtime-and-headers-8",
+            "chapter": "runtime-and-headers",
+            "heading": "Sessions",
+            "text": "HELMET hardens the PHP session settings before the session starts (the stack's runtime and headers design).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:39"
+        },
+        {
+            "id": "runtime-and-headers-9",
+            "chapter": "runtime-and-headers",
+            "heading": "Sessions",
+            "text": "The request-forgery guard (Sec-Fetch-Site, then Origin) is optional and off by default; a rejected request gets 403 `Forbidden` (the stack's runtime and headers design).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:40"
+        },
+        {
+            "id": "runtime-and-headers-10",
+            "chapter": "runtime-and-headers",
+            "heading": "Health",
+            "text": "`/up` is the health endpoint HELMET answers for raw PHP apps (the stack's runtime and headers design).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:45"
+        },
+        {
+            "id": "runtime-and-headers-11",
+            "chapter": "runtime-and-headers",
+            "heading": "Errors in production",
+            "text": "PHP `display_errors` MUST be `Off` and `log_errors` `On` in production (Squire's deploy kit ships that php.ini; HELMET neither sets nor checks it).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:49"
+        },
+        {
+            "id": "runtime-and-headers-12",
+            "chapter": "runtime-and-headers",
+            "heading": "Errors in production",
+            "text": "Laravel `APP_DEBUG` MUST be `false` in production (WSU developer standards, 2024). The Laravel adapter writes one warning `helmet.debug_enabled_in_production` when it is true in the production environment.",
+            "applies_to": [
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:51"
+        },
+        {
+            "id": "runtime-and-headers-13",
+            "chapter": "runtime-and-headers",
+            "heading": "Not decided here",
+            "text": "The Cross-Origin-Resource-Policy default.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:58"
+        },
+        {
+            "id": "runtime-and-headers-14",
+            "chapter": "runtime-and-headers",
+            "heading": "Not decided here",
+            "text": "The Content-Security-Policy report endpoints.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:59"
+        },
+        {
+            "id": "runtime-and-headers-15",
+            "chapter": "runtime-and-headers",
+            "heading": "Not decided here",
+            "text": "The metrics endpoint.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:60"
         },
         {
             "id": "secrets-1",
@@ -2552,7 +2858,7 @@
             "id": "secrets-8",
             "chapter": "secrets",
             "heading": "Not decided here",
-            "text": "Which HELMET header rules and runtime refusals apply is still to be decided. See `runtime-and-headers.md`.",
+            "text": "The HELMET header rules and runtime refusals are written in `runtime-and-headers.md`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",

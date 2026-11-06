@@ -14,6 +14,14 @@ WELD is the whole Wayne State app stack joined into one application. Install it,
 hooked up: sign-in, security headers, checks, coding standards, CI and the WayneUI interface. Think of it as the
 Megazord, except it comes with a deploy script and nobody has to shout to make it combine.
 
+## Documentation
+
+The docs live at [site/docs/index.html](site/docs/index.html) and ship to https://weld.apps.wayne.edu/docs/. They are
+built from `docs/` by the shared docs builder (`composer docs`) and checked in `composer ci`, so the page you read is
+the page that ships: same source, same bead. The docs wear the front page's look: the header is
+`docs/_header.html` and the theme is `docs/theme/weld.css` (named in `docs/docs.json`). Change the look there, never
+in the builder's kit files (`site/assets/docs.css`, `site/assets/docs.js`).
+
 ## Where the code lives
 
 The canonical repository is on nougat: [enterprise-apps/weld](https://nougat.snu.gs/enterprise-apps/weld). git.wayne.edu and GitHub ([waynestate/weld](https://github.com/waynestate/weld)) are read-only mirrors of it.
@@ -124,8 +132,8 @@ What is on the bench today:
 - `.env.example` sets `APP_NAME=WELD`, `LOG_CHANNEL=stderr` and `SESSION_DRIVER=database`
 - `Schema::defaultStringLength(191)` keeps index keys under Citadel's MySQL 5.6 767-byte cap
 - `.gitattributes` sets `* text=auto eol=lf`
-- `composer ci` is the CI contract: it runs validate, tests, Pint, PHPStan level 8, the agent-ready check and audit, the same command on
-  GitLab and GitHub
+- `composer ci` is the CI contract: it runs validate, the tests with Pest, Pint, PHPStan level 8, the agent-ready check and audit, the
+  same command on GitLab and GitHub
 - `pint.json` and `phpstan.neon` still copy Pinstripe's 0.1 Laravel presets; Pinstripe 0.1.1 is on Packagist
   (tagged), and they switch to `includes: vendor/waynestate/pinstripe/...` when WELD requires it
 - HELMET runs its security headers and CSP middleware in the global chain, so every response carries the baseline;
@@ -138,6 +146,11 @@ What is on the bench today:
 - The starter kit's password auth (register, login, password reset, two-factor) is removed on purpose; the door is
   SESAME's
 - The license is MIT
+
+**Testing.** Write new tests in Pest. Use an `it('...', function () { ... });` closure under `tests/Feature` or `tests/Unit`; the existing
+PHPUnit class tests keep working and are converted only when you touch them. `composer test` runs both, and `tests/Pest.php` binds the
+Feature tests to the Laravel app and a fresh database. The suite runs on a fixed dummy `APP_KEY` set in `phpunit.xml` so it boots with no
+`.env`; the app refuses that key in production, so a copied test config cannot ship.
 
 Best practices for building, running and deploying WELD live in [BEST_PRACTICES.md](BEST_PRACTICES.md).
 
@@ -227,7 +240,11 @@ Pick Sourdough when you want a starter you shape yourself. Pick WELD when you wa
 Sourdough writes a manifest of every file it generates (`.sourdough/manifest.json`: each path with its SHA-256).
 `bin/regen-check.php` compares that manifest with WELD file by file, skipping the product files WELD adds on top
 (listed in `.sourdough/product-files.json`) and any path with a `vendor` or `node_modules` segment. Each remaining
-path is reported as IDENTICAL, DIFFERS or MISSING_IN_WELD.
+path is reported as IDENTICAL, DIFFERS, MISSING_IN_WELD or RELOCATED.
+
+Sourdough keeps Squire's deploy kit at the app root, and WELD keeps it under `deploy/`; the gate reports those
+files as relocated, not drift, when the `deploy/` copy is byte-identical. `php artisan oracle:check` finds the
+check file in either place.
 
 The gate is a ratchet: `.sourdough/regen-baseline.json` records the drift already known and accepted, and the check
 fails only on new drift. CI runs it against a fresh `sourdough new --inertia` generation from Sourdough's main;

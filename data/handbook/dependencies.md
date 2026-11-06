@@ -10,6 +10,10 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
   threshold (the stack's version policy). PROCTOR check: `composer-audit`.
 - `composer.json` `require.php` MUST NOT allow an EOL version as its lowest
   bound (the stack's version policy). PROCTOR check: `php-floor`.
+- Apps SHOULD set a Composer cooldown of 3 days, once Composer 2.11 is stable
+  and in the base images; until then no cooldown is set (the stack's dependency
+  decision, 2026-11-03). A PROCTOR check for a missing cooldown is planned, not
+  built.
 - Every project is a framework-free core plus thin adapters. `composer.json`
   requires only `php` and PSR packages; Laravel, Inertia and Vue are
   `suggest` (the stack's core-plus-adapters design).

@@ -123,6 +123,7 @@ include:
 | `job_name` | string | `composer-audit` | Name of the job. Set it when you include this component more than once. |
 | `image` | string | `composer:2@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc` | Docker image for the job. |
 | `working_dir` | string | `.` | Directory to run composer audit in, relative to the project root. |
+| `abandoned` | string | `fail` | How composer audit treats abandoned packages: fail (default), report (list them, do not fail) or ignore. |
 
 #### Run it on a schedule
 
@@ -299,7 +300,7 @@ and tar.
 |-------|------|---------|--------------|
 | `stage` | string | `test` | Pipeline stage for the portability jobs. |
 | `image` | string | `$CI_REGISTRY_IMAGE/portability:$CI_COMMIT_SHORT_SHA` | App image the portability-run job starts and validates. The default is what portability-build pushes; GitLab expands the CI variables at job time. |
-| `buildah_image` | string | `quay.io/buildah/stable:v1.41.5@sha256:37fa3027bd4b1d76a0001c6bb7349b63c48ebbaee8fa5f47e6097f5e88f6447c` | Buildah image for the portability-build job; it builds and pushes the app image. |
+| `buildah_image` | string | `quay.io/buildah/stable:v1.43.5-immutable@sha256:7c2b605262748ace2c5c57c5550942d0adad57aec82ede3070927722306c0ffb` | Buildah image for the portability-build job; it builds and pushes the app image. |
 | `dockerfile` | string | `Dockerfile` | Dockerfile to build, relative to the context. |
 | `context` | string | `.` | Build context, relative to the project root. |
 | `app_root` | string | `/app` | Directory inside the image where the app lives. |
@@ -309,6 +310,8 @@ and tar.
 | `uid` | number | `100123` | Numeric uid the app runs as. The gid is always 0. |
 | `start_command` | string | none | Command that starts the app inside the image. It is app-specific, so it is required and has no default. |
 | `boot_timeout` | number | `60` | Seconds goss retries the health check while the app boots. |
+
+The default is an immutable tag (`-immutable`) pinned by digest, because the plain version tag can be re-pushed and its old digest removed.
 
 ## Same instance only
 
@@ -386,7 +389,9 @@ auto-merges the same way. Every merge request carries the `auto-deps` label.
 The exception is Preflight's own pins: an update that touches the templates,
 the contract or this repository's own pipeline, a bump of a component include
 version, and a bump of the recorded Squire kit version, never auto-merge (see
-What waits for review).
+What waits for review). One image gets a narrower rule: `quay.io/buildah/stable`
+only ever matches `-immutable` tags, because Red Hat re-pushed a mutable tag
+and garbage-collected the old digest, which broke an image job.
 
 ### What waits
 
@@ -398,7 +403,7 @@ label and waits for a person.
 Updates that change an image digest inside the templates, the contract, or
 this repository's own pipeline, bumps of a Preflight component version in an
 app's `component:` include, and bumps of the recorded Squire kit version
-(labelled `squire-kit`) carry the `needs-review` label and never auto-merge.
+(labeled `squire-kit`) carry the `needs-review` label and never auto-merge.
 They wait for a person because those pins are what every app pipeline runs:
 a changed digest here changes what every consuming pipeline executes, so it
 earns a human eye even when its own pipeline is green. The Squire kit version
@@ -479,6 +484,10 @@ include:
 The `workflow:rules` block must live in the app's own file. A component
 cannot set the pipeline's `workflow:rules` for the project that includes it,
 so the `merge_request_event` rule goes in the app's `.gitlab-ci.yml`.
+
+## Which release ran
+
+Every Preflight job prints a `Preflight component <name> <version> (ref <reference>, sha <sha>)` line before any other command, so when a job misbehaves, its log says which Preflight release produced it. The line needs GitLab 18.7 or later, where `spec: component:` is generally available; an include pinned by commit SHA shows that SHA in the line.
 
 ## What the components cannot force
 
@@ -610,6 +619,8 @@ The full documentation lives at [preflight.apps.wayne.edu/docs/](https://preflig
 - `composer docs:check` fails when the built site is stale; `composer ci` runs it.
 
 The pages are committed because the deploy server serves `site/` without building. Every page links back to its Markdown, and the footer stamps the version the docs describe. Cleared for takeoff: the flight manual flies with the aircraft.
+
+The pages wear the front page's flight deck: `docs/_header.html` is the front page's top bar and `docs/theme/preflight.css` maps its palette and B612 type onto the docs kit, with a dark mode taken from the instrument panel. `docs/docs.json` names both under `theme`. Restyle the docs in those two files, never in `site/assets/docs.css` or `bin/docs-site.php`: those are Squire's bytes.
 
 ## Local checks
 

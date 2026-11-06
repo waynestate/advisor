@@ -5,8 +5,6 @@ description: All notable changes to this project.
 
 <!-- Generated from CHANGELOG.md by bin/docs-site.php. Edit CHANGELOG.md, not this file. -->
 
-<!-- Keep this comment first: the shared docs builder drops a "# " heading only when it is the file's very first line,
-     and the changelog docs page needs this one as its h1 (the a11y gate wants exactly one per page). -->
 # Changelog
 
 All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.
@@ -15,6 +13,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Added
 
+- Changed: resynced the bundled content (data/) with the stack as of 2026-11-05, including Booster 1.8.2 and 1.8.3, DRAWBRIDGE (session store, secret files, GitHub references removed), HELMET (H21 partly enforced, warn_broad_proxies), SESAME (CAS login bound to its browser), PROCTOR, ROLLCALL, CREED handbook chapters, Sourdough (--sail, --docker, Pest 4) and the WELD and SQUIRE guides; the Sourdough role now lists every shape that generates; the docs builder and kit follow SQUIRE 97744a4, which keeps the changelog page h1 itself.
 - Added: a proof run (scripts/proof/ProofRunner.php, bin/proof.php) that walks a corpus of app folders through the real `bin/advisor mcp` server over stdio and keeps one JSONL line per app (pass, flagged, tool-error or not-applicable); dev tooling, not part of the served product.
 - Added: an accessibility gate (scripts/a11y/check.mjs) that loads every HTML page under site/ in a real browser and fails on any axe-core WCAG violation, in light and dark themes at phone and desktop width, plus a reduced-motion pass; runs as the a11y job in GitLab CI.
 - Added: a docs site (site/docs/) built by the shared docs builder from docs/, checked in composer ci.

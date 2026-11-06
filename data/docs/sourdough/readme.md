@@ -16,6 +16,8 @@ Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
 Every loaf gets proofed before it ships.
 
+Documentation: the [docs site](site/docs/index.html) is built from [`docs/`](docs/) by Squire's docs builder; `composer docs:build` rebuilds it and `composer docs:check` fails when it is stale. The docs pages wear the front page's header, menu, palette and fonts: edit [`docs/_header.html`](docs/_header.html) and [`docs/theme/sourdough.css`](docs/theme/sourdough.css) (named by the `theme` key in `docs/docs.json`), never the kit's `docs.css`.
+
 Front page: [`site/index.html`](site/index.html), a static page you can open in a browser or serve from `site/`.
 
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
@@ -26,7 +28,7 @@ The canonical repository is on nougat: [enterprise-apps/sourdough](https://nouga
 Open issues and merge requests on nougat, not on the mirrors.
 This moves to git.wayne.edu once it has CI runners. Nougat is the starter culture; the mirrors are just slices.
 
-Sourdough is the app starter for the WSU stack. One command scaffolds a new app with SESAME (auth), HELMET (baseline runtime), PROCTOR (checks), and the Preflight CI components already in place. It is one PHP command, so it works on Windows, macOS, and Linux.
+Sourdough is the app starter for the WSU stack. One command scaffolds a new app with SESAME (auth), HELMET (baseline runtime), Pinstripe (coding standard), PROCTOR (checks), and the Preflight CI components already in place. It is one PHP command, so it works on Windows, macOS, and Linux.
 
 <div align="center">
 
@@ -58,8 +60,8 @@ Options:
 - `--laravel` use the Laravel base
 - `--vue` add a Vue front end
 - `--inertia` use Inertia/Vue (implies `--laravel`)
-- `--sail` use Laravel Sail for the local runtime (Laravel paths)
-- `--docker` use a Docker image for the local runtime (Laravel paths)
+- `--sail` run the Laravel app on Sail for local work: compose.yaml and laravel/sail in require-dev, MySQL 8.4 LTS; needs WSL2 on Windows, where `--docker` is the route that works natively
+- `--docker` generate a Dockerfile and compose.yaml for local work (native on every OS; amd64 and arm64): the app's own base images, pinned by digest, are the single place to swap in SQUIRE's Citadel-parity image when it exists; MySQL 8.4; Playbook credentials reach the build only as a BuildKit secret, never a build arg
 - `--dry-run` print the plan and write nothing
 - `--name` app name (default: the basename of `<dir>`)
 - `--no-input` never prompt (Sourdough 0.1 has no prompts)
@@ -188,6 +190,10 @@ docker run --rm -v "${PWD}:/app" -w /app php:8.4-cli php bin/sourdough new /tmp/
 ```
 
 The smoke gate bakes a shape for real and runs the generated app's own checks; see the "Smoke gate" section of [MAINTAINING.md](MAINTAINING.md) for the full recipe. On Windows, `.\scripts\smoke-shape.ps1 <shape>` runs it in one line.
+
+### Tests in the apps it bakes
+
+The Laravel shapes (Blade, Blade + Vue islands, Inertia) come with Pest 4. The skeleton's PHPUnit example keeps running, `composer test` and `composer ci` run Pest, and the baked tests read `.env` when it exists, otherwise `.env.example`, on top of `phpunit.xml`. The raw PHP shape is unchanged. Write new tests in Pest.
 
 ## CI
 

@@ -18,6 +18,8 @@ PHP version.
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
+Documentation: the docs site is at [`site/docs/index.html`](site/docs/index.html), built from `docs/` by Squire's shared builder and kept current by `composer ci`. The pages wear the front page's look through `docs/_header.html` and `docs/theme/pinstripe.css`: edit those two files, never the vendored kit.
+
 ## Where the code lives
 
 The canonical repository is on nougat: [enterprise-apps/pinstripe](https://nougat.snu.gs/enterprise-apps/pinstripe). git.wayne.edu and GitHub ([waynestate/pinstripe](https://github.com/waynestate/pinstripe)) are read-only mirrors of it.
@@ -52,7 +54,7 @@ composer require --dev waynestate/pinstripe:^0.1
 ```
 
 Pinstripe loads its PHPStan rules through `phpstan/extension-installer`, and Composer will not ask when it cannot prompt.
-Pinstripe 0.1.2 is on Packagist, and the npm package, `@waynestate/pinstripe`, is at 0.1.0.
+Pinstripe 0.1.3 is on Packagist, and the npm package, `@waynestate/pinstripe`, is at 0.1.2.
 
 Point PHPStan at the raw config. `phpstan.neon`:
 
@@ -184,8 +186,92 @@ Add scripts that run on every OS:
 }
 ```
 
-`npm run lint` fails on style and accessibility. `npm run format` fixes the layout. The preset is the off-the-rack
-suit: it fits every app, and you only add your own cufflinks. If an app adopts Oxlint for speed, ESLint stays in the toolchain for `.vue` files, because Pinstripe's Vue and accessibility rules (eslint-plugin-vue and eslint-plugin-vuejs-accessibility) run only in ESLint.
+`npm run lint` fails on style and accessibility, and on every Vue and accessibility finding: where the plugins'
+recommended configs report a rule as a warning, Pinstripe reports it as an error, so the editor, a local run and CI
+all agree on what fails. `npm run format` fixes the layout. The preset is the off-the-rack suit: it fits every app,
+and you only add your own cufflinks. If an app adopts Oxlint for speed, ESLint stays in the toolchain for `.vue`
+files, because Pinstripe's Vue and accessibility rules (eslint-plugin-vue and eslint-plugin-vuejs-accessibility) run
+only in ESLint.
+
+### Adopt gradually with the -warn presets
+
+An app that cannot fix every finding in one cut keeps the old behavior with the `-warn` twin of the preset: the same
+rules with the plugins' original severities, so findings that were warnings stay warnings.
+
+```js
+import pinstripe from '@waynestate/pinstripe/eslint/javascript-warn'
+
+export default [...pinstripe]
+```
+
+For TypeScript, import `@waynestate/pinstripe/eslint/typescript-warn` instead. Once the codebase is clean, switch
+the import back to the strict preset, and every Vue and accessibility finding fails lint.
+
+### Show ESLint findings in the merge request
+
+Add a second script that uses the gitlab formatter:
+
+```json
+{
+    "scripts": {
+        "lint:gitlab": "eslint . --format gitlab"
+    }
+}
+```
+
+Point GitLab at the artifact:
+
+```yaml
+artifacts:
+    reports:
+        codequality: gl-codequality.json
+```
+
+`--format gitlab` comes from `eslint-formatter-gitlab`, a dependency of Pinstripe, so it resolves from the app's own
+`node_modules` without anything extra to install. In GitLab CI the formatter reads the job's predefined variables:
+`CI_JOB_NAME` picks the job, `CI_PROJECT_DIR` keeps the report's paths relative to the project root, and the report
+path itself is read from that job's `artifacts: reports: codequality:` line in the CI config. When the config lives
+somewhere else (`CI_CONFIG_PATH` is empty or a URL), set `ESLINT_CODE_QUALITY_REPORT` to name the file instead.
+Pinstripe tests the formatter end to end: the bad Vue fixture becomes a non-empty Code Quality report. The chalk
+marks move into the merge request.
+
+## Format Blade views
+
+Pinstripe's Prettier preset formats Blade templates too. It loads `prettier-plugin-blade`, a third-party Prettier
+plugin that Pinstripe depends on and pins to an exact version (3.3.3 today), so the Blade rules travel with the preset
+and cannot drift. An app that points Prettier at the preset gets Blade formatting with no extra install: Prettier
+resolves the `plugins` entry relative to the config file's package, and the plugin is a dependency of
+`@waynestate/pinstripe`, so the bare name resolves from any app that extends this config.
+
+The preset adds an override for `*.blade.php` that sets the `blade` parser and a 4-space tab width. The first time you
+run Prettier over an app, every Blade file changes once: the indent becomes 4 spaces, a space goes after directive
+names (`@vite (` instead of `@vite(`), and void tags self-close (`<input>` becomes `<input />`). That is a one-time
+reformat, not a recurring change.
+
+To reformat an existing app's views in one go:
+
+```
+npx prettier --write "resources/views/**/*.blade.php"
+```
+
+### Adopting
+
+Do the reformat as its own commit, with nothing else in it, so the churn is easy to review and easy to back out. Then
+list that commit's hash in `.git-blame-ignore-revs` so `git blame` skips the reformat and stays useful:
+
+```
+# .git-blame-ignore-revs
+# One hash per line; blank lines and # comments are ignored.
+a1b2c3d4e5f60718293a4b5c6d7e8f9012345678
+```
+
+and tell git to read it:
+
+```
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+```
+
+With that in place, blame points at the person who last changed a line's meaning, not at the reformat.
 
 ## Use it for Rector
 
@@ -262,6 +348,28 @@ tailor.
 Pinstripe ships `pinstripe-baseline`, one PHP command that runs on every OS, to keep that promise. It reads both
 the NEON baseline and the PHP format (`phpstan-baseline.php`).
 
+A baseline is only for apps adopting Pinstripe late; new apps never set it. The app opts in from its own
+`composer.json`:
+
+```json
+{
+    "extra": {
+        "pinstripe": {
+            "legacy": true
+        }
+    }
+}
+```
+
+Every command checks the flag before it reads the baseline. Without it, `pinstripe-baseline` exits 2 with:
+
+```
+composer.json: a baseline is only for apps adopting Pinstripe late. Add "extra": { "pinstripe": { "legacy": true } } to composer.json to opt in; new apps never set it.
+```
+
+In a monorepo, point the command at another composer.json with `--composer=<path>` (default: `composer.json` in the
+current working directory).
+
 ```
 vendor/bin/pinstripe-baseline count phpstan-baseline.neon
 ```
@@ -334,6 +442,17 @@ Node tools:
 - ESLint 10 is what sets the Node floor: Node 20 before 20.19 is out.
 
 Measure twice, cut once: these floors are cut from the lock files, and the test keeps the hem honest.
+
+## Supply chain
+
+Pinstripe's own installs are hardened in the repo's `.npmrc`, and apps should copy both lines into their own `.npmrc`:
+
+```
+ignore-scripts=true
+min-release-age=3
+```
+
+`ignore-scripts=true` stops npm from running any lifecycle script (`preinstall`, `install`, `postinstall`) while installing dependencies, so a package cannot execute code merely by being installed. `min-release-age=3` makes npm refuse to install a release published fewer than 3 days ago, leaving time to pull a compromised publish before it reaches a lockfile. The stack's Renovate `minimumReleaseAge` rule waits the same 3 days before updating, so the two guards agree. New cloth rests on the rail for three days before it is cut.
 
 ## Coming next
 

@@ -63,7 +63,11 @@ The rules Drawbridge holds itself to. Every rule names the tests that prove it, 
     which ends in `composer audit`.
 14. **Add headers, never overwrite.** The gateway's own response headers ride on proxied answers with `setifempty`,
     so an app that sends its own (through HELMET) keeps it; only the pages the gateway answers itself carry plain
-    `set`. Tests: `RenderTest::testEveryAppHostAddsTheTwoSetIfEmptyHeaders` and
-    `RenderTest::testNoAppHostOverridesAHeaderAnAppCouldSend` pin the `setifempty` side, and
+    `set`. Protected and api paths get a default `Cache-Control: no-store` with `setifempty` (public paths get none),
+    so an app that wants its protected assets cached sends its own `Cache-Control`. Tests:
+    `RenderTest::testEveryAppHostAddsTheTwoSetIfEmptyHeaders` and
+    `RenderTest::testNoAppHostOverridesAHeaderAnAppCouldSend` pin the `setifempty` side,
+    `RenderTest::testProtectedAndApiPathsAddANoStoreDefault` and
+    `RenderTest::testPublicPathsAddNoCacheHeaderAndSetTheFlag` pin the new `Cache-Control` default, and
     `RenderTest::testGatewayAnsweredLocationsCarryTheirOwnHeaders` pins the plain `set` on the locations the gateway
     answers itself.

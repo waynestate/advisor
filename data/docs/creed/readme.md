@@ -20,6 +20,12 @@ Vue and Inertia, plus the rules every check runs against. A small
 framework-free PHP reader, `Waynestate\Creed\Policy`, answers the one question
 every tool needs: what state is this version in, on this date?
 
+## Documentation
+
+The documentation site lives at [`site/docs/index.html`](site/docs/index.html) and deploys to [https://creed.apps.wayne.edu/docs/](https://creed.apps.wayne.edu/docs/). It is built from `docs/` by Squire's shared docs builder, and `composer ci` fails when the committed pages go stale. Creed Bratton keeps his records in a filing cabinet nobody can find; ours are in `docs/`, where anyone can.
+
+The docs pages are bound into the same code book as the front page: the running head and main menu, the cream stock and green cloth spine, Source Serif and IBM Plex Mono, stamped callouts and the green colophon, light and dark. That look lives in two files, `docs/_header.html` and `docs/theme/creed.css`, named by the `theme` key in `docs/docs.json`; edit those, never the kit's `site/assets/docs.css`.
+
 ## Where the code lives
 
 The canonical repository is on nougat: [enterprise-apps/creed](https://nougat.snu.gs/enterprise-apps/creed). git.wayne.edu and GitHub ([waynestate/creed](https://github.com/waynestate/creed)) are read-only mirrors of it.
@@ -229,7 +235,7 @@ Maintainers: how to build, test and release this project, and where its data com
 No PHP on the machine? Fine. Docker runs the suite:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2 composer install --no-interaction
+docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 composer install --no-interaction
 docker run --rm -v "${PWD}:/app" -w /app php:8.4-cli vendor/bin/phpunit
 docker run --rm -v "${PWD}:/app" -w /app php:8.3-cli vendor/bin/phpunit
 ```
@@ -237,7 +243,7 @@ docker run --rm -v "${PWD}:/app" -w /app php:8.3-cli vendor/bin/phpunit
 The policy validates against its schema:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2 composer validate-policy
+docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 composer validate-policy
 ```
 
 ## Strongly recommended: a git.wayne.edu instance runner
