@@ -36,6 +36,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Fixed
 
+- Fixed: the proof runner keeps the tool binary paths out of the error text: each of the proctor, booster and advisor binary paths is shortened to its file name before the scratch and corpus folders are masked as /app.
 - Fixed: front-page scroll reveals start hidden from first paint (plain CSS under `html.motion`, set in `<head>` before the body parses) instead of fading out after load, so unscrolled below-the-fold content sits at opacity 0 rather than being caught mid-fade; the motion class is only set where IntersectionObserver exists, so a page that hides content can always bring it back.
 - Fixed: docs code blocks that scroll sideways are keyboard focusable (`tabindex="0"`), satisfying the scrollable-region-focusable rule. Since the resync with Squire's unified docs builder, the kit's docs.js does this for every block that overflows, tabs included.
 - Fixed: the changelog docs page keeps its `# Changelog` heading, so the page has exactly one level-1 heading (a comment now sits above the heading in CHANGELOG.md, so the shared builder keeps it).
