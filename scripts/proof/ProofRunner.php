@@ -967,13 +967,16 @@ final class ProofRunner
     }
 
     /**
-     * Keeps paths out of anything the log may carry: the scratch folder and
-     * the corpus both become /app.
+     * Keeps paths out of anything the log may carry: the tool binaries become
+     * their file names, and the scratch folder and the corpus both become /app.
      *
      * @param array{id: string, dir: string, kind: string} $unit
      */
     private function sanitize(string $text, array $unit, string $work): string
     {
+        foreach ([$this->proctorBin, $this->boosterBin, $this->advisorBin] as $bin) {
+            $text = str_replace([$bin, str_replace('/', '\\', $bin)], basename($bin), $text);
+        }
         foreach ([$work, $unit['dir'], $this->workDir, $this->corpusDir] as $path) {
             $text = str_replace([$path, str_replace('/', '\\', $path)], '/app', $text);
         }
