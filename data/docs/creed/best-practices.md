@@ -19,6 +19,7 @@ Each practice has a reason, sources, and a tag that says how the stack holds it 
 |---|---|
 | `Enforced` | Code makes the violation impossible, or a test fails CI. |
 | `Checked` | PROCTOR or CI warns or fails. The check is named. |
+| `Partially` | Some of it is built or checked. The rest is written down only. |
 | `Documented` | Written down only. |
 | `Not yet` | A gap. |
 
@@ -131,7 +132,9 @@ How the stack holds it: `Not yet`. Second pass: the first pass said `policy.json
 LTS. Those three are now in the file, with dates that match the vendor pages. The practice stays `Not yet` because the
 process is still manual: the scheduled job fails when upstream ships a patch, but a new release line is still found by
 hand. The gap was real: Laravel 13 (released 2026-03-17) and MySQL 9.7 (released 2026-04-21) took six to seven months to
-land. See practices 49 and 50 for what comes next.
+land. The policy robot's Monday run of the full refresher now writes a new line above every listed line and opens it as a
+merge request (practice 8), so the stamp can move once that path has landed a line. See practices 49 and 50 for what
+comes next.
 
 ### 8. Check the policy against upstream automatically
 
@@ -143,8 +146,10 @@ Why: people forget; a job does not.
 Sources: [endoflife.date MySQL](https://endoflife.date/mysql), [PHP supported versions](https://www.php.net/supported-versions.php).
 
 How the stack holds it: `Partially`. A scheduled job re-reads the upstream feeds, including endoflife.date, and fails
-the pipeline when the latest patch levels in `policy.json` are stale; it is check-only and never commits. Support dates
-are still hand-edited, and the full refresher is not scheduled.
+the pipeline when the latest patch levels in `policy.json` are stale; it is check-only and never commits. The policy
+robot now also runs the full refresher (`bin/refresh-policy.php`: dates, patches, new lines) on a
+Monday schedule and opens a merge request plus `auto-alert` issues when anything moved or two sources disagree. The
+stamp stays `Partially` until the robot's first merge request has landed on `main`.
 
 ### 9. Model support honestly when a project publishes no dates
 
@@ -1008,7 +1013,8 @@ These are places where a source disagrees with the repository or with an earlier
 1. Done in the repository after the first pass: Laravel 13, Node 26 and MySQL 9.7 are in `policy.json` (practice 7). The
    process gap remains (items 19 and 22).
 2. Partially: a scheduled job checks the latest patch levels against the upstream feeds and fails when they are stale;
-   support dates stay hand-edited, and the full refresher is not scheduled (practice 8).
+   the policy robot now runs the full refresher every Monday and opens a merge request; the stamp moves once its first
+   merge request lands (practice 8).
 3. Done: the schema allows `"current": true` lines with no end date, and Vue 3, Inertia 2 and Inertia 3 are listed (practice 9).
 4. Done: `policy/sources.json` records each source with its first_seen and last_seen, and `policy.json` keeps `latest_patch_checked` (practice 6).
 5. Partly done: policy.json records the supported PHP range per Laravel release (practice 14); the PROCTOR check that compares an app with it is not built.

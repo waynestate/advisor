@@ -652,12 +652,18 @@ build gate, which runs `npm ci` and `npm run build` in the `node:26` container b
 `vite-major` moves a Vite front end onto the Vite major in the hop data: it pins `vite` wherever it sits in
 `package.json`, pins `laravel-vite-plugin` and `@vitejs/plugin-vue` to the hop data's versions when they are already
 listed, runs `npm install` in the Node container and asks for a build gate. `tailwind-3-to-4` runs the official
-`@tailwindcss/upgrade` tool in the Node container, then pins `tailwindcss` to
-`^4.1`, adds the matching Vite or PostCSS plugin, and removes `autoprefixer` and `postcss-import`, which Tailwind 4
-folds in; plugins listed in `tailwind.config.js` and `@apply` inside Vue SFC `<style>` blocks stay manual work, and
-the hop says so. `typescript-major` pins `typescript` to `^6.0` wherever it sits in `package.json`, and `vue-tsc` to
-`^3.0` when the app lists it, then asks for the same build gate; running the type check and fixing what the new
-major flags stay manual work, and the hop says so.
+`@tailwindcss/upgrade` tool (one exact release, with `--force`) in the Node container, then pins `tailwindcss` to
+`^4.1`, adds the matching Vite or PostCSS plugin, removes `autoprefixer` and `postcss-import`, which Tailwind 4
+folds in, moves an inline `css.postcss` Tailwind block in `vite.config` to the `@tailwindcss/vite` plugin (the
+early 2025 Laravel starter kit shape; any other config that still imports them gets a MANUAL line), and runs
+`npm install` so the lock matches; plugins listed in `tailwind.config.js` and `@apply` inside Vue SFC `<style>` blocks stay manual work, and
+the hop says so. `inertia-2-to-3` raises `inertiajs/inertia-laravel` and `@inertiajs/vue3` to `^3.0` when the plan
+lands on Laravel 11 or newer on PHP 8.2 or newer, runs `composer update` and `npm install`, and lists the v3 breaking
+changes as manual lines, because a person works them. `typescript-major` pins `typescript` to `^6.0` wherever it sits
+in `package.json`, and `vue-tsc` to `^3.0` when the app lists it, runs `npm install` so the lock matches, then asks for the same build gate; when
+that install has to override a peer dependency, the hop names the package to raise, because the next plain
+`npm install` would refuse the tree; running the type
+check and fixing what the new major flags stay manual work, and the hop says so.
 
 Vue 2 to Vue 3 is staged. `vue-26-to-27` moves the front end to the last Vue 2 release, which carries the Vue 3
 reactivity API; `vue-27-to-compat` switches to the `@vue/compat` build; `vue-compat-codemod` runs the
@@ -666,7 +672,7 @@ three: skipping it skips them, and a person finishes the job, because Rector doe
 
 ### Hops Booster knows
 
-Thirty-six hops: PHP one minor at a time from 5.5 to 8.5, Laravel one major at a time from 5.8 to 13 and PHPUnit one
+Thirty-seven hops: PHP one minor at a time from 5.5 to 8.5, Laravel one major at a time from 5.8 to 13 and PHPUnit one
 major at a time from 9 to 13, each list read from `data/versions.json` and trimmed to the majors whose Rector ruleset
 is installed ([Hop data](#hop-data)). An app whose PHPUnit is below 9 gets `phpunit-to-9-manual`, a manual move to
 `^9.5` placed before the first hop that targets PHP 8.0 (PHPUnit 7 and 8 do not run on PHP 8), and the regular
@@ -704,12 +710,15 @@ new Vite itself: pins `vite` to the hop data's version wherever it sits, pins `l
 `@vitejs/plugin-vue` to the hop data's versions when they are already listed, and runs `npm install` in the Node
 container); `tailwind-3-to-4` (planned when `package.json` carries `tailwindcss` below 4, after `node-pin-24`
 and `mix-to-vite`: runs the official `@tailwindcss/upgrade` tool, pins `tailwindcss` to `^4.1`, adds the matching
-Vite or PostCSS plugin and removes `autoprefixer` and `postcss-import`); `typescript-major` (planned when
+Vite or PostCSS plugin, removes `autoprefixer` and `postcss-import`, and runs `npm install`); `typescript-major` (planned when
 `package.json` lists `typescript` below major 6, after `tailwind-3-to-4`: pins `typescript` to `^6.0` wherever it
-sits, and `vue-tsc` to `^3.0` when the app lists it, then gates on the build and the tests; running the type check
+sits, and `vue-tsc` to `^3.0` when the app lists it, runs `npm install`, then gates on the build and the tests; running the type check
 stays manual work, and the hop says so); and the Vue 2 to Vue 3 stage,
 `vue-26-to-27`, `vue-27-to-compat` and `vue-compat-codemod`, with the `vue-2-to-3` playbook standing in for all three.
-`booster hops` prints them all.
+`inertia-2-to-3` (planned when composer.json requires `inertiajs/inertia-laravel` or `package.json` carries
+`@inertiajs/vue3` below 3, and the plan lands on Laravel 11 or newer on PHP 8.2 or newer, last after the Vue stage:
+raises both constraints to `^3.0`, runs `composer update` and `npm install`, and lists the v3 breaking changes as manual
+lines). `booster hops` prints them all.
 
 > Every other hop lifts the engine; `wayneui-1-to-2` is the one that repaints the bodywork.
 
@@ -818,9 +827,14 @@ The [Real output page](https://booster.apps.wayne.edu/proof.html) shows `booster
 Proven how: the first full run with the gate on took a Laravel 12 app from PHP 8.2 to 8.4 in two hops, each gated by
 the app's 197-test suite, and it is written up in [research/booster-e2e-gate.md](research/booster-e2e-gate.md).
 
+The front-end hops (`vite-major`, `tailwind-3-to-4`, `typescript-major`, `inertia-2-to-3`) were proven on 2026-11-06
+on a Laravel 12 app generated from the public Laravel Vue starter kit, with every gate on: the first pass found four
+bugs, each fixed with a test, and the upgraded app then built, passed its tests on PHP 8.5 and registered a user in a
+browser. The private proof site has the hop-by-hop table.
+
 ## Status
 
-Version 1.8. See [CHANGELOG.md](CHANGELOG.md) for what changed, [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) for what stays
+Version 1.9. See [CHANGELOG.md](CHANGELOG.md) for what changed, [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) for what stays
 open, and [BEST_PRACTICES.md](BEST_PRACTICES.md) for the rules Booster follows.
 
 ## License

@@ -137,7 +137,7 @@
             "role": "The upgrade tool: Rector recipes and checks that move an app one PHP or Laravel version at a time.",
             "state": "built",
             "package": "waynestate/booster",
-            "version": "1.8.3",
+            "version": "1.9.0",
             "php": "^8.3",
             "next_step": "Plan one hop at a time with `upgrade_path`, and read its README for the Rector recipes.",
             "docs": [
@@ -217,7 +217,7 @@
             "role": "Wired, Everything, Linked, Deployed: one Laravel + Inertia/Vue app with every stack part already joined. A team clones it, renames it and deploys it.",
             "state": "built",
             "package": "waynestate/weld",
-            "version": "0.1.2",
+            "version": "0.1.3",
             "php": "^8.3",
             "next_step": "Clone it for a new Laravel + Inertia/Vue app; its front page shows how the parts fit.",
             "docs": [

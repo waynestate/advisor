@@ -54,6 +54,7 @@ composer require --dev waynestate/pinstripe:^0.1
 ```
 
 Pinstripe loads its PHPStan rules through `phpstan/extension-installer`, and Composer will not ask when it cannot prompt.
+If Composer stops because a package your app already locks (often an older PHPStan) does not fit, run the same `composer require` again with `-W`, as Composer suggests, so it may update that package too.
 Pinstripe 0.1.3 is on Packagist, and the npm package, `@waynestate/pinstripe`, is at 0.1.3.
 
 Point PHPStan at the raw config. `phpstan.neon`:
@@ -132,6 +133,7 @@ composer require --dev waynestate/pinstripe:^0.1 larastan/larastan
 ```
 
 Pinstripe loads its PHPStan rules through `phpstan/extension-installer`, and Composer will not ask when it cannot prompt.
+If Composer stops because a package your app already locks (often an older PHPStan) does not fit, run the same `composer require` again with `-W`, as Composer suggests, so it may update that package too.
 Pinstripe pulls in `phpstan/extension-installer`, which registers Larastan for you. When Composer asks, allow the
 plugin (`config.allow-plugins` in your `composer.json`). Your `phpstan.neon` includes
 `vendor/waynestate/pinstripe/phpstan/laravel.neon` and nothing else: there is no Larastan line to add, and the
@@ -324,6 +326,10 @@ Strict is the tailor's chalk line drawn before the first stitch.
 Generate a baseline with `phpstan analyse --generate-baseline`, include it in your `phpstan.neon`, and only ever
 shrink it. New code gets no baseline. A baseline is a tailor's chalk line: it marks the fabric as it is, and every
 release you take it in, never let it out.
+
+Some errors cannot go into a baseline (PHPStan says so, and the run stays red): fix how PHPStan finds that code
+first. When the app bundles a third-party library, point Pint at your own folders instead of the whole app. The
+[Proof](https://pinstripe.apps.wayne.edu/docs/reference/proof.html) page shows both on 82 Wayne State apps.
 
 ### Ignore comments must say why
 

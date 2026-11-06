@@ -229,7 +229,7 @@ The tags describe the repo as it stands on 2026-11-02. Since 2026-10-28 the Squi
 - **Practice:** Preflight components are referenced by commit SHA or a fixed tag, not a moving branch.
 - **Why:** A moved branch changes your pipeline without a review.
 - **Sources:** [GitLab CI/CD include](https://docs.gitlab.com/ci/yaml/include/).
-- **Stack:** `Documented`. `.gitlab-ci.yml:6` pins the `php-test` component to `@0.1.0` and `.github/workflows/ci.yml:16` pins the reusable workflow to a commit SHA; the comment "Pinned to Preflight 0.1.0. Never use ~latest." sits at `.gitlab-ci.yml:2`. There is no check that flags an unpinned include. Target `Checked`: PROCTOR flags `include:` entries without a SHA.
+- **Stack:** `Checked`. `.gitlab-ci.yml` pins every Preflight component to the 0.1.4 release SHA (the tag in a trailing comment) and `.github/workflows/ci.yml` pins the reusable workflow to a commit SHA; the comment "Pinned to Preflight 0.1.4. Never use ~latest." sits at the top of `.gitlab-ci.yml`. PROCTOR's `preflight-pinned` check, run by the `proctor-root` job, fails on an include without a SHA.
 
 ## Gaps for the backlog
 

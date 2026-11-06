@@ -24,7 +24,7 @@ every tool needs: what state is this version in, on this date?
 
 The documentation site lives at [`site/docs/index.html`](site/docs/index.html) and deploys to [https://creed.apps.wayne.edu/docs/](https://creed.apps.wayne.edu/docs/). It is built from `docs/` by Squire's shared docs builder, and `composer ci` fails when the committed pages go stale. Creed Bratton keeps his records in a filing cabinet nobody can find; ours are in `docs/`, where anyone can.
 
-The docs pages are bound into the same code book as the front page: the running head and main menu, the cream stock and green cloth spine, Source Serif and IBM Plex Mono, stamped callouts and the green colophon, light and dark. That look lives in two files, `docs/_header.html` and `docs/theme/creed.css`, named by the `theme` key in `docs/docs.json`; edit those, never the kit's `site/assets/docs.css`.
+The docs pages are bound into the same code book as the front page: the running head and main menu, the cream stock and green cloth spine, Source Serif and IBM Plex Mono, stamped callouts and the green colophon. Dark mode is the same book read after hours (warm graphite, cream type, gold foil), never a green wallpaper. The cover's gold ribbon marks the page you are reading, and each callout's stamp is pressed as it scrolls in, for readers who allow motion. That look lives in two files, `docs/_header.html` and `docs/theme/creed.css`, named by the `theme` key in `docs/docs.json`; edit those, never the kit's `site/assets/docs.css`.
 
 ## Where the code lives
 
@@ -144,18 +144,32 @@ The rules, chapter by chapter, live in [`handbook/`](handbook/README.md).
 `bin/refresh-patches.php` re-reads the upstream feeds, rewrites the
 `latest_patch` fields in `policy/policy.json`, and proposes new Vue lines from
 endoflife.date. A scheduled CI job runs the refresh and is check-only: when
-the policy changed, the tool exits 3 and the job fails on the diff. The policy
-robot (`bin/policy-bot.php run`) is the committing path: it commits the data
-allowlist on `auto/policy-refresh` and pushes it as a merge request labeled
-`auto-data`; a data-only run is auto-merged, and missing CI variables stop the
-run before any push. The `policy-bot` job in `.gitlab-ci.yml` runs it: on its
-dedicated schedule (the one carrying `CREED_JOB=policy-bot`) and by hand from
-the web. Without the token the job prints "CREED_BOT_TOKEN not set; skipping
-the policy robot" and stays green. The robot never tags or releases, and
-support dates stay hand-edited: a person reviews each support-date edit.
+the policy changed, the tool exits 3 and the job fails on the diff.
 
-To put the robot on the schedule, the owner creates three things on nougat
-(the canonical repository), all on the CREED project:
+The policy robot (`bin/policy-bot.php run`) is the committing path, and it
+runs every Monday. It runs the fuller `bin/refresh-policy.php` (below), commits
+`policy/policy.json` and `policy/sources.json` on `auto/policy-refresh`, and
+force-pushes a merge request titled "policy: refresh from upstream sources",
+labeled `auto-data`. After a refresher exit 3 the merge request merges itself
+once its pipeline passes; after an exit 4 (something held or refused) it waits
+for a person. Each held or refused item, each disagreement between sources the
+policy cannot settle, and each listed line within 60 days of its
+`security_until` also gets one GitLab issue labeled `auto-alert`, noted on
+later runs and closed when it clears. When `refreshed_on` is a week old and
+nothing moved, the robot stamps it anyway (the heartbeat). It never tags or
+releases, and a missing CI variable stops it before any push. To review a
+robot merge request, read its body (one line per change, with its class),
+check any date against its source, and never commit to `auto/policy-refresh`:
+the next run overwrites it. If its pipeline goes red for an unrelated reason,
+fix `main` and rebase the merge request. The [policy robot
+guide](https://creed.apps.wayne.edu/docs/guides/policy-bot.html) has the
+details.
+
+The `policy-bot` job in `.gitlab-ci.yml` runs the robot on the schedule that
+carries `CREED_JOB=policy-bot` and by hand from the web. Without the token the
+job prints "CREED_BOT_TOKEN not set; skipping the policy robot" and stays
+green. The setup, all on the CREED project on nougat (the canonical
+repository):
 
 1. A project access token (Settings > Access tokens): role Maintainer
    (Developer works only if Developers may merge to the default branch),
@@ -163,9 +177,8 @@ To put the robot on the schedule, the owner creates three things on nougat
 2. A CI/CD variable `CREED_BOT_TOKEN` holding the token: masked and hidden,
    protected, not a file. The schedule runs on `main`, which is a protected
    branch, so the protected variable is available there.
-3. A schedule on `main` (CI/CD > Schedules): weekly, Monday, with the variable
-   `CREED_JOB` = `policy-bot`. The existing check-only schedule (no variable)
-   can stay or be replaced by this one.
+3. A pipeline schedule on `main` (Build > Pipeline schedules): weekly, Monday,
+   with the variable `CREED_JOB` = `policy-bot`.
 
 The branch `auto/policy-refresh` must not be protected, or the robot cannot
 push it. The schedules are GitLab project settings, not files in this repo.
@@ -205,8 +218,9 @@ per value, which source said it, and the first and last day it was seen.
 Exit codes: `0` nothing worth committing (always `0` with `--dry-run`); `1` hard
 failure; `3` something was written to `policy/policy.json` or `policy/sources.json`,
 including a released `loosen-fail` (the policy robot raises the alert from the
-report); `4` something was held or refused; nothing is committed for that run.
-Written changes are always written.
+report); `4` something was held or refused (whatever could be written was
+written; the held or refused items stay out). The refresher never commits: the
+policy robot does.
 `bin/refresh-patches.php` still works as before.
 
 ## Carrying CREED in another package
@@ -215,7 +229,7 @@ PROCTOR, Booster and Rollcall each carry a generated copy of the reader
 under their own namespace, so two tools in one app never fight over a class
 name (the generator below keeps the copies in step). ADVISOR carries CREED's
 policy and handbook as a data bundle instead. The copies began
-because CREED was not on Packagist. It is now (`waynestate/creed` 0.1.3), so
+because CREED was not on Packagist. It is now (`waynestate/creed`, 0.1.6 at this writing), so
 each copy can become a real `require`, one consumer at a time; until a
 consumer switches, its copy stays. CREED owns the generator and the check:
 

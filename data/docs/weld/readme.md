@@ -1,7 +1,5 @@
 
 
-On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
-
 # WELD
 
 <p>
@@ -23,6 +21,9 @@ the page that ships: same source, same bead. The docs wear the front page's look
 in the builder's kit files (`site/assets/docs.css`, `site/assets/docs.js`). In dark mode the docs are the shop after
 hours: steel, cream type and gold, with green kept for the helmet and the footer, not a green wallpaper.
 
+On Citadel the front page and docs are served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose
+front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+
 ## Where the code lives
 
 The canonical repository is on nougat: [enterprise-apps/weld](https://nougat.snu.gs/enterprise-apps/weld). git.wayne.edu and GitHub ([waynestate/weld](https://github.com/waynestate/weld)) are read-only mirrors of it.
@@ -41,6 +42,10 @@ composer create-project waynestate/weld my-app
 cd my-app
 npm ci
 ```
+
+`create-project` installs the newest tagged release, and `main` can be ahead of it (the [CHANGELOG](CHANGELOG.md)
+lists what is unreleased). 0.1.3 (2026-11-06) is the first tag where WayneUI draws the app; clone when you want
+`main`.
 
 Or clone it, if you want the history too, and it is yours to rename:
 
@@ -150,8 +155,9 @@ What is on the bench today:
 
 **Testing.** Write new tests in Pest. Use an `it('...', function () { ... });` closure under `tests/Feature` or `tests/Unit`; the existing
 PHPUnit class tests keep working and are converted only when you touch them. `composer test` runs both, and `tests/Pest.php` binds the
-Feature tests to the Laravel app and a fresh database. The suite runs on a fixed dummy `APP_KEY` set in `phpunit.xml` so it boots with no
-`.env`; the app refuses that key in production, so a copied test config cannot ship.
+Feature tests to the Laravel app and a fresh database. The suite reads `.env` when it exists, otherwise `.env.example`
+(`tests/Support/SkipEnvFile.php`, the same file Sourdough ships), and runs on a fixed dummy `APP_KEY` set in `phpunit.xml`, so it boots
+with no `.env`; the app refuses that key in production, so a copied test config cannot ship. CI's `php-test` matrix runs `vendor/bin/pest`.
 
 Best practices for building, running and deploying WELD live in [BEST_PRACTICES.md](BEST_PRACTICES.md).
 
@@ -179,6 +185,11 @@ The same subcommands work on every OS:
 
 Deploying somewhere other than a laptop? [Running WELD off Citadel](docs/running-off-citadel.md) covers OpenShift,
 Coolify and plain Docker, with Citadel for comparison.
+
+Does it hold? [Proof](docs/reference/proof.md) is the bend test: on 2026-11-06 a new app went from an empty folder to
+a signed-in WayneUI dashboard in about four and a half minutes and to every CI gate green in about eight, with 0
+accessibility violations in 16 page checks, and one small Wayne State app was ported onto it. The run found a blank
+first page and a Windows `up` that emptied the local database; both are fixed, and the open findings are listed there.
 
 ## Oracle
 
