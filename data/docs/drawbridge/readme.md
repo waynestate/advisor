@@ -11,7 +11,7 @@ Checks: `composer ci` (the same command runs on GitLab and GitHub). The containe
 Drawbridge is the sign-in gateway for the apps on Citadel, Wayne State's container platform. It is Apache with
 mod_auth_openidc, set up as one OpenID Connect client for Microsoft Entra ID. It is not live yet: its home will be
 `auth.apps.wayne.edu`, in front of every app on the platform, once the Citadel routing for it exists.
-The latest release, 0.2.0, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
+The latest release, 0.2.1, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
 checks that the visitor has a session, drops any identity header the visitor sent, and passes the app a
 short-lived signed assertion that SESAME's `gateway` driver verifies. Which paths need a login, and which need an
 Entra authentication context on top, is declared per app in a config file. Nothing else decides it.
