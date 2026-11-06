@@ -4,6 +4,10 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Security
+
+- The front-page deploy layer moves to Symfony 7.4.23 (symfony/http-foundation and symfony/yaml advisories, including CVE-2026-118514).
+
 ### Added
 
 - Changed: resynced the bundled content (data/) with the stack as of 2026-11-05, including Booster 1.8.2 and 1.8.3, DRAWBRIDGE (session store, secret files, GitHub references removed), HELMET (H21 partly enforced, warn_broad_proxies), SESAME (CAS login bound to its browser), PROCTOR, ROLLCALL, CREED handbook chapters, Sourdough (--sail, --docker, Pest 4) and the WELD and SQUIRE guides; the Sourdough role now lists every shape that generates; the docs builder and kit follow SQUIRE 97744a4, which keeps the changelog page h1 itself.
