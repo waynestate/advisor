@@ -260,6 +260,8 @@ The policy validates against its schema:
 docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 composer validate-policy
 ```
 
+The site carries an accessibility gate (axe-core in Playwright, WCAG 2.2 AA, run in Docker): `scripts/a11y.sh` on Linux and macOS, `scripts/a11y.ps1` on Windows.
+
 ## Strongly recommended: a git.wayne.edu instance runner
 
 git.wayne.edu has no runners today. Every product in the stack strongly
