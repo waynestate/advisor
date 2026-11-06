@@ -31,7 +31,7 @@
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "36252b386181a0a5f4139201586d9c31b2e65a50fd12363c6c7abe2a9c1baff9",
+            "sha256": "fc7cb97431d716aaf808c5407237ccd867fde7b91e249e4e9e17d41c6f7719a3",
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
@@ -83,11 +83,11 @@
             "source": "sesame/README.md"
         },
         "docs/sourdough/best-practices.md": {
-            "sha256": "efbea6866b8a0292aafb06464eaf0dfd4657adb58692aa8092894ed9113dced8",
+            "sha256": "30747b23878f17d4329e1dff377ae1037f9f6dda1e14e0ae82598d3110b8ad78",
             "source": "sourdough/BEST_PRACTICES.md"
         },
         "docs/sourdough/readme.md": {
-            "sha256": "9611cab095272ef05fafb2360ea70c1daf95f428b4a8dfd762d69e8ba0fb5787",
+            "sha256": "1c12615c8f133dd31a740068ec72890b03b577f5c015e3825b9261b3a9a1dd44",
             "source": "sourdough/README.md"
         },
         "docs/squire/best-practices.md": {
@@ -115,7 +115,7 @@
             "source": "weld/BEST_PRACTICES.md"
         },
         "docs/weld/readme.md": {
-            "sha256": "86a2b891a4294d8749dc85f587e665cec1464c4dae797c30448f73401cc61fec",
+            "sha256": "ea1118d537dd7f174acd70ef75091bd36db9530c43d561e3e757c2278ef9262e",
             "source": "weld/README.md"
         },
         "guides/connect-to-oracle-on-citadel.md": {

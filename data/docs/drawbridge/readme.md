@@ -462,6 +462,8 @@ In Docker, with no local PHP:
 docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
 ```
 
+The accessibility gate runs axe-core (WCAG 2.2 AA) against the front page and every docs page in a real Chromium browser inside Docker, so no host browser is needed: `sh scripts/a11y.sh` on Linux and macOS, `scripts\a11y.ps1` on Windows.
+
 The unit suite checks the assertion against a mirror of SESAME's `gateway` driver rules
 (`tests/Support/SesameContract.php`). To check it against the real driver instead, point `SESAME_PATH`
 at a SESAME checkout that has been installed (`composer install` in it) and run the integration suite;
