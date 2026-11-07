@@ -352,7 +352,7 @@
             "id": "ci-5",
             "chapter": "ci",
             "heading": "CI",
-            "text": "The components run on the git.wayne.edu instance runner (first-repos), and every product strongly recommends the instance runner.",
+            "text": "git.wayne.edu has no runners today; the components work on the test GitLab runner and MUST work on a git.wayne.edu runner when one exists (first-repos). Every product strongly recommends the instance runner.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -374,7 +374,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/ci.md:14"
+            "source": "handbook/ci.md:15"
         },
         {
             "id": "ci-7",
@@ -388,7 +388,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/ci.md:15"
+            "source": "handbook/ci.md:16"
         },
         {
             "id": "ci-8",
@@ -402,7 +402,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/ci.md:16"
+            "source": "handbook/ci.md:17"
         },
         {
             "id": "code-1",
@@ -532,7 +532,7 @@
             "id": "code-10",
             "chapter": "code",
             "heading": "Source control and documentation",
-            "text": "The stack's code has its primary home on git.wayne.edu; the standards name git.wayne.edu as the preferred home.",
+            "text": "The stack's code has its primary home on nougat, with git.wayne.edu as the mirror, until a CI runner exists on git.wayne.edu; the standards name git.wayne.edu as the preferred home.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
