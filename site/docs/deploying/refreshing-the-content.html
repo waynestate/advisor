@@ -46,7 +46,7 @@
 <p>Beside the generated docs, hand-written guides are kept by hand in <code>generator/guides/</code> (one Markdown file per slug), the same way the ownership table is kept. Each is bundled into <code>data/guides/</code> and served as <code>advisor://guide/&lt;slug&gt;</code>; the first is &quot;Connect to Oracle on Citadel&quot;.</p>
 <h2 id="regenerate">Regenerate<a class="docs-heading-link" aria-label="Link to this section" href="#regenerate">#</a></h2>
 <p>With the stack repos checked out side by side:</p>
-<pre><code class="language-bash">php vendor/bin/advisor content:generate --sources=/path/to/stack
+<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor content:generate --sources=/path/to/stack
 </code></pre>
 <p><code>--sources</code> can also come from <code>ADVISOR_STACK_DIR</code>. Run <code>content:generate</code> after any change that lands in CREED's policy or handbook, a project's README or best practices, an extra doc, or the projects seed. Commit the regenerated <code>data/</code> with the source commits in the message.</p>
 <p>The generator reads each project's folder from beside the other repos, so a stale clone gives stale docs. WayneUI's development happens on its GitLab repository and the checked-out copy is only a mirror of it: fast-forward the local wayne-ui clone to that repository's main before a resync.</p>
@@ -54,15 +54,15 @@
 <p>Beyond a project's README and best practices, a seed may bundle further files under <code>extra_docs</code> (a map of slug to path in the project); each lands in <code>data/docs/&lt;id&gt;/&lt;slug&gt;.md</code> and in the project's docs list, and a missing file is skipped, not an error. WayneUI's entry bundles its MIGRATING.md as the <code>migrating</code> doc.</p>
 <h2 id="verify">Verify<a class="docs-heading-link" aria-label="Link to this section" href="#verify">#</a></h2>
 <p>CI cannot see the sibling repositories, so <code>composer ci</code> runs <code>content:verify</code>, which needs none of them:</p>
-<pre><code class="language-bash">php vendor/bin/advisor content:verify
+<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor content:verify
 </code></pre>
 <p>It checks the bundled <code>data/</code> against <code>data/manifest.json</code> (a SHA-256 for every file).</p>
 <h2 id="check-for-drift">Check for drift<a class="docs-heading-link" aria-label="Link to this section" href="#check-for-drift">#</a></h2>
 <p><code>composer content:drift</code> compares <code>data/</code> with a checkout of the stack repos and exits 1 when they no longer agree. It takes the folder from <code>ADVISOR_STACK_DIR</code>; without it, it prints how to run it and exits 1:</p>
-<pre><code class="language-bash">ADVISOR_STACK_DIR=&lt;folder holding the stack repos&gt; composer content:drift
+<pre tabindex="0"><code class="language-bash">ADVISOR_STACK_DIR=&lt;folder holding the stack repos&gt; composer content:drift
 </code></pre>
 <p>It writes nothing. On drift it lists the files that moved; regenerate with <code>composer content:generate</code> and review the diff before committing. You can also pass <code>--check</code> to <code>content:generate</code> directly:</p>
-<pre><code class="language-bash">php vendor/bin/advisor content:generate --sources=/path/to/stack --check
+<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor content:generate --sources=/path/to/stack --check
 </code></pre>
 <p>That exits 1 on drift.</p>
 <p>The GitLab job <code>content-drift</code> does the same in CI: it clones the repos listed in <code>data/projects.json</code> with the job token, puts them in one folder, sets <code>ADVISOR_STACK_DIR</code> and runs the check. It is manual or scheduled and allowed to fail, so it cannot block main. Run the drift check before every tag: a release must carry docs that still match the repos it advises on.</p>

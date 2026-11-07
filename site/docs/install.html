@@ -56,14 +56,14 @@
 <p>The platform is pinned to PHP 8.3.0 in <code>composer.json</code>.</p>
 <h2 id="install-1">Install<a class="docs-heading-link" aria-label="Link to this section" href="#install-1">#</a></h2>
 <p>Add it to the app as a dev dependency:</p>
-<pre><code class="language-bash">composer require --dev waynestate/advisor
+<pre tabindex="0"><code class="language-bash">composer require --dev waynestate/advisor
 </code></pre>
 <p>The command is then <code>php vendor/bin/advisor</code>. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.</p>
 <p>ADVISOR is on Packagist: <code>composer require --dev waynestate/advisor:^0.1</code>. No extra repository needed.</p>
 <aside class="docs-callout docs-callout--note" role="note"><p class="docs-callout__label">Note</p><p>Native Windows is not yet proven. ADVISOR is one PHP command, so it is built to run the same everywhere, but it has not been proven on native Windows. If you are on Windows, <a href="guides/docker.html">use Docker</a>.</p></aside>
 <h2 id="verify">Verify<a class="docs-heading-link" aria-label="Link to this section" href="#verify">#</a></h2>
 <p>Check the install with:</p>
-<pre><code class="language-bash">php vendor/bin/advisor doctor
+<pre tabindex="0"><code class="language-bash">php vendor/bin/advisor doctor
 </code></pre>
 <p>It checks the four things that keep a server from appearing, in plain words, and changes nothing:</p>
 <ul>

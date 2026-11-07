@@ -43,7 +43,7 @@
 <p>Every command the <code>advisor</code> CLI takes, and what it does.</p>
 <h2 id="running-a-command">Running a command<a class="docs-heading-link" aria-label="Link to this section" href="#running-a-command">#</a></h2>
 <p>Run any command with <code>php vendor/bin/advisor &lt;command&gt;</code>. This is one PHP command, not a shell script, so it works the same on Windows, macOS and Linux. The <code>mcp</code> command is started by your MCP client, not by you.</p>
-<pre><code>php vendor/bin/advisor mcp                          # serve over stdio (your client starts this)
+<pre tabindex="0"><code>php vendor/bin/advisor mcp                          # serve over stdio (your client starts this)
 php vendor/bin/advisor install [--client=claude] [--write] [--force] [--path=.]
 php vendor/bin/advisor content:verify               # check the bundled content against its manifest
 php vendor/bin/advisor content:generate [--sources=&lt;dir&gt;] [--check]
