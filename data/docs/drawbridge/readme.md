@@ -60,7 +60,12 @@ browser --> Apache httpd (Drawbridge) --> app container
 
 - A request for a **protected** path without a session goes to Entra to sign in (authorization code flow with PKCE)
   and comes back. For an **api** path it gets a plain 401, so a script never receives an HTML login page. A
-  **public** path passes through with no identity attached.
+  **public** path passes through with no identity attached. A **deny** path never reaches the app: the gateway
+  answers 403 with its own page, signed in or not. `default: deny` makes every unlisted path a deny path, so only
+  the paths an app lists exist at all. The most specific rule wins, whichever list it is in.
+- A protected or api rule can name **groups** (`groups: [app1-admins]`, read from the ID token claim
+  `oidc.groups_claim`, `wsu_roles` at WSU): a signed-in person who holds none of them gets 403. It is a coarse gate
+  in front of the app; the app still decides what each person may do.
 - mod_auth_openidc checks the ID token (signature, issuer, audience, nonce, expiry) and keeps the session. The
   claims reach the gateway in the request environment only, never as headers, and no Entra token is passed to an app.
 - The assertion is a compact JWT with `typ: drawbridge+jwt` and a `kid`. Claims: `iss` (Drawbridge, never Entra),
@@ -101,6 +106,12 @@ An app links to `/_drawbridge/oidc/callback?logout=<URL-encoded address on the s
 the gateway session for that host and sends the browser through Entra's sign-out endpoint (named in the provider's
 discovery document) back to the address. An address on another host is refused, so the link cannot be used to bounce
 visitors elsewhere.
+
+To end a person's sessions from outside, on every app host at once, run `drawbridge revoke <subject>` where the
+gateway reads its revocation list (`DRAWBRIDGE_REVOCATION_FILE`). On their next protected request a browser is sent
+through the sign-out above and an `api` caller gets 401; a fresh sign-in works as before, so disable the account in
+Entra to keep someone out. Entra offers other apps only an iframe front-channel logout, which blocked third-party
+cookies break, so DRAWBRIDGE uses none: every sign-out hop is a top-level redirect.
 
 Signing in is held the same way: a sign-in started with a `target_link_uri` on another host (written plainly, protocol-relative or with a userinfo trick) never sends the visitor there, and the answer never names that host. The rig proves it (`GatewayTest::testLoginReturnsOnlyToTheSameHost`).
 
@@ -426,6 +437,7 @@ outside (per-user revocation needs an index that is not built).
 | `DRAWBRIDGE_SESSION_CACHE_ENTRIES` | `1000` | entries in the shared-memory cache: sessions, nonces, provider metadata (minimum 10; a smaller value or a non-number is refused when the config is rendered) |
 | `DRAWBRIDGE_RUN_DIR` | `/tmp/drawbridge` | scratch for rendered config, locks and the session cache |
 | `DRAWBRIDGE_LOG_LEVEL` | `warn` | Apache log level |
+| `DRAWBRIDGE_EVENT_LOG` | `/dev/stdout` | where the JSON event log goes (sign-in, failed sign-in, sign-out, denied, revoked) |
 | `DRAWBRIDGE_METRICS_TOKEN` | none | bearer token that may read `/metrics`; empty turns the endpoint off unless an allow list is set |
 | `DRAWBRIDGE_METRICS_ALLOW` | none | comma list of client IPs/CIDRs allowed to read `/metrics`; empty trusts no address |
 
@@ -438,7 +450,8 @@ Run as `php bin/drawbridge <command>` (or `vendor/bin/drawbridge` when installed
 | Command | Does |
 |---|---|
 | `config:validate` | checks the config and prints every problem at once, then the provider settings (never the secret, only whether its variable is set); exit 1 if any |
-| `explain <host> <path>` | says which rule applies to a request, and which authentication context it needs, and why |
+| `explain <host> <path>` | says which rule applies to a request, the authentication context and groups it needs, and whether it is denied |
+| `revoke <subject>... [--list]` | ends every gateway session those people hold now, on every app host (the revocation list the gateway rereads each second) |
 | `render` | checks the two secrets in the environment, then writes `apps.conf` and `policy.lua` for Apache (the entrypoint runs this) |
 | `keys:generate` | makes an ES256 key pair; refuses to overwrite a file |
 | `keys:jwks --key=KID=FILE ... [--out=FILE]` | writes the key set file apps verify with: the public keys, current then next, as a JWKS; refuses a private key |
@@ -504,6 +517,20 @@ emergency ones, are in [Rotating the signing key](docs/guides/rotating-the-signi
 [an ADR](ADR/an ADR-signing-key-distribution-and-rotation.md). Two keys on the ring: the guard can change locks
 without anyone waiting outside the gate.
 
+## Log events
+
+Besides the access log, the gateway writes one JSON line for each sign-in, failed sign-in, sign-out, refusal and
+revoked session, and nothing for an ordinary request:
+
+```json
+{"v":1,"event":"drawbridge.denied","time":"2026-11-07T15:04:05Z","host":"app1.apps.wayne.edu","path":"/admin/reports/q3","status":403,"user":"ab1234","rule":"login","reason":"group","client":"(client address)"}
+```
+
+The events are `drawbridge.signin`, `drawbridge.signin_failed`, `drawbridge.signout`, `drawbridge.denied` and
+`drawbridge.revoked`, each refusal with a `reason`. The path is logged without its query string, and no cookie,
+token or claim but the subject is ever written. `DRAWBRIDGE_EVENT_LOG` picks the file (default `/dev/stdout`).
+[Log events](docs/reference/log-events.md) documents every field.
+
 ## Metrics
 
 Drawbridge can expose a Prometheus `/metrics` endpoint, off by default. It is on when `DRAWBRIDGE_METRICS_TOKEN`
@@ -550,7 +577,7 @@ to expose those. Labels carry no identity, claim, or token, and the `reason` lab
 
 ## Documents
 
-- `BEST_PRACTICES.md`: the short list of rules the gateway holds itself to.
+- `BEST_PRACTICES.md`: the practices the gateway holds itself to, each with its sources, one tag and the tests that hold it.
 - `ENTRA_TEST.md`: the first real Entra test: what you need to do.
 - `OPEN_QUESTIONS.md`: what is unanswered, what is missing, what is not built yet.
 - `ADR/`: decisions about Drawbridge itself, one file each (an ADR: signing key distribution and rotation).
