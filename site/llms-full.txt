@@ -640,9 +640,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### \[Unreleased\][#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
 
-#### Security[#](https://advisor.apps.wayne.edu/docs/changelog.html#security)
-
-- The front-page deploy layer moves to Symfony 7.4.23 (symfony/http-foundation and symfony/yaml advisories, including CVE-2026-118514).
+### \[0.1.6\] - 2026-11-06[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-6-2026-11-06)
 
 #### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
 
@@ -651,10 +649,13 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - data: resync 2026-11-06 morning (booster:fc8e42e drawbridge:265c57d helmet:bca4c25 sesame:67a7fae proctor:33c329a rollcall:a8aaac5 creed:15cc9cc sourdough:387773e weld:a88d703 squire:6a6a352 preflight:734728d pinstripe:7d71088 wayne-ui:7c237a2 advisor:31544c6): Booster 1.9.0, WELD 0.1.3, the CREED and ROLLCALL docs brand pass, proof pages for Preflight, Pinstripe, ROLLCALL and WELD.
 - data: resync 2026-11-06 afternoon (booster:bf1bd59 drawbridge:131ea28 helmet:8718bbf sesame:af9e764 proctor:5a8d5ca rollcall:6e9d4a8 creed:cbf2163 sourdough:7444c3c weld:6eb9c42 squire:8bbc9c7 preflight:f1c56ac pinstripe:e329dd7 wayne-ui:9e1e762 advisor:8d3d2f6): accessibility gates on SESAME, Booster, CREED, Preflight, PROCTOR and HELMET, and the Booster dogfood fixes for the front-end hops.
 - data: resync 2026-11-06 evening (booster:bf1bd59 drawbridge:d0fa5b4 helmet:8718bbf sesame:af9e764 proctor:5a8d5ca rollcall:6e9d4a8 creed:cbf2163 sourdough:173b14a weld:82ee1a6 squire:8bbc9c7 preflight:f1c56ac pinstripe:e329dd7 advisor:a7d58f2 wayne-ui:9e1e762): accessibility gates on WELD and DRAWBRIDGE, the Sourdough raw PHP + Vue shape.
-- Changed: resynced the bundled content (data/) with the stack as of 2026-11-05, including Booster 1.8.2 and 1.8.3, DRAWBRIDGE (session store, secret files, GitHub references removed), HELMET (H21 partly enforced, warn_broad_proxies), SESAME (CAS login bound to its browser), PROCTOR, ROLLCALL, CREED handbook chapters, Sourdough (--sail, --docker, Pest 4) and the WELD and SQUIRE guides; the Sourdough role now lists every shape that generates; the docs builder and kit follow SQUIRE 97744a4, which keeps the changelog page h1 itself.
 - Added: a proof run (scripts/proof/ProofRunner.php, bin/proof.php) that walks a corpus of app folders through the real `bin/advisor mcp` server over stdio and keeps one JSONL line per app (pass, flagged, tool-error or not-applicable); dev tooling, not part of the served product.
 - Added: an accessibility gate (scripts/a11y/check.mjs) that loads every HTML page under site/ in a real browser and fails on any axe-core WCAG violation, in light and dark themes at phone and desktop width, plus a reduced-motion pass; runs as the a11y job in GitLab CI.
 - Added: a docs site (site/docs/) built by the shared docs builder from docs/, checked in composer ci.
+
+#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
+
+- Changed: resynced the bundled content (data/) with the stack as of 2026-11-05, including Booster 1.8.2 and 1.8.3, DRAWBRIDGE (session store, secret files, GitHub references removed), HELMET (H21 partly enforced, warn_broad_proxies), SESAME (CAS login bound to its browser), PROCTOR, ROLLCALL, CREED handbook chapters, Sourdough (--sail, --docker, Pest 4) and the WELD and SQUIRE guides; the Sourdough role now lists every shape that generates; the docs builder and kit follow SQUIRE 97744a4, which keeps the changelog page h1 itself.
 - Changed: the docs pages wear the front page's look: the same sheet head and main menu (Docs marked current), Fraunces titles with a plotted maroon route, the legend's mono labels, commands on the dark code ground with the gold Copy tab, callouts drawn as map marks (note, tip, out of bounds), the green footer band, and a dark mode derived from the Directions band. Motion only without a reduced-motion preference. Source: `docs/_header.html` and `docs/theme/advisor.css` through the builder's `theme` key. The front page site owes a Quick Update.
 - Changed: the bundled data is resynced with the stack's main branches of 2026-11-03 (afternoon): SESAME S45 and the DRAWBRIDGE module floor (from branch heads awaiting main), HELMET H42 4xx pages, H43, H53 and H41 notes; SESAME S4, S41, S42 and S27; plus the Booster, Preflight, PROCTOR and Squire docs that moved.
 - Changed: the bundled data is resynced again (evening): PROCTOR composer-audit-off, not-audited, scoped overrides and the ignore-entries count; Pinstripe Node 22/24/26 matrix, the Laravel + Vue fixture and ADR-0001; plus the other projects docs that moved on main.
@@ -662,6 +663,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: the bundled data is resynced again (night of 2026-11-03): the Pinstripe and Squire readmes moved; Booster, ROLLCALL and WELD docs were already current.
 - Changed: the bundled data is resynced again (late night of 2026-11-03): Sourdough (`composer playbook` script), HELMET, Preflight and Squire readmes moved; WELD docs were already current.
 - Changed: symfony/console and symfony/process accept ^8.0 as well as ^7.4, so apps on Pest 5 / PHPUnit 13 can install ADVISOR.
+- Changed: the docs builder and kit are resynced from Squire's unified builder (theme hook, callouts, code tabs, task lists, copy button fix).
 
 #### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
 
@@ -669,8 +671,11 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Fixed: front-page scroll reveals start hidden from first paint (plain CSS under `html.motion`, set in `<head>` before the body parses) instead of fading out after load, so unscrolled below-the-fold content sits at opacity 0 rather than being caught mid-fade; the motion class is only set where IntersectionObserver exists, so a page that hides content can always bring it back.
 - Fixed: docs code blocks that scroll sideways are keyboard focusable (`tabindex="0"`), satisfying the scrollable-region-focusable rule. Since the resync with Squire's unified docs builder, the kit's docs.js does this for every block that overflows, tabs included.
 - Fixed: the changelog docs page keeps its `# Changelog` heading, so the page has exactly one level-1 heading (a comment now sits above the heading in CHANGELOG.md, so the shared builder keeps it).
-- Changed: the docs builder and kit are resynced from Squire's unified builder (theme hook, callouts, code tabs, task lists, copy button fix).
 - Fixed: table-of-contents sub-links carry the base `docs-toc__item` class again, so they get the block display and padding that keep them at or above the 24px target size (and their hover color).
+
+#### Security[#](https://advisor.apps.wayne.edu/docs/changelog.html#security)
+
+- The front-page deploy layer moves to Symfony 7.4.23 (symfony/http-foundation and symfony/yaml advisories, including CVE-2026-118514).
 
 ### \[0.1.5\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-5-2026-11-03)
 
@@ -695,7 +700,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Docs: a one-line `claude mcp add` and a Docker `.mcp.json` for machines without PHP.
 - Added: composer content:drift and an optional CI job that fail when data/ no longer matches the sibling repos.
 
-#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
+#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-1)
 
 - Changed: the deploy layer's Squire kit is refreshed to 0.3.3 (release options can now live in ./.env.squire).
 - Changed: the deploy layer's Squire kit is refreshed to 0.3.4 (the local .env.squire file is now git-ignored).
@@ -707,7 +712,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Added: agent-ready site (prompt blocks, Markdown twins, llms.txt), from Squire's kit.
 - `playbook_lookup` tool: answers "what is the value of X?" for WSU shared values. An environment variable of the same name wins, then the private `waynestate/playbook` package (Playbook) supplies the rest; without it the tool says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are refused. `waynestate/playbook` is suggested, never required.
 
-#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-1)
+#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-2)
 
 - Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.
 - Changed: project names written as words except acronyms.
@@ -722,7 +727,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 - `owner_of` tool: answers "which project owns X?" from a new bundled `data/ownership.json` table (sourced from `generator/ownership.json`, verified by `content:verify`). Fuzzy match: every word of the topic must appear in a row's topic or role; a no-match answer lists every known topic.
 
-#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-2)
+#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-3)
 
 - `upgrade_path` moves from the `stack` group to a new `booster` group, so `ADVISOR_GROUPS=stack` offers reference tools only and never starts a program. `ADVISOR_GROUPS` now accepts `stack`, `proctor` and `booster`.
 - PHPStan includes Pinstripe's `raw.neon` preset (`waynestate/pinstripe` 0.1.0 as a dev dependency) instead of a hand copy of its settings; two docblocks were tightened to satisfy the preset's method-signature checks. Pint already used the `per` preset, so `pint.json` is unchanged.
@@ -1493,7 +1498,7 @@ The command is `php vendor/bin/advisor`. This works the same on Windows, macOS a
 
 ### Status[#](https://advisor.apps.wayne.edu/docs/#status)
 
-Current release 0.1.5. PHP ^8.3, license MIT, MCP SDK 0.9.0. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
+Current release 0.1.6. PHP ^8.3, license MIT, MCP SDK 0.9.0. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
 
 ### Related[#](https://advisor.apps.wayne.edu/docs/#related)
 
@@ -1992,9 +1997,13 @@ Source: https://advisor.apps.wayne.edu/docs/upgrading.html
 
 This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
 
-### Unreleased[#](https://advisor.apps.wayne.edu/docs/upgrading.html#unreleased)
+### \[0.1.6\] - 2026-11-06[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-6-2026-11-06)
 
-A docs site built from `docs/` is added and checked in `composer ci`. The bundled data is resynced several times with the stack main branches of 2026-11-03, picking up changes in SESAME, HELMET, PROCTOR, Pinstripe, Sourdough, Squire, WELD, Booster, Preflight, Drawbridge, Rollcall, and others. ADVISOR's own version reads 0.1.5.
+No breaking changes are marked for this release. Update with `composer update waynestate/advisor`; the MCP server reports version 0.1.6.
+
+- symfony/console and symfony/process accept ^8.0 as well as ^7.4, so apps on Pest 5 / PHPUnit 13 can install ADVISOR.
+- The bundled data is resynced with the stack's main branches through the evening of 2026-11-06, including Booster 1.9.0, WELD 0.1.3, the accessibility gates across the stack and the Sourdough raw PHP + Vue shape.
+- A docs site built from `docs/` is added and checked in `composer ci`, and the front page and docs pass an accessibility gate. The proof runner is dev tooling and is not part of the served product.
 
 ### \[0.1.5\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-5-2026-11-03)
 

@@ -38,7 +38,7 @@ The command is `php vendor/bin/advisor`. This works the same on Windows, macOS a
 
 ## Status[#](https://advisor.apps.wayne.edu/docs/#status)
 
-Current release 0.1.5. PHP ^8.3, license MIT, MCP SDK 0.9.0. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
+Current release 0.1.6. PHP ^8.3, license MIT, MCP SDK 0.9.0. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
 
 ## Related[#](https://advisor.apps.wayne.edu/docs/#related)
 

@@ -35,7 +35,7 @@ The command is `php vendor/bin/advisor`. This works the same on Windows, macOS a
 
 ## Status
 
-Current release 0.1.5. PHP ^8.3, license MIT, MCP SDK 0.9.0. Agent-ready index: [llms.txt](../llms.txt).
+Current release 0.1.6. PHP ^8.3, license MIT, MCP SDK 0.9.0. Agent-ready index: [llms.txt](../llms.txt).
 
 ## Related
 

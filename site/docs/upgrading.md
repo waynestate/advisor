@@ -10,9 +10,13 @@ generator: Squire agent-ready
 
 This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
 
-## Unreleased[#](https://advisor.apps.wayne.edu/docs/upgrading.html#unreleased)
+## \[0.1.6\] - 2026-11-06[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-6-2026-11-06)
 
-A docs site built from `docs/` is added and checked in `composer ci`. The bundled data is resynced several times with the stack main branches of 2026-11-03, picking up changes in SESAME, HELMET, PROCTOR, Pinstripe, Sourdough, Squire, WELD, Booster, Preflight, Drawbridge, Rollcall, and others. ADVISOR's own version reads 0.1.5.
+No breaking changes are marked for this release. Update with `composer update waynestate/advisor`; the MCP server reports version 0.1.6.
+
+- symfony/console and symfony/process accept ^8.0 as well as ^7.4, so apps on Pest 5 / PHPUnit 13 can install ADVISOR.
+- The bundled data is resynced with the stack's main branches through the evening of 2026-11-06, including Booster 1.9.0, WELD 0.1.3, the accessibility gates across the stack and the Sourdough raw PHP + Vue shape.
+- A docs site built from `docs/` is added and checked in `composer ci`, and the front page and docs pass an accessibility gate. The proof runner is dev tooling and is not part of the served product.
 
 ## \[0.1.5\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-5-2026-11-03)
 

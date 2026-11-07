@@ -4,9 +4,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
-### Security
-
-- The front-page deploy layer moves to Symfony 7.4.23 (symfony/http-foundation and symfony/yaml advisories, including CVE-2026-118514).
+## [0.1.6] - 2026-11-06
 
 ### Added
 
@@ -15,10 +13,13 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - data: resync 2026-11-06 morning (booster:fc8e42e drawbridge:265c57d helmet:bca4c25 sesame:67a7fae proctor:33c329a rollcall:a8aaac5 creed:15cc9cc sourdough:387773e weld:a88d703 squire:6a6a352 preflight:734728d pinstripe:7d71088 wayne-ui:7c237a2 advisor:31544c6): Booster 1.9.0, WELD 0.1.3, the CREED and ROLLCALL docs brand pass, proof pages for Preflight, Pinstripe, ROLLCALL and WELD.
 - data: resync 2026-11-06 afternoon (booster:bf1bd59 drawbridge:131ea28 helmet:8718bbf sesame:af9e764 proctor:5a8d5ca rollcall:6e9d4a8 creed:cbf2163 sourdough:7444c3c weld:6eb9c42 squire:8bbc9c7 preflight:f1c56ac pinstripe:e329dd7 wayne-ui:9e1e762 advisor:8d3d2f6): accessibility gates on SESAME, Booster, CREED, Preflight, PROCTOR and HELMET, and the Booster dogfood fixes for the front-end hops.
 - data: resync 2026-11-06 evening (booster:bf1bd59 drawbridge:d0fa5b4 helmet:8718bbf sesame:af9e764 proctor:5a8d5ca rollcall:6e9d4a8 creed:cbf2163 sourdough:173b14a weld:82ee1a6 squire:8bbc9c7 preflight:f1c56ac pinstripe:e329dd7 advisor:a7d58f2 wayne-ui:9e1e762): accessibility gates on WELD and DRAWBRIDGE, the Sourdough raw PHP + Vue shape.
-- Changed: resynced the bundled content (data/) with the stack as of 2026-11-05, including Booster 1.8.2 and 1.8.3, DRAWBRIDGE (session store, secret files, GitHub references removed), HELMET (H21 partly enforced, warn_broad_proxies), SESAME (CAS login bound to its browser), PROCTOR, ROLLCALL, CREED handbook chapters, Sourdough (--sail, --docker, Pest 4) and the WELD and SQUIRE guides; the Sourdough role now lists every shape that generates; the docs builder and kit follow SQUIRE 97744a4, which keeps the changelog page h1 itself.
 - Added: a proof run (scripts/proof/ProofRunner.php, bin/proof.php) that walks a corpus of app folders through the real `bin/advisor mcp` server over stdio and keeps one JSONL line per app (pass, flagged, tool-error or not-applicable); dev tooling, not part of the served product.
 - Added: an accessibility gate (scripts/a11y/check.mjs) that loads every HTML page under site/ in a real browser and fails on any axe-core WCAG violation, in light and dark themes at phone and desktop width, plus a reduced-motion pass; runs as the a11y job in GitLab CI.
 - Added: a docs site (site/docs/) built by the shared docs builder from docs/, checked in composer ci.
+
+### Changed
+
+- Changed: resynced the bundled content (data/) with the stack as of 2026-11-05, including Booster 1.8.2 and 1.8.3, DRAWBRIDGE (session store, secret files, GitHub references removed), HELMET (H21 partly enforced, warn_broad_proxies), SESAME (CAS login bound to its browser), PROCTOR, ROLLCALL, CREED handbook chapters, Sourdough (--sail, --docker, Pest 4) and the WELD and SQUIRE guides; the Sourdough role now lists every shape that generates; the docs builder and kit follow SQUIRE 97744a4, which keeps the changelog page h1 itself.
 - Changed: the docs pages wear the front page's look: the same sheet head and main menu (Docs marked current), Fraunces titles with a plotted maroon route, the legend's mono labels, commands on the dark code ground with the gold Copy tab, callouts drawn as map marks (note, tip, out of bounds), the green footer band, and a dark mode derived from the Directions band. Motion only without a reduced-motion preference. Source: `docs/_header.html` and `docs/theme/advisor.css` through the builder's `theme` key. The front page site owes a Quick Update.
 - Changed: the bundled data is resynced with the stack's main branches of 2026-11-03 (afternoon): SESAME S45 and the DRAWBRIDGE module floor (from branch heads awaiting main), HELMET H42 4xx pages, H43, H53 and H41 notes; SESAME S4, S41, S42 and S27; plus the Booster, Preflight, PROCTOR and Squire docs that moved.
 - Changed: the bundled data is resynced again (evening): PROCTOR composer-audit-off, not-audited, scoped overrides and the ignore-entries count; Pinstripe Node 22/24/26 matrix, the Laravel + Vue fixture and ADR-0001; plus the other projects docs that moved on main.
@@ -26,6 +27,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: the bundled data is resynced again (night of 2026-11-03): the Pinstripe and Squire readmes moved; Booster, ROLLCALL and WELD docs were already current.
 - Changed: the bundled data is resynced again (late night of 2026-11-03): Sourdough (`composer playbook` script), HELMET, Preflight and Squire readmes moved; WELD docs were already current.
 - Changed: symfony/console and symfony/process accept ^8.0 as well as ^7.4, so apps on Pest 5 / PHPUnit 13 can install ADVISOR.
+- Changed: the docs builder and kit are resynced from Squire's unified builder (theme hook, callouts, code tabs, task lists, copy button fix).
 
 ### Fixed
 
@@ -33,8 +35,12 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Fixed: front-page scroll reveals start hidden from first paint (plain CSS under `html.motion`, set in `<head>` before the body parses) instead of fading out after load, so unscrolled below-the-fold content sits at opacity 0 rather than being caught mid-fade; the motion class is only set where IntersectionObserver exists, so a page that hides content can always bring it back.
 - Fixed: docs code blocks that scroll sideways are keyboard focusable (`tabindex="0"`), satisfying the scrollable-region-focusable rule. Since the resync with Squire's unified docs builder, the kit's docs.js does this for every block that overflows, tabs included.
 - Fixed: the changelog docs page keeps its `# Changelog` heading, so the page has exactly one level-1 heading (a comment now sits above the heading in CHANGELOG.md, so the shared builder keeps it).
-- Changed: the docs builder and kit are resynced from Squire's unified builder (theme hook, callouts, code tabs, task lists, copy button fix).
 - Fixed: table-of-contents sub-links carry the base `docs-toc__item` class again, so they get the block display and padding that keep them at or above the 24px target size (and their hover color).
+
+### Security
+
+- The front-page deploy layer moves to Symfony 7.4.23 (symfony/http-foundation and symfony/yaml advisories, including CVE-2026-118514).
+
 ## [0.1.5] - 2026-11-03
 
 - Changed: the deploy layer requires HELMET ^0.3 and PROCTOR ^0.4 (locked at 0.3.0 and 0.4.0) and sets minimum-stability to stable, which clears PROCTOR 0.4's new minimum-stability warning. HELMET 0.3 reads an empty `HELMET_PROXIES=` as trust nobody; the front page sets only the `citadel` preset, so nothing changes for it. The front page site owes a Quick Update.
