@@ -26,7 +26,7 @@ Warning
 
 If a file does not match, the server refuses to start rather than serve it.
 
-Files are cleaned on the way in: line endings are normalized and invisible characters (the TAG block, zero-width and bidirectional controls) are stripped.
+Files are cleaned on the way in: line endings are normalized and invisible characters (the TAG block, zero-width and bidirectional controls) are stripped. Image boilerplate is trimmed from the project docs, on the way in and again when `read_project_docs` serves them: centred hero, badge and cast blocks, lone images whose target is relative or a GIF (linked or not), and rows of nothing but badges. Prose, tables and code blocks are left alone, and the bundled file itself is never rewritten at read time, so its manifest hash still holds.
 
 ## Hand-written guides[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#hand-written-guides)
 

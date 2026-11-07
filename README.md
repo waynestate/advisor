@@ -187,7 +187,7 @@ Nine tools, all read-only. Each one says where its answer came from:
 | `read_project_docs` | A project's README, best practices, or (WayneUI only) markup contract and 1.x to 2.x migration guide, paged. |
 | `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. |
 | `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
-| `owner_of` | Answers "which project owns X?" from the bundled ownership table, with a fuzzy topic match. |
+| `owner_of` | Answers "which project owns X?" from the bundled ownership table, built from the stack's one-owner-per-rule decision first: the owner, its role, the projects around it, and the decision each answer comes from. Pass a topic or the whole question ("who owns composer audit"). |
 | `playbook_lookup` | A shared value by key, or every key: an environment variable of the same name wins, then Playbook; secret-looking keys are refused. |
 | `run_proctor_check` | Runs the app's own `vendor/bin/proctor check` against the bundled policy and returns the findings. |
 | `upgrade_path` | Plans the app's PHP and/or Laravel upgrade, one supported hop at a time, via Booster's read-only `plan`. |
@@ -281,6 +281,8 @@ are generated from the sibling stack repositories by `content:generate` and veri
 serve it. Files are cleaned on the way in: line endings are normalized and invisible characters (the TAG block,
 zero-width and bidirectional controls) are stripped. Each project entry also carries its version when the project
 publishes one (composer.json, else package.json, else the newest CHANGELOG heading).
+
+Image boilerplate is trimmed from the project docs, on the way in and again when `read_project_docs` serves them: centred hero, badge and cast blocks, lone images whose target is relative or a GIF (linked or not), and rows of nothing but badges. Prose, tables and code blocks are left alone, and the bundled file itself is never rewritten at read time, so its manifest hash still holds.
 
 Beside the generated docs, hand-written guides are kept by hand in `generator/guides/` (one Markdown file per slug),
 the same way the ownership table is kept. Each is bundled into `data/guides/` and served as `advisor://guide/<slug>`;
