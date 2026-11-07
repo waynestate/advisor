@@ -127,6 +127,58 @@ final class ContentBundleTest extends TestCase
         $this->assertNull($bundle->guide('no-such-guide'));
     }
 
+    /**
+     * Rewrites ownership.json in a copy of the bundle and fixes its manifest hash,
+     * so only the shape check can object.
+     *
+     * @param callable(array<string, mixed>): array<string, mixed> $edit
+     */
+    private function copyWithOwnership(callable $edit): string
+    {
+        $dir = $this->copyOfData();
+        $table = json_decode((string) file_get_contents($dir . '/ownership.json'), true, 512, JSON_THROW_ON_ERROR);
+        $text = (string) json_encode($edit($table), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";
+        file_put_contents($dir . '/ownership.json', $text);
+        $manifest = json_decode((string) file_get_contents($dir . '/manifest.json'), true, 512, JSON_THROW_ON_ERROR);
+        $manifest['files']['ownership.json']['sha256'] = hash('sha256', $text);
+        file_put_contents($dir . '/manifest.json', json_encode($manifest));
+
+        return $dir;
+    }
+
+    public function testAnOwnershipRowWithoutItsDecisionIsRefused(): void
+    {
+        $dir = $this->copyWithOwnership(static function (array $table): array {
+            unset($table['topics'][0]['decision']);
+
+            return $table;
+        });
+
+        $this->assertStringContainsString('ownership.json topic 0 needs a non-empty decision.', implode("\n", (new ContentBundle($dir))->problems()));
+    }
+
+    public function testAnAliasThatNamesAnotherRowIsRefused(): void
+    {
+        $dir = $this->copyWithOwnership(static function (array $table): array {
+            $table['topics'][1]['aliases'][] = (string) $table['topics'][0]['topic'];
+
+            return $table;
+        });
+
+        $this->assertStringContainsString('ownership.json repeats the topic or alias', implode("\n", (new ContentBundle($dir))->problems()));
+    }
+
+    public function testAliasesMustBeAListOfNames(): void
+    {
+        $dir = $this->copyWithOwnership(static function (array $table): array {
+            $table['topics'][0]['aliases'] = ['', 'fine'];
+
+            return $table;
+        });
+
+        $this->assertStringContainsString('ownership.json topic 0 aliases[0] must be a non-empty string.', implode("\n", (new ContentBundle($dir))->problems()));
+    }
+
     public function testTheOracleGuideCarriesNoDashesOrPasswordValues(): void
     {
         $text = (new ContentBundle(Advisor::dataDir()))->guide('connect-to-oracle-on-citadel');

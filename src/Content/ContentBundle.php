@@ -110,9 +110,10 @@ final class ContentBundle
     }
 
     /**
-     * Shape check for data/ownership.json: every row needs a topic, an owner
-     * and a role; the owner (and every "also" project) must be a known
-     * project; topics must not repeat.
+     * Shape check for data/ownership.json: every row needs a topic, an owner,
+     * a role and the decision it comes from; the owner (and every "also"
+     * project) must be a known project; aliases, when present, are a list of
+     * non-empty names; no topic or alias may name two rows.
      *
      * @return list<string> one line per problem; empty means the table is sound
      */
@@ -142,7 +143,7 @@ final class ContentBundle
                 $problems[] = "{$label} is not an object.";
                 continue;
             }
-            foreach (['topic', 'owner', 'role'] as $key) {
+            foreach (['topic', 'owner', 'role', 'decision'] as $key) {
                 if (!is_string($row[$key] ?? null) || trim((string) $row[$key]) === '') {
                     $problems[] = "{$label} needs a non-empty {$key}.";
                 }
@@ -163,10 +164,26 @@ final class ContentBundle
                     }
                 }
             }
+            $names = [];
             if (is_string($row['topic'] ?? null) && trim((string) $row['topic']) !== '') {
-                $key = strtolower(trim((string) $row['topic']));
+                $names[] = (string) $row['topic'];
+            }
+            $aliases = $row['aliases'] ?? [];
+            if (!is_array($aliases) || !array_is_list($aliases)) {
+                $problems[] = "{$label} aliases must be a list.";
+            } else {
+                foreach ($aliases as $j => $alias) {
+                    if (!is_string($alias) || trim($alias) === '') {
+                        $problems[] = "{$label} aliases[{$j}] must be a non-empty string.";
+                    } else {
+                        $names[] = $alias;
+                    }
+                }
+            }
+            foreach ($names as $name) {
+                $key = strtolower(trim($name));
                 if (isset($seen[$key])) {
-                    $problems[] = "ownership.json repeats the topic '{$row['topic']}'.";
+                    $problems[] = "ownership.json repeats the topic or alias '{$name}'.";
                 }
                 $seen[$key] = true;
             }

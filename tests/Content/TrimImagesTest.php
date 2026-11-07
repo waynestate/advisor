@@ -43,7 +43,7 @@ final class TrimImagesTest extends TestCase
             ['id' => 'wayne-ui', 'name' => 'WayneUI', 'kind' => 'ui', 'tagline' => 'interface', 'role' => 'UI.', 'next_step' => 'Use it.', 'contract' => 'contract/markup-contract.json'],
         ]]));
         $this->put($base . '/ownership.json', (string) json_encode(['topics' => [
-            ['topic' => 'checks', 'owner' => 'PROCTOR', 'role' => 'Runs the checks.', 'also' => []],
+            ['topic' => 'checks', 'owner' => 'PROCTOR', 'role' => 'Runs the checks.', 'also' => [], 'decision' => 'A test decision'],
         ]]));
     }
 

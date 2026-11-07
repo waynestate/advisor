@@ -51,7 +51,7 @@ final class GeneratorTest extends TestCase
         ]]));
         // The ownership table lives beside the project seed, like in the real repository.
         $this->put($base . '/ownership.json', (string) json_encode(['topics' => [
-            ['topic' => 'checks', 'owner' => 'PROCTOR', 'role' => 'Runs the checks.', 'also' => []],
+            ['topic' => 'checks', 'owner' => 'PROCTOR', 'role' => 'Runs the checks.', 'also' => [], 'decision' => 'A test decision'],
         ]]));
         // Hand-written guides live beside the project seed too, one Markdown file per slug.
         $this->put($base . '/guides/connect-to-oracle-on-citadel.md', "# Connect to Oracle on Citadel\n\nSet `ORACLE_USERNAME`.\n");

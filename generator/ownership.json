@@ -1,60 +1,246 @@
 {
-    "_comment": "Who owns what in the stack. One row per topic: the project that owns it, what it does with it, and the projects that help around it. Hand-written; content:verify checks the shape and that every named project is known.",
+    "_comment": "Who owns what in the stack. One row per topic: the project that owns it, what it does with it, the projects that help around it, and the decision it comes from. The stack's one-owner-per-rule decision comes first, row for row; the other rows follow the decisions they name, or the project's role in the parts list. Decisions are named by title and date, never by number: the decision records are not public. Hand-written; content:verify checks the shape and that every named project is known.",
     "topics": [
         {
-            "topic": "composer audit",
-            "owner": "PROCTOR",
-            "role": "runs it (the composer-audit check)",
-            "also": [
-                {
-                    "project": "Preflight",
-                    "role": "CI job that calls PROCTOR"
-                },
-                {
-                    "project": "CREED",
-                    "role": "states the rule"
-                }
-            ]
-        },
-        {
-            "topic": "supported PHP, Laravel and Node versions",
+            "topic": "version policy",
+            "aliases": [
+                "supported PHP, Laravel and Node versions",
+                "policy.json",
+                "policy reader",
+                "end of life dates"
+            ],
             "owner": "CREED",
-            "role": "states the policy (policy.json support dates)",
+            "role": "publishes policy.json and the one reader of it; no other code decides a version's state",
             "also": [
                 {
                     "project": "PROCTOR",
                     "role": "checks an app against it"
                 },
                 {
+                    "project": "Booster",
+                    "role": "plans upgrade hops from it"
+                },
+                {
+                    "project": "Rollcall",
+                    "role": "shows the fleet's versions against it"
+                },
+                {
                     "project": "ADVISOR",
                     "role": "answers from it via policy_lookup"
                 }
-            ]
+            ],
+            "decision": "One owner per rule, copies are generated (stack decision, 2026-10-28)"
         },
         {
-            "topic": "security headers and CSP",
-            "owner": "HELMET",
-            "role": "sets the security headers and the CSP on the response",
+            "topic": "composer audit",
+            "aliases": [
+                "abandoned packages"
+            ],
+            "owner": "PROCTOR",
+            "role": "runs it (the composer-audit check)",
             "also": [
                 {
+                    "project": "Preflight",
+                    "role": "the composer-audit CI component that runs it before merge"
+                },
+                {
+                    "project": "Squire",
+                    "role": "its doctor points to PROCTOR and checks that the release script runs it"
+                },
+                {
                     "project": "CREED",
-                    "role": "states the rule (runtime-and-headers chapter)"
+                    "role": "states the rule (dependencies chapter)"
                 }
-            ]
+            ],
+            "decision": "One owner per rule, copies are generated (stack decision, 2026-10-28)"
+        },
+        {
+            "topic": "lock file",
+            "aliases": [
+                "composer.lock"
+            ],
+            "owner": "PROCTOR",
+            "role": "checks that composer.lock is committed and in step with composer.json (the lock-committed check)",
+            "also": [
+                {
+                    "project": "Squire",
+                    "role": "its doctor points to PROCTOR"
+                }
+            ],
+            "decision": "One owner per rule, copies are generated (stack decision, 2026-10-28)"
+        },
+        {
+            "topic": "MySQL 5.6",
+            "aliases": [
+                "mysql56"
+            ],
+            "owner": "PROCTOR",
+            "role": "warns when migrations or app code use features the shared MySQL 5.6 server rejects (the mysql56 check)",
+            "also": [
+                {
+                    "project": "Squire",
+                    "role": "its doctor points to PROCTOR"
+                }
+            ],
+            "decision": "One owner per rule, copies are generated (stack decision, 2026-10-28)"
+        },
+        {
+            "topic": "/up health endpoint",
+            "aliases": [
+                "/up",
+                "health check",
+                "helmet_up"
+            ],
+            "owner": "HELMET",
+            "role": "answers /up (helmet_up(), called by helmet_boot() and by the thin raw up.php)",
+            "also": [
+                {
+                    "project": "Squire",
+                    "role": "its health check and release script call HELMET's /up"
+                }
+            ],
+            "decision": "One owner per rule, copies are generated (stack decision, 2026-10-28)"
+        },
+        {
+            "topic": "deploy files",
+            "aliases": [
+                "deployments folder",
+                "health.php",
+                "parity kit",
+                "release scripts",
+                "Citadel deploy kit"
+            ],
+            "owner": "Squire",
+            "role": "the deploy kit: deployments/, health.php, the parity kit, the raw up.php and the release scripts, recorded in .squire.json and updated by squire update",
+            "also": [
+                {
+                    "project": "Sourdough",
+                    "role": "composes Squire's templates and never writes a path .squire.json lists"
+                }
+            ],
+            "decision": "One owner per rule, copies are generated (stack decision, 2026-10-28)"
+        },
+        {
+            "topic": "CI pipeline contents",
+            "aliases": [
+                ".gitlab-ci.yml",
+                "CI templates",
+                "CI components"
+            ],
+            "owner": "Preflight",
+            "role": "the CI components and templates for GitLab and GitHub (tests, PROCTOR, audit and accessibility)",
+            "also": [
+                {
+                    "project": "Sourdough",
+                    "role": "writes an app's .gitlab-ci.yml as an include of the components, nothing else"
+                },
+                {
+                    "project": "PROCTOR",
+                    "role": "the check the proctor component runs"
+                }
+            ],
+            "decision": "One owner per rule, copies are generated (stack decision, 2026-10-28)"
+        },
+        {
+            "topic": "parts list",
+            "aliases": [
+                "stack parts",
+                "projects.json"
+            ],
+            "owner": "ADVISOR",
+            "role": "keeps the parts list in projects.json; every stack README carries a generated block, checked with stack-parts --check",
+            "also": [],
+            "decision": "One owner per rule, copies are generated (stack decision, 2026-10-28)"
+        },
+        {
+            "topic": "app wiring",
+            "aliases": [
+                "app generator",
+                "stack wiring",
+                "adopt an existing app",
+                "feed stack changes"
+            ],
+            "owner": "Sourdough",
+            "role": "the only tool that writes the stack's wiring into an app's repository (new, adopt), and it keeps that wiring current (feed)",
+            "also": [
+                {
+                    "project": "PROCTOR",
+                    "role": "checks and reports, never writes"
+                },
+                {
+                    "project": "Squire",
+                    "role": "the Citadel images, release scripts and deploy"
+                },
+                {
+                    "project": "ADVISOR",
+                    "role": "may call Sourdough's commands as tools"
+                }
+            ],
+            "decision": "Sourdough owns an app's wiring to the stack, for the app's whole life (stack decision, 2026-10-27)"
+        },
+        {
+            "topic": "upgrades",
+            "aliases": [
+                "PHP upgrade",
+                "Laravel upgrade"
+            ],
+            "owner": "Booster",
+            "role": "plans and runs PHP and Laravel upgrades, one supported hop at a time (it rewrites app code; Sourdough keeps the wiring)",
+            "also": [
+                {
+                    "project": "ADVISOR",
+                    "role": "shows the plan via upgrade_path"
+                }
+            ],
+            "decision": "Sourdough owns an app's wiring to the stack, for the app's whole life (stack decision, 2026-10-27)"
+        },
+        {
+            "topic": "fleet census",
+            "aliases": [
+                "what runs where"
+            ],
+            "owner": "Rollcall",
+            "role": "the fleet census: what runs where, and on what PHP",
+            "also": [],
+            "decision": "Sourdough owns an app's wiring to the stack, for the app's whole life (stack decision, 2026-10-27)"
+        },
+        {
+            "topic": "starter app",
+            "aliases": [
+                "reference app",
+                "integration test"
+            ],
+            "owner": "WELD",
+            "role": "Sourdough's Laravel + Inertia/Vue shape, prebuilt: the reference app the stack is named for, and the stack's integration test",
+            "also": [
+                {
+                    "project": "Sourdough",
+                    "role": "generates it, and its feed is proved on it"
+                }
+            ],
+            "decision": "One owner per rule, copies are generated (stack decision, 2026-10-28)"
         },
         {
             "topic": "sign-in",
+            "aliases": [
+                "authentication",
+                "CAS"
+            ],
             "owner": "SESAME",
-            "role": "sign-in inside the app (CAS, gateway assertion, OpenID Connect and OAuth2 drivers)",
+            "role": "sign-in inside the app (CAS, gateway assertion, OpenID Connect and OAuth2 drivers); the app always owns its session",
             "also": [
                 {
                     "project": "Drawbridge",
                     "role": "the gateway in front of the app"
                 }
-            ]
+            ],
+            "decision": "One protocol-neutral auth library with app-native sessions; gateway identity must be signed (stack decision, 2026-10-27)"
         },
         {
             "topic": "OpenID Connect gateway",
+            "aliases": [
+                "Entra ID"
+            ],
             "owner": "Drawbridge",
             "role": "the sign-in gateway (Microsoft Entra ID over OpenID Connect, signed assertions only)",
             "also": [
@@ -62,89 +248,81 @@
                     "project": "SESAME",
                     "role": "verifies the signed assertion (gateway driver)"
                 }
-            ]
+            ],
+            "decision": "One protocol-neutral auth library with app-native sessions; gateway identity must be signed (stack decision, 2026-10-28 update)"
         },
         {
             "topic": "coding standard",
+            "aliases": [
+                "Pint preset",
+                "PHPStan level"
+            ],
             "owner": "Pinstripe",
             "role": "the coding standard: shared Pint and PHPStan presets, plus ESLint and Prettier configuration",
-            "also": []
+            "also": [],
+            "decision": "Pinstripe's standards: two Pint presets, PHPStan level 8 for new code, TypeScript starters (stack decision, 2026-10-27)"
         },
         {
-            "topic": "CI templates",
-            "owner": "Preflight",
-            "role": "the CI templates for GitLab and GitHub (tests, PROCTOR, audit and accessibility)",
+            "topic": "security headers and CSP",
+            "aliases": [
+                "content security policy"
+            ],
+            "owner": "HELMET",
+            "role": "sets the security headers and the CSP on the response",
             "also": [
                 {
-                    "project": "PROCTOR",
-                    "role": "the check the CI job runs"
+                    "project": "CREED",
+                    "role": "states the rule (runtime-and-headers chapter)"
                 }
-            ]
-        },
-        {
-            "topic": "Citadel deploy kit and release scripts",
-            "owner": "Squire",
-            "role": "the deploy kit and release scripts, with the Citadel target",
-            "also": []
-        },
-        {
-            "topic": "upgrades",
-            "owner": "Booster",
-            "role": "plans and runs PHP and Laravel upgrades, one supported hop at a time",
-            "also": [
-                {
-                    "project": "ADVISOR",
-                    "role": "shows the plan via upgrade_path"
-                }
-            ]
-        },
-        {
-            "topic": "fleet census",
-            "owner": "Rollcall",
-            "role": "the fleet census: what runs where, and on what PHP",
-            "also": []
-        },
-        {
-            "topic": "starter app",
-            "owner": "WELD",
-            "role": "the reference app the stack is named for",
-            "also": []
-        },
-        {
-            "topic": "app generator",
-            "owner": "Sourdough",
-            "role": "generates a new app from a starter, already wired to the stack",
-            "also": []
+            ],
+            "decision": "HELMET's role in the parts list"
         },
         {
             "topic": "written standards",
+            "aliases": [
+                "handbook"
+            ],
             "owner": "CREED",
             "role": "the handbook: the written standards for the stack",
-            "also": []
+            "also": [],
+            "decision": "CREED's role in the parts list"
         },
         {
             "topic": "people lookup",
+            "aliases": [],
             "owner": "Rolodex",
             "role": "people lookup",
-            "also": []
+            "also": [],
+            "decision": "Rolodex's role in the parts list (paused)"
         },
         {
             "topic": "Banner read access",
+            "aliases": [],
             "owner": "TELLER",
             "role": "read-only Banner and Oracle data access",
-            "also": []
+            "also": [],
+            "decision": "TELLER's role in the parts list (paused)"
         },
         {
             "topic": "interface components",
+            "aliases": [
+                "design system",
+                "brand tokens"
+            ],
             "owner": "WayneUI",
             "role": "the interface layer: brand tokens and components on four consumer paths",
-            "also": []
+            "also": [],
+            "decision": "WayneUI's role in the parts list (project 0 of the stack)"
         },
         {
             "topic": "the MCP server itself",
+            "aliases": [
+                "MCP server"
+            ],
             "owner": "ADVISOR",
             "role": "the MCP server: this project",
-            "also": []
+            "also": [],
+            "decision": "ADVISOR's role in the parts list"
         }
     ]
 }

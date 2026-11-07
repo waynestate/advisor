@@ -179,7 +179,7 @@
             "source": "creed/handbook/versions.md"
         },
         "ownership.json": {
-            "sha256": "1dd8b2fe98f8692d0a99a2c89e489923e2702a2c2eb87cd40254bbcc2b711840",
+            "sha256": "a5bd8d968aac8a127df2a03033326df1913dacf8a15609a738414bbcf62fd8a1",
             "source": "generator/ownership.json"
         },
         "policy.json": {

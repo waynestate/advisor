@@ -172,6 +172,64 @@ final class ToolsTest extends TestCase
         $this->assertNotSame('', $data['source']);
     }
 
+    public function testOwnerOfNamesTheDecisionBehindTheAnswer(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'owner_of', ['topic' => 'composer audit']));
+
+        $this->assertSame('composer audit', $data['matches'][0]['topic']);
+        $this->assertStringStartsWith('One owner per rule, copies are generated', $data['matches'][0]['decision']);
+        foreach ($data['matches'] as $match) {
+            $this->assertNotSame('', $match['decision'], $match['topic'] . ' has no decision');
+        }
+    }
+
+    public function testOwnerOfIgnoresTheQuestionWords(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'owner_of', ['topic' => 'Who owns composer audit?']));
+
+        $this->assertSame('composer audit', $data['matches'][0]['topic']);
+        $this->assertSame('PROCTOR', $data['matches'][0]['owner']);
+    }
+
+    /**
+     * The one-owner-per-rule table, row for row: each rule answers with its owner first.
+     *
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public static function oneOwnerPerRule(): array
+    {
+        return [
+            'version policy' => ['who owns the version policy', 'CREED'],
+            'policy.json' => ['policy.json', 'CREED'],
+            'lock file' => ['composer.lock', 'PROCTOR'],
+            'composer audit' => ['composer audit', 'PROCTOR'],
+            'MySQL 5.6' => ['MySQL 5.6', 'PROCTOR'],
+            '/up' => ['who owns /up?', 'HELMET'],
+            'deploy files' => ['deploy files', 'Squire'],
+            'release scripts' => ['release scripts', 'Squire'],
+            '.gitlab-ci.yml' => ['.gitlab-ci.yml', 'Preflight'],
+            'parts list' => ['the parts list', 'ADVISOR'],
+            'app wiring' => ['who owns app wiring', 'Sourdough'],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('oneOwnerPerRule')]
+    public function testOwnerOfAnswersEachRuleWithItsOwnerFirst(string $question, string $owner): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'owner_of', ['topic' => $question]));
+
+        $this->assertNotEmpty($data['matches'], $question);
+        $this->assertSame($owner, $data['matches'][0]['owner'], $question);
+    }
+
+    public function testOwnerOfMatchesWholeWordStartsOnly(): void
+    {
+        // "it" is a question word and "dit" starts no word, so neither reaches "audit".
+        $data = $this->data($this->call(Boot::core(), 'owner_of', ['topic' => 'dit']));
+
+        $this->assertSame([], $data['matches']);
+    }
+
     public function testOwnerOfMatchesCaseInsensitively(): void
     {
         $data = $this->data($this->call(Boot::core(), 'owner_of', ['topic' => 'Composer AUDIT']));
