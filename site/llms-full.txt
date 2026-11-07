@@ -642,6 +642,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 #### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
 
+- The Proof page records its last run.
 - data: resync 2026-11-06 night (booster:8c57a15 drawbridge:a60990a helmet:8a79b46 sesame:2505033 proctor:038d632 rollcall:aed8dd9 creed:0f6ab20 sourdough:b2644b3 weld:baf8e60 squire:88fd2ec preflight:a5ed45a pinstripe:eb03078 advisor:c3964c5 wayne-ui:9e1e762): Booster, CREED handbook and best practices, PROCTOR, Preflight and SESAME docs, the abandoned_packages policy, and the released versions of Booster, PROCTOR, Sourdough and others.
 
 ### \[0.1.6\] - 2026-11-06[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-6-2026-11-06)
@@ -1847,6 +1848,22 @@ Source: https://advisor.apps.wayne.edu/docs/reference/proof.html
 This page walks through `composer ci`, the one command that proves the build, and what each step of it proves.
 
 The same command runs on GitLab and GitHub.
+
+### Last run[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#last-run)
+
+| Check | Date | Commit | Result | Duration |
+| --- | --- | --- | --- | --- |
+| `composer validate --strict` | 2026-11-07 | aca9f6e | pass: `./composer.json is valid` | 1 s |
+| `content:verify` | 2026-11-07 | aca9f6e | pass: `data/ is sound.` | 5 s |
+| `stack-parts --check=README.md` | 2026-11-07 | aca9f6e | pass: the stack-parts block is up to date in 1 file | 1 s |
+| `phpunit` | 2026-11-07 | aca9f6e | pass: 249 tests, 1415 assertions, 1 skipped | 2:41 |
+| `pint --test` | 2026-11-07 | aca9f6e | pass: 109 files | 6 s |
+| `site:agent-ready-check` | 2026-11-07 | aca9f6e | pass: 27 file(s) current | 1 s |
+| `phpstan analyse` | 2026-11-07 | aca9f6e | pass: no errors | 57 s |
+| `composer audit` | 2026-11-07 | aca9f6e | pass: no security advisories | 1 s |
+| `docs:check` | 2026-11-07 | aca9f6e | pass: 22 page(s) current | 6 s |
+
+To refresh this table, re-run `composer ci` (or each command above) on the commit you want to record and rewrite the date, commit, results and durations. Every check this page names was run in Docker on 2026-11-07; none was skipped.
 
 ### The command[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#the-command)
 

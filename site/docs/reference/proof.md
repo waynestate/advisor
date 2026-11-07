@@ -12,6 +12,22 @@ This page walks through `composer ci`, the one command that proves the build, an
 
 The same command runs on GitLab and GitHub.
 
+## Last run[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#last-run)
+
+| Check | Date | Commit | Result | Duration |
+| --- | --- | --- | --- | --- |
+| `composer validate --strict` | 2026-11-07 | aca9f6e | pass: `./composer.json is valid` | 1 s |
+| `content:verify` | 2026-11-07 | aca9f6e | pass: `data/ is sound.` | 5 s |
+| `stack-parts --check=README.md` | 2026-11-07 | aca9f6e | pass: the stack-parts block is up to date in 1 file | 1 s |
+| `phpunit` | 2026-11-07 | aca9f6e | pass: 249 tests, 1415 assertions, 1 skipped | 2:41 |
+| `pint --test` | 2026-11-07 | aca9f6e | pass: 109 files | 6 s |
+| `site:agent-ready-check` | 2026-11-07 | aca9f6e | pass: 27 file(s) current | 1 s |
+| `phpstan analyse` | 2026-11-07 | aca9f6e | pass: no errors | 57 s |
+| `composer audit` | 2026-11-07 | aca9f6e | pass: no security advisories | 1 s |
+| `docs:check` | 2026-11-07 | aca9f6e | pass: 22 page(s) current | 6 s |
+
+To refresh this table, re-run `composer ci` (or each command above) on the commit you want to record and rewrite the date, commit, results and durations. Every check this page names was run in Docker on 2026-11-07; none was skipped.
+
 ## The command[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#the-command)
 
 ```

@@ -42,6 +42,84 @@
       <article class="docs-article"><h1 id="proof">Proof<a class="docs-heading-link" aria-label="Link to this section" href="#proof">#</a></h1>
 <p>This page walks through <code>composer ci</code>, the one command that proves the build, and what each step of it proves.</p>
 <p>The same command runs on GitLab and GitHub.</p>
+<h2 id="last-run">Last run<a class="docs-heading-link" aria-label="Link to this section" href="#last-run">#</a></h2>
+<div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Date</th>
+<th>Commit</th>
+<th>Result</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>composer validate --strict</code></td>
+<td>2026-11-07</td>
+<td>aca9f6e</td>
+<td>pass: <code>./composer.json is valid</code></td>
+<td>1 s</td>
+</tr>
+<tr>
+<td><code>content:verify</code></td>
+<td>2026-11-07</td>
+<td>aca9f6e</td>
+<td>pass: <code>data/ is sound.</code></td>
+<td>5 s</td>
+</tr>
+<tr>
+<td><code>stack-parts --check=README.md</code></td>
+<td>2026-11-07</td>
+<td>aca9f6e</td>
+<td>pass: the stack-parts block is up to date in 1 file</td>
+<td>1 s</td>
+</tr>
+<tr>
+<td><code>phpunit</code></td>
+<td>2026-11-07</td>
+<td>aca9f6e</td>
+<td>pass: 249 tests, 1415 assertions, 1 skipped</td>
+<td>2:41</td>
+</tr>
+<tr>
+<td><code>pint --test</code></td>
+<td>2026-11-07</td>
+<td>aca9f6e</td>
+<td>pass: 109 files</td>
+<td>6 s</td>
+</tr>
+<tr>
+<td><code>site:agent-ready-check</code></td>
+<td>2026-11-07</td>
+<td>aca9f6e</td>
+<td>pass: 27 file(s) current</td>
+<td>1 s</td>
+</tr>
+<tr>
+<td><code>phpstan analyse</code></td>
+<td>2026-11-07</td>
+<td>aca9f6e</td>
+<td>pass: no errors</td>
+<td>57 s</td>
+</tr>
+<tr>
+<td><code>composer audit</code></td>
+<td>2026-11-07</td>
+<td>aca9f6e</td>
+<td>pass: no security advisories</td>
+<td>1 s</td>
+</tr>
+<tr>
+<td><code>docs:check</code></td>
+<td>2026-11-07</td>
+<td>aca9f6e</td>
+<td>pass: 22 page(s) current</td>
+<td>6 s</td>
+</tr>
+</tbody>
+</table></div>
+<p>To refresh this table, re-run <code>composer ci</code> (or each command above) on the commit you want to record and rewrite the date, commit, results and durations. Every check this page names was run in Docker on 2026-11-07; none was skipped.</p>
 <h2 id="the-command">The command<a class="docs-heading-link" aria-label="Link to this section" href="#the-command">#</a></h2>
 <pre tabindex="0"><code>composer ci
 </code></pre>
@@ -78,7 +156,7 @@
     </main>
     <nav class="docs-pager" aria-label="Pages"><a class="docs-pager__link" href="../../docs/reference/best-practices.html"><span class="docs-pager__dir">Previous</span><span class="docs-pager__title">Best practices</span></a><a class="docs-pager__link docs-pager__link--next" href="../../docs/deploying/releasing.html"><span class="docs-pager__dir">Next</span><span class="docs-pager__title">Releasing</span></a></nav>
   </div>
-  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#the-command">The command</a></li><li class="docs-toc__item"><a href="#composer-validate-strict">composer validate --strict</a></li><li class="docs-toc__item"><a href="#content-verify">content:verify</a></li><li class="docs-toc__item"><a href="#stack-parts-check-readme-md">stack-parts --check=README.md</a></li><li class="docs-toc__item"><a href="#phpunit">PHPUnit</a></li><li class="docs-toc__item"><a href="#pint">Pint</a></li><li class="docs-toc__item"><a href="#site-agent-ready-check">site:agent-ready-check</a></li><li class="docs-toc__item"><a href="#phpstan">PHPStan</a></li><li class="docs-toc__item"><a href="#composer-audit">composer audit</a></li><li class="docs-toc__item"><a href="#docs-check">docs:check</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
+  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#last-run">Last run</a></li><li class="docs-toc__item"><a href="#the-command">The command</a></li><li class="docs-toc__item"><a href="#composer-validate-strict">composer validate --strict</a></li><li class="docs-toc__item"><a href="#content-verify">content:verify</a></li><li class="docs-toc__item"><a href="#stack-parts-check-readme-md">stack-parts --check=README.md</a></li><li class="docs-toc__item"><a href="#phpunit">PHPUnit</a></li><li class="docs-toc__item"><a href="#pint">Pint</a></li><li class="docs-toc__item"><a href="#site-agent-ready-check">site:agent-ready-check</a></li><li class="docs-toc__item"><a href="#phpstan">PHPStan</a></li><li class="docs-toc__item"><a href="#composer-audit">composer audit</a></li><li class="docs-toc__item"><a href="#docs-check">docs:check</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
 </div>
 <footer class="docs-footer">
   <span>Documents ADVISOR <span data-docs-version>0.1.6</span></span>
