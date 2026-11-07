@@ -438,8 +438,14 @@ final class ContentBundle
             return null;
         }
         $path = $this->docPath($project, $doc, $extension);
+        if (!is_file($path)) {
+            return null;
+        }
+        $text = (string) file_get_contents($path);
 
-        return is_file($path) ? (string) file_get_contents($path) : null;
+        // Trimmed again on the way out, so a bundle generated before a trim rule
+        // existed is still served without its image boilerplate.
+        return $extension === 'md' ? ImageTrim::trim($text) : $text;
     }
 
     public function docRelativePath(string $project, string $doc): string
