@@ -7,9 +7,9 @@ Status: draft, checked against sources on 2026-10-27, with a second research pas
 ## What this covers
 
 Preflight is a set of GitLab CI/CD components that every stack project and WSU app includes with
-`include: component:`. Today it has twelve: `php-test` (PHP versions through `parallel:matrix`), `composer-audit`,
+`include: component:`. Today it has thirteen: `php-test` (PHP versions through `parallel:matrix`), `composer-audit`,
 `proctor`, `sbom`, `pint`, `phpstan`, `eslint`, `secret-detection`, `a11y` (the accessibility suite, 6.5),
-`portability`, `package-publish` and `renovate`. A contract suite comes later.
+`portability`, `package-publish`, `renovate` and `squire-kit` (a deploy kit still matches its Squire release). A contract suite comes later.
 
 This guide is for two groups:
 
@@ -122,8 +122,9 @@ Why: it decides where Preflight and the apps that use it must live.
 
 Sources: [GitLab: components, cross-instance access](https://docs.gitlab.com/ci/components/).
 
-**How the stack holds it: Documented.** The README has a "Same instance only" section. Until git.wayne.edu has an
-instance runner, Preflight and each app must be on or mirrored to the GitLab instance that has a runner.
+**How the stack holds it: Documented.** The README has a "Same instance only" section. git.wayne.edu now has an
+instance runner, and the stack's CI runs on it. Every product in the stack still strongly recommends a
+git.wayne.edu instance runner, so that capacity stays there.
 
 ### 1.6 Assume a tag can move, and give consumers the SHA
 Publish the commit SHA next to every release tag in the release notes. Tell apps to pin the SHA and use the tag only as a
@@ -188,7 +189,7 @@ the run.
 Sources: [GitLab: CI/CD inputs](https://docs.gitlab.com/ci/inputs/);
 [GitLab: component examples](https://docs.gitlab.com/ci/components/examples/).
 
-**How the stack holds it: Enforced.** All twelve templates use `spec:inputs` with types, descriptions and defaults.
+**How the stack holds it: Enforced.** All thirteen templates use `spec:inputs` with types, descriptions and defaults.
 GitLab rejects a wrong type or an unknown input at pipeline creation. The first pipeline, back when Preflight had
 three components, passed all six jobs with the array input.
 
@@ -232,7 +233,7 @@ Why: global keys leak into the consuming pipeline.
 
 Sources: [GitLab: component examples](https://docs.gitlab.com/ci/components/examples/).
 
-**How the stack holds it: Enforced.** All twelve templates follow it. `tests/check-contract.sh` fails on any top-level
+**How the stack holds it: Enforced.** All thirteen templates follow it. `tests/check-contract.sh` fails on any top-level
 key that is not a job named in `contract/inputs.json`, so a template cannot add a global key. The README's "Which jobs
 may be allowed to fail" explains why only `proctor`, `secret-detection` and `a11y` take `allow_failure`.
 
@@ -306,8 +307,8 @@ A job timeout cannot exceed the runner's timeout.
 
 Sources: [GitLab: CI/CD YAML, `timeout` and `interruptible`](https://docs.gitlab.com/ci/yaml/).
 
-**How the stack holds it: Documented.** All twelve templates set `interruptible: true` and a `timeout` of their own:
-`10m` for pint and phpstan, `15m` for eslint, `30 minutes` for composer-audit, package-publish, php-test, proctor,
+**How the stack holds it: Documented.** All thirteen templates set `interruptible: true` and a `timeout` of their own:
+`10m` for pint and phpstan, `10 minutes` for squire-kit, `15m` for eslint, `30 minutes` for composer-audit, package-publish, php-test, proctor,
 sbom, secret-detection, a11y and both portability jobs, and `1 hour` for renovate. What stays open is the cancellation half: whether a superseded pipeline is actually
 canceled still needs `workflow:auto_cancel` in the app's own file, which a component cannot force (see 3.1).
 
@@ -431,7 +432,7 @@ by a hostile `composer.json`, which is exactly what a contributed branch can car
 Sources: [GitLab: merge request pipelines](https://docs.gitlab.com/ci/pipelines/merge_request_pipelines/);
 [GitLab: CI/CD variables](https://docs.gitlab.com/ci/variables/).
 
-**How the stack holds it: Documented.** All twelve templates use no secrets, which limits the harm, and the README
+**How the stack holds it: Documented.** All thirteen templates use no secrets, which limits the harm, and the README
 documents the rule: review a fork's `.gitlab-ci.yml` before running its pipeline, and never give it protected variables.
 
 ---
@@ -755,7 +756,7 @@ Sources: [GitLab: CI/CD variables](https://docs.gitlab.com/ci/variables/);
 [GitLab: pipeline security, secrets](https://docs.gitlab.com/ci/pipeline_security/);
 [OWASP CICD-SEC-6 Insufficient Credential Hygiene](https://owasp.org/www-project-top-10-ci-cd-security-risks/).
 
-**How the stack holds it: Documented.** The twelve templates use no secrets, which is good. Nothing fails if a later
+**How the stack holds it: Documented.** The thirteen templates use no secrets, which is good. Nothing fails if a later
 template adds one. The repository's own pipeline now runs GitLab's pipeline secret detection as an advisory job
 (`secret_detection` with `allow_failure: true`, kept in place by `tests/check-secret-detection.sh` and its `.ps1`
 twin); the plan is to make it blocking after a week of green pipelines. Whether it runs on the git.wayne.edu
@@ -958,13 +959,20 @@ Why: a component that never fails looks the same as one that works.
 
 Sources: [GitLab: components, testing](https://docs.gitlab.com/ci/components/).
 
-**How the stack holds it: Not yet.** The fixture's `bin/proctor` is a stub that prints `[]` and exits 0, so the
-`proctor` self-test cannot fail. The fixture has no advisory and no failing test.
-
-Second pass, checked in the main checkout: the stub is still a short shell script that prints `[]` and exits 0, and
-the fixture's `composer.json` requires `php ^8.3`, with `phpunit ^11.0`, `laravel/pint ^1.32` and `phpstan/phpstan ^2.3`
-in require-dev. Add fixtures for an advisory, an abandoned package and a malware-flagged version too (see 4.6 and 4.11),
-so each Composer policy result is recorded as a real exit code.
+**How the stack holds it: Partly.** Seven components carry a fixture that must fail them, each kept in place by a
+check: `proctor` runs `tests/proctor-fails`, a fake proctor that prints one blocker finding and exits 1, against the
+clean stub in `tests/fixture-app` (`tests/check-proctor-fails`); `composer-audit` runs `composer audit` on
+`tests/audit-fixtures/advisory`, which fails in every mode, and `tests/audit-fixtures/abandoned`, which fails only in
+`fail` mode (`tests/check-abandoned-input`); `a11y` checks the bad site in `tests/a11y-fixtures/bad`, which fails with
+each flaw named (`tests/check-a11y`); `portability` passes only when `tests/portability/bad-writes-root` and
+`tests/portability/bad-needs-root` both fail (`tests/check-portability`); `php-test` runs PHPUnit on
+`tests/php-test-fails`, which carries a failing test, against the clean case in `tests/fixture-app`
+(`tests/check-php-test-fails`); `phpstan` runs PHPStan on `tests/phpstan-fails`, which carries a type error, against
+the clean case in `tests/fixture-app` (`tests/check-phpstan-fails`); and `pint` runs Pint in test mode on
+`tests/pint-fails`, which is not formatted to the standard, against the clean case in `tests/fixture-app`
+(`tests/check-pint-fails`). Still missing: a malware-flagged version fixture for `composer-audit` (see 4.6 and 4.11),
+and a must-fail fixture for `eslint`, `package-publish`, `sbom` and `secret-detection`; `renovate` is a config, not a
+job, so it has nothing to fail.
 
 ### 7.3 Use the stack's own projects as the first users
 Each stack repo includes Preflight, pinned.
@@ -974,7 +982,7 @@ Why: the people who write the components feel their faults first.
 Sources: [GitLab: components, testing](https://docs.gitlab.com/ci/components/).
 
 **How the stack holds it: Documented.** PROCTOR and CREED include `php-test` and `composer-audit` at a pinned SHA.
-WayneUI's pipeline has never run, because git.wayne.edu has no runner.
+git.wayne.edu now has an instance runner, and the stack's CI runs on it. Every product in the stack still strongly recommends a git.wayne.edu instance runner, so that capacity stays there.
 
 ### 7.4 Let a developer run the same checks on Windows, macOS and Linux without bash
 Give each check a command that runs the same way on every OS, such as a Composer script, and have the CI job call it. Keep
@@ -1036,7 +1044,7 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 21. 1.4: Add an inputs contract file and a test that catches a renamed input or job.
 22. 2.3 and 2.6: Lint templates for global keys, and explain which components may be weakened.
 23. 3.1: Publish the "components do not force" limit in the README.
-24. 5.3 and 5.4 and 7.3: Close with the git.wayne.edu instance runner (this is still an open question); WayneUI's pipeline cannot run until then.
+24. 5.3 and 5.4 and 7.3: git.wayne.edu now has an instance runner, and the stack's CI runs on it; every product in the stack still strongly recommends a git.wayne.edu instance runner, so that capacity stays there. What remains open: 5.4's list of hosts jobs may reach.
 
 Added in the second pass (2026-10-27):
 

@@ -26,9 +26,9 @@ answers the load balancer's `/up` ping, and writes structured logs.
 
 ## Where the code lives
 
-The canonical repository is on nougat: [enterprise-apps/helmet](https://nougat.snu.gs/enterprise-apps/helmet). git.wayne.edu and GitHub ([waynestate/helmet](https://github.com/waynestate/helmet)) are read-only mirrors of it.
-Open issues and merge requests on nougat, not on the mirrors.
-This moves to git.wayne.edu once it has CI runners. Nougat is the head this helmet fits; the mirrors are mannequins.
+The canonical repository is [git.wayne.edu/enterprise-apps/helmet](https://git.wayne.edu/enterprise-apps/helmet) (clone over SSH as `git@git.wayne.edu:enterprise-apps/helmet.git`, or HTTPS as `https://git.wayne.edu/enterprise-apps/helmet.git`). Open issues and merge requests there; tags are made there, by the maintainer, with an approver.
+GitHub ([waynestate/helmet](https://github.com/waynestate/helmet)) is a read-only push mirror of it. Nobody pushes to the mirror; Packagist and npm read from it.
+git.wayne.edu is the head this helmet fits; the mirror is the mannequin.
 
 It is the floor, not the ceiling. An app on raw PHP calls `helmet_boot()` once
 at the top of its front controller and is done. An app on Laravel or a PSR-15
@@ -1087,9 +1087,9 @@ and fails on any WCAG 2.2 AA violation. Run it before you release.
 
 ## Strongly recommended: a git.wayne.edu instance runner
 
-git.wayne.edu has no runners today, so CI for this repo runs on the test
-GitLab instance. Every product in the stack strongly recommends a
-git.wayne.edu instance runner.
+git.wayne.edu now has an instance runner, and HELMET's CI runs on it.
+Every product in the stack still strongly recommends a git.wayne.edu
+instance runner, so that capacity stays there.
 
 
 <sub>GIF via [Tenor](https://tenor.com/view/wilmas-rainbow-helmet-wilmas-wilma-rainbow-gif-18685087)</sub>

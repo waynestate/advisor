@@ -28,9 +28,11 @@ The docs pages are bound into the same code book as the front page: the running 
 
 ## Where the code lives
 
-The canonical repository is on nougat: [enterprise-apps/creed](https://nougat.snu.gs/enterprise-apps/creed). git.wayne.edu and GitHub ([waynestate/creed](https://github.com/waynestate/creed)) are read-only mirrors of it.
-Open issues and merge requests on nougat, not on the mirrors.
-This moves to git.wayne.edu once it has CI runners. Creed Bratton would say the code lives wherever he last left it. Ours lives on nougat.
+The canonical repository is [enterprise-apps/creed](https://git.wayne.edu/enterprise-apps/creed) on git.wayne.edu: clone it over SSH as `git@git.wayne.edu:enterprise-apps/creed.git`, or over HTTPS as `https://git.wayne.edu/enterprise-apps/creed.git`. Open issues and merge requests there; tags are made there, by the maintainer, with an approver. CI runs on git.wayne.edu.
+
+GitHub ([waynestate/creed](https://github.com/waynestate/creed)) is a read-only push mirror of it: nobody pushes to it, and Packagist reads from it.
+
+Creed Bratton would say the code lives wherever he last left it. Ours lives on git.wayne.edu.
 
 No other code in the stack decides a version's state. The rules live in one
 place, and every tool reads them from here.
@@ -168,7 +170,7 @@ details.
 The `policy-bot` job in `.gitlab-ci.yml` runs the robot on the schedule that
 carries `CREED_JOB=policy-bot` and by hand from the web. Without the token the
 job prints "CREED_BOT_TOKEN not set; skipping the policy robot" and stays
-green. The setup, all on the CREED project on nougat (the canonical
+green. The setup, all on the CREED project on git.wayne.edu (the canonical
 repository):
 
 1. A project access token (Settings > Access tokens): role Maintainer
@@ -264,8 +266,9 @@ The site carries an accessibility gate (axe-core in Playwright, WCAG 2.2 AA, run
 
 ## Strongly recommended: a git.wayne.edu instance runner
 
-git.wayne.edu has no runners today. Every product in the stack strongly
-recommends a git.wayne.edu instance runner.
+git.wayne.edu now has an instance runner, and the stack's CI runs on it.
+Every product in the stack still strongly recommends a git.wayne.edu
+instance runner, so that capacity stays there.
 
 Creed Bratton, whose quality assurance work we all admire. His past is a
 mystery. Ours is in `policy/policy.json`, where it belongs.

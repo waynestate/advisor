@@ -26,9 +26,9 @@ Documentation: the opening of this README is the [Overview](site/docs/index.html
 
 ## Where the code lives
 
-The canonical repository is on nougat: [enterprise-apps/sesame](https://nougat.snu.gs/enterprise-apps/sesame). git.wayne.edu and GitHub ([waynestate/sesame](https://github.com/waynestate/sesame)) are read-only mirrors of it.
-Open issues and merge requests on nougat, not on the mirrors.
-This moves to git.wayne.edu once it has CI runners. Open sesame: the cave is nougat.
+The canonical repository is [enterprise-apps/sesame](https://git.wayne.edu/enterprise-apps/sesame) on git.wayne.edu (clone over SSH as `git@git.wayne.edu:enterprise-apps/sesame.git`, or over HTTPS). Open issues and merge requests there, and make tags there, by the maintainer, with an approver.
+GitHub ([waynestate/sesame](https://github.com/waynestate/sesame)) is a read-only push mirror; nobody pushes to it, and Packagist reads from it.
+CI runs on git.wayne.edu. Open sesame: the cave has a new address.
 
 ## Install
 
@@ -1401,9 +1401,9 @@ scripts/a11y.ps1     # Windows
 
 ## Strongly recommended: a git.wayne.edu instance runner
 
-git.wayne.edu has no runners today, so CI for this repo runs on the test
-GitLab instance. Every product in the stack strongly recommends a
-git.wayne.edu instance runner.
+CI for this repo runs on git.wayne.edu, on the instance runner. Every product
+in the stack strongly recommends the same for apps on git.wayne.edu: one
+shared runner, one less surprise per pipeline.
 
 <details>
 <summary><b>The brand board</b>: the mark, lockups, palette and type</summary>

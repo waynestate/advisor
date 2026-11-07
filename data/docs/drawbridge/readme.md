@@ -26,9 +26,9 @@ This page summarizes the gateway; the [docs site](site/docs/index.html) holds th
 
 ## Where the code lives
 
-The canonical repository is on nougat: [enterprise-apps/drawbridge](https://nougat.snu.gs/enterprise-apps/drawbridge). git.wayne.edu is a read-only mirror of it.
-Open issues and merge requests on nougat, not on the mirrors.
-This moves to git.wayne.edu once it has CI runners. The drawbridge is down at nougat; the mirrors are across the moat.
+The canonical repository is [enterprise-apps/drawbridge](https://git.wayne.edu/enterprise-apps/drawbridge) on git.wayne.edu, cloned over HTTPS (`git clone https://git.wayne.edu/enterprise-apps/drawbridge.git`) or SSH (`git clone git@git.wayne.edu:enterprise-apps/drawbridge.git`).
+Open issues and merge requests there. Tags are made there, by the maintainer, with an approver.
+Drawbridge is not on GitHub: git.wayne.edu is its only home. The drawbridge is down at the castle; there is no mirror across the moat.
 
 ## Where it fits in the stack
 
@@ -145,7 +145,7 @@ inside the `composer:2.10.3` container.
 **Windows (PowerShell)**
 
 ```powershell
-git clone https://nougat.snu.gs/enterprise-apps/drawbridge.git; cd drawbridge
+git clone https://git.wayne.edu/enterprise-apps/drawbridge.git; cd drawbridge
 docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 composer install --no-interaction
 Copy-Item .env.example .env
 Copy-Item config\drawbridge.example.yaml config\drawbridge.yaml
@@ -156,7 +156,7 @@ docker build -f docker/gateway/Dockerfile -t drawbridge-gateway .
 **Linux and macOS**
 
 ```sh
-git clone https://nougat.snu.gs/enterprise-apps/drawbridge.git && cd drawbridge
+git clone https://git.wayne.edu/enterprise-apps/drawbridge.git && cd drawbridge
 docker run --rm -v "$PWD:/app" -w /app composer:2.10.3 composer install --no-interaction
 cp .env.example .env
 cp config/drawbridge.example.yaml config/drawbridge.yaml

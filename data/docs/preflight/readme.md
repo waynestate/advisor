@@ -16,9 +16,14 @@ Documentation: the full manual lives at [preflight.apps.wayne.edu/docs/](https:/
 
 ## Where the code lives
 
-The canonical repository is on nougat: [enterprise-apps/preflight](https://nougat.snu.gs/enterprise-apps/preflight). git.wayne.edu and GitHub ([waynestate/preflight](https://github.com/waynestate/preflight)) are read-only mirrors of it.
-Open issues and merge requests on nougat, not on the mirrors.
-This moves to git.wayne.edu once it has CI runners. Cleared for takeoff from nougat; the mirrors are just other gates.
+The canonical repository is [enterprise-apps/preflight](https://git.wayne.edu/enterprise-apps/preflight) on
+git.wayne.edu. Clone it over SSH (`git@git.wayne.edu:enterprise-apps/preflight.git`) or HTTPS
+(`https://git.wayne.edu/enterprise-apps/preflight.git`), and open issues and merge requests there. Tags are made
+there, by the maintainer, with an approver.
+GitHub ([waynestate/preflight](https://github.com/waynestate/preflight)) is a read-only push mirror of
+git.wayne.edu. Nobody pushes to it; Packagist and npm read from it.
+CI runs on git.wayne.edu, on its instance runner. Cleared for takeoff from git.wayne.edu; the mirror is just
+another gate.
 
 <details>
 <summary><b>Walk round the aircraft</b>: the placards, the flight plan and the flight manual from the front page</summary>
@@ -291,6 +296,7 @@ include:
 | `autodiscover_filter` | string | `$CI_PROJECT_NAMESPACE/*` | Glob limiting which projects Renovate discovers, relative to the runner project's namespace. |
 | `dry_run` | string | `"null"` | Dry run mode: `null` (disabled), `lookup` or `full`. |
 | `git_author` | string | none | Author of the commits and merge requests Renovate creates, in the form `Name <email>`. Required. |
+| `squire_kit_tasks` | boolean | `false` | Allow the Squire kit commands of Preflight's preset (install the new `waynestate/squire` from Packagist, then `squire update` on the kit folder), so a Squire kit merge request arrives with its files refreshed. Off, the merge request bumps the version only and shows an artifact error. |
 
 ### portability
 
@@ -377,6 +383,37 @@ The job installs the three npm packages at exact versions with `--ignore-scripts
 the app. The checker is `templates/a11y/check.mjs`, inlined in the template because a component ships only its
 `template.yml`; `tests/check-a11y-inline` keeps the two byte for byte. Renovate bumps the image and the two axe-core
 packages (as one group), and the bumps wait for review like every template pin.
+
+### squire-kit
+
+Version 1 · Category: Testing/Validation · Tags: squire,deploy,drift
+
+Installs the Squire release a deploy kit records in its `.squire.json` and runs `squire init --check` on the kit
+folder, so the pipeline fails when a kit file was edited, is missing, or is not that release's template. It checks the
+recorded version, so a new Squire never turns main red by itself: Renovate's Squire rule moves the version (see
+[Squire kits](#squire-kits)). A squire keeps the armor polished; this job is the inspection before the joust.
+
+```yaml
+include:
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/squire-kit@<full commit SHA> # 0.2.0
+    inputs:
+      working_dir: deploy
+```
+
+squire-kit ships in 0.2.0 (0.1.4 does not include it). Run `vendor/bin/squire init --check --path=deploy` first; while
+a repository cleans up its first findings, set `allow_failure: true`.
+
+| Input | Type | Default | What it does |
+|-------|------|---------|--------------|
+| `stage` | string | `test` | Pipeline stage for the job. |
+| `job_name` | string | `squire-kit` | Name of the job. Set it when you include this component more than once. |
+| `image` | string | `composer:2.10.3@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc` | Docker image for the job. It needs PHP 8.3 or later and Composer. |
+| `working_dir` | string | `.` | The kit folder: the one holding `.squire.json`, relative to the project root. |
+| `squire_version` | string | `""` | Squire release to check against, `x.y.z`. Empty reads the version recorded in `.squire.json`. |
+| `allow_failure` | boolean | `false` | Whether the job can fail without failing the pipeline, for a repository cleaning up its first findings. |
+
+The job installs Squire with `composer create-project --no-dev --no-scripts` into a temporary folder, never into the
+app. It exits 0 when the kit matches, 1 when it drifted, and 2 when the check could not run.
 
 ## Same instance only
 
@@ -472,9 +509,35 @@ app's `component:` include, and bumps of the recorded Squire kit version
 They wait for a person because those pins are what every app pipeline runs:
 a changed digest here changes what every consuming pipeline executes, so it
 earns a human eye even when its own pipeline is green. The Squire kit version
-bump is refreshed by a person who runs `squire update` (with the right path
-for the repo), reviews the diff and commits it to the branch; the runner runs
-no commands, so the merge request carries no postUpgradeTasks.
+bump also changes the kit's files; see [Squire kits](#squire-kits).
+
+### Squire kits
+
+A Squire deploy kit (the `deploy` folder in the stack's repos) is files Squire
+wrote, recorded with their hashes in `deploy/.squire.json`. Two rules in the
+preset keep it equal to a Squire release:
+
+- **A new Squire refreshes the kit.** The custom manager reads the version in
+  `.squire.json` and opens a merge request for each new `waynestate/squire`
+  on Packagist. Its `postUpgradeTasks` install that release into a folder
+  under `/tmp` (outside the repository, `--no-dev --no-scripts`) and run
+  `squire update` on the kit folder, so the merge request carries the
+  refreshed files. It waits for review (`squire-kit`, `needs-review`).
+- **Renovate leaves kit files alone.** Updates to `docker-compose.squire.yml`
+  and anything under `.squire/` are turned off outside Squire's own
+  `templates/` folders. A digest or tag bump there is an edit to a file Squire
+  owns: the kit drifts from its release, and the next `squire update` refuses
+  to overwrite it. Change the image in Squire's templates instead.
+
+Renovate only runs a post-upgrade command its runner allows. The renovate
+component's `squire_kit_tasks` input (default `false`) writes the allow-list
+into the runner's `config.js`: two anchored patterns that match the exact
+`composer create-project` and `squire update` commands. No shell runs them.
+Without the input, the merge request bumps the version only and shows an
+artifact error; refresh it by hand with `vendor/bin/squire update
+--path=deploy`, review the diff and commit it to the branch. A release that
+adds a kit file also needs `vendor/bin/squire init --path=deploy`, and the
+`squire-kit` component catches both cases in the pipeline.
 
 ### Why MySQL and HA-Proxy get digests only
 
@@ -495,6 +558,8 @@ A person must set up:
   `GITHUB_COM_TOKEN`.
 - A pipeline schedule on that project so the job runs regularly; weekly on
   Monday is a sensible default.
+- To let Squire kit merge requests arrive refreshed, `squire_kit_tasks: true`
+  under the include's `inputs:`, on a Preflight version that has the input.
 
 ### The runner project
 
@@ -563,10 +628,11 @@ if the pilot reads it.
 
 ### Which jobs may be allowed to fail
 
-Three components take an `allow_failure` input, all defaulting to `false`: `proctor`, `secret-detection` and `a11y`. A
-policy finding is a warning while an app adopts PROCTOR's rules, a secret finding while a repo allowlists its first false
-positives, and an accessibility finding while a site fixes what the gate found on its first run, so each job may fail
-without failing the pipeline during adoption; all three still write their reports. `composer-audit` has no such input on purpose: a known advisory must fail the pipeline. The other jobs have no
+Four components take an `allow_failure` input, all defaulting to `false`: `proctor`, `secret-detection`, `a11y` and
+`squire-kit`. A policy finding is a warning while an app adopts PROCTOR's rules, a secret finding while a repo
+allowlists its first false positives, an accessibility finding while a site fixes what the gate found on its first run,
+and a kit finding while a repo puts its deploy kit back to Squire's files, so each job may fail without failing the
+pipeline during adoption; the first three still write their reports. `composer-audit` has no such input on purpose: a known advisory must fail the pipeline. The other jobs have no
 `allow_failure` input either.
 
 No template adds a global key such as `default:`, `variables:`, `workflow:` or `stages:`. `tests/check-contract.sh`
@@ -597,9 +663,9 @@ left out on purpose: it would trade a token for a warning, and the checklist cos
 
 ## Strongly recommended: a git.wayne.edu instance runner.
 
-Until git.wayne.edu has a runner, CI runs on the GitLab instance that has one, and Preflight and each
-app must live on or be mirrored to it. A git.wayne.edu instance runner is strongly recommended. Ask
-for a non-privileged Docker executor (no privileged mode, no Docker socket mount), a fresh ephemeral
+git.wayne.edu now has an instance runner, and the stack's CI runs on it. Every product in the stack still
+strongly recommends a git.wayne.edu instance runner, so that capacity stays there. Ask for a
+non-privileged Docker executor (no privileged mode, no Docker socket mount), a fresh ephemeral
 environment for every job, and no shell executor shared between projects; capacity and maintenance
 stay with ops. A job that needs the host's Docker socket to take off has skipped its own preflight.
 
@@ -727,6 +793,20 @@ pwsh -File tests/check-portability.ps1
 ```
 
 The site's pages have an accessibility gate: the `a11y` component's own checker, run in Docker with the image and versions pinned in its template, so no host browser is needed and a local run checks the same way as the pipeline. `sh scripts/a11y.sh` on Linux and macOS, `scripts/a11y.ps1` in PowerShell on Windows. It checks the front page and every docs page at WCAG 2.2 AA in light and dark mode at 320 px and 1280 px, with the reflow check, and fails on any violation. `tests/check-a11y.sh` (and `.ps1`) prove the checker passes a clean fixture site and fails a known-bad one.
+
+Run the must-fail fixtures with Docker; each proves its component (`php-test`, `phpstan`, `pint`) still fails a bad app and passes a clean one, running the component's own commands from its template in the component's own image. The `must-fail-php-test` and `must-fail-phpstan-pint` jobs run the same checks in CI, in the components' own images, so they need no Docker there. Locally, run them with Docker:
+
+```sh
+docker run --rm -v "$(pwd):/app" -w /app php:8.3-cli-trixie sh tests/check-php-test-fails.sh
+docker run --rm -v "$(pwd):/app" -w /app composer:2.10.3@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc sh tests/check-phpstan-fails.sh
+docker run --rm -v "$(pwd):/app" -w /app composer:2.10.3@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc sh tests/check-pint-fails.sh
+```
+
+```powershell
+pwsh -File tests/check-php-test-fails.ps1
+pwsh -File tests/check-phpstan-fails.ps1
+pwsh -File tests/check-pint-fails.ps1
+```
 
 <details>
 <summary><b>The brand board</b>: the runway mark, lockups, palette and type</summary>

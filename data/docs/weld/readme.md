@@ -26,9 +26,9 @@ front controller serves `site/` behind HELMET's security headers. For local deve
 
 ## Where the code lives
 
-The canonical repository is on nougat: [enterprise-apps/weld](https://nougat.snu.gs/enterprise-apps/weld). git.wayne.edu and GitHub ([waynestate/weld](https://github.com/waynestate/weld)) are read-only mirrors of it.
-Open issues and merge requests on nougat, not on the mirrors.
-This moves to git.wayne.edu once it has CI runners. The weld is made on nougat; the mirrors only get the polished bead.
+The canonical repository is [enterprise-apps/weld](https://git.wayne.edu/enterprise-apps/weld) on git.wayne.edu. Open issues and merge requests there; tags are made there, by the maintainer, with an approver.
+GitHub ([waynestate/weld](https://github.com/waynestate/weld)) is a read-only push mirror of it: nobody pushes to it, and Packagist reads from it.
+The weld is made on git.wayne.edu; the mirrors only get the polished bead.
 
 **Not to be confused with:** `weld:doctor` checks local setup only; standards checks are PROCTOR's.
 
@@ -104,7 +104,7 @@ git remote set-url origin https://git.example.com/you/my-app.git
 
 Then re-run the checks the way CI does: `.\bin\weld.ps1 test` (or `bin/weld.sh test`), which runs `composer ci` in the container, plus `composer proctor` for the standards check. A photocopy is not a weld yet: when the checks pass under your name, the seam holds.
 
-Want a smaller starting point than a full Laravel app? Sourdough is the starter tool for every shape of Wayne State app. It bakes four shapes today: raw PHP, Laravel with Blade, Laravel with Blade plus Vue islands, and Laravel with Inertia and Vue; only raw PHP with a Vue SPA is not available yet. WELD is the Inertia and Vue shape, already assembled with every part wired and ready to clone.
+Want a smaller starting point than a full Laravel app? Sourdough is the starter tool for every shape of Wayne State app. It bakes five shapes: raw PHP, raw PHP with a Vue SPA, Laravel with Blade, Laravel with Blade plus Vue islands, and Laravel with Inertia and Vue. WELD is the Inertia and Vue shape, already assembled with every part wired and ready to clone.
 
 ## What is welded in
 
@@ -245,7 +245,7 @@ Add `--json` to any of them for a machine-readable report.
 
 ## WELD and Sourdough
 
-Sourdough is the starter tool for every shape of Wayne State app. It bakes four shapes today: raw PHP, Laravel with Blade, Laravel with Blade plus Vue islands, and Laravel with Inertia and Vue; only raw PHP with a Vue SPA is not available yet.
+Sourdough is the starter tool for every shape of Wayne State app. It bakes five shapes: raw PHP, raw PHP with a Vue SPA, Laravel with Blade, Laravel with Blade plus Vue islands, and Laravel with Inertia and Vue.
 WELD is one of those shapes, Laravel with Inertia and Vue, with every part already joined and proved to work together.
 Pick Sourdough when you want a starter you shape yourself. Pick WELD when you want the finished piece.
 

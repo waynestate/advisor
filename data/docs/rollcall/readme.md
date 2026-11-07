@@ -223,7 +223,7 @@ Next: after a good scan, `var/snapshots/<today>.json` holds the day's attendance
 
 ### Scheduled scan on GitLab CI
 
-Rollcall's own repository (on nougat, its canonical home) carries a `rollcall-scan` job in `.gitlab-ci.yml`. It
+Rollcall's own repository (on git.wayne.edu, its canonical home) carries a `rollcall-scan` job in `.gitlab-ci.yml`. It
 runs `scan` over the 13 stack projects read-only and keeps the snapshot in `var/snapshots/` as a 30 day artifact.
 It runs when a GitLab schedule says so, or when a person starts it by hand from the web; without a token it skips
 green. To make it run, create three things in GitLab:
@@ -380,8 +380,8 @@ docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install
 (On Windows PowerShell `${PWD}` works as written; in Git Bash use `$(pwd -W)` and set `MSYS_NO_PATHCONV=1`.)
 
 The GitLab pipeline (`.gitlab-ci.yml`) and the GitHub workflow (`.github/workflows/ci.yml`) both wrap `composer ci`,
-on PHP 8.3, 8.4 and 8.5. git.wayne.edu has no runners yet; an instance runner there is strongly recommended so this
-check can run beside the code it protects.
+on PHP 8.3, 8.4 and 8.5. git.wayne.edu now has an instance runner, and the stack's CI runs on it. Every product in
+the stack still strongly recommends a git.wayne.edu instance runner, so that capacity stays there.
 
 The front page has its own accessibility gate (axe-core in Playwright, run in Docker): `scripts/a11y.sh` on Linux
 and macOS, `scripts/a11y.ps1` on Windows; MAINTAINING.md says when to run it.
@@ -423,13 +423,11 @@ and macOS, `scripts/a11y.ps1` on Windows; MAINTAINING.md says when to run it.
 
 ## Where the code lives
 
-The canonical repository is on nougat: [enterprise-apps/rollcall](https://nougat.snu.gs/enterprise-apps/rollcall). git.wayne.edu and GitHub ([waynestate/rollcall](https://github.com/waynestate/rollcall)) are read-only mirrors of it.
-Open issues and merge requests on nougat, not on the mirrors.
-This moves to git.wayne.edu once it has CI runners. Roll call: nougat? Present. The mirrors? Copies of the sheet.
+The canonical repository is [enterprise-apps/rollcall](https://git.wayne.edu/enterprise-apps/rollcall) on git.wayne.edu. Clone it over SSH as `git@git.wayne.edu:enterprise-apps/rollcall.git` or over HTTPS as `https://git.wayne.edu/enterprise-apps/rollcall.git`; open issues and merge requests there, and tags are made there, by the maintainer, with an approver. GitHub ([waynestate/rollcall](https://github.com/waynestate/rollcall)) is a read-only push mirror of git.wayne.edu: nobody pushes to it, and Packagist reads from it. Roll call: git.wayne.edu? Present. GitHub? A copy of the sheet.
 
 ## Contributing
 
-Issues and merge requests go to nougat; see Where the code lives above.
+Issues and merge requests go to git.wayne.edu; see Where the code lives above.
 
 License: MIT, Copyright Wayne State University.
 
