@@ -25,7 +25,7 @@
             "role": "The handbook and policy.json (support dates per runtime). Every other project reads its policy; it is the one place that decides what state a version is in.",
             "state": "built",
             "package": "waynestate/creed",
-            "version": "0.1.6",
+            "version": "0.1.7",
             "php": "^8.3",
             "next_step": "Read the handbook chapter for the area you are changing; use policy_lookup for dates.",
             "docs": [
@@ -41,7 +41,7 @@
             "role": "One command that measures a PHP app against policy.json and prints a JSON, text or Code Quality report. It reports; CI decides.",
             "state": "built",
             "package": "waynestate/proctor",
-            "version": "0.6.0",
+            "version": "0.7.0",
             "php": "^8.3",
             "next_step": "Run run_proctor_check on the app, fix the failing checks, and keep `proctor check` in CI.",
             "docs": [
@@ -57,7 +57,7 @@
             "role": "Protocol-neutral sign-in: drivers for CAS, a signed gateway assertion, OpenID Connect (Entra sign-in) and OAuth2 bearer tokens (SAML is planned). It returns a verified identity and leaves the session to the app.",
             "state": "built",
             "package": "waynestate/sesame",
-            "version": "0.4.0",
+            "version": "0.5.0",
             "php": "^8.3",
             "next_step": "Pick the driver your platform supports and read its README before wiring routes.",
             "docs": [
@@ -73,7 +73,7 @@
             "role": "The runtime baseline: security headers, CSP, session hardening, trusted proxies, a health check and a version warning.",
             "state": "built",
             "package": "waynestate/helmet",
-            "version": "0.3.1",
+            "version": "0.4.0",
             "php": "^8.3",
             "next_step": "Add it as a dependency and start from its presets; it reads the same policy as PROCTOR.",
             "docs": [
@@ -89,7 +89,7 @@
             "role": "The starters: one command generates a new app in the shape you pick: raw PHP (`sourdough new --raw`), Laravel with Blade (`--laravel`), Laravel with Blade and Vue islands (`--laravel --vue`) or Laravel with Inertia and Vue (`--inertia`). Only `--raw --vue` is not available yet. `--sail` or `--docker` adds a local runtime to the Laravel shapes.",
             "state": "built",
             "package": "waynestate/sourdough",
-            "version": "0.1.6",
+            "version": "0.1.7",
             "php": "^8.3",
             "next_step": "Start a new app with `sourdough new` and the shape flag you need; keep an app honest with `sourdough manifest --check` (`feed` is a later release).",
             "docs": [
@@ -105,7 +105,7 @@
             "role": "CI templates for GitLab (components) and GitHub (reusable workflows): tests, PROCTOR, audit and accessibility, with `composer ci` as the one contract.",
             "state": "built",
             "package": "waynestate/preflight",
-            "version": "0.1.4",
+            "version": "0.2.0",
             "php": "^8.3",
             "next_step": "Include its components pinned to a tag; never track the latest.",
             "docs": [
@@ -137,7 +137,7 @@
             "role": "The upgrade tool: Rector recipes and checks that move an app one PHP or Laravel version at a time.",
             "state": "built",
             "package": "waynestate/booster",
-            "version": "1.9.0",
+            "version": "1.10.0",
             "php": "^8.3",
             "next_step": "Plan one hop at a time with `upgrade_path`, and read its README for the Rector recipes.",
             "docs": [
@@ -153,7 +153,7 @@
             "role": "The fleet census: PHP, image, framework and PROCTOR result for every app, and the end-of-life burn-down.",
             "state": "built",
             "package": "waynestate/rollcall",
-            "version": "0.1.9",
+            "version": "0.1.10",
             "php": "^8.3",
             "next_step": "Owners check their app's row; a missing row means the app is not registered.",
             "docs": [
@@ -169,7 +169,7 @@
             "role": "The Citadel auth gateway: one OpenID Connect client through Entra ID that hands each app a signed assertion for SESAME's gateway driver.",
             "state": "built",
             "package": "waynestate/drawbridge",
-            "version": "0.2.2",
+            "version": "0.3.0",
             "php": "^8.3",
             "next_step": "Apps on Citadel use SESAME's gateway driver; plan against the Drawbridge README.",
             "docs": [
@@ -185,7 +185,7 @@
             "role": "The Citadel kit: the app-side release script, local parity with the platform, and upstream merge requests. Platform-specific deploy code lives here and nowhere else.",
             "state": "built",
             "package": "waynestate/squire",
-            "version": "0.5.0",
+            "version": "0.6.0",
             "php": "^8.3",
             "next_step": "Use its release script for Citadel deploys; other platforms use their own targets.",
             "docs": [
@@ -201,7 +201,7 @@
             "role": "This server: orients a developer and gives their coding agent read-only tools into the stack. It sits beside Laravel Boost and does not replace it.",
             "state": "built",
             "package": "waynestate/advisor",
-            "version": "0.1.6",
+            "version": "0.1.7",
             "php": "^8.3",
             "next_step": "Run `advisor install` to wire your agent, then start with list_projects.",
             "docs": [
@@ -217,7 +217,7 @@
             "role": "Wired, Everything, Linked, Deployed: one Laravel + Inertia/Vue app with every stack part already joined. A team clones it, renames it and deploys it.",
             "state": "built",
             "package": "waynestate/weld",
-            "version": "0.1.3",
+            "version": "0.1.4",
             "php": "^8.3",
             "next_step": "Clone it for a new Laravel + Inertia/Vue app; its front page shows how the parts fit.",
             "docs": [

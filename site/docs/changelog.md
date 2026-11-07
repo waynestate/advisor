@@ -12,6 +12,8 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[Unreleased\][#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
 
+## \[0.1.7\] - 2026-11-07[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-7-2026-11-07)
+
 ### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
 - The front page's deploy layer (`deploy/`) completes Squire's kit 0.5.0: `oracle-check.php`, which the 0.5.0 `squire update` did not add, is written and recorded, so `squire init --check` passes. `site/assets/stack-env.js` takes the stack's one copy, with bindingless catch blocks.
@@ -23,6 +25,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - `read_project_docs` trims image boilerplate again at read time, so docs bundled before a trim rule existed are served clean without editing `data/docs`. The trim (now `Content\ImageTrim`, shared with the generator) also drops linked hero images (`[![...](https://github.com/waynestate/advisor/-/blob/main/...)](...)`) and rows of nothing but badges, which the generator used to let through (Sourdough's README hero and badge row).
 - The Proof page records its last run.
 - data: resync 2026-11-06 night (booster:8c57a15 drawbridge:a60990a helmet:8a79b46 sesame:2505033 proctor:038d632 rollcall:aed8dd9 creed:0f6ab20 sourdough:b2644b3 weld:baf8e60 squire:88fd2ec preflight:a5ed45a pinstripe:eb03078 advisor:c3964c5 wayne-ui:9e1e762): Booster, CREED handbook and best practices, PROCTOR, Preflight and SESAME docs, the abandoned_packages policy, and the released versions of Booster, PROCTOR, Sourdough and others.
+- data: resync for the 2026-11-07 releases (Booster 1.10.0, CREED 0.1.7, Drawbridge 0.3.0, HELMET 0.4.0, Preflight 0.2.0, PROCTOR 0.7.0, Rollcall 0.1.10, SESAME 0.5.0, Sourdough 0.1.7, Squire 0.6.0, WELD 0.1.4; Pinstripe stays 0.1.4).
 
 ## \[0.1.6\] - 2026-11-06[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-6-2026-11-06)
 

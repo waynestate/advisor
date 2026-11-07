@@ -74,10 +74,16 @@ vendor/bin/proctor check [--path=.] [--format=text|json|codequality|sarif] [--po
 - `--today`: override today's date (YYYY-MM-DD) so runs are deterministic. In CI this option is refused unless a trusted job sets `PROCTOR_ALLOW_OVERRIDES=1`.
 - `--php-runtime`: the PHP version that will serve the app (X.Y.Z), used by the `unpatched` check. CI should pass the deploy image's PHP, not the runner's.
 
+Before a deploy, ask for a go or no-go instead (see [Deploy gate](#deploy-gate)):
+
+```
+vendor/bin/proctor gate [--path=.] [--format=text|json] [--baseline=<report or directory>] [--record=<file>] [--policy=<file>] [--today=YYYY-MM-DD] [--php-runtime=X.Y.Z] [--timeout=60]
+```
+
 ## Checks
 
 
-<div align="center"><sub>Nine of the twenty-five checks shown, asked in this order on every run; `policy-age` stays silent while the policy is fresh. The lines are real output from the test fixtures.</sub></div>
+<div align="center"><sub>Nine of the twenty-six checks shown, asked in this order on every run; `policy-age` stays silent while the policy is fresh. The lines are real output from the test fixtures.</sub></div>
 
 - `php-floor`: fails when the lowest PHP version allowed by `require.php` is past security support plus the grace window, when composer.json has no usable php constraint, or when there is no composer.json at all.
 - `unpatched`: warns when a locked component is behind the policy's `latest_patch` for its version line, and passes when it is current. Reads laravel from composer.lock (`laravel/framework`), vue and inertia from package-lock.json (`vue`, `@inertiajs/vue3`), and the PHP runtime from `--php-runtime`. No finding when the component, its version line, or `latest_patch` is absent from the policy.
@@ -97,6 +103,7 @@ vendor/bin/proctor check [--path=.] [--format=text|json|codequality|sarif] [--po
 - `repo-url-credentials`: warns when a credential is written into a package source URL: a deploy token in the userinfo of a composer.json repository URL or a composer.lock source/dist URL (`https://gitlab+deploy-token-12:<token>@host/group/lib.git`), a bare token user of 20+ characters, a `private_token`, `access_token`, `token` or `password` query parameter, or a `.npmrc` line that sets `_authToken`, `_auth` or `_password` to a literal value (`${SOME_VAR}` is fine). The secret is masked as `***` in the message, so the report itself is safe to hand back. Warning, not failure. Fix by moving the token to `auth.json`, which is gitignored, or a CI variable, and using one registry URL without credentials. The proctor spots the answer key taped inside the desk before the student does.
 - `instant-client-committed`: warns when Oracle Instant Client is committed to the repo: an `instantclient*.zip` or `instantclient*.rpm` archive, any file under a directory named `instantclient` or `instantclient_*` (an unzipped install), or a loose client library such as `libclntsh.so`, `libociei.so` or `oci.dll`. Only committed files count: the git-tracked files when the app path sits in a git repository and git can be run, otherwise the files on disk. Skipped at any depth: `vendor/`, `node_modules/` and `.git/`. One warning per match: the archive, the topmost matching directory, or the loose file, each reported with its total size in MB. Warning, not failure: Citadel's images already include Instant Client, and the WSU Sail and Docker images will too. Fix by deleting it, running `git rm -r --cached` on the path PROCTOR reports, and adding that path to .gitignore. The proctor takes the 60-to-126-MB textbook off the student's desk: the exam hall already keeps a copy on the shelf.
 - `env-outside-config`: warns, never fails, for every `env()` call in a Laravel app (an `artisan` file at the root, or `laravel/framework` in composer.json `require`) outside its config files: after `php artisan config:cache` Laravel no longer loads .env, so the call returns null in production while it works on a laptop. Scanned: every `*.php` file except the top-level `config/` and `bootstrap/cache/`, and `tests/`, `vendor/`, `node_modules/`, `storage/` and `.git/` at any depth. PHP is read on the syntax tree, so a comment, a string, a method named `env` and a function imported from another namespace are not flagged; a Blade line is matched only with a quoted first argument (`{{ env('APP_NAME') }}`), and Blade's `@env('local')` directive is not a call. Larastan enforces the same rule, so a call that carries its ignore marker for it (`@phpstan-ignore larastan.noEnvCallsOutsideOfConfig` on the line or on a comment line right above) is an info note instead (`proctor/env-outside-config/suppressed`), visible but not counted; a closure in `bootstrap/app.php` that runs before config is loaded is the usual reason. Fix by reading the variable in a config file and calling `config()` where it is used. The proctor reads the answer sheet, not the notes in the margin.
+- `raw-identity-header`: warns, never fails, when app code reads an identity header directly instead of taking the user from SESAME. DRAWBRIDGE, the gateway, signs the session into the `X-Sesame-Assertion` header and passes the user's claims as request headers; only SESAME's gateway driver may open that pair, because it verifies the signature before a claim becomes the logged-in user (CREED auth-3), and app code that reads a claim header itself accepts whatever value the proxy, or a client, put there. Scanned: every `*.php` file except `vendor/`, `node_modules/`, `storage/`, `tests/` and `.git/` at any depth. PHP is read on the syntax tree with names resolved, so a header name in a comment or a log string, a variable named `$REMOTE_USER`, and `getenv()` with a computed argument are not flagged. Flagged read positions: a string key on `$_SERVER` or `$_ENV`, the quoted argument of `getenv()` or `apache_getenv()`, the quoted first argument of a method named `header`, `server`, `hasHeader`, `getHeader` or `getHeaderLine` (and of `get()` on a `->headers` object), and a string key on the result of `getallheaders()` or `apache_request_headers()`, directly or through a variable assigned from them. Names match case-insensitively with `-` and `_` interchangeable, and where the read comes from `$_SERVER` or the environment the `HTTP_` prefix Apache adds to request headers is accepted too. `X-Sesame-Assertion` is the signed assertion itself and `PHP_AUTH_USER` is basic-auth material, so neither is an identity claim and neither is flagged. Blade templates (`*.blade.php`) are matched line by line for `$_SERVER['...']` and `request()->header('...')` / `request()->server('...')`. A file that does not parse is skipped here; the portability check reports it. Fix by taking the user from SESAME (the gateway driver) and reading the claims it returns. The proctor checks the ID at the door; it does not trust the name written on the exam paper.
 - `app-key`: warns, never fails, when the repository gives away the APP_KEY or makes a leaked one worse. `proctor/app-key/committed-env`: a real env file is committed (`.env`, `.env.production`, any `.env.*` that is not an example or a test file). `proctor/app-key/committed-key`: a committed env file, examples included, sets `APP_KEY` or `APP_PREVIOUS_KEYS` to a real key (`base64:` and 16 or 32 bytes), or `config/app.php` carries one as a literal; the key is never printed. `proctor/app-key/cookie-sessions`: `SESSION_DRIVER=cookie` in a committed env file, or a `cookie` default in `config/session.php`. A real env file is graded only when PROCTOR knows it is committed (git lists it, or `CI`, `GITLAB_CI` or `GITHUB_ACTIONS` is set), so a developer's own `.env` never raises a flag; example files (`.example`, `.dist`, `.sample`, `.template`) are always graded, and test files (`.env.testing`, `.env.test`, `.env.ci`, `.env.dusk.*`) are skipped. Fix by removing the file or value, rotating the key with `php artisan key:generate` on every environment that used it, and moving sessions to the database or redis driver. The proctor does not read the answer key aloud; it only notes that it was left on the desk.
 - `served-folder`: warns, never fails, when a committed file under the top-level `public/` can be downloaded by a stranger: a PHP file that calls `phpinfo()` (`proctor/served-folder/phpinfo`), or a database dump (`*.sql`, `*.sql.gz`, `*.dump`), a backup or editor copy (`*.bak`, `*.old`, `*.orig`, `*.swp`, a name ending in `~`), a log, an env file or a database admin tool (`adminer*.php`) (`proctor/served-folder/debug-file`). No finding when the app has no `public/` folder. Fix by deleting the file or moving it out of `public/`. The proctor clears the scratch paper off the desk before the hall opens.
 - `world-writable`: warns, never fails, when the repository sets mode 777: `chmod` with `777`, `0777`, `a+rwx` or `ugo+rwx` in a shell script, a Dockerfile, a Makefile, `.gitlab-ci.yml` or the `scripts` of composer.json and package.json, or a PHP `chmod()` with the literal `0777`. Comment lines, the sticky `1777` and `mkdir()` (the umask still applies to it) are not flagged; `tests/` is skipped. Fix by giving the web server user write access to the folders it needs (`storage/` and `bootstrap/cache/` in Laravel) and nothing more. The proctor does not prop the exam-room door open for anyone who wanders by.
@@ -132,6 +139,29 @@ flowchart LR
 <br>
 
 </details>
+
+## Deploy gate
+
+`proctor gate` is the proctor at the exam-hall door: it does not mark the whole paper, it decides whether you may sit. A release script or a platform hook calls it before a deploy, and it follows CREED's deploy-gate chapter: a small, fast rule set that ratchets, so a deploy that does not make things worse always passes.
+
+| Gate check | Why it is at the door |
+| --- | --- |
+| `php-floor` | the PHP the app declares is still supported |
+| `unpatched` | the runtime and framework are on their latest patch (warns only) |
+| `laravel-eol` | the locked Laravel line is still supported |
+| `laravel-php` | the declared PHP fits the locked Laravel line |
+| `lock-committed` | the lock file is the release |
+| `composer-audit` | no known advisory at or above the threshold |
+| `overrides` | every override is still in date |
+| `policy-age` | the policy itself is fresh (warns only) |
+
+Overrides are applied first, as in `proctor check`. Each remaining failure is then blocked (no baseline, so a first deploy; a regression, because the baseline passed that rule; or an expired override, for any check), held (the baseline failed the same rule id too, so owners of an EOL app can still ship the fix) or waived (composer-audit had no advisory data, which only warns at deploy time). Any block is a no-go.
+
+- `--baseline`: a PROCTOR JSON report (the file `--record` wrote last time) or the running deployment's source directory. Without it, every failure blocks.
+- `--record`: also write the JSON verdict to a file; pass it as `--baseline` next time.
+- Exit codes: `0` go, `1` no-go, `2` the gate could not decide. A platform hook fails open on 2, with an alert, so a gate bug never takes down deploys.
+
+The whole story, with the verdict's JSON shape: [Deploy gate](https://proctor.apps.wayne.edu/docs/guides/deploy-gate.html).
 
 ## Formats
 
@@ -227,6 +257,7 @@ The full set, grouped by check:
 | `instant-client-committed` | `proctor/instant-client-committed` |
 | `env-outside-config` | `proctor/env-outside-config` |
 | `env-outside-config` | `proctor/env-outside-config/suppressed` |
+| `raw-identity-header` | `proctor/raw-identity-header` |
 | `app-key` | `proctor/app-key` |
 | `app-key` | `proctor/app-key/committed-env` |
 | `app-key` | `proctor/app-key/committed-key` |

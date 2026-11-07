@@ -11,7 +11,7 @@ Checks: `composer ci` (the same command runs on GitLab and GitHub). The containe
 Drawbridge is the sign-in gateway for the apps on Citadel, Wayne State's container platform. It is Apache with
 mod_auth_openidc, set up as one OpenID Connect client for Microsoft Entra ID. It is not live yet: its home will be
 `auth.apps.wayne.edu`, in front of every app on the platform, once the Citadel routing for it exists.
-The latest release, 0.2.2, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
+The latest release, 0.3.0, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
 checks that the visitor has a session, drops any identity header the visitor sent, and passes the app a
 short-lived signed assertion that SESAME's `gateway` driver verifies. Which paths need a login, and which need an
 Entra authentication context on top, is declared per app in a config file. Nothing else decides it.
@@ -422,7 +422,7 @@ outside (per-user revocation needs an index that is not built).
 | `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_FILE` | unset | the same for the crypto passphrase |
 | `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS_FILE` | unset | the same for the previous passphrase |
 | `DRAWBRIDGE_SIGNING_KEY_FILE` | `/run/drawbridge/signing.key` | ES256 private key for assertions (mounted) |
-| `DRAWBRIDGE_SIGNING_KEY_ID` | `drawbridge-1` | `kid` in each token header; change it when the key changes |
+| `DRAWBRIDGE_SIGNING_KEY_ID` | `drawbridge-1` | `kid` in each token header; change it when the key changes (name keys by date, for example `drawbridge-2026-11`) |
 | `DRAWBRIDGE_SESSION_CACHE_ENTRIES` | `1000` | entries in the shared-memory cache: sessions, nonces, provider metadata (minimum 10; a smaller value or a non-number is refused when the config is rendered) |
 | `DRAWBRIDGE_RUN_DIR` | `/tmp/drawbridge` | scratch for rendered config, locks and the session cache |
 | `DRAWBRIDGE_LOG_LEVEL` | `warn` | Apache log level |
@@ -441,6 +441,7 @@ Run as `php bin/drawbridge <command>` (or `vendor/bin/drawbridge` when installed
 | `explain <host> <path>` | says which rule applies to a request, and which authentication context it needs, and why |
 | `render` | checks the two secrets in the environment, then writes `apps.conf` and `policy.lua` for Apache (the entrypoint runs this) |
 | `keys:generate` | makes an ES256 key pair; refuses to overwrite a file |
+| `keys:jwks --key=KID=FILE ... [--out=FILE]` | writes the key set file apps verify with: the public keys, current then next, as a JWKS; refuses a private key |
 | `signer:map` | the long-running process behind Apache's `prg:` map (not for people) |
 
 ## Run the checks
@@ -489,8 +490,19 @@ sh rig/run.sh        # Linux, macOS
 
 ## Using the assertion in an app
 
-Point SESAME's `gateway` driver at Drawbridge: the same issuer, the app's host as the audience, the signing public
-key, and the header `X-Sesame-Assertion`. Apps do not parse the token themselves.
+Point SESAME's `gateway` driver at Drawbridge: the same issuer, the app's host as the audience, the key set file, and
+the header `X-Sesame-Assertion`. Apps do not parse the token themselves.
+
+### Signing keys and rotation
+
+The gateway signs with one ES256 key at a time and names it in the `kid` header. Apps get the public keys as one
+key set file (a JWKS) that always holds the **current** key and the **next** one, written by `keys:jwks`, and point
+SESAME at it with `SESAME_GATEWAY_JWKS_FILE`. Because every app already trusts the next key, the gateway can switch to
+it without any app changing first; the apps pick up a fresh file afterwards. Rotate every 12 months (and at once on a
+suspected leak), and remove a retired key no sooner than 5 minutes after the switch. The steps, including the
+emergency ones, are in [Rotating the signing key](docs/guides/rotating-the-signing-key.md); the reasoning is
+[an ADR](ADR/an ADR-signing-key-distribution-and-rotation.md). Two keys on the ring: the guard can change locks
+without anyone waiting outside the gate.
 
 ## Metrics
 
@@ -541,6 +553,7 @@ to expose those. Labels carry no identity, claim, or token, and the `reason` lab
 - `BEST_PRACTICES.md`: the short list of rules the gateway holds itself to.
 - `ENTRA_TEST.md`: the first real Entra test: what you need to do.
 - `OPEN_QUESTIONS.md`: what is unanswered, what is missing, what is not built yet.
+- `ADR/`: decisions about Drawbridge itself, one file each (an ADR: signing key distribution and rotation).
 - `CHANGELOG.md`: what changed.
 - `site/`: the front page, a static sheet set for the gatehouse (`site/index.html`; see `site/README.md`).
 

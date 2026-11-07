@@ -7,6 +7,13 @@ description: How to upgrade ADVISOR, version by version.
 
 This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
 
+## [0.1.7] - 2026-11-07
+
+No breaking changes are marked for this release. Update with `composer update waynestate/advisor`; the MCP server reports version 0.1.7.
+
+- `owner_of` answers from an ownership table rebuilt from the stack's decisions, and `read_project_docs` trims image boilerplate at read time as well.
+- The bundled data is resynced with the stack's 2026-11-07 releases, and the canonical repository is git.wayne.edu.
+
 ## [0.1.6] - 2026-11-06
 
 No breaking changes are marked for this release. Update with `composer update waynestate/advisor`; the MCP server reports version 0.1.6.
