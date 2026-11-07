@@ -135,11 +135,11 @@
             "source": "creed/handbook/auth.md"
         },
         "handbook/ci.md": {
-            "sha256": "29f72c617fed8cc3df161e2896c838b847f5f0702ee923aa507d3f3bb7614e62",
+            "sha256": "8802e0e8d8ff2c424ed06abbb497d41350164adb11d149d73788e4432cd59819",
             "source": "creed/handbook/ci.md"
         },
         "handbook/code.md": {
-            "sha256": "b7958524e59ae76ebf05100706ef48a35c2ac62cb266b726c93e756f83ca87e0",
+            "sha256": "fd2d47b7a4929c906559ac8ff1dbff2a78734d289783813a9ef486db1f8e393d",
             "source": "creed/handbook/code.md"
         },
         "handbook/databases.md": {
@@ -191,7 +191,7 @@
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {
-            "sha256": "8e35dc09ee382406d4788affcceb379d193617b37eeab7fbbf03f85c983c9aef",
+            "sha256": "2b45ed3e2abf714914c377bbd217f24fbc52475a32c3a943f60a746284bac46e",
             "source": "creed/handbook, creed/policy/policy.json"
         }
     }

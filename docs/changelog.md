@@ -11,6 +11,11 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Changed
+
+- The canonical repository is git.wayne.edu (ADR-0021); docs, links and package metadata no longer point at the archived nougat copy.
+- The CREED handbook's code and CI chapters are resynced from CREED main, so `list_stack_rules` and `advisor://creed/code` say the stack's code lives on git.wayne.edu and its CI runs on the git.wayne.edu instance runner (the old rule kept the archived copy as the home "until a CI runner exists on git.wayne.edu"). The bundled project docs are not part of this resync.
+
 ### Added
 
 - The Proof page records its last run.

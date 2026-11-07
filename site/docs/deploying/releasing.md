@@ -21,7 +21,7 @@ A release needs a maintainer's approval. Never move or delete a published tag.
 1. Move the lines under `## [Unreleased]` in `CHANGELOG.md` (Keep a Changelog) to a new `## [X.Y.Z] - YYYY-MM-DD` heading.
 2. With the denylist file present, regenerate: `php bin/advisor content:generate --sources=<stack folder>`, then `composer ci` (the public-posture test must pass).
 3. Both pipelines green for that commit. Run a secrets scan of the history.
-4. Tag `X.Y.Z` (no `v`) on nougat. The mirror carries the tag to GitHub, and Packagist picks it up from there.
+4. Tag `X.Y.Z` (no `v`) on git.wayne.edu. Its push mirror carries the tag to GitHub, and Packagist picks it up from there.
 5. A release needs a maintainer's approval. Never move or delete a published tag.
 
 ## The denylist[#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#the-denylist)

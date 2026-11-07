@@ -12,7 +12,7 @@ This page tells you how to make a change to ADVISOR, what rules the change must 
 
 ## Where changes go[#](https://advisor.apps.wayne.edu/docs/contributing.html#where-changes-go)
 
-Development happens on nougat, the canonical repository: enterprise-apps/advisor. This GitHub repository and git.wayne.edu are read-only mirrors: `main` and tags are copied automatically. Changes, issues and merge requests go to nougat. Nobody pushes to the mirrors.
+Development happens on git.wayne.edu, the canonical repository: [enterprise-apps/advisor](https://git.wayne.edu/enterprise-apps/advisor) (clone `git@git.wayne.edu:enterprise-apps/advisor.git` over SSH, or `https://git.wayne.edu/enterprise-apps/advisor.git` over HTTPS). Changes, issues and merge requests go there, CI runs there on its instance runner, and tags are made there by the maintainer, with an approver. GitHub ([waynestate/advisor](https://github.com/waynestate/advisor)) is a read-only push mirror of git.wayne.edu for Packagist: nobody pushes to it.
 
 ## Build and test[#](https://advisor.apps.wayne.edu/docs/contributing.html#build-and-test)
 
@@ -81,7 +81,7 @@ The denylist file is never committed. The bundle is regenerated with the file pr
 1. Move the lines under `## [Unreleased]` in `CHANGELOG.md` (Keep a Changelog) to a new `## [X.Y.Z] - YYYY-MM-DD` heading.
 2. With the denylist file present, regenerate: `php bin/advisor content:generate --sources=<stack folder>`, then `composer ci` (the public-posture test must pass).
 3. Both pipelines green for that commit. Run a secrets scan of the history.
-4. Tag `X.Y.Z` (no `v`) on nougat. The mirror carries the tag to GitHub, and Packagist picks it up from there.
+4. Tag `X.Y.Z` (no `v`) on git.wayne.edu. Its push mirror carries the tag to GitHub, and Packagist picks it up from there.
 5. A release needs a maintainer's approval. Never move or delete a published tag.
 
 ## Open work[#](https://advisor.apps.wayne.edu/docs/contributing.html#open-work)

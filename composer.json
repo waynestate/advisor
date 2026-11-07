@@ -3,8 +3,8 @@
     "description": "Wayne State's own MCP server: orients a developer and gives their coding agent read-only tools into every project of the app stack.",
     "homepage": "https://advisor.apps.wayne.edu/",
     "support": {
-        "source": "https://nougat.snu.gs/enterprise-apps/advisor",
-        "issues": "https://nougat.snu.gs/enterprise-apps/advisor/-/issues"
+        "source": "https://github.com/waynestate/advisor",
+        "issues": "https://git.wayne.edu/enterprise-apps/advisor/-/issues"
     },
     "type": "library",
     "license": "MIT",

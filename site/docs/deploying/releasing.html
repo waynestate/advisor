@@ -48,7 +48,7 @@
 <li>Move the lines under <code>## [Unreleased]</code> in <code>CHANGELOG.md</code> (Keep a Changelog) to a new <code>## [X.Y.Z] - YYYY-MM-DD</code> heading.</li>
 <li>With the denylist file present, regenerate: <code>php bin/advisor content:generate --sources=&lt;stack folder&gt;</code>, then <code>composer ci</code> (the public-posture test must pass).</li>
 <li>Both pipelines green for that commit. Run a secrets scan of the history.</li>
-<li>Tag <code>X.Y.Z</code> (no <code>v</code>) on nougat. The mirror carries the tag to GitHub, and Packagist picks it up from there.</li>
+<li>Tag <code>X.Y.Z</code> (no <code>v</code>) on git.wayne.edu. Its push mirror carries the tag to GitHub, and Packagist picks it up from there.</li>
 <li>A release needs a maintainer's approval. Never move or delete a published tag.</li>
 </ol>
 <h2 id="the-denylist">The denylist<a class="docs-heading-link" aria-label="Link to this section" href="#the-denylist">#</a></h2>
@@ -67,7 +67,7 @@
 </div>
 <footer class="docs-footer">
   <span>Documents ADVISOR <span data-docs-version>0.1.6</span></span>
-  <span><a rel="noopener" href="https://nougat.snu.gs/enterprise-apps/advisor">Source</a> Mirrors: <a rel="noopener" href="https://git.wayne.edu/enterprise-apps/advisor">git.wayne.edu</a> <a rel="noopener" href="https://github.com/waynestate/advisor">GitHub</a> <a href="releasing.md">Markdown</a></span>
+  <span><a rel="noopener" href="https://github.com/waynestate/advisor">Source</a> <a href="releasing.md">Markdown</a></span>
 </footer>
 </body>
 </html>

@@ -23,9 +23,11 @@ Documentation: the full docs live at [`site/docs/index.html`](site/docs/index.ht
 
 ## Where the code lives
 
-The canonical repository is on nougat: [enterprise-apps/advisor](https://nougat.snu.gs/enterprise-apps/advisor). git.wayne.edu and GitHub ([waynestate/advisor](https://github.com/waynestate/advisor)) are read-only mirrors of it.
-Open issues and merge requests on nougat, not on the mirrors.
-This moves to git.wayne.edu once it has CI runners. Our advice: start at nougat.
+The canonical repository is [enterprise-apps/advisor](https://git.wayne.edu/enterprise-apps/advisor) on git.wayne.edu: clone it over SSH as `git@git.wayne.edu:enterprise-apps/advisor.git`, or over HTTPS as `https://git.wayne.edu/enterprise-apps/advisor.git`. Open issues and merge requests there; tags are made there, by the maintainer, with an approver. CI runs on git.wayne.edu, on its instance runner.
+
+GitHub ([waynestate/advisor](https://github.com/waynestate/advisor)) is a read-only push mirror of it: nobody pushes to it, and Packagist reads from it.
+
+An advisor with office hours in two buildings is just hard to find. Ours keeps one office: git.wayne.edu.
 
 > Every WSU student has an advisor. Now every WSU app does too, and this one answers email.
 
@@ -388,7 +390,7 @@ MIT. Copyright Wayne State University.
 <div align="center"><b>Everyone on the sheet</b><br><sub>WayneUI and the stack. ADVISOR is the one with office hours.</sub></div>
 
 <div align="center">
-  <a href="https://github.com/waynestate/wayne-ui" title="WayneUI"><img src="docs/readme/cast/wayneui.png" width="40" alt="WayneUI"></a>
+  <a href="https://git.wayne.edu/enterprise-apps/wayne-ui" title="WayneUI"><img src="docs/readme/cast/wayneui.png" width="40" alt="WayneUI"></a>
   <a href="https://github.com/waynestate/creed" title="CREED"><img src="docs/readme/cast/creed.png" width="40" alt="CREED"></a>
   <a href="https://github.com/waynestate/proctor" title="PROCTOR"><img src="docs/readme/cast/proctor.png" width="40" alt="PROCTOR"></a>
   <a href="https://github.com/waynestate/sesame" title="SESAME"><img src="docs/readme/cast/sesame.png" width="40" alt="SESAME"></a>
@@ -399,7 +401,7 @@ MIT. Copyright Wayne State University.
   <a href="https://github.com/waynestate/pinstripe" title="Pinstripe"><img src="docs/readme/cast/pinstripe.png" width="40" alt="Pinstripe"></a>
   <a href="https://github.com/waynestate/booster" title="Booster"><img src="docs/readme/cast/booster.png" width="40" alt="Booster"></a>
   <a href="https://github.com/waynestate/rollcall" title="Rollcall"><img src="docs/readme/cast/rollcall.png" width="40" alt="Rollcall"></a>
-  <a href="https://nougat.snu.gs/enterprise-apps/drawbridge" title="Drawbridge"><img src="docs/readme/cast/drawbridge.png" width="40" alt="Drawbridge"></a>
+  <a href="https://git.wayne.edu/enterprise-apps/drawbridge" title="Drawbridge"><img src="docs/readme/cast/drawbridge.png" width="40" alt="Drawbridge"></a>
   <a href="https://github.com/waynestate/advisor" title="ADVISOR"><img src="docs/readme/cast/advisor.png" width="40" alt="ADVISOR"></a>
   <a href="https://github.com/waynestate/weld" title="WELD"><img src="docs/readme/cast/weld.png" width="40" alt="WELD"></a>
 </div>

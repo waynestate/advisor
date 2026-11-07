@@ -2,13 +2,13 @@
 
 > ADVISOR is an MCP server for the Wayne State app stack. Your coding agent asks it about our standards, supported versions, docs and checks, and it answers read-only from the stack's own files.
 
-Front page: [`site/index.html`](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/site/index.html), a static field map of the stack (open it in a browser).
+Front page: [`site/index.html`](https://github.com/waynestate/advisor/blob/HEAD/site/index.html), a static field map of the stack (open it in a browser).
 
-On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
+On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](https://github.com/waynestate/advisor/blob/HEAD/deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
-Documentation: the full docs live at [`site/docs/index.html`](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/site/docs/index.html), built from `docs/` by the shared docs builder (`composer docs`). The docs wear the front page's look through the builder's `theme` key in `docs/docs.json`: [`docs/_header.html`](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/docs/_header.html) is the sheet head every docs page gets (keep its links in step with the front page's), and [`docs/theme/advisor.css`](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/docs/theme/advisor.css) holds the paper, Fraunces titles, code ground, callouts and the derived dark mode; the build copies it to `site/docs/theme/`. Edit those two files, never `site/assets/docs.css` or `docs.js` (Squire's kit), then run `composer docs`. The back of the map, now with the same legend as the front.
+Documentation: the full docs live at [`site/docs/index.html`](https://github.com/waynestate/advisor/blob/HEAD/site/docs/index.html), built from `docs/` by the shared docs builder (`composer docs`). The docs wear the front page's look through the builder's `theme` key in `docs/docs.json`: [`docs/_header.html`](https://github.com/waynestate/advisor/blob/HEAD/docs/_header.html) is the sheet head every docs page gets (keep its links in step with the front page's), and [`docs/theme/advisor.css`](https://github.com/waynestate/advisor/blob/HEAD/docs/theme/advisor.css) holds the paper, Fraunces titles, code ground, callouts and the derived dark mode; the build copies it to `site/docs/theme/`. Edit those two files, never `site/assets/docs.css` or `docs.js` (Squire's kit), then run `composer docs`. The back of the map, now with the same legend as the front.
 
 Every page below is Markdown. The HTML pages send the same Markdown to a client that asks for `text/markdown`. Written by Squire's agent-ready kit from the README and the pages; do not edit.
 
@@ -45,7 +45,7 @@ Every page below is Markdown. The HTML pages send the same Markdown to a client 
 
 ## Source
 
-- [README](https://nougat.snu.gs/enterprise-apps/advisor/blob/HEAD/README.md): the project's README, with install, commands and checks
+- [README](https://github.com/waynestate/advisor/blob/HEAD/README.md): the project's README, with install, commands and checks
 - [Everything in one file](https://advisor.apps.wayne.edu/llms-full.txt): the README and every page above, as one Markdown file
 
 ## Optional

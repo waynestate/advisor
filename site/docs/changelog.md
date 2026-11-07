@@ -12,6 +12,11 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[Unreleased\][#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
 
+### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
+
+- The canonical repository is git.wayne.edu (ADR-0021); docs, links and package metadata no longer point at the archived nougat copy.
+- The CREED handbook's code and CI chapters are resynced from CREED main, so `list_stack_rules` and `advisor://creed/code` say the stack's code lives on git.wayne.edu and its CI runs on the git.wayne.edu instance runner (the old rule kept the archived copy as the home "until a CI runner exists on git.wayne.edu"). The bundled project docs are not part of this resync.
+
 ### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
 
 - The Proof page records its last run.
@@ -30,7 +35,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Added: an accessibility gate (scripts/a11y/check.mjs) that loads every HTML page under site/ in a real browser and fails on any axe-core WCAG violation, in light and dark themes at phone and desktop width, plus a reduced-motion pass; runs as the a11y job in GitLab CI.
 - Added: a docs site (site/docs/) built by the shared docs builder from docs/, checked in composer ci.
 
-### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
+### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-1)
 
 - Changed: resynced the bundled content (data/) with the stack as of 2026-11-05, including Booster 1.8.2 and 1.8.3, DRAWBRIDGE (session store, secret files, GitHub references removed), HELMET (H21 partly enforced, warn_broad_proxies), SESAME (CAS login bound to its browser), PROCTOR, ROLLCALL, CREED handbook chapters, Sourdough (--sail, --docker, Pest 4) and the WELD and SQUIRE guides; the Sourdough role now lists every shape that generates; the docs builder and kit follow SQUIRE 97744a4, which keeps the changelog page h1 itself.
 - Changed: the docs pages wear the front page's look: the same sheet head and main menu (Docs marked current), Fraunces titles with a plotted maroon route, the legend's mono labels, commands on the dark code ground with the gold Copy tab, callouts drawn as map marks (note, tip, out of bounds), the green footer band, and a dark mode derived from the Directions band. Motion only without a reduced-motion preference. Source: `docs/_header.html` and `docs/theme/advisor.css` through the builder's `theme` key. The front page site owes a Quick Update.
@@ -77,7 +82,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Docs: a one-line `claude mcp add` and a Docker `.mcp.json` for machines without PHP.
 - Added: composer content:drift and an optional CI job that fail when data/ no longer matches the sibling repos.
 
-### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-1)
+### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-2)
 
 - Changed: the deploy layer's Squire kit is refreshed to 0.3.3 (release options can now live in ./.env.squire).
 - Changed: the deploy layer's Squire kit is refreshed to 0.3.4 (the local .env.squire file is now git-ignored).
@@ -89,7 +94,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Added: agent-ready site (prompt blocks, Markdown twins, llms.txt), from Squire's kit.
 - `playbook_lookup` tool: answers "what is the value of X?" for WSU shared values. An environment variable of the same name wins, then the private `waynestate/playbook` package (Playbook) supplies the rest; without it the tool says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are refused. `waynestate/playbook` is suggested, never required.
 
-### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-2)
+### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-3)
 
 - Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.
 - Changed: project names written as words except acronyms.
@@ -104,7 +109,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 - `owner_of` tool: answers "which project owns X?" from a new bundled `data/ownership.json` table (sourced from `generator/ownership.json`, verified by `content:verify`). Fuzzy match: every word of the topic must appear in a row's topic or role; a no-match answer lists every known topic.
 
-### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-3)
+### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-4)
 
 - `upgrade_path` moves from the `stack` group to a new `booster` group, so `ADVISOR_GROUPS=stack` offers reference tools only and never starts a program. `ADVISOR_GROUPS` now accepts `stack`, `proctor` and `booster`.
 - PHPStan includes Pinstripe's `raw.neon` preset (`waynestate/pinstripe` 0.1.0 as a dev dependency) instead of a hand copy of its settings; two docblocks were tightened to satisfy the preset's method-signature checks. Pint already used the `per` preset, so `pint.json` is unchanged.
