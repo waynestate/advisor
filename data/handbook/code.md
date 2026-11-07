@@ -56,7 +56,8 @@ Each ban becomes a PHPStan rule: Larastan's where it has one, `phpstan-disallowe
 for plain bans, and a custom rule only when neither fits.
 
 - `env()` only in `config/` files, from Larastan's
-  `NoEnvCallsOutsideOfConfig` rule. Planned.
+  `NoEnvCallsOutsideOfConfig` rule. PROCTOR check: `env-outside-config`
+  (a warning per call); the PHPStan rule is planned.
 - No disabled TLS verification, such as `withoutVerifying()` or
   `CURLOPT_SSL_VERIFYPEER` set to false (OWASP ASVS). Planned.
 - No SQL built by joining strings; use bindings (OWASP SQL Injection

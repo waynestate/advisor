@@ -280,9 +280,11 @@ Why: build tools run with your credentials and your source.
 Sources: [Node.js release schedule](https://github.com/nodejs/Release),
 [Node release schedule data](https://raw.githubusercontent.com/nodejs/Release/main/schedule.json).
 
-How the stack holds it: `Not yet`. The dates for 20, 22, 24 and 26 are in `policy.json` (second pass: 26 was added after
-the first pass, and its dates match the Node schedule). No check reads an app's Node version. Node 27 changes the
-schedule shape: see practice 49.
+How the stack holds it: `Checked`. The dates for 20, 22, 24 and 26 are in `policy.json` (second pass: 26 was added after
+the first pass, and its dates match the Node schedule). PROCTOR main's `proctor/node-eol` reads every Node version an app
+pins (`.nvmrc`, `.node-version`, package.json `volta.node`, the `node` image in `.gitlab-ci.yml` or a Dockerfile) and
+grades it through the policy: an active line passes, a security-only line warns and an EOL line fails. `engines.node`
+and odd majors warn. Node 27 changes the schedule shape: see practice 49.
 
 ### 17. Choose a supported MySQL, and say when the platform lags
 
@@ -404,7 +406,10 @@ Why: a repository is copied to many machines and outlives any one password.
 Sources: [OWASP Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html),
 [Laravel configuration docs](https://laravel.com/docs/13.x/configuration).
 
-How the stack holds it: `Documented`. `handbook/secrets.md` writes the rules; no check scans for committed secrets yet.
+How the stack holds it: `Partially`. `handbook/secrets.md` writes the rules. PROCTOR main warns on two kinds of committed
+secret: a real `.env` file or a real `APP_KEY` (`proctor/app-key/committed-env` and `committed-key`, practice 43) and a
+token written into a package source URL or `.npmrc` (`proctor/repo-url-credentials`). No general secret scan exists, so
+an API key pasted into code is not caught, and rotation stays a process.
 
 ### 25. Read environment variables only in config files
 
@@ -415,8 +420,9 @@ Why: it works on a laptop and breaks in production.
 
 Sources: [Laravel configuration docs](https://laravel.com/docs/13.x/configuration).
 
-How the stack holds it: `Not yet`. The rule is named in design notes as a PHPStan rule planned for PROCTOR v0.2. It
-belongs in Pinstripe and the handbook, and neither has it yet.
+How the stack holds it: `Checked`. PROCTOR main's `proctor/env-outside-config` warns for every `env()` call in a Laravel
+app outside `config/`, in PHP and in Blade templates. A call that carries Larastan's own ignore marker for the same rule
+(`larastan.noEnvCallsOutsideOfConfig`) is reported as reviewed, not counted. `handbook/code.md` names the rule.
 
 ### 26. Never run production with debug on
 
@@ -707,8 +713,11 @@ Sources: [GitGuardian, exploiting public APP_KEY leaks](https://blog.gitguardian
 patches only. It is one option, not an endorsement. Windows support is not stated on the page, so check it before
 adopting).
 
-How the stack holds it: `Not yet`. This extends practice 24: no secret scan, and no rule about rotation or the session
-driver.
+How the stack holds it: `Checked`. PROCTOR main's `proctor/app-key` warns when a real env file is committed
+(`committed-env`), when a committed env file or `config/app.php` carries a real `APP_KEY` or `APP_PREVIOUS_KEYS`
+(`committed-key`; the key is never printed), and when the session driver is `cookie` (`cookie-sessions`). An
+uncommitted `.env` on a laptop is never graded. Rotating a key that leaked stays a process: the check names
+`php artisan key:generate` but cannot see whether it ran.
 
 ### 44. Pin base images and rebuild them on a schedule
 
@@ -898,8 +907,10 @@ wrote it. A leaked password is a bad encore: everyone remembers it, and nobody a
 
 Sources: the WSU developer standards, 2024 (an internal WSU document), [OWASP ASVS](https://asvs.owasp.org/).
 
-How the stack holds it: `Documented`. `handbook/secrets.md` writes the rule. This extends practice 24, which stays
-`Documented` because no scan exists.
+How the stack holds it: `Partially`. `handbook/secrets.md` writes the rule. PROCTOR main warns on committed env files and
+APP_KEYs (`proctor/app-key`, practice 43), on tokens in package source URLs (`proctor/repo-url-credentials`), and on
+dumps, backups, logs and env files in the served folder (`proctor/served-folder`, practice 59). What a log or an
+exception carries at runtime is not something a static check can see.
 
 ### 56. Validate every input and treat uploaded files as hostile
 
@@ -955,8 +966,11 @@ are read by strangers.
 
 Sources: the WSU developer standards, 2024 (an internal WSU document).
 
-How the stack holds it: `Not yet`. `handbook/production.md` writes the rule. A PROCTOR check for the served-folder
-scan and one for permissions are proposed, neither is built.
+How the stack holds it: `Partially`. `handbook/production.md` writes the rule. PROCTOR main's `proctor/served-folder`
+warns when a committed file under `public/` is a dump, a backup or editor copy, a log, an env file or `adminer*.php`, or
+calls `phpinfo()`, and `proctor/world-writable` warns on `chmod 777` in scripts, Dockerfiles, CI and composer or npm
+scripts, and on a PHP `chmod()` with `0777`. Whether the app runs as a non-root user is a fact of the running
+container, which no static check can see.
 
 ### 60. Monitor `/up`, rotate logs and keep an audit trail
 
@@ -1031,11 +1045,13 @@ These are places where a source disagrees with the repository or with an earlier
 4. Done: `policy/sources.json` records each source with its first_seen and last_seen, and `policy.json` keeps `latest_patch_checked` (practice 6).
 5. Partly done: policy.json records the supported PHP range per Laravel release (practice 14); the PROCTOR check that compares an app with it is not built.
 6. Add a PROCTOR check that reads the Laravel version from `composer.lock` against the policy (practice 15).
-7. Add a PROCTOR check for the Node version in `.nvmrc` or `package.json` engines (practice 16).
+7. Done: PROCTOR main's `node-eol` grades the Node version in `.nvmrc`, `.node-version`, `volta.node`, CI and
+   Dockerfile images, and `engines` (practice 16).
 8. Add a MySQL check or report once the platform timeline is known (practice 17).
 9. Add an abandoned-package setting to `rules` and apply it in the audit check (practice 21).
 10. Add a secret-scanning job in Preflight (the secrets chapter is written; practice 24).
-11. Add a PHPStan rule for `env()` outside `config/` and put the rule in Pinstripe (practice 25).
+11. Done: PROCTOR main's `env-outside-config` warns on `env()` outside `config/` (practice 25). Larastan's own rule in
+    Pinstripe would catch it earlier, in the editor.
 12. Partly done: the runtime and headers chapter is written (practice 26); the `config` check that `APP_DEBUG` is
     false in production is not built.
 13. Partly done: versions, dependencies, auth, databases, ci, every-os and overrides carry check IDs; the other chapters
@@ -1060,8 +1076,8 @@ Added in the second pass (2026-10-27):
 23. Add an npm check (`audit-level`, `ignore-scripts`, `min-release-age`) to Preflight, with a severity word map between
     Composer and npm (practice 41).
 24. Confirm the tier of git.wayne.edu (the rule is written in `handbook/code.md`; practice 42).
-25. Add a secrets chapter section on `APP_KEY`: rotation, the session driver, and a scan that works on Windows, macOS and
-    Linux (practice 43; extends item 10).
+25. Partly done: PROCTOR main's `app-key` warns on a committed `.env` or `APP_KEY` and the cookie session driver, on
+    every OS (practice 43). The secrets chapter names the check; a general secret scan is still item 10.
 26. Partly done: `images.docker` is filled for PHP 8.3 to 8.5 and the rebuild rule is in `handbook/versions.md`;
     `citadel` waits for Citadel's image names.
 27. Ask the owners of git.wayne.edu to publish its GitLab patch level and a patch routine (practice 45).
@@ -1083,9 +1099,10 @@ Added in the second pass (2026-10-27):
 
 Added from the WSU developer standards (2026-11-02):
 
-38. PROCTOR check for non-production files in the served folder (`phpinfo.php`, dumps, backups, `.env`, `.git`)
-    (practice 59).
-39. PROCTOR check for mode 777 and web-writable paths outside an allowed list (practice 59).
+38. Done: PROCTOR main's `served-folder` warns on `phpinfo()`, dumps, backups, logs, env files and `adminer*.php`
+    committed under `public/` (practice 59).
+39. Partly done: PROCTOR main's `world-writable` warns on `chmod 777` in scripts and PHP; web-writable paths outside an
+    allowed list need the running container (practice 59).
 40. A committed-secret scan in Preflight; extends items 10 and 25 and practice 55.
 41. Whether idle sessions get a stated time limit (practice 57).
 42. Deferred past 1.0: a schema version 2 with `platform_components` per target. It would be a breaking schema change and nothing needs it yet.

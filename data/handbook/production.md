@@ -16,9 +16,9 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 - The app and its scripts MUST run as a non-root, non-administrator user with the least access they need (WSU developer standards, 2024). No check exists yet.
 - The web server MUST NOT list directory contents (WSU developer standards, 2024). No check exists yet.
 - File permissions MUST be set per path; write access for the web server is granted only to specific files or folders, and mode `777` MUST NOT be used (WSU developer standards, 2024).
-  A PROCTOR check for this is proposed, not built: it flags mode `777` and web-writable paths outside the allowed list.
+  PROCTOR check: `world-writable` (`chmod 777` in scripts, Dockerfiles, CI and PHP).
 - Debugging and diagnostic files, scripts, dumps and backups MUST NOT sit in the served folder (WSU developer standards, 2024).
-  A PROCTOR check for this is proposed, not built: a scan of the served folder for `phpinfo.php`, dumps, backups, `.env` and `.git`.
+  PROCTOR check: `served-folder` (`phpinfo()`, dumps, backups, logs, env files and `adminer*.php` under `public/`).
 - On failure the app degrades predictably and fails closed: an authentication error withholds access (WSU developer standards, 2024).
 - A person is told when something fails: a monitor calls `/up` on a schedule and alerts someone (WSU developer standards, 2024).
 - Logs are rotated or removed at a set interval; temporary files are cleaned up; uploaded files have a retention rule. Citadel rotates container logs; elsewhere the platform or the app MUST (WSU developer standards, 2024). No check exists yet.

@@ -4,8 +4,9 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 
 ## Credentials
 
-- Credentials (database and service passwords, API keys, tokens) MUST NOT be committed to version control, because history keeps them forever. Commit `.env.example` with placeholders instead. A credential that was ever committed is treated as exposed and rotated (WSU developer standards, 2024). No check exists yet.
-- Credentials and sensitive data MUST live outside any folder the web server serves. Laravel's `public/` is the only served folder; raw PHP apps serve one `public/` folder the same way (WSU developer standards, 2024). No check exists yet.
+- Credentials (database and service passwords, API keys, tokens) MUST NOT be committed to version control, because history keeps them forever. Commit `.env.example` with placeholders instead. A credential that was ever committed is treated as exposed and rotated (WSU developer standards, 2024). PROCTOR checks: `app-key` (a committed `.env` or `APP_KEY`) and `repo-url-credentials` (a token in a package source URL); no general secret scan exists yet.
+- Credentials and sensitive data MUST live outside any folder the web server serves. Laravel's `public/` is the only served folder; raw PHP apps serve one `public/` folder the same way (WSU developer standards, 2024). PROCTOR check: `served-folder` (dumps, backups, logs and env files in `public/`).
+- The Laravel `APP_KEY` is a credential: whoever holds it can forge encrypted payloads, which can mean code execution. It MUST NOT be committed, a key that leaked MUST be rotated with `php artisan key:generate` on every environment that used it, and the session driver SHOULD NOT be `cookie`, which seals every session with the key (GitGuardian, exploiting public APP_KEY leaks). PROCTOR check: `app-key`.
 - An app uses its own dedicated application ID, never a person's employee or student AccessID, to reach another server or service, with the fewest permissions the task needs (WSU developer standards, 2024).
 - Real values come from the environment at deploy time (the Citadel dashboard or CI variables), never from a file in the repo (WSU developer standards, 2024).
 

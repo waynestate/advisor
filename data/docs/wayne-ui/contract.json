@@ -1737,6 +1737,11 @@
       "hasOfficialMasthead": true,
       "search": "wsu-app-bar__search--expandable, because the masthead already has a wayne.edu field"
     },
-    "note": "Both are APPLICATION templates. The difference is who can reach them, and therefore how much university identity they carry, not what they are for."
+    "note": "Both are APPLICATION templates. The difference is who can reach them, and therefore how much university identity they carry, not what they are for.",
+    "appBarItemIcon": {
+      "class": "wsu-app-bar__item-icon",
+      "markup": "<svg class=\"wsu-icon wsu-app-bar__item-icon\" aria-hidden=\"true\"><use href=\".../icons.svg#wsu-NAME\"/></svg>",
+      "why": "The class sizes the glyph to its label (1.15em) and sets its resting strength. Without it a bare wsu-icon renders larger and at full strength, so an item icon looked different depending on which path drew it."
+    }
   }
 }

@@ -712,7 +712,7 @@
             "id": "code-23",
             "chapter": "code",
             "heading": "Banned patterns",
-            "text": "`env()` only in `config/` files, from Larastan's `NoEnvCallsOutsideOfConfig` rule. Planned.",
+            "text": "`env()` only in `config/` files, from Larastan's `NoEnvCallsOutsideOfConfig` rule. PROCTOR check: `env-outside-config` (a warning per call); the PHPStan rule is planned.",
             "applies_to": [
                 "laravel-blade",
                 "laravel-blade-vue",
@@ -732,7 +732,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:60"
+            "source": "handbook/code.md:61"
         },
         {
             "id": "code-25",
@@ -746,7 +746,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:62"
+            "source": "handbook/code.md:63"
         },
         {
             "id": "code-26",
@@ -760,7 +760,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:64"
+            "source": "handbook/code.md:65"
         },
         {
             "id": "code-27",
@@ -774,7 +774,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:69"
+            "source": "handbook/code.md:70"
         },
         {
             "id": "code-28",
@@ -786,7 +786,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:70"
+            "source": "handbook/code.md:71"
         },
         {
             "id": "code-29",
@@ -800,7 +800,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:71"
+            "source": "handbook/code.md:72"
         },
         {
             "id": "code-30",
@@ -814,7 +814,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:72"
+            "source": "handbook/code.md:73"
         },
         {
             "id": "code-31",
@@ -828,7 +828,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:73"
+            "source": "handbook/code.md:74"
         },
         {
             "id": "code-32",
@@ -840,7 +840,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:74"
+            "source": "handbook/code.md:75"
         },
         {
             "id": "code-33",
@@ -854,7 +854,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:76"
+            "source": "handbook/code.md:77"
         },
         {
             "id": "code-34",
@@ -868,7 +868,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:80"
+            "source": "handbook/code.md:81"
         },
         {
             "id": "code-35",
@@ -880,7 +880,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:82"
+            "source": "handbook/code.md:83"
         },
         {
             "id": "code-36",
@@ -894,7 +894,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:87"
+            "source": "handbook/code.md:88"
         },
         {
             "id": "code-37",
@@ -908,7 +908,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:90"
+            "source": "handbook/code.md:91"
         },
         {
             "id": "code-38",
@@ -922,7 +922,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:92"
+            "source": "handbook/code.md:93"
         },
         {
             "id": "code-39",
@@ -936,7 +936,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:110"
+            "source": "handbook/code.md:111"
         },
         {
             "id": "code-40",
@@ -950,7 +950,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:112"
+            "source": "handbook/code.md:113"
         },
         {
             "id": "code-41",
@@ -964,7 +964,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:116"
+            "source": "handbook/code.md:117"
         },
         {
             "id": "code-42",
@@ -978,7 +978,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:118"
+            "source": "handbook/code.md:119"
         },
         {
             "id": "code-43",
@@ -992,7 +992,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:119"
+            "source": "handbook/code.md:120"
         },
         {
             "id": "code-44",
@@ -1006,7 +1006,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:123"
+            "source": "handbook/code.md:124"
         },
         {
             "id": "code-45",
@@ -1020,7 +1020,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:124"
+            "source": "handbook/code.md:125"
         },
         {
             "id": "code-46",
@@ -1032,7 +1032,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:125"
+            "source": "handbook/code.md:126"
         },
         {
             "id": "code-47",
@@ -1046,7 +1046,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:126"
+            "source": "handbook/code.md:127"
         },
         {
             "id": "code-48",
@@ -1060,7 +1060,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:127"
+            "source": "handbook/code.md:128"
         },
         {
             "id": "code-49",
@@ -1074,7 +1074,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:128"
+            "source": "handbook/code.md:129"
         },
         {
             "id": "code-50",
@@ -1088,7 +1088,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:129"
+            "source": "handbook/code.md:130"
         },
         {
             "id": "code-51",
@@ -1100,7 +1100,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:130"
+            "source": "handbook/code.md:131"
         },
         {
             "id": "code-52",
@@ -1112,7 +1112,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:131"
+            "source": "handbook/code.md:132"
         },
         {
             "id": "code-53",
@@ -1126,7 +1126,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:133"
+            "source": "handbook/code.md:134"
         },
         {
             "id": "code-54",
@@ -1140,7 +1140,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:135"
+            "source": "handbook/code.md:136"
         },
         {
             "id": "code-55",
@@ -1152,7 +1152,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:137"
+            "source": "handbook/code.md:138"
         },
         {
             "id": "code-56",
@@ -1166,7 +1166,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:138"
+            "source": "handbook/code.md:139"
         },
         {
             "id": "code-57",
@@ -1178,7 +1178,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:139"
+            "source": "handbook/code.md:140"
         },
         {
             "id": "code-58",
@@ -1192,7 +1192,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:141"
+            "source": "handbook/code.md:142"
         },
         {
             "id": "code-59",
@@ -1206,7 +1206,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:142"
+            "source": "handbook/code.md:143"
         },
         {
             "id": "code-60",
@@ -1220,7 +1220,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:143"
+            "source": "handbook/code.md:144"
         },
         {
             "id": "code-61",
@@ -1234,7 +1234,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:144"
+            "source": "handbook/code.md:145"
         },
         {
             "id": "code-62",
@@ -1248,7 +1248,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:146"
+            "source": "handbook/code.md:147"
         },
         {
             "id": "code-63",
@@ -1262,7 +1262,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:147"
+            "source": "handbook/code.md:148"
         },
         {
             "id": "databases-1",
@@ -2426,7 +2426,7 @@
             "id": "production-9",
             "chapter": "production",
             "heading": "Running safely",
-            "text": "File permissions MUST be set per path; write access for the web server is granted only to specific files or folders, and mode `777` MUST NOT be used (WSU developer standards, 2024). A PROCTOR check for this is proposed, not built: it flags mode `777` and web-writable paths outside the allowed list.",
+            "text": "File permissions MUST be set per path; write access for the web server is granted only to specific files or folders, and mode `777` MUST NOT be used (WSU developer standards, 2024). PROCTOR check: `world-writable` (`chmod 777` in scripts, Dockerfiles, CI and PHP).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2440,7 +2440,7 @@
             "id": "production-10",
             "chapter": "production",
             "heading": "Running safely",
-            "text": "Debugging and diagnostic files, scripts, dumps and backups MUST NOT sit in the served folder (WSU developer standards, 2024). A PROCTOR check for this is proposed, not built: a scan of the served folder for `phpinfo.php`, dumps, backups, `.env` and `.git`.",
+            "text": "Debugging and diagnostic files, scripts, dumps and backups MUST NOT sit in the served folder (WSU developer standards, 2024). PROCTOR check: `served-folder` (`phpinfo()`, dumps, backups, logs, env files and `adminer*.php` under `public/`).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2760,7 +2760,7 @@
             "id": "secrets-1",
             "chapter": "secrets",
             "heading": "Credentials",
-            "text": "Credentials (database and service passwords, API keys, tokens) MUST NOT be committed to version control, because history keeps them forever. Commit `.env.example` with placeholders instead. A credential that was ever committed is treated as exposed and rotated (WSU developer standards, 2024). No check exists yet.",
+            "text": "Credentials (database and service passwords, API keys, tokens) MUST NOT be committed to version control, because history keeps them forever. Commit `.env.example` with placeholders instead. A credential that was ever committed is treated as exposed and rotated (WSU developer standards, 2024). PROCTOR checks: `app-key` (a committed `.env` or `APP_KEY`) and `repo-url-credentials` (a token in a package source URL); no general secret scan exists yet.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2774,7 +2774,7 @@
             "id": "secrets-2",
             "chapter": "secrets",
             "heading": "Credentials",
-            "text": "Credentials and sensitive data MUST live outside any folder the web server serves. Laravel's `public/` is the only served folder; raw PHP apps serve one `public/` folder the same way (WSU developer standards, 2024). No check exists yet.",
+            "text": "Credentials and sensitive data MUST live outside any folder the web server serves. Laravel's `public/` is the only served folder; raw PHP apps serve one `public/` folder the same way (WSU developer standards, 2024). PROCTOR check: `served-folder` (dumps, backups, logs and env files in `public/`).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2788,10 +2788,8 @@
             "id": "secrets-3",
             "chapter": "secrets",
             "heading": "Credentials",
-            "text": "An app uses its own dedicated application ID, never a person's employee or student AccessID, to reach another server or service, with the fewest permissions the task needs (WSU developer standards, 2024).",
+            "text": "The Laravel `APP_KEY` is a credential: whoever holds it can forge encrypted payloads, which can mean code execution. It MUST NOT be committed, a key that leaked MUST be rotated with `php artisan key:generate` on every environment that used it, and the session driver SHOULD NOT be `cookie`, which seals every session with the key (GitGuardian, exploiting public APP_KEY leaks). PROCTOR check: `app-key`.",
             "applies_to": [
-                "raw-php",
-                "raw-php-vue",
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
@@ -2802,7 +2800,7 @@
             "id": "secrets-4",
             "chapter": "secrets",
             "heading": "Credentials",
-            "text": "Real values come from the environment at deploy time (the Citadel dashboard or CI variables), never from a file in the repo (WSU developer standards, 2024).",
+            "text": "An app uses its own dedicated application ID, never a person's employee or student AccessID, to reach another server or service, with the fewest permissions the task needs (WSU developer standards, 2024).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2815,23 +2813,23 @@
         {
             "id": "secrets-5",
             "chapter": "secrets",
-            "heading": "Errors and debug output",
-            "text": "`APP_DEBUG` MUST be `false` in production (WSU developer standards, 2024). The Laravel adapter writes one warning `helmet.debug_enabled_in_production` when it is true in the production environment. A PROCTOR check for this is proposed, not built.",
+            "heading": "Credentials",
+            "text": "Real values come from the environment at deploy time (the Citadel dashboard or CI variables), never from a file in the repo (WSU developer standards, 2024).",
             "applies_to": [
+                "raw-php",
+                "raw-php-vue",
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/secrets.md:14"
+            "source": "handbook/secrets.md:11"
         },
         {
             "id": "secrets-6",
             "chapter": "secrets",
             "heading": "Errors and debug output",
-            "text": "Public-facing code MUST NOT display default interpreter or framework error pages to the user; show a controlled message and log the detail (WSU developer standards, 2024). No check exists yet.",
+            "text": "`APP_DEBUG` MUST be `false` in production (WSU developer standards, 2024). The Laravel adapter writes one warning `helmet.debug_enabled_in_production` when it is true in the production environment. A PROCTOR check for this is proposed, not built.",
             "applies_to": [
-                "raw-php",
-                "raw-php-vue",
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
@@ -2842,7 +2840,7 @@
             "id": "secrets-7",
             "chapter": "secrets",
             "heading": "Errors and debug output",
-            "text": "Logs and diagnostic output MUST NOT contain credentials or personally identifiable information such as Social Security numbers. That includes logged exceptions (WSU developer standards, 2024). No check exists yet.",
+            "text": "Public-facing code MUST NOT display default interpreter or framework error pages to the user; show a controlled message and log the detail (WSU developer standards, 2024). No check exists yet.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2855,6 +2853,20 @@
         {
             "id": "secrets-8",
             "chapter": "secrets",
+            "heading": "Errors and debug output",
+            "text": "Logs and diagnostic output MUST NOT contain credentials or personally identifiable information such as Social Security numbers. That includes logged exceptions (WSU developer standards, 2024). No check exists yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/secrets.md:17"
+        },
+        {
+            "id": "secrets-9",
+            "chapter": "secrets",
             "heading": "Not decided here",
             "text": "The HELMET header rules and runtime refusals are written in `runtime-and-headers.md`.",
             "applies_to": [
@@ -2864,7 +2876,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/secrets.md:22"
+            "source": "handbook/secrets.md:23"
         },
         {
             "id": "versions-1",

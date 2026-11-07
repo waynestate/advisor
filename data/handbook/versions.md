@@ -53,6 +53,11 @@ names. `openshift` and `coolify` are not filled yet.
 The policy lists even Node majors only, because even majors are the LTS lines;
 odd majors MUST NOT be a target and are not listed (the stack's version policy).
 
+An app MUST build on a Node line that has not reached end of life. PROCTOR
+check: `node-eol`. It reads `.nvmrc`, `.node-version`, `volta.node` and the
+`node` image in CI and Dockerfiles: an active line passes, a security-only line
+warns and an EOL line fails. `engines.node` and an odd major warn.
+
 ## Tool minimums
 
 The `tools` block sets a minimum version for a developer tool. Each key is a

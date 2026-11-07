@@ -19,7 +19,7 @@
             "source": "booster/README.md"
         },
         "docs/creed/best-practices.md": {
-            "sha256": "6891dd6a0d90af902097665132bf34c900e82e1dd258bcc5654ad513c4b7918d",
+            "sha256": "d34664bc6f0b2d2021573a0722a9a8e0b4c919239839567c0432546c20887ce8",
             "source": "creed/BEST_PRACTICES.md"
         },
         "docs/creed/readme.md": {
@@ -31,7 +31,7 @@
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "b98d0ad691be1969cc07957a192c6359f641d5795f2ba235160ee3b77de777c7",
+            "sha256": "01007d64bd3e58f24ebcd43f81aca641708d5b685c931a73721973d7fb3f73ec",
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
@@ -59,11 +59,11 @@
             "source": "preflight/README.md"
         },
         "docs/proctor/best-practices.md": {
-            "sha256": "dbd9eecddf6ea3112a3eb6c83df6788664fe30551fab3194824f1d1e795793a9",
+            "sha256": "bbd6f19c6d4df222f3f66523da9f7c390d03612f7498cc3a75df52cd84d1ce3c",
             "source": "proctor/BEST_PRACTICES.md"
         },
         "docs/proctor/readme.md": {
-            "sha256": "a48edd783e2a543ecbdc49409c3fd9d4ddd17af5fe69cf9f952b1cae422a849d",
+            "sha256": "f201ebb37d08f38350087a8b57e64b9d0b2d084a07b1c75362ce4b07c4fbb424",
             "source": "proctor/README.md"
         },
         "docs/rollcall/best-practices.md": {
@@ -87,7 +87,7 @@
             "source": "sourdough/BEST_PRACTICES.md"
         },
         "docs/sourdough/readme.md": {
-            "sha256": "fe308de4651ad46530ec99f2d664cbc102f1bc7ecdfca76476233eec18b0ed63",
+            "sha256": "b8d7d6938ebcfb99b38414f24af0badf986f3a1f302472e3ddd5dee50dee141e",
             "source": "sourdough/README.md"
         },
         "docs/squire/best-practices.md": {
@@ -95,11 +95,11 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "1a91a0aec6834ac3dec0ad29d996505cf7d90a60d7d515d5a7322750e42a80c7",
+            "sha256": "7e94002d7741b304e1804029ee0fabc0b397c05b2934443ea999b96d385409d2",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {
-            "sha256": "cabe956e30822a56213b3e5e5436c33e37eb9006558c26294d6ca7f1e0ea468e",
+            "sha256": "f1b75da0c89e812ed5cdc11ac47d6f901d3664044ed03271916cf9ec845fcc9f",
             "source": "wayne-ui/contract/markup-contract.json"
         },
         "docs/wayne-ui/migrating.md": {
@@ -139,7 +139,7 @@
             "source": "creed/handbook/ci.md"
         },
         "handbook/code.md": {
-            "sha256": "f26125dae987f4b3223ac84c55449d49c3eb8dc2b28c75d98ffe03ac5447940f",
+            "sha256": "b7958524e59ae76ebf05100706ef48a35c2ac62cb266b726c93e756f83ca87e0",
             "source": "creed/handbook/code.md"
         },
         "handbook/databases.md": {
@@ -163,7 +163,7 @@
             "source": "creed/handbook/overrides.md"
         },
         "handbook/production.md": {
-            "sha256": "2caf3964d5c042fc95aae7352284eeba7cb644e1974a65f5edc6e6557a3157cb",
+            "sha256": "4e14fd3fd31c8ca647d78dc55518570fdb2bfe83caf704fe9f9f799e4e89a11b",
             "source": "creed/handbook/production.md"
         },
         "handbook/runtime-and-headers.md": {
@@ -171,11 +171,11 @@
             "source": "creed/handbook/runtime-and-headers.md"
         },
         "handbook/secrets.md": {
-            "sha256": "7975dfa6b4e48b995bcd577aae5f8dcb620107bf6bf13316273cd3ccb6e7c369",
+            "sha256": "0c8f1e902db6c56c1f80873edbe86b5604c42cf55378b3cb920ef8ec07ce98e6",
             "source": "creed/handbook/secrets.md"
         },
         "handbook/versions.md": {
-            "sha256": "4876356c96e6f99d696c0b028c696c3066a811bd4d51577cba7275c087e209eb",
+            "sha256": "aa147fa101610b5b2cb39c5124aaa81ec82468327e98a0cab9c9cac8bbfb2680",
             "source": "creed/handbook/versions.md"
         },
         "ownership.json": {
@@ -191,7 +191,7 @@
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {
-            "sha256": "990f161c3ca1acc4e0a364c165ef0a89d720db76628b2548b33d48989daee32c",
+            "sha256": "8e35dc09ee382406d4788affcceb379d193617b37eeab7fbbf03f85c983c9aef",
             "source": "creed/handbook, creed/policy/policy.json"
         }
     }
