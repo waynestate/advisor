@@ -24,9 +24,10 @@ Each practice has a reason, sources, and a tag that says how the stack holds it 
 | `Not yet` | A gap. |
 
 Tags describe the repository and design documents as they stand on 2026-10-29. Practices 55 to 61 were added on
-2026-11-02. PROCTOR v0.1 is specified in
+2026-11-02. Nine tags were re-checked against the tree on 2026-11-06 (practices 14, 24, 39, 42, 44, 46, 49, 50 and
+51). PROCTOR v0.1 is specified in
 `first-repos.md` and its checks are named below as specified. CREED's own pipeline includes the `php-test`,
-`composer-audit` and `proctor` components, pinned to Preflight 0.1.0; the `proctor` job checks `deploy/` and is
+`composer-audit` and `proctor` components, pinned to Preflight 0.1.4; the `proctor` job checks `deploy/` and is
 allowed to fail while its current findings are fixed.
 
 ## 1. The version policy as data
@@ -248,8 +249,10 @@ Why: an app that cannot move PHP also cannot move Laravel, and the reverse.
 
 Sources: [Laravel release notes](https://laravel.com/docs/13.x/releases).
 
-How the stack holds it: `Not yet`. The policy does not record which PHP versions each Laravel release supports, and no
-check compares them.
+How the stack holds it: `Checked`. `policy.json` records the PHP range each Laravel release supports (Laravel 10 to
+13), and the reader exposes it through `phpRange()`; `tests/PolicyRequiresTest.php` pins the values. PROCTOR main's
+`proctor/laravel-php` reads the app's `require.php` and its locked `laravel/framework`, and fails when the PHP
+constraint allows no PHP in the policy's range for that Laravel release, or allows PHP below the release's floor.
 
 ### 15. Run a Laravel release that still gets security fixes
 
@@ -260,10 +263,11 @@ Why: an EOL framework is the largest unpatched surface in a typical app.
 
 Sources: [Laravel release notes](https://laravel.com/docs/13.x/releases).
 
-How the stack holds it: `Not yet`. The reader can classify Laravel 10, 11, 12 and 13 (second pass: 13 was added after
+How the stack holds it: `Checked`. The reader can classify Laravel 10, 11, 12 and 13 (second pass: 13 was added after
 the first pass). PROCTOR `unpatched` reads `laravel/framework` from `composer.lock` and warns when the locked patch
-trails the policy's `latest_patch`, but no check fails an app whose framework line is EOL; the planned deploy gate
-will. A supported branch is not enough on its own: see practice 38 for the October 2026 Laravel advisory.
+trails the policy's `latest_patch`; PROCTOR main's `proctor/laravel-eol` classifies the locked Laravel line through
+the policy, where an active line passes, a security-only line warns and an EOL line fails. A supported branch is not
+enough on its own: see practice 38 for the October 2026 Laravel advisory.
 
 ### 16. Use a Node release that is in LTS or maintenance
 
@@ -356,7 +360,8 @@ legacy keys keep
 working only while the matching `policy` section is absent. So the stack should write down which Composer version its CI
 uses, and which of the two config styles it follows.
 
-How the stack holds it: `Not yet`. `policy.json` rules have no abandoned-package setting.
+How the stack holds it: `Checked`. The policy's `rules.abandoned_packages` is `fail` (see `handbook/dependencies.md`),
+and PROCTOR main's `proctor/composer-audit/abandoned` applies it.
 
 ### 22. Keep the core free of framework dependencies
 
@@ -399,7 +404,7 @@ Why: a repository is copied to many machines and outlives any one password.
 Sources: [OWASP Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html),
 [Laravel configuration docs](https://laravel.com/docs/13.x/configuration).
 
-How the stack holds it: `Not yet`. No handbook chapter covers secrets, and no check scans for committed secrets.
+How the stack holds it: `Documented`. `handbook/secrets.md` writes the rules; no check scans for committed secrets yet.
 
 ### 25. Read environment variables only in config files
 
@@ -468,9 +473,10 @@ Why: a rule that nothing runs is only a wish.
 
 Sources: [OWASP ASVS](https://asvs.owasp.org/).
 
-How the stack holds it: `Partially`. The stack's enforcement design defines the five points. Rules that a PROCTOR check
-enforces now carry "PROCTOR check: `id`" in the handbook (versions, dependencies, auth, databases, ci, every-os,
-overrides). The chapters do not yet tag each rule with its enforcement point.
+How the stack holds it: `Partially`. Every rule in the handbook now names its point: the PROCTOR check that enforces
+it, the command that measures it, or the plain words "no check exists yet". What remains: the checks behind the
+"no check exists yet" tags, and a guard that fails when a rule loses its tag; the handbook lint checks RFC 2119
+wording only.
 
 ## 6. Writing the handbook
 
@@ -505,9 +511,9 @@ Why: a standard is a command that fails, not a sentence in a README.
 
 Sources: [OWASP ASVS](https://asvs.owasp.org/) (requirements written to be verified).
 
-How the stack holds it: `Partially`. The handbook chapters on versions, dependencies, auth, databases, ci, every-os and
-overrides name the PROCTOR check beside each rule a check enforces. Rules no check covers are left without an ID.
-The code, runtime-and-headers and remaining chapters have not been walked yet.
+How the stack holds it: `Partially`. Every handbook chapter now names, beside each rule, the PROCTOR check that
+enforces it, the command that measures it, or the plain words "no check exists yet". What remains: the checks behind
+those tags, and a mechanical guard that keeps every rule named; the handbook lint checks RFC 2119 wording only.
 
 ### 33. Judge with deterministic checks only
 
@@ -616,9 +622,9 @@ Sources: [Packagist: Composer 2.9.6 Perforce fixes](https://blog.packagist.com/c
 [Composer releases](https://github.com/composer/composer/releases),
 [Composer config reference](https://getcomposer.org/doc/06-config.md#audit).
 
-How the stack holds it: `Not yet`. CREED's README tells developers to run the floating `composer:2` image, and no repo
-but the policy records a minimum Composer version (`tools.composer.minimum`, 2.8.0) and CREED's own pipeline runs the
-pinned `composer:2.10.3` image.
+How the stack holds it: `Checked`. PROCTOR's `composer-version` check fails a Composer below the higher of its CVE
+floors and CREED's policy minimum (`tools.composer.minimum`, 2.8.0), naming the policy in its message. CREED's own
+pipeline runs the pinned `composer:2.10.3` image.
 
 ### 40. Treat a brand-new package version as untrusted for a short time
 
@@ -680,8 +686,10 @@ Sources: [GitLab dependency scanning](https://docs.gitlab.com/user/application_s
 [pipeline secret detection](https://docs.gitlab.com/user/application_security/secret_detection/pipeline/),
 [secret push protection](https://docs.gitlab.com/user/application_security/secret_detection/secret_push_protection/).
 
-How the stack holds it: `Not yet`. The rule is not written. The two components CREED uses run Composer and PHPUnit, not a
-GitLab scanner (as the handbook describes them; their internals were not read), so they appear to fit it already.
+How the stack holds it: `Documented`. The rule is written in `handbook/code.md`: the stack's GitLab instances run the
+Free tier, so nothing relies on GitLab SAST. The tier of git.wayne.edu was not checked. The two components CREED uses
+run Composer and PHPUnit, not a GitLab scanner (as the handbook describes them; their internals were not read), so they
+appear to fit it already.
 
 ### 43. Treat `APP_KEY` as a code-execution key
 
@@ -699,8 +707,8 @@ Sources: [GitGuardian, exploiting public APP_KEY leaks](https://blog.gitguardian
 patches only. It is one option, not an endorsement. Windows support is not stated on the page, so check it before
 adopting).
 
-How the stack holds it: `Not yet`. This extends practice 24: no handbook chapter, no secret scan, and no rule about
-rotation or the session driver.
+How the stack holds it: `Not yet`. This extends practice 24: no secret scan, and no rule about rotation or the session
+driver.
 
 ### 44. Pin base images and rebuild them on a schedule
 
@@ -712,9 +720,9 @@ Why: pinning without rebuilding freezes the bugs; rebuilding without pinning cha
 
 Sources: [Docker build best practices](https://docs.docker.com/build/building/best-practices/).
 
-How the stack holds it: `Not yet`. The schema already allows an optional `images` object on each version, keyed by
-target (`citadel`, `docker`, `openshift`, `coolify`), but no entry in `policy.json` uses it, and no rebuild schedule is
-written.
+How the stack holds it: `Partially`. `policy.json` fills `images.docker` for PHP 8.3 to 8.5 with the official images,
+and the rebuild rule is written in `handbook/versions.md`; `tests/PolicyImagesTest.php` keeps the entries valid. The
+`citadel` names wait for Citadel to publish its image names.
 
 ### 45. Treat the CI host as part of the supply chain
 
@@ -746,8 +754,9 @@ the platform owns.
 
 Sources: [Laravel 13 database docs](https://laravel.com/docs/13.x/database), [endoflife.date MySQL](https://endoflife.date/mysql).
 
-How the stack holds it: `Not yet`. The policy records no database minimum per Laravel release, and the platform's
-MySQL timeline is still an open question.
+How the stack holds it: `Partially`. `policy.json` records the minimum MySQL and MariaDB for each Laravel release
+(Laravel 10 to 13), and the reader exposes them through `requires()`; `tests/PolicyRequiresTest.php` pins the values.
+The platform's MySQL timeline is still an open question, and no check compares an app with the policy yet.
 
 ### 47. Plan the MySQL move around authentication and LTS lines
 
@@ -794,8 +803,9 @@ the current mapping has nothing to copy. The maintainers must pick a rule and wr
 
 Sources: [Node.js release schedule](https://github.com/nodejs/Release).
 
-How the stack holds it: `Not yet`. Node 26 is in `policy.json` correctly. Decided 2026-11-03: policy lists only even Node
-majors, which are the LTS lines; odd majors are never a target and are not listed, so no mapping rule is needed for 27.
+How the stack holds it: `Documented`. Node 26 is in `policy.json` correctly. Decided 2026-11-03 and written in
+`handbook/versions.md`: policy lists only even Node majors, which are the LTS lines; odd majors are never a target and
+are not listed, so no mapping rule is needed for 27.
 
 ### 50. Design the freshness check around a real feed
 
@@ -811,8 +821,9 @@ Why: practice 8 says "compare with a feed" but not what to compare or what to ig
 Sources: [endoflife.date PHP API](https://endoflife.date/api/v1/products/php/), [endoflife.date MySQL API](https://endoflife.date/api/v1/products/mysql/).
 
 How the stack holds it: `Partially`. `bin/refresh-policy.php` calls the API and classifies every change before writing
-it, but no pipeline runs it yet. endoflife.date is a community aggregator, so the job reports differences and a human
-confirms them against the vendor page (practice 6).
+it, and the `policy-bot` job runs it (on the robot's schedule and from the web), staying green until `CREED_BOT_TOKEN`
+is set. endoflife.date is a community aggregator, so the job reports differences and a human confirms them against the
+vendor page (practice 6).
 
 ### 51. Decide whether the schema is strict or tolerant, and test both readers
 
@@ -824,9 +835,10 @@ Why: "add fields, never rename" fails in practice if the strict schema is the th
 Sources: [Semantic Versioning 2.0.0](https://semver.org/),
 [JSON Schema introduction](https://json-schema.org/understanding-json-schema/about).
 
-How the stack holds it: `Not yet`. No test pairs an old schema or reader with a new policy file. Decided 2026-11-03: strict
-where the file is published, tolerant where it is read; the schema forbids unknown keys, so CREED's own CI fails on a stray
-key, and readers ignore them, so an older reader keeps working on a newer file.
+How the stack holds it: `Enforced`. Decided 2026-11-03: strict where the file is published, tolerant where it is read.
+The schema forbids unknown keys, and `tests/PolicySchemaTest.php` rejects a stray key in CI;
+`tests/OlderReaderContractTest.php` loads a future-shaped policy file with the reader and asserts every known line
+still answers the same.
 
 ## 10. Accessibility and the legal floor (second pass)
 
@@ -887,7 +899,7 @@ wrote it. A leaked password is a bad encore: everyone remembers it, and nobody a
 Sources: the WSU developer standards, 2024 (an internal WSU document), [OWASP ASVS](https://asvs.owasp.org/).
 
 How the stack holds it: `Documented`. `handbook/secrets.md` writes the rule. This extends practice 24, which stays
-`Not yet` because no scan exists.
+`Documented` because no scan exists.
 
 ### 56. Validate every input and treat uploaded files as hostile
 
@@ -1022,7 +1034,7 @@ These are places where a source disagrees with the repository or with an earlier
 7. Add a PROCTOR check for the Node version in `.nvmrc` or `package.json` engines (practice 16).
 8. Add a MySQL check or report once the platform timeline is known (practice 17).
 9. Add an abandoned-package setting to `rules` and apply it in the audit check (practice 21).
-10. Add a secrets chapter, and a secret-scanning job in Preflight (practice 24).
+10. Add a secret-scanning job in Preflight (the secrets chapter is written; practice 24).
 11. Add a PHPStan rule for `env()` outside `config/` and put the rule in Pinstripe (practice 25).
 12. Partly done: the runtime and headers chapter is written (practice 26); the `config` check that `APP_DEBUG` is
     false in production is not built.
@@ -1042,12 +1054,12 @@ Added in the second pass (2026-10-27):
     compares it with the image or runtime (practice 37).
 20. Add a response window per severity to `rules` (for example "fix within N days"; the maintainers choose N), and a
     check that applies it to `composer audit` output (practice 38).
-21. Record a Composer version in CI and in the README commands, and decide between the legacy `audit` keys and
-    `config.policy` (practices 21 and 39).
+21. Decide between the legacy `audit` keys and `config.policy` (the Composer version is pinned in CI and the README
+    commands; practices 21 and 39).
 22. Done: decided 2026-11-03: a 3 day cooldown once Composer 2.11 is stable and in the base images; Sourdough apps set it and PROCTOR warns when it is missing (PROCTOR plan 4.11). Not set anywhere yet, because Composer 2.11 is not in the base images (practice 40).
 23. Add an npm check (`audit-level`, `ignore-scripts`, `min-release-age`) to Preflight, with a severity word map between
     Composer and npm (practice 41).
-24. Write down "gates must run on any GitLab tier" and confirm the tier of git.wayne.edu (practice 42).
+24. Confirm the tier of git.wayne.edu (the rule is written in `handbook/code.md`; practice 42).
 25. Add a secrets chapter section on `APP_KEY`: rotation, the session driver, and a scan that works on Windows, macOS and
     Linux (practice 43; extends item 10).
 26. Partly done: `images.docker` is filled for PHP 8.3 to 8.5 and the rebuild rule is in `handbook/versions.md`;
@@ -1060,7 +1072,7 @@ Added in the second pass (2026-10-27):
     one (practice 48).
 31. Done: decided 2026-11-03: policy lists only even Node majors, which are the LTS lines; odd majors are never a target and are not listed. A new even major is added from Node's release schedule when it is announced (practice 49).
 32. Partially: `bin/refresh-policy.php` calls the API with the filter rules in practice 50 and classifies every change,
-   but no pipeline runs it yet (extends item 2).
+    and the `policy-bot` job runs it, staying green until `CREED_BOT_TOKEN` is set (extends item 2).
 33. Done: decided 2026-11-03: strict where the file is published, tolerant where it is read. The schema forbids unknown keys, so CREED's own CI fails on a stray key; readers ignore unknown keys, so an older reader keeps working on a newer file (`tests/OlderReaderContractTest.php`; practice 51, extends item 14).
 34. Ask WSU's accessibility office and counsel which Title II dates apply, then write the chapter's target level
     (practices 52 and 54).

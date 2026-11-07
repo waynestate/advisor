@@ -12,9 +12,13 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[Unreleased\][#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
 
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
+
+- data: resync 2026-11-06 night (booster:8c57a15 drawbridge:a60990a helmet:8a79b46 sesame:2505033 proctor:038d632 rollcall:aed8dd9 creed:0f6ab20 sourdough:b2644b3 weld:baf8e60 squire:88fd2ec preflight:a5ed45a pinstripe:eb03078 advisor:c3964c5 wayne-ui:9e1e762): Booster, CREED handbook and best practices, PROCTOR, Preflight and SESAME docs, the abandoned_packages policy, and the released versions of Booster, PROCTOR, Sourdough and others.
+
 ## \[0.1.6\] - 2026-11-06[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-6-2026-11-06)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-1)
 
 - data: resync 2026-11-05 evening (booster:eaf2758 drawbridge:aa403f3 helmet:36cb918 sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:335c4e4 preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:4fdc7b0)
 - data: resync 2026-11-05 late (booster:5b25715 drawbridge:19698ea helmet:417129a sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:9384c1d preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:ba8b7e1)
@@ -64,7 +68,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.1.3\] - 2026-11-02[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-3-2026-11-02)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-1)
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-2)
 
 - Added: hand-written guides bundled from generator/guides/ and served as advisor://guide/; first guide: Connect to Oracle on Citadel.
 - Added: policy_lookup returns latest_patch; the bundled docs drop hero images, badges and GIFs.
@@ -79,7 +83,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.1.2\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-2-2026-10-29)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-2)
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-3)
 
 - Added: agent-ready site (prompt blocks, Markdown twins, llms.txt), from Squire's kit.
 - `playbook_lookup` tool: answers "what is the value of X?" for WSU shared values. An environment variable of the same name wins, then the private `waynestate/playbook` package (Playbook) supplies the rest; without it the tool says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are refused. `waynestate/playbook` is suggested, never required.
@@ -95,7 +99,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.1.1\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-1-2026-10-29)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-3)
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-4)
 
 - `owner_of` tool: answers "which project owns X?" from a new bundled `data/ownership.json` table (sourced from `generator/ownership.json`, verified by `content:verify`). Fuzzy match: every word of the topic must appear in a row's topic or role; a no-match answer lists every known topic.
 
@@ -108,7 +112,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 First build, aimed at 0.1.0.
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-4)
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-5)
 
 - Read-only MCP server over stdio (`php vendor/bin/advisor mcp`) on the official `mcp/sdk` 0.9.0, speaking both the legacy `initialize` handshake and the 2026-07-28 per-request form.
 - Seven tools: `list_projects`, `get_project_status`, `read_project_docs`, `policy_lookup`, `list_stack_rules`, `run_proctor_check`, `upgrade_path`. Resources `advisor://policy` and `advisor://creed/<chapter>`. Prompts `orient_me` and `plan_upgrade`.

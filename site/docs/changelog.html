@@ -43,8 +43,12 @@
 <h1 id="changelog">Changelog<a class="docs-heading-link" aria-label="Link to this section" href="#changelog">#</a></h1>
 <p>All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.</p>
 <h2 id="unreleased">[Unreleased]<a class="docs-heading-link" aria-label="Link to this section" href="#unreleased">#</a></h2>
-<h2 id="0-1-6-2026-11-06">[0.1.6] - 2026-11-06<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-6-2026-11-06">#</a></h2>
 <h3 id="added">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added">#</a></h3>
+<ul>
+<li>data: resync 2026-11-06 night (booster:8c57a15 drawbridge:a60990a helmet:8a79b46 sesame:2505033 proctor:038d632 rollcall:aed8dd9 creed:0f6ab20 sourdough:b2644b3 weld:baf8e60 squire:88fd2ec preflight:a5ed45a pinstripe:eb03078 advisor:c3964c5 wayne-ui:9e1e762): Booster, CREED handbook and best practices, PROCTOR, Preflight and SESAME docs, the abandoned_packages policy, and the released versions of Booster, PROCTOR, Sourdough and others.</li>
+</ul>
+<h2 id="0-1-6-2026-11-06">[0.1.6] - 2026-11-06<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-6-2026-11-06">#</a></h2>
+<h3 id="added-1">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-1">#</a></h3>
 <ul>
 <li>data: resync 2026-11-05 evening (booster:eaf2758 drawbridge:aa403f3 helmet:36cb918 sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:335c4e4 preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:4fdc7b0)</li>
 <li>data: resync 2026-11-05 late (booster:5b25715 drawbridge:19698ea helmet:417129a sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:9384c1d preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:ba8b7e1)</li>
@@ -105,7 +109,7 @@
 <li>Changed: CI pulls its Docker Hub images through the GitLab Dependency Proxy (the group's CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX), so pipelines no longer hit Docker Hub's anonymous pull limit.</li>
 </ul>
 <h2 id="0-1-3-2026-11-02">[0.1.3] - 2026-11-02<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-3-2026-11-02">#</a></h2>
-<h3 id="added-1">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-1">#</a></h3>
+<h3 id="added-2">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-2">#</a></h3>
 <ul>
 <li>Added: hand-written guides bundled from generator/guides/ and served as advisor://guide/<slug>; first guide: Connect to Oracle on Citadel.</li>
 <li>Added: policy_lookup returns latest_patch; the bundled docs drop hero images, badges and GIFs.</li>
@@ -119,7 +123,7 @@
 <li>Changed: the deploy layer's Squire kit is refreshed to 0.3.4 (the local .env.squire file is now git-ignored).</li>
 </ul>
 <h2 id="0-1-2-2026-10-29">[0.1.2] - 2026-10-29<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-2-2026-10-29">#</a></h2>
-<h3 id="added-2">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-2">#</a></h3>
+<h3 id="added-3">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-3">#</a></h3>
 <ul>
 <li>Added: agent-ready site (prompt blocks, Markdown twins, llms.txt), from Squire's kit.</li>
 <li><code>playbook_lookup</code> tool: answers &quot;what is the value of X?&quot; for WSU shared values. An environment variable of the
@@ -137,7 +141,7 @@ refused. <code>waynestate/playbook</code> is suggested, never required.</li>
 <li>Fixed: stale capability claims in the site and docs.</li>
 </ul>
 <h2 id="0-1-1-2026-10-29">[0.1.1] - 2026-10-29<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-1-2026-10-29">#</a></h2>
-<h3 id="added-3">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-3">#</a></h3>
+<h3 id="added-4">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-4">#</a></h3>
 <ul>
 <li><code>owner_of</code> tool: answers &quot;which project owns X?&quot; from a new bundled <code>data/ownership.json</code> table (sourced from
 <code>generator/ownership.json</code>, verified by <code>content:verify</code>). Fuzzy match: every word of the topic must appear in a
@@ -153,7 +157,7 @@ used the <code>per</code> preset, so <code>pint.json</code> is unchanged.</li>
 </ul>
 <h2 id="0-1-0-2026-10-29">[0.1.0] - 2026-10-29<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-0-2026-10-29">#</a></h2>
 <p>First build, aimed at 0.1.0.</p>
-<h3 id="added-4">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-4">#</a></h3>
+<h3 id="added-5">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-5">#</a></h3>
 <ul>
 <li>Read-only MCP server over stdio (<code>php vendor/bin/advisor mcp</code>) on the official <code>mcp/sdk</code> 0.9.0, speaking both the
 legacy <code>initialize</code> handshake and the 2026-07-28 per-request form.</li>
@@ -176,7 +180,7 @@ GitLab (PREFLIGHT 0.1.0) and GitHub.</li>
     </main>
     <nav class="docs-pager" aria-label="Pages"><a class="docs-pager__link" href="../docs/contributing.html"><span class="docs-pager__dir">Previous</span><span class="docs-pager__title">Contributing</span></a></nav>
   </div>
-  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#unreleased">[Unreleased]</a></li><li class="docs-toc__item"><a href="#0-1-6-2026-11-06">[0.1.6] - 2026-11-06</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed">Fixed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#security">Security</a></li><li class="docs-toc__item"><a href="#0-1-5-2026-11-03">[0.1.5] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-4-2026-11-03">[0.1.4] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-3-2026-11-02">[0.1.3] - 2026-11-02</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-1">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-1">Changed</a></li><li class="docs-toc__item"><a href="#0-1-2-2026-10-29">[0.1.2] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-2">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-2">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-1">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-1-2026-10-29">[0.1.1] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-3">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-3">Changed</a></li><li class="docs-toc__item"><a href="#0-1-0-2026-10-29">[0.1.0] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-4">Added</a></li></ul></nav>
+  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#unreleased">[Unreleased]</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added">Added</a></li><li class="docs-toc__item"><a href="#0-1-6-2026-11-06">[0.1.6] - 2026-11-06</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-1">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed">Fixed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#security">Security</a></li><li class="docs-toc__item"><a href="#0-1-5-2026-11-03">[0.1.5] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-4-2026-11-03">[0.1.4] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-3-2026-11-02">[0.1.3] - 2026-11-02</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-2">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-1">Changed</a></li><li class="docs-toc__item"><a href="#0-1-2-2026-10-29">[0.1.2] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-3">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-2">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-1">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-1-2026-10-29">[0.1.1] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-4">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-3">Changed</a></li><li class="docs-toc__item"><a href="#0-1-0-2026-10-29">[0.1.0] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-5">Added</a></li></ul></nav>
 </div>
 <footer class="docs-footer">
   <span>Documents ADVISOR <span data-docs-version>0.1.6</span></span>

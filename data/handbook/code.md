@@ -15,16 +15,16 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 
 ## Reading the code
 
-- Comment where it helps: complex logic, areas that could improve, business rules that would otherwise be a mystery (SHOULD). Do not keep version history in comments; git is the change log (WSU developer standards, 2024).
-- Code that no longer runs MUST be removed, not commented out; git keeps it (WSU developer standards, 2024).
-- Variable, class and database names SHOULD be complete and descriptive; avoid ambiguous abbreviations (WSU developer standards, 2024).
+- Comment where it helps: complex logic, areas that could improve, business rules that would otherwise be a mystery (SHOULD). Do not keep version history in comments; git is the change log (WSU developer standards, 2024). No check exists yet.
+- Code that no longer runs MUST be removed, not commented out; git keeps it (WSU developer standards, 2024). No check exists yet.
+- Variable, class and database names SHOULD be complete and descriptive; avoid ambiguous abbreviations (WSU developer standards, 2024). No check exists yet.
 
 ## Source control and documentation
 
-- All source is kept in git. Access to a repo MUST be removed when someone leaves the project or the university (WSU developer standards, 2024).
+- All source is kept in git. Access to a repo MUST be removed when someone leaves the project or the university (WSU developer standards, 2024). No check exists yet.
 - The stack's code has its primary home on nougat, with git.wayne.edu as the mirror, until a CI runner exists on git.wayne.edu; the standards name git.wayne.edu as the preferred home.
 - Register the project in the catalog Enterprise Apps names, and keep its environments current. Stack apps also register with ROLLCALL, the stack's census (WSU developer standards, 2024).
-- Every repo's README MUST say how to install, configure and deploy the code for local development, on every OS (see `every-os.md`), and how to update an existing deployment (WSU developer standards, 2024).
+- Every repo's README MUST say how to install, configure and deploy the code for local development, on every OS (see `every-os.md`), and how to update an existing deployment (WSU developer standards, 2024). No check exists yet.
 - If the Help Desk might be contacted about the project, keep an overview in the repo: what it does, who uses it, known common issues and who to call for an incident; deliver changes to the Help Desk when it changes (WSU developer standards, 2024).
 
 ## Static analysis
@@ -37,7 +37,8 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 - PHPStan's `phpVersion` follows the policy's PHP floor (the stack's coding standard).
 - Existing apps start at the highest level they pass, with a committed
   baseline that MUST NOT grow, then raise the level one step at a time
-  (the stack's coding standard). Like the band says, the only way is Higher.
+  (the stack's coding standard). No check exists yet. Like the band says,
+  the only way is Higher.
 - New packages have no baseline (the stack's coding standard).
 - Two reasons for level 8:
   - The starters begin clean, so new apps pass from day one (the stack's coding standard).
@@ -46,8 +47,8 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 
 ## Input and files
 
-- All input (forms, API calls, headers, cookies, and data read from a database you do not control) MUST be validated on the server; SQL uses bound parameters, and output is escaped for where it lands. That guards against SQL injection and cross-site scripting (WSU developer standards, 2024).
-- Files from untrusted sources MUST be checked against the expected type, MUST NOT be passed to include, class-loading or reflection calls, MUST be stored outside the served folder with limited permissions, and MUST NOT be executable (WSU developer standards, 2024).
+- All input (forms, API calls, headers, cookies, and data read from a database you do not control) MUST be validated on the server; SQL uses bound parameters, and output is escaped for where it lands. That guards against SQL injection and cross-site scripting (WSU developer standards, 2024). No check exists yet.
+- Files from untrusted sources MUST be checked against the expected type, MUST NOT be passed to include, class-loading or reflection calls, MUST be stored outside the served folder with limited permissions, and MUST NOT be executable (WSU developer standards, 2024). No check exists yet.
 
 ## Banned patterns
 

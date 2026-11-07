@@ -11,6 +11,10 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Added
+
+- data: resync 2026-11-06 night (booster:8c57a15 drawbridge:a60990a helmet:8a79b46 sesame:2505033 proctor:038d632 rollcall:aed8dd9 creed:0f6ab20 sourdough:b2644b3 weld:baf8e60 squire:88fd2ec preflight:a5ed45a pinstripe:eb03078 advisor:c3964c5 wayne-ui:9e1e762): Booster, CREED handbook and best practices, PROCTOR, Preflight and SESAME docs, the abandoned_packages policy, and the released versions of Booster, PROCTOR, Sourdough and others.
+
 ## [0.1.6] - 2026-11-06
 
 ### Added

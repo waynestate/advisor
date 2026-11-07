@@ -267,8 +267,10 @@ Failures" as A03 and notes that only 11 CVEs map to its CWEs, so an advisory-onl
 Sources: [Packagist: an update on Composer and Packagist supply chain security, 2026-05-27](https://blog.packagist.com/an-update-on-composer-packagist-supply-chain-security);
 [OWASP Top 10 2025, A03 Software Supply Chain Failures](https://top10.owasp.org/2025/A03_2025-Software_Supply_Chain_Failures).
 
-**How the stack holds it: Not yet.** The Preflight `proctor` component runs `composer install`, so it uses the lock.
-Nothing stops a custom job from running `update`, and PROCTOR cannot see the pipeline.
+**How the stack holds it: Partially.** The Preflight `proctor` component runs `composer install`, so it uses the lock.
+PROCTOR's `ci-pipelines` check warns (`proctor/ci-pipelines/composer-update`) when a command segment of a GitLab job
+script line or a GitHub step run starts with `composer update` or `composer require`. What remains: the finding is a
+warning, not a fail, and only `.gitlab-ci.yml` and `.github/workflows/ci.yml` are read.
 
 ### 3.8 Keep locked components on the latest patch
 A locked component that is behind the policy's `latest_patch` for its version line is a warning, not a failure: a
@@ -422,8 +424,11 @@ advisory pages through summaries and did not confirm the CVSS scores against NVD
 
 **How the stack holds it: Partially.** PROCTOR now reads the Composer version, names it in the text report's header
 line, and the `composer-version` check (see 4.6) fails when the Composer on PATH carries the command-injection holes
-CVE-2024-35241 and CVE-2024-35242 or is Composer 1. What remains: no minimum covers the 2026 Perforce flaws fixed in
-2.9.6 and 2.10.3, and the Preflight component installs whatever Composer is current at the time.
+CVE-2024-35241 and CVE-2024-35242 or is Composer 1. Since the next release, the same check also fails when the
+Composer on PATH is below the CREED policy's `tools.composer.minimum` (2.8.0 in the bundled policy), naming the
+policy in the message; the CVE floors stay as absolute floors underneath it. What remains: no minimum covers the 2026
+Perforce flaws fixed in 2.9.6 and 2.10.3, and the Preflight component installs whatever Composer is current at the
+time.
 
 ### 4.9 Report an app that switches the dependency policy off (second pass)
 Look for `config.policy` set to `false`, `policy.malware` or `policy.advisories` set to `false`, and the matching
@@ -1024,3 +1029,26 @@ declares one of the Preflight job names (`proctor`, `php-test`, `composer-audit`
 `renovate`, `package-publish`) with `script`, `before_script` or `after_script` while a Preflight component is
 included (`proctor/preflight-pinned/script-override`). `PreflightPinnedCheckTest` pins the fixture outcomes for
 pinned and unpinned includes and for overridden jobs.
+
+## Framework lines
+
+### The laravel-eol check
+CREED's handbook asks an app to run a Laravel release that still gets security fixes. The policy already records each
+Laravel line's active and security dates, and the reader can classify a version against them; what was missing was a
+check that applies the verdict to the lock.
+
+**How the stack holds it: Checked.** The `laravel-eol` check classifies the locked `laravel/framework` version against
+the policy as of `--today`: active passes, security-only warns naming the end date and the days left, eol fails, and a
+line past the security end date plus the grace window fails as `eol_grace_expired` (rule id `proctor/laravel-eol`). An
+active override downgrades the eol fail, never the grace-expired one. No finding without `laravel/framework` in
+composer.lock. `LaravelEolCheckTest` pins the fixture outcomes for every state and for the override.
+
+### The laravel-php check
+CREED's handbook asks an app to match its framework release to a PHP version it supports. The policy records each
+Laravel major's PHP range; what was missing was a check that compares the range with the app's declared floor.
+
+**How the stack holds it: Checked.** The `laravel-php` check fails when composer.json's `require.php` allows a PHP
+version outside the policy range for the locked Laravel major, and passes when the constraint fits (rule id
+`proctor/laravel-php`). No finding without `laravel/framework` in composer.lock, without a recorded range, or without a
+`require.php`: php-floor owns the missing-constraint verdict. `LaravelPhpCheckTest` pins the fixture outcomes for the
+pass, both out-of-range directions, the override and the skips.

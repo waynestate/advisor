@@ -8,6 +8,12 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
   policy). PROCTOR check: `lock-committed`.
 - `composer audit` MUST report no advisories at or above the policy's severity
   threshold (the stack's version policy). PROCTOR check: `composer-audit`.
+
+CREED's `abandoned_packages` rule is `fail`, matching Composer's default since
+2.7, so `composer audit` fails on an abandoned package. An app that has to keep
+one replaces it or records an override with a reason; PROCTOR's
+`composer-audit` check applies the same setting.
+
 - `composer.json` `require.php` MUST NOT allow an EOL version as its lowest
   bound (the stack's version policy). PROCTOR check: `php-floor`.
 - Apps SHOULD set a Composer cooldown of 3 days, once Composer 2.11 is stable
