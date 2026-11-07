@@ -14,6 +14,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
+- The front page's deploy layer (`deploy/`) completes Squire's kit 0.5.0: `oracle-check.php`, which the 0.5.0 `squire update` did not add, is written and recorded, so `squire init --check` passes. `site/assets/stack-env.js` takes the stack's one copy, with bindingless catch blocks.
 - The canonical repository is git.wayne.edu (ADR-0021); docs, links and package metadata no longer point at the archived nougat copy.
 
 ### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
