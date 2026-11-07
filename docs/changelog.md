@@ -11,6 +11,10 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Changed
+
+- CI caches Composer and npm downloads per lock file (`.composer-cache`, keyed on `composer.lock` and `deploy/composer.lock`, and `.npm-cache`), so a pipeline stops fetching every package from Packagist and npm on every run. Images already come through the Dependency Proxy.
+
 ## [0.1.7] - 2026-11-07
 
 ### Changed
