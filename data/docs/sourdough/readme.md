@@ -1,10 +1,6 @@
 <div align="center">
 
-[![Sourdough: dough in a jar, risen past its gold band](docs/readme/hero.jpg)](site/index.html)
-
 # Sourdough
-
-![php](docs/readme/badges/php.svg) ![license](docs/readme/badges/license.svg) ![exit codes](docs/readme/badges/exit-codes.svg) [![GitHub CI](https://github.com/waynestate/sourdough/actions/workflows/ci.yml/badge.svg)](https://github.com/waynestate/sourdough/actions/workflows/ci.yml)
 
 **Feed it and it grows.**
 

@@ -7,7 +7,7 @@
             "source": "advisor/BEST_PRACTICES.md"
         },
         "docs/advisor/readme.md": {
-            "sha256": "a7b9c51be54f981cc88ac6e8a9e9e1475569afd3c451b00f48751f40ffdd49b6",
+            "sha256": "2d3388d6dca7359f230b6f9f04c89415843125ce792e37101288d526a4024aad",
             "source": "advisor/README.md"
         },
         "docs/booster/best-practices.md": {
@@ -87,7 +87,7 @@
             "source": "sourdough/BEST_PRACTICES.md"
         },
         "docs/sourdough/readme.md": {
-            "sha256": "f5b6a4a8bcdedd33282d8c4c2b3e5a3a2a4d6f2d60bcfd6e1a757dde347520d3",
+            "sha256": "5a2428dde0e4880b59ea1ccc252ae1911b0c52bed0bacf5e8e95b5fa87bd4024",
             "source": "sourdough/README.md"
         },
         "docs/squire/best-practices.md": {
