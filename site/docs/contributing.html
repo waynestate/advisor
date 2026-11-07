@@ -84,7 +84,7 @@
 </table></div>
 <p><code>composer ci</code> runs <code>composer validate --strict</code>, <code>content:verify</code>, <code>stack-parts --check=README.md</code>, PHPUnit, Pint, PHPStan and <code>composer audit</code>. CI cannot see the sibling repos, so it verifies the manifest; regenerating is a local step.</p>
 <p>With only Docker:</p>
-<pre tabindex="0"><code>docker run --rm -v &quot;${PWD}:/app&quot; -w /app composer:2.10.3 sh -c &quot;composer install --no-interaction &amp;&amp; composer ci&quot;
+<pre tabindex="0"><code>docker run --rm -v &quot;${PWD}:/app&quot; -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c &quot;composer install --no-interaction &amp;&amp; composer ci&quot;
 </code></pre>
 <p>Snapshot tests are updated with <code>ADVISOR_UPDATE_SNAPSHOTS=1</code> (<code>$env:ADVISOR_UPDATE_SNAPSHOTS = &quot;1&quot;</code> in PowerShell) before <code>vendor/bin/phpunit</code>.</p>
 <h2 id="rules-a-change-must-keep">Rules a change must keep<a class="docs-heading-link" aria-label="Link to this section" href="#rules-a-change-must-keep">#</a></h2>

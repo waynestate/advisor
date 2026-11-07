@@ -315,7 +315,7 @@ That runs `composer validate --strict`, `content:verify`, PHPUnit, Pint, PHPStan
 included from `vendor/waynestate/pinstripe`) and `composer audit`. No PHP on your machine? Use Docker:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
 ```
 
 Tests drive the real SDK server in-process with a small MCP client, snapshot `tools/list`, and start
@@ -342,7 +342,7 @@ plus one reduced-motion pass. Each page must also have one ``, a `lang` attribut
 horizontal scroll at phone width. Run it from the repo root (works in PowerShell):
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app/scripts/a11y mcr.microsoft.com/playwright:v1.49.1-noble sh -c "npm install --no-audit --no-fund && node check.mjs"
+docker run --rm -v "${PWD}:/app" -e npm_config_cache=/npm-cache -v stack-npm-cache:/npm-cache -w /app/scripts/a11y mcr.microsoft.com/playwright:v1.49.1-noble sh -c "npm install --no-audit --no-fund && node check.mjs"
 ```
 
 It also runs as the `a11y` job in GitLab CI.
@@ -607,7 +607,7 @@ ADVISOR answers from a bundled copy of what these projects publish. Here is who 
 - [Pinstripe](https://pinstripe.apps.wayne.edu/)the coding standard
 - [SESAME](https://sesame.apps.wayne.edu/)sign-in
 - [HELMET](https://helmet.apps.wayne.edu/)the runtime baseline
-- [Sourdough](https://sourdough.apps.wayne.edu/)the raw PHP starter
+- [Sourdough](https://sourdough.apps.wayne.edu/)starts an app in any of the five shapes
 - [WELD](https://weld.apps.wayne.edu/)the Laravel starter app
 - ADVISORyou are here
 - [Booster](https://booster.apps.wayne.edu/)upgrades, one hop at a time
@@ -643,6 +643,11 @@ Source: https://advisor.apps.wayne.edu/docs/changelog.html
 All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.
 
 ### \[Unreleased\][#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
+
+#### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
+
+- The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (`-v stack-composer-cache:/tmp/cache`), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.
+- The front page's parts list says Sourdough starts all five app shapes; it said "the raw PHP starter".
 
 ### \[0.1.7\] - 2026-11-07[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-7-2026-11-07)
 
@@ -684,7 +689,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: symfony/console and symfony/process accept ^8.0 as well as ^7.4, so apps on Pest 5 / PHPUnit 13 can install ADVISOR.
 - Changed: the docs builder and kit are resynced from Squire's unified builder (theme hook, callouts, code tabs, task lists, copy button fix).
 
-#### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
+#### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-1)
 
 - Fixed: the proof runner keeps the tool binary paths out of the error text: each of the proctor, booster and advisor binary paths is shortened to its file name before the scratch and corpus folders are masked as /app.
 - Fixed: front-page scroll reveals start hidden from first paint (plain CSS under `html.motion`, set in `<head>` before the body parses) instead of fading out after load, so unscrolled below-the-fold content sits at opacity 0 rather than being caught mid-fade; the motion class is only set where IntersectionObserver exists, so a page that hides content can always bring it back.
@@ -736,7 +741,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.
 - Changed: project names written as words except acronyms.
 
-#### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-1)
+#### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-2)
 
 - Fixed: stale capability claims in the site and docs.
 
@@ -795,7 +800,7 @@ Development happens on git.wayne.edu, the canonical repository: [enterprise-apps
 With only Docker:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
 ```
 
 Snapshot tests are updated with `ADVISOR_UPDATE_SNAPSHOTS=1` (`$env:ADVISOR_UPDATE_SNAPSHOTS = "1"` in PowerShell) before `vendor/bin/phpunit`.
@@ -1888,7 +1893,7 @@ composer ci
 No PHP on your machine? Use Docker:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
 ```
 
 ### composer validate --strict[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#composer-validate-strict)

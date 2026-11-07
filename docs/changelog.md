@@ -11,6 +11,11 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Fixed
+
+- The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (`-v stack-composer-cache:/tmp/cache`), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.
+- The front page's parts list says Sourdough starts all five app shapes; it said "the raw PHP starter".
+
 ## [0.1.7] - 2026-11-07
 
 ### Changed

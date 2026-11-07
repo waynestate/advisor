@@ -12,6 +12,11 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[Unreleased\][#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
 
+### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
+
+- The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (`-v stack-composer-cache:/tmp/cache`), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.
+- The front page's parts list says Sourdough starts all five app shapes; it said "the raw PHP starter".
+
 ## \[0.1.7\] - 2026-11-07[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-7-2026-11-07)
 
 ### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
@@ -52,7 +57,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: symfony/console and symfony/process accept ^8.0 as well as ^7.4, so apps on Pest 5 / PHPUnit 13 can install ADVISOR.
 - Changed: the docs builder and kit are resynced from Squire's unified builder (theme hook, callouts, code tabs, task lists, copy button fix).
 
-### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
+### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-1)
 
 - Fixed: the proof runner keeps the tool binary paths out of the error text: each of the proctor, booster and advisor binary paths is shortened to its file name before the scratch and corpus folders are masked as /app.
 - Fixed: front-page scroll reveals start hidden from first paint (plain CSS under `html.motion`, set in `<head>` before the body parses) instead of fading out after load, so unscrolled below-the-fold content sits at opacity 0 rather than being caught mid-fade; the motion class is only set where IntersectionObserver exists, so a page that hides content can always bring it back.
@@ -104,7 +109,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.
 - Changed: project names written as words except acronyms.
 
-### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-1)
+### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-2)
 
 - Fixed: stale capability claims in the site and docs.
 

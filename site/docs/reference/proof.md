@@ -37,7 +37,7 @@ composer ci
 No PHP on your machine? Use Docker:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
 ```
 
 ## composer validate --strict[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#composer-validate-strict)

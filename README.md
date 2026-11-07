@@ -331,7 +331,7 @@ That runs `composer validate --strict`, `content:verify`, PHPUnit, Pint, PHPStan
 included from `vendor/waynestate/pinstripe`) and `composer audit`. No PHP on your machine? Use Docker:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
 ```
 
 Tests drive the real SDK server in-process with a small MCP client, snapshot `tools/list`, and start
@@ -358,7 +358,7 @@ plus one reduced-motion pass. Each page must also have one `<h1>`, a `lang` attr
 horizontal scroll at phone width. Run it from the repo root (works in PowerShell):
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app/scripts/a11y mcr.microsoft.com/playwright:v1.49.1-noble sh -c "npm install --no-audit --no-fund && node check.mjs"
+docker run --rm -v "${PWD}:/app" -e npm_config_cache=/npm-cache -v stack-npm-cache:/npm-cache -w /app/scripts/a11y mcr.microsoft.com/playwright:v1.49.1-noble sh -c "npm install --no-audit --no-fund && node check.mjs"
 ```
 
 It also runs as the `a11y` job in GitLab CI.

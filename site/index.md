@@ -242,7 +242,7 @@ ADVISOR answers from a bundled copy of what these projects publish. Here is who 
 - [Pinstripe](https://pinstripe.apps.wayne.edu/)the coding standard
 - [SESAME](https://sesame.apps.wayne.edu/)sign-in
 - [HELMET](https://helmet.apps.wayne.edu/)the runtime baseline
-- [Sourdough](https://sourdough.apps.wayne.edu/)the raw PHP starter
+- [Sourdough](https://sourdough.apps.wayne.edu/)starts an app in any of the five shapes
 - [WELD](https://weld.apps.wayne.edu/)the Laravel starter app
 - ADVISORyou are here
 - [Booster](https://booster.apps.wayne.edu/)upgrades, one hop at a time

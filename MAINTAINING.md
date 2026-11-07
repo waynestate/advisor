@@ -39,7 +39,7 @@ Development happens on git.wayne.edu, the canonical repository: [enterprise-apps
 With only Docker:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
 ```
 
 `composer ci` runs `composer validate --strict`, `content:verify`, `stack-parts --check=README.md`, PHPUnit, Pint,
