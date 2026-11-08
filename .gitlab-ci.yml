@@ -64,6 +64,16 @@ composer-ci:
     - composer install --no-interaction --no-progress --prefer-dist
     - composer ci
 
+# ADVISOR's own page checks, beside Preflight's a11y component: light and dark at 390 and 1440 px, a
+# reduced-motion pass, one <h1>, a lang attribute, a non-empty title, no horizontal scroll at 390 px.
+a11y-extra:
+  extends: .npm-cache
+  image: mcr.microsoft.com/playwright:v1.49.1-noble
+  script:
+    - cd scripts/a11y
+    - npm install --no-audit --no-fund
+    - node check.mjs
+
 # content-drift needs a schedule created in the project's CI settings by a maintainer
 # (Settings, CI/CD, Schedules), and the job token needs read access to the sibling repos.
 content-drift:
