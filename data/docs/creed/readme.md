@@ -150,40 +150,48 @@ the policy changed, the tool exits 3 and the job fails on the diff.
 
 The policy robot (`bin/policy-bot.php run`) is the committing path, and it
 runs every Monday. It runs the fuller `bin/refresh-policy.php` (below), commits
-`policy/policy.json` and `policy/sources.json` on `auto/policy-refresh`, and
-force-pushes a merge request titled "policy: refresh from upstream sources",
-labeled `auto-data`. After a refresher exit 3 the merge request merges itself
-once its pipeline passes; after an exit 4 (something held or refused) it waits
-for a person. Each held or refused item, each disagreement between sources the
-policy cannot settle, and each listed line within 60 days of its
-`security_until` also gets one GitLab issue labeled `auto-alert`, noted on
-later runs and closed when it clears. When `refreshed_on` is a week old and
-nothing moved, the robot stamps it anyway (the heartbeat). It never tags or
-releases, and a missing CI variable stops it before any push. To review a
-robot merge request, read its body (one line per change, with its class),
-check any date against its source, and never commit to `auto/policy-refresh`:
-the next run overwrites it. If its pipeline goes red for an unrelated reason,
-fix `main` and rebase the merge request. The [policy robot
-guide](https://creed.apps.wayne.edu/docs/guides/policy-bot.html) has the
-details.
+`policy/policy.json` and `policy/sources.json` on main's commit as "policy:
+refresh from upstream sources", and runs `composer ci` in its own job. Green:
+it pushes the commit straight to `main` with the CI job token. GitLab starts
+no new pipeline for that push (the job already ran the gate), and nobody
+merges anything by hand. Red: it opens or updates `auto/policy-refresh` as a
+merge request labeled `auto-data` for a person, and the job fails, so the
+schedule owner gets mail. Every run, red or green, each held or refused item,
+each disagreement between sources the policy cannot settle, and each listed
+line within 60 days of its `security_until` gets one GitLab issue labeled
+`auto-alert`, noted on later runs and closed when it clears. When
+`refreshed_on` is a week old and nothing moved, the robot stamps it anyway
+(the heartbeat). It never tags or releases, it pushes only from `main`, and a
+missing CI variable stops it before any push. To review a red week's merge
+request, read the failed job and the body (one line per change, with its
+class), check any date against its source, and never commit to
+`auto/policy-refresh`: the next run overwrites it. If the gate went red for
+an unrelated reason, fix `main` and start the robot by hand. The [policy
+robot guide](https://creed.apps.wayne.edu/docs/guides/policy-bot.html) has
+the details.
 
-The `policy-bot` job in `.gitlab-ci.yml` runs the robot on the schedule that
-carries `CREED_JOB=policy-bot` and by hand from the web. Without the token the
-job prints "CREED_BOT_TOKEN not set; skipping the policy robot" and stays
-green. The setup, all on the CREED project on git.wayne.edu (the canonical
-repository):
+The `policy-bot` job in `.gitlab-ci.yml` runs the robot on `main` only: on
+the schedule that carries `CREED_JOB=policy-bot` and by hand from the web.
+Without the token the job prints "CREED_BOT_TOKEN not set; skipping the
+policy robot" and stays green. The setup, all on the CREED project on
+git.wayne.edu (the canonical repository):
 
-1. A project access token (Settings > Access tokens): role Maintainer
-   (Developer works only if Developers may merge to the default branch),
-   scopes `api` and `write_repository`, an expiry of 90 days, then rotate.
+1. A project access token (Settings > Access tokens) for the alert issues
+   only: role Maintainer, scope `api`, an expiry of 90 days, then rotate. The
+   push uses the job token, so `write_repository` is no longer needed; a
+   token that already has it keeps working as it is.
 2. A CI/CD variable `CREED_BOT_TOKEN` holding the token: masked and hidden,
    protected, not a file. The schedule runs on `main`, which is a protected
    branch, so the protected variable is available there.
 3. A pipeline schedule on `main` (Build > Pipeline schedules): weekly, Monday,
-   with the variable `CREED_JOB` = `policy-bot`.
+   with the variable `CREED_JOB` = `policy-bot`. Its owner must be allowed to
+   push to the protected `main` (Maintainer or above), because the job token
+   pushes as the schedule owner.
+4. "Allow Git push requests to the repository" turned on (Settings > CI/CD >
+   Job token permissions), so the job token may push.
 
-The branch `auto/policy-refresh` must not be protected, or the robot cannot
-push it. The schedules are GitLab project settings, not files in this repo.
+The branch `auto/policy-refresh` must not be protected, or the red-week
+fallback cannot push it. These are GitLab project settings, not files in this repo.
 The GitHub mirror runs the same check on a cron and on demand.
 
 ## Refreshing the policy

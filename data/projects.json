@@ -41,7 +41,7 @@
             "role": "One command that measures a PHP app against policy.json and prints a JSON, text or Code Quality report. It reports; CI decides.",
             "state": "built",
             "package": "waynestate/proctor",
-            "version": "0.7.0",
+            "version": "0.8.0",
             "php": "^8.3",
             "next_step": "Run run_proctor_check on the app, fix the failing checks, and keep `proctor check` in CI.",
             "docs": [
@@ -73,7 +73,7 @@
             "role": "The runtime baseline: security headers, CSP, session hardening, trusted proxies, a health check and a version warning.",
             "state": "built",
             "package": "waynestate/helmet",
-            "version": "0.4.0",
+            "version": "1.0.0",
             "php": "^8.3",
             "next_step": "Add it as a dependency and start from its presets; it reads the same policy as PROCTOR.",
             "docs": [
@@ -89,7 +89,7 @@
             "role": "The starters: one command generates a new app in the shape you pick: raw PHP (`sourdough new --raw`), raw PHP with a Vue SPA (`--raw --vue`), Laravel with Blade (`--laravel`), Laravel with Blade and Vue islands (`--laravel --vue`) or Laravel with Inertia and Vue (`--inertia`). `--sail` or `--docker` adds a local runtime to the Laravel shapes.",
             "state": "built",
             "package": "waynestate/sourdough",
-            "version": "0.1.7",
+            "version": "0.2.0",
             "php": "^8.3",
             "next_step": "Start a new app with `sourdough new` and the shape flag you need; keep an app honest with `sourdough manifest --check`, and bring template updates in with `sourdough feed`.",
             "docs": [
@@ -105,7 +105,7 @@
             "role": "CI templates for GitLab (components) and GitHub (reusable workflows): tests, PROCTOR, audit and accessibility, with `composer ci` as the one contract.",
             "state": "built",
             "package": "waynestate/preflight",
-            "version": "0.2.0",
+            "version": "0.3.0",
             "php": "^8.3",
             "next_step": "Include its components pinned to a tag; never track the latest.",
             "docs": [
@@ -169,7 +169,7 @@
             "role": "The Citadel auth gateway: one OpenID Connect client through Entra ID that hands each app a signed assertion for SESAME's gateway driver.",
             "state": "built",
             "package": "waynestate/drawbridge",
-            "version": "0.3.0",
+            "version": "0.4.0",
             "php": "^8.3",
             "next_step": "Apps on Citadel use SESAME's gateway driver; plan against the Drawbridge README.",
             "docs": [

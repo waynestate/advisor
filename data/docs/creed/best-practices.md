@@ -25,9 +25,11 @@ Each practice has a reason, sources, and a tag that says how the stack holds it 
 
 Tags describe the repository and design documents as they stand on 2026-10-29. Practices 55 to 61 were added on
 2026-11-02. Nine tags were re-checked against the tree on 2026-11-06 (practices 14, 24, 39, 42, 44, 46, 49, 50 and
-51). PROCTOR v0.1 is specified in
+51). On 2026-11-08 every tag, count and named file was re-checked against this tree, PROCTOR main, Preflight 0.2.0,
+HELMET main and Rollcall main, and five tags moved (practices 8, 17, 23, 34 and 53). Later that day the pin moved to
+Preflight 0.3.0, and the practices that name it (23 and 42) were re-read against 0.3.0. PROCTOR v0.1 is specified in
 `first-repos.md` and its checks are named below as specified. CREED's own pipeline includes the `php-test`,
-`composer-audit` and `proctor` components, pinned to Preflight 0.1.4; the `proctor` job checks `deploy/` and is
+`composer-audit` and `proctor` components, pinned to Preflight 0.3.0; the `proctor` job checks `deploy/` and is
 allowed to fail while its current findings are fixed.
 
 ## 1. The version policy as data
@@ -57,7 +59,7 @@ Sources: [JSON Schema introduction](https://json-schema.org/understanding-json-s
 
 How the stack holds it: `Enforced`. `PolicySchemaTest` validates the bundled file and rejects broken fixtures (bad
 date, missing rules block, unknown key, string where an integer belongs). `composer validate-policy` runs the same
-check. Both run in the `php-test` component.
+check. The tests run in the `php-test` component, and `composer ci` (the `composer-ci` job) runs both.
 
 Second pass: the schema requires `security_until` on every line that is not `"current": true`, and rejects a current
 line that carries one (practice 4, fixtures `no-security-until.json` and `current-with-security-until.json`), so the
@@ -133,8 +135,9 @@ How the stack holds it: `Not yet`. Second pass: the first pass said `policy.json
 LTS. Those three are now in the file, with dates that match the vendor pages. The practice stays `Not yet` because the
 process is still manual: the scheduled job fails when upstream ships a patch, but a new release line is still found by
 hand. The gap was real: Laravel 13 (released 2026-03-17) and MySQL 9.7 (released 2026-04-21) took six to seven months to
-land. The policy robot's Monday run of the full refresher now writes a new line above every listed line and opens it as a
-merge request (practice 8), so the stamp can move once that path has landed a line. See practices 49 and 50 for what
+land. The policy robot's Monday run of the full refresher now writes a new line above every listed line, runs
+`composer ci`, and pushes the commit to `main` when the gate is green, or opens a merge request when it is red (practice
+8), so the stamp can move once that path has landed a new line. See practices 49 and 50 for what
 comes next.
 
 ### 8. Check the policy against upstream automatically
@@ -146,11 +149,13 @@ Why: people forget; a job does not.
 
 Sources: [endoflife.date MySQL](https://endoflife.date/mysql), [PHP supported versions](https://www.php.net/supported-versions.php).
 
-How the stack holds it: `Partially`. A scheduled job re-reads the upstream feeds, including endoflife.date, and fails
-the pipeline when the latest patch levels in `policy.json` are stale; it is check-only and never commits. The policy
-robot now also runs the full refresher (`bin/refresh-policy.php`: dates, patches, new lines) on a
-Monday schedule and opens a merge request plus `auto-alert` issues when anything moved or two sources disagree. The
-stamp stays `Partially` until the robot's first merge request has landed on `main`.
+How the stack holds it: `Checked`. The `refresh-patches` job re-reads the upstream feeds, including endoflife.date, and
+fails the pipeline when the latest patch levels in `policy.json` are stale; it is check-only and never commits. The
+`policy-bot` job runs the full refresher (`bin/refresh-policy.php`: dates, patches, new lines) on a Monday schedule,
+commits what moved, runs `composer ci`, and pushes to `main` when the gate is green; when it is red it opens a merge
+request and the job fails. Each held or refused item, such as two sources that disagree, gets an `auto-alert` issue
+(`bin/policy-bot.php`, `.gitlab-ci.yml`). Its first refresh landed on `main` on 2026-11-08, which was the condition for
+moving this stamp from `Partially`.
 
 ### 9. Model support honestly when a project publishes no dates
 
@@ -295,9 +300,12 @@ Why: a database that no longer gets fixes holds everything above it back.
 
 Sources: [endoflife.date MySQL](https://endoflife.date/mysql).
 
-How the stack holds it: `Not yet`. `policy.json` lists MySQL 5.6, 5.7, 8.0, 8.4 and 9.7 (second pass: 9.7 was added after
-the first pass), and the platform's own MySQL timeline is still an open question. Nothing checks it. The shared MySQL
-5.6 is below the minimum that Laravel itself documents: see practice 46.
+How the stack holds it: `Partially`. `policy.json` lists MySQL 5.6, 5.7, 8.0, 8.4 and 9.7 (second pass: 9.7 was added
+after the first pass). PROCTOR main's `proctor/mysql-eol` grades every MySQL or MariaDB version an app names (an
+official image in a root compose file, or `SQUIRE_MYSQL_IMAGE` in an example env file) through the policy: a
+security-only line warns, and an EOL line warns too, never fails, until the platform offers a supported MySQL. The
+platform's own MySQL timeline is still an open question, so the "say when the platform lags" half is not held. The
+shared MySQL 5.6 is below the minimum that Laravel itself documents: see practice 46.
 
 ## 3. Dependencies
 
@@ -391,8 +399,10 @@ Sources: [Composer basic usage](https://getcomposer.org/doc/01-basic-usage.md) (
 commit SHA, which it calls preferred, or to a release tag; it says to avoid `~latest`). The pinning rule itself is the
 stack's own, from the first-repos design.
 
-How the stack holds it: `Documented`. `ci.md` states it, and CREED's `.gitlab-ci.yml` pins both components to a SHA.
-No check scans other repos.
+How the stack holds it: `Partially`. `ci.md` states it, and CREED's `.gitlab-ci.yml` pins its three Preflight
+components (`php-test`, `composer-audit` and `proctor`) to the 0.3.0 tag. PROCTOR main's `proctor/preflight-pinned`
+warns when an app includes a Preflight component at a branch, `~latest`, a partial version such as `0.3` or no ref; a
+full release tag (such as `@0.3.0`) or a full commit SHA passes. Components from anywhere else are not checked.
 
 ## 4. Secrets and configuration
 
@@ -408,8 +418,10 @@ Sources: [OWASP Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.o
 
 How the stack holds it: `Partially`. `handbook/secrets.md` writes the rules. PROCTOR main warns on two kinds of committed
 secret: a real `.env` file or a real `APP_KEY` (`proctor/app-key/committed-env` and `committed-key`, practice 43) and a
-token written into a package source URL or `.npmrc` (`proctor/repo-url-credentials`). No general secret scan exists, so
-an API key pasted into code is not caught, and rotation stays a process.
+token written into a package source URL or `.npmrc` (`proctor/repo-url-credentials`). Preflight 0.2.0's
+`secret-detection` component runs Gitleaks over the checked-out tree and fails the pipeline on a match, so an API key
+pasted into code is caught in an app that includes it. CREED's own pipeline does not include it yet, and rotation
+stays a process.
 
 ### 25. Read environment variables only in config files
 
@@ -453,8 +465,8 @@ way forward; the owner stays responsible for keeping the app current).
 Second pass: the first pass also cited the GOV.UK manual here. As read on 2026-10-27, that page says nothing about named,
 dated exceptions, so the citation was removed. The practice itself is the stack's own design (the version policy).
 
-How the stack holds it: `Checked`. PROCTOR `overrides` prints every override and fails an expired one. Rollcall is
-counts expired overrides across apps in its fleet report.
+How the stack holds it: `Checked`. PROCTOR `overrides` prints every override and fails an expired one. Rollcall's
+digest flags each app with an expired PROCTOR override (`override_expired`).
 
 ### 28. Roll a new rule out in stages, with dates
 
@@ -479,10 +491,11 @@ Why: a rule that nothing runs is only a wish.
 
 Sources: [OWASP ASVS](https://asvs.owasp.org/).
 
-How the stack holds it: `Partially`. Every rule in the handbook now names its point: the PROCTOR check that enforces
-it, the command that measures it, or the plain words "no check exists yet". What remains: the checks behind the
-"no check exists yet" tags, and a guard that fails when a rule loses its tag; the handbook lint checks RFC 2119
-wording only.
+How the stack holds it: `Partially`. Most rules in the handbook name their point: the PROCTOR check that enforces it,
+the command that measures it, or the plain words "no check exists yet". Some still name neither (the auth chapter's
+driver and access rules, for example). What remains: tags for those rules, the checks behind the "no check exists
+yet" tags, and a guard that fails when a rule loses its tag; the handbook lint (`bin/lint-handbook.php`) checks RFC
+2119 wording only.
 
 ## 6. Writing the handbook
 
@@ -517,9 +530,10 @@ Why: a standard is a command that fails, not a sentence in a README.
 
 Sources: [OWASP ASVS](https://asvs.owasp.org/) (requirements written to be verified).
 
-How the stack holds it: `Partially`. Every handbook chapter now names, beside each rule, the PROCTOR check that
-enforces it, the command that measures it, or the plain words "no check exists yet". What remains: the checks behind
-those tags, and a mechanical guard that keeps every rule named; the handbook lint checks RFC 2119 wording only.
+How the stack holds it: `Partially`. Most handbook rules name, beside the rule, the PROCTOR check that enforces it,
+the command that measures it, or the plain words "no check exists yet"; some still name neither (practice 29). What
+remains: those tags, the checks behind them, and a mechanical guard that keeps every rule named; the handbook lint
+checks RFC 2119 wording only.
 
 ### 33. Judge with deterministic checks only
 
@@ -541,9 +555,10 @@ Why: developers work on all three, and Citadel needs LF.
 
 Sources: none outside the stack; this is the stack's every-OS design.
 
-How the stack holds it: `Documented`. The stack's every-OS design and `every-os.md` state it, and CREED has the
-`.gitattributes`.
-PROCTOR checks for CRLF in server files and case collisions are planned, not in v0.1.
+How the stack holds it: `Partially`. The stack's every-OS design and `every-os.md` state it, and CREED has the
+`.gitattributes`. PROCTOR main's `proctor/crlf-deploy-script` fails when a deploy script (`build.sh`, `release.sh`, or
+a `.sh` file under `deploy/`, `deployments/`, `deploy_scripts/` or `scripts/`) has Windows line endings. No check
+reads `.gitattributes`, other server files or file-name case collisions yet.
 
 ### 35. Run the test suite on every supported PHP version
 
@@ -567,7 +582,8 @@ Why: a gate that nothing runs protects nobody.
 Sources: [GitLab Code Quality docs](https://docs.gitlab.com/ci/testing/code_quality/) (the report is produced by a
 pipeline job, so it needs a runner).
 
-How the stack holds it: `Documented`. The README and `ci.md` state it; the runner is not in place.
+How the stack holds it: `Documented`. The README and `ci.md` state it. git.wayne.edu now has an instance runner and
+CREED's CI runs on it; nothing checks that another product's pipeline does.
 
 ## 7. Patching and the supply chain (second pass)
 
@@ -589,7 +605,7 @@ Sources: [PHP 2026 news archive](https://www.php.net/archive/2026.php),
 2026-10-21).
 
 How the stack holds it: `Documented`. `policy.json` now carries a `latest_patch` and a `latest_patch_checked` date for
-each PHP version (and for Laravel and Node), and `bin/refresh-patches.php` keeps them current from php.net, Packagist,
+each supported PHP version (and for Laravel and Node; EOL PHP 8.1 has none), and `bin/refresh-patches.php` keeps them current from php.net, Packagist,
 nodejs.org and endoflife.date (handbook: `versions.md`, "Latest patches"). It is informational: a version's state is
 still derived from the dates alone, and no PROCTOR check fails an image that is behind the latest patch yet. This pass
 did not verify whether Citadel's PHP images were rebuilt after 2026-10-21.
@@ -672,8 +688,9 @@ Why: build tools run with your credentials and your source (practice 16), and th
 Sources: [npm config](https://docs.npmjs.com/cli/v11/using-npm/config),
 [Composer config, `policy`](https://getcomposer.org/doc/06-config.md#policy).
 
-How the stack holds it: `Not yet`. Preflight 0.1.0 has `proctor`, `php-test` and `composer-audit`; `sbom`, `pint`,
-`phpstan` and `eslint` arrive in the next tag. None of them audits `package-lock.json`. The `audit_severity_threshold`
+How the stack holds it: `Not yet`. Preflight 0.2.0 has `proctor`, `php-test`, `composer-audit`, `sbom`, `pint`,
+`phpstan`, `eslint`, `a11y`, `secret-detection`, `portability`, `renovate`, `package-publish` and `squire-kit`. None of
+them audits `package-lock.json`. The `audit_severity_threshold`
 rule is read by the Composer audit alone.
 
 ### 42. Gate on tools that work on every GitLab tier
@@ -693,9 +710,9 @@ Sources: [GitLab dependency scanning](https://docs.gitlab.com/user/application_s
 [secret push protection](https://docs.gitlab.com/user/application_security/secret_detection/secret_push_protection/).
 
 How the stack holds it: `Documented`. The rule is written in `handbook/code.md`: the stack's GitLab instances run the
-Free tier, so nothing relies on GitLab SAST. The tier of git.wayne.edu was not checked. The two components CREED uses
-run Composer and PHPUnit, not a GitLab scanner (as the handbook describes them; their internals were not read), so they
-appear to fit it already.
+Free tier, so nothing relies on GitLab SAST. The tier of git.wayne.edu was not checked. The three components CREED
+uses run PHPUnit (`php-test`), `composer audit` (`composer-audit`) and PROCTOR (`proctor`), not a GitLab scanner
+(their Preflight 0.3.0 templates were read on 2026-11-08), so they fit it.
 
 ### 43. Treat `APP_KEY` as a code-execution key
 
@@ -830,8 +847,8 @@ Why: practice 8 says "compare with a feed" but not what to compare or what to ig
 Sources: [endoflife.date PHP API](https://endoflife.date/api/v1/products/php/), [endoflife.date MySQL API](https://endoflife.date/api/v1/products/mysql/).
 
 How the stack holds it: `Partially`. `bin/refresh-policy.php` calls the API and classifies every change before writing
-it, and the `policy-bot` job runs it (on the robot's schedule and from the web), staying green until `CREED_BOT_TOKEN`
-is set. endoflife.date is a community aggregator, so the job reports differences and a human confirms them against the
+it, and the `policy-bot` job runs it (on the robot's schedule and from the web); without `CREED_BOT_TOKEN` the job
+prints a notice and stays green. endoflife.date is a community aggregator, so the job reports differences and a human confirms them against the
 vendor page (practice 6).
 
 ### 51. Decide whether the schema is strict or tolerant, and test both readers
@@ -876,7 +893,10 @@ WayneUI's own gate is outside CREED and was not reviewed in this pass.
 
 Sources: [GitLab accessibility testing](https://docs.gitlab.com/ci/testing/accessibility_testing/).
 
-How the stack holds it: `Not yet`. Preflight has no accessibility component.
+How the stack holds it: `Checked`. Preflight 0.2.0's `a11y` component opens the app's pages in Chromium (Playwright),
+in light and dark at 320 and 1280 px, runs axe-core and fails the pipeline on any violation (WCAG 2.0 and 2.1 A and AA
+by default; add `wcag22aa` for practice 54). It is axe-core, not GitLab's Pa11y job. CREED runs the same kind of gate
+on its own site with `scripts/a11y.sh` and `scripts/a11y.ps1`, by hand, not in its pipeline.
 
 ### 54. Aim at WCAG 2.2 AA
 
@@ -909,7 +929,8 @@ Sources: the WSU developer standards, 2024 (an internal WSU document), [OWASP AS
 
 How the stack holds it: `Partially`. `handbook/secrets.md` writes the rule. PROCTOR main warns on committed env files and
 APP_KEYs (`proctor/app-key`, practice 43), on tokens in package source URLs (`proctor/repo-url-credentials`), and on
-dumps, backups, logs and env files in the served folder (`proctor/served-folder`, practice 59). What a log or an
+dumps, backups, logs and env files in the served folder (`proctor/served-folder`, practice 59), and Preflight 0.2.0's
+`secret-detection` component fails a pipeline on a committed secret Gitleaks recognizes. What a log or an
 exception carries at runtime is not something a static check can see.
 
 ### 56. Validate every input and treat uploaded files as hostile
@@ -1038,18 +1059,19 @@ These are places where a source disagrees with the repository or with an earlier
 
 1. Done in the repository after the first pass: Laravel 13, Node 26 and MySQL 9.7 are in `policy.json` (practice 7). The
    process gap remains (items 19 and 22).
-2. Partially: a scheduled job checks the latest patch levels against the upstream feeds and fails when they are stale;
-   the policy robot now runs the full refresher every Monday and opens a merge request; the stamp moves once its first
-   merge request lands (practice 8).
+2. Done: a scheduled job checks the latest patch levels against the upstream feeds and fails when they are stale;
+   the policy robot runs the full refresher every Monday, pushes to `main` when `composer ci` is green and opens a
+   merge request when it is red; its first refresh landed on 2026-11-08 (practice 8).
 3. Done: the schema allows `"current": true` lines with no end date, and Vue 3, Inertia 2 and Inertia 3 are listed (practice 9).
 4. Done: `policy/sources.json` records each source with its first_seen and last_seen, and `policy.json` keeps `latest_patch_checked` (practice 6).
-5. Partly done: policy.json records the supported PHP range per Laravel release (practice 14); the PROCTOR check that compares an app with it is not built.
-6. Add a PROCTOR check that reads the Laravel version from `composer.lock` against the policy (practice 15).
+5. Done: policy.json records the supported PHP range per Laravel release, and PROCTOR main's `laravel-php` compares an app's `require.php` with it (practice 14).
+6. Done: PROCTOR main's `laravel-eol` reads the Laravel line from `composer.lock` and grades it through the policy (practice 15).
 7. Done: PROCTOR main's `node-eol` grades the Node version in `.nvmrc`, `.node-version`, `volta.node`, CI and
    Dockerfile images, and `engines` (practice 16).
-8. Add a MySQL check or report once the platform timeline is known (practice 17).
-9. Add an abandoned-package setting to `rules` and apply it in the audit check (practice 21).
-10. Add a secret-scanning job in Preflight (the secrets chapter is written; practice 24).
+8. Partly done: PROCTOR main's `mysql-eol` grades the MySQL an app names, warning only; a platform report waits for the
+   platform timeline (practice 17).
+9. Done: `rules.abandoned_packages` is `fail`, and PROCTOR main's `composer-audit` applies it (practice 21).
+10. Done: Preflight 0.2.0's `secret-detection` component runs Gitleaks and fails on a match (practice 24).
 11. Done: PROCTOR main's `env-outside-config` warns on `env()` outside `config/` (practice 25). Larastan's own rule in
     Pinstripe would catch it earlier, in the editor.
 12. Partly done: the runtime and headers chapter is written (practice 26); the `config` check that `APP_DEBUG` is
@@ -1059,8 +1081,10 @@ These are places where a source disagrees with the repository or with an earlier
 14. Done: `tests/OlderReaderContractTest.php` loads a future-shaped policy file with the reader and asserts every
     known line still answers the same (practice 10).
 15. Add stage dates (`report`, `warn`, `block`) to the schema (practice 28).
-16. Add PROCTOR checks for `.gitattributes`, CRLF in server files and file-name case collisions (practice 34).
-17. Add a PROCTOR check that CI includes are pinned to a tag or SHA (practice 23).
+16. Partly done: PROCTOR main's `crlf-deploy-script` fails on CRLF in deploy scripts; checks for `.gitattributes`,
+    other server files and file-name case collisions are still to add (practice 34).
+17. Partly done: PROCTOR main's `preflight-pinned` warns when a Preflight include is not pinned to a commit SHA; other
+    components are not checked (practice 23).
 18. Partly done: the accessibility chapter is written, with the WCAG 2.2 AA target (practices 30 and 54); the Title
     II dates stay open (practice 52).
 
@@ -1077,7 +1101,7 @@ Added in the second pass (2026-10-27):
     Composer and npm (practice 41).
 24. Confirm the tier of git.wayne.edu (the rule is written in `handbook/code.md`; practice 42).
 25. Partly done: PROCTOR main's `app-key` warns on a committed `.env` or `APP_KEY` and the cookie session driver, on
-    every OS (practice 43). The secrets chapter names the check; a general secret scan is still item 10.
+    every OS (practice 43). The secrets chapter names the check; the general secret scan is item 10.
 26. Partly done: `images.docker` is filled for PHP 8.3 to 8.5 and the rebuild rule is in `handbook/versions.md`;
     `citadel` waits for Citadel's image names.
 27. Ask the owners of git.wayne.edu to publish its GitLab patch level and a patch routine (practice 45).
@@ -1088,11 +1112,11 @@ Added in the second pass (2026-10-27):
     one (practice 48).
 31. Done: decided 2026-11-03: policy lists only even Node majors, which are the LTS lines; odd majors are never a target and are not listed. A new even major is added from Node's release schedule when it is announced (practice 49).
 32. Partially: `bin/refresh-policy.php` calls the API with the filter rules in practice 50 and classifies every change,
-    and the `policy-bot` job runs it, staying green until `CREED_BOT_TOKEN` is set (extends item 2).
+    and the `policy-bot` job runs it; a human still confirms an aggregator difference against the vendor page (extends item 2).
 33. Done: decided 2026-11-03: strict where the file is published, tolerant where it is read. The schema forbids unknown keys, so CREED's own CI fails on a stray key; readers ignore unknown keys, so an older reader keeps working on a newer file (`tests/OlderReaderContractTest.php`; practice 51, extends item 14).
 34. Ask WSU's accessibility office and counsel which Title II dates apply, then write the chapter's target level
     (practices 52 and 54).
-35. Add an accessibility job to Preflight, using Pa11y or another deterministic tool (practice 53).
+35. Done: Preflight 0.2.0's `a11y` component runs axe-core in Playwright and fails on a violation (practice 53).
 36. Done: the Laravel 13 `active_until` date (2027-09-30) carries its source, endoflife.date, in `policy/sources.json` (Checks against the web).
 37. Done: the schema requires `security_until` on every line that is not `"current": true` (`policy/policy.schema.json`),
     and `tests/PolicySchemaTest.php` rejects a line with neither (practice 2).
@@ -1103,8 +1127,9 @@ Added from the WSU developer standards (2026-11-02):
     committed under `public/` (practice 59).
 39. Partly done: PROCTOR main's `world-writable` warns on `chmod 777` in scripts and PHP; web-writable paths outside an
     allowed list need the running container (practice 59).
-40. A committed-secret scan in Preflight; extends items 10 and 25 and practice 55.
-41. Whether idle sessions get a stated time limit (practice 57).
+40. Done: a committed-secret scan in Preflight, the `secret-detection` component (0.2.0); extends items 10 and 25 and practice 55.
+41. Done: `policy.json` records the idle limits (`sessions`), and the handbook's auth chapter states them and points at
+    the policy (practice 57).
 42. Deferred past 1.0: a schema version 2 with `platform_components` per target. It would be a breaking schema change and nothing needs it yet.
 
 ## Sources

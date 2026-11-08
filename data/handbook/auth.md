@@ -10,15 +10,31 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 - The `gateway` driver accepts only a signed assertion, never a bare header:
   user, attributes, issued-at, audience, an expiry of 60 seconds or less, and
   a signature the gateway and app share (the stack's auth design).
-- Drivers: `cas` (the default today), `gateway`, `oidc`, `oauth2`, `saml` (not
-  built yet), and `fake` for local development and tests (the stack's auth design).
+- Drivers: `cas` (the default today), `gateway`, `oidc`, `oauth2`, `saml`
+  (opt-in), and `fake` for local development and tests (the stack's auth design).
 - Non-EOL PHP only, with no exceptions (the stack's auth design).
   PROCTOR check: `php-floor`.
-- To be decided: the gateway's key distribution and rotation, and the SAML
-  library choice if a `saml` driver is built (the stack's auth design).
+- The gateway's public keys reach apps as one key set file (JWKS) that holds
+  the current key and the next one. Drawbridge writes it (`keys:jwks`),
+  Playbook carries WSU's copy (public keys only), and the app points SESAME's
+  `gateway.jwks_file` (`SESAME_GATEWAY_JWKS_FILE`) at it. An app SHOULD read
+  that file rather than copy keys into config values, and the `gateway` driver
+  never fetches keys over the network at sign-in (the stack's signing-key
+  decision).
+  SESAME config: the file is checked at boot, and a missing file, private key
+  material or a repeated `kid` stops the app.
+- The gateway's signing key MUST be rotated every 12 months, and at once when
+  a private key could have been exposed. A retired key MUST stay in the key set
+  for at least 5 minutes after the switch, so assertions signed just before it
+  still verify (the stack's signing-key decision). No check exists yet. Still
+  open: where the private keys live on Citadel and who runs the yearly
+  rotation.
+- The `saml` driver is built on `onelogin/php-saml`, is opt-in, sets no
+  default WSU identity provider, and requires the provider to sign its
+  assertions (the stack's SAML decision). SESAME config: the `saml` block.
 - API and other stateless requests are authenticated with signed, short-lived bearer tokens in an `Authorization` header, verified on every request. A token is signed, not merely encrypted; JSON Web Tokens are a good fit (WSU developer standards, 2024).
 - Authentication is checked before any content is shown or any script function runs, on every request. Deny by default: routes are protected unless listed as public, and an unauthenticated person is sent to sign in (WSU developer standards, 2024).
 - When authentication or an authorization lookup fails, the result is fail closed: access is withheld (WSU developer standards, 2024).
 - Administrative access MUST be limited to named users or roles, and access that is due to end is revoked on a regular schedule (WSU developer standards, 2024).
 - Access that is due to end when a person's status changes (for example an ended employment) MUST be removed by an automated process, not by memory (WSU developer standards, 2024).
-- Idle sessions MUST time out after a configurable period of inactivity. The stack sets no number yet; Laravel's default session lifetime applies until it does (WSU developer standards, 2024).
+- Idle sessions MUST time out after a configurable period of inactivity (WSU developer standards, 2024). The stack's numbers are in `policy/policy.json`, under `sessions`, which is the source for them: SESAME signs a user out after 120 minutes idle and 720 minutes in all (`sessions.sesame`), and Drawbridge after 3600 seconds idle and 28800 seconds in all (`sessions.gateway`). SESAME config: `session.idle_minutes` (`SESAME_SESSION_IDLE_MINUTES`) and `session.absolute_minutes` (`SESAME_SESSION_ABSOLUTE_MINUTES`), with those defaults. An app that does not use SESAME sets its own idle limit; that is documented only.

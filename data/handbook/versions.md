@@ -39,8 +39,10 @@ to test against saved feeds.
 ## Base images
 
 A base image MUST be rebuilt when the policy's `latest_patch` for its branch
-changes; the policy robot opens that change, so an image never sits behind the
-patch level the policy records (the stack's version policy). Every such change
+changes. The policy robot lands that change itself: it pushes the refresh to
+`main` when its `composer ci` gate is green, and opens a merge request for a
+person only when the gate is red. So an image never sits behind the patch
+level the policy records (the stack's version policy). Every such change
 to `latest_patch` is a rebuild. An image MUST NOT be pinned to a branch the
 policy marks EOL (the stack's version policy).
 

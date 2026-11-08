@@ -20,7 +20,7 @@ Each practice ends with one tag that says how the stack holds it today.
 - `Documented`: written down in an ADR or design doc only. Where the design says a test will cover it, the text says so, but the test does not exist yet.
 - `Not yet`: a gap. Nothing holds it.
 
-Sourdough is a working tool (0.1.7): `sourdough new` bakes all five shapes (raw PHP, raw PHP with a Vue SPA, Laravel with Blade, Laravel with Blade and Vue islands, Laravel with Inertia and Vue), `sourdough manifest --check` and `sourdough feed` ship, and the smoke gate bakes every shape for real. Many tags below were first written while Sourdough was still a design, so some may undersell what the code now does; each is re-checked against the code when its practice is next touched. Sibling projects (SESAME, HELMET, PROCTOR, Preflight) hold part of several practices, and where one leans on them the tag says so.
+Sourdough is a working tool (0.2.0): `sourdough new` bakes all five shapes (raw PHP, raw PHP with a Vue SPA, Laravel with Blade, Laravel with Blade and Vue islands, Laravel with Inertia and Vue), `sourdough manifest --check` and `sourdough feed` ship, and the smoke gate bakes every shape for real. Many tags below were first written while Sourdough was still a design, so some may undersell what the code now does; each is re-checked against the code when its practice is next touched. Sibling projects (SESAME, HELMET, PROCTOR, Preflight) hold part of several practices, and where one leans on them the tag says so.
 
 ---
 
@@ -29,17 +29,17 @@ Sourdough is a working tool (0.1.7): `sourdough new` bakes all five shapes (raw 
 ### 1.1 Make the permutation an explicit, validated input
 Take the permutation from flags (`--raw`, `--vue`, `--laravel`, `--inertia`) and refuse combinations that make no sense, such as `--inertia` without `--laravel`. Why: a wrong guess here produces an app that looks fine and fails later, and a clear error costs nothing. Laravel's own installer works the same way: you choose one starter kit and get one coherent result.
 Sources: [S1], [S8].
-Stack: `Documented`. the stack design notes lists the flag table and says `--inertia` without `--laravel` is an error. Step 1 plans tests for every row and for the invalid combinations.
+Stack: `Enforced`. `Permutation::fromFlags()` (`src/Permutation.php`) maps the flags to one of the five shapes and refuses the combinations that make no sense with exit 1: `--raw` with `--laravel` or `--inertia`, and `--vue` with `--inertia`. The design changed one row: `--inertia` alone now means `--laravel --inertia` rather than an error. `tests/PermutationTest.php` covers every valid row and every refused combination, and `tests/NewCommandTest.php` checks each shape from its documented flags (`testEachShapeFromItsDocumentedFlags`), `--inertia` alone (`testInertiaAloneImpliesLaravel`) and the refusal at the CLI (`testRawWithInertiaExitsOneAndNamesTheShapes`).
 
 ### 1.2 Offer `--dry-run`, and make it write nothing
 `--dry-run` prints the plan (files, packages, commands) and changes nothing on disk. Why: a developer can see what will happen before it happens, and a test can assert that nothing was written.
 Sources: [S6].
-Stack: `Documented`. Step 1 plans a test that `--dry-run` writes nothing.
+Stack: `Enforced`. `sourdough new --dry-run` prints the plan and returns before anything is written; `tests/NewCommandTest.php` asserts the target directory does not exist afterwards (`testDryRunWritesNothingAndExitsZero`, and `testJsonWithoutDryRunExitsTwoAndWritesNothing` for the `--json` misuse), with the same check for the ovens (`tests/DockerScaffoldTest.php`, `tests/SailScaffoldTest.php`, both through the real binary) and for the saved plan (`tests/SavedPlanTest.php`, `testADryRunSavesNoPlan`).
 
 ### 1.3 Refuse a non-empty target; overwrite only on explicit request
 Refuse to generate into a directory that already has files. If you ever allow overwriting, require a `--force` flag, and prompt only when the session is interactive. Why: the worst outcome of a scaffolder is silently damaging work that was already there.
 Sources: [S6].
-Stack: `Documented`. The refusal is in the stack design notes. There is no `--force` design yet, which is fine as long as nobody adds one without a test.
+Stack: `Enforced`. Every generator refuses a target that is a file or a directory with anything in it ("already exists and is not empty"), before writing: `testRefusesNonEmptyTarget` in `tests/RawGeneratorTest.php`, `tests/LaravelBladeGeneratorTest.php`, `tests/LaravelBladeVueGeneratorTest.php` and `tests/LaravelInertiaGeneratorTest.php`, plus `testRefusesTargetThatIsAFile`. The ovens refuse to write over an existing `Dockerfile` or `compose.yaml` (`tests/DockerScaffoldTest.php`, `tests/SailScaffoldTest.php`). There is no `--force`, which is fine as long as nobody adds one without a test.
 
 ### 1.4 Use exit codes that scripts can rely on
 Return 0 on success and distinct non-zero codes for the main failure modes. Document them. Why: release scripts, CI and agents decide what to do from the code alone.
@@ -112,29 +112,29 @@ Stack: `Not yet`. The MySQL timeline question is still open. Squire's S18 is `Do
 ### 3.1 Record where the app came from
 Write the template name, template version and the answers given into a file in the generated project (for example `.sourdough.json`). Copier does this with `.copier-answers.yml` and cruft with `.cruft.json`. Why: without it there is nothing to compare against, so no update is possible. Do not hand-edit that file.
 Sources: [S4], [S5].
-Stack: `Not yet`.
+Stack: `Enforced`. Every bake writes `.sourdough/manifest.json` with the template, the Sourdough version and the answers (plus a sha256 for every file): `src/Baker.php` calls `src/Manifest.php` last, after the scaffolds, on every shape, and `tests/ManifestTest.php` checks its shape. The plan the app was baked from is saved next to it as `.sourdough/plan.yaml` (`src/AppPlan.php`). The "do not hand-edit" half is a rule in the docs only: nothing checks the manifest itself for edits.
 
 ### 3.2 Provide a check that fails CI when an app falls behind
 A `sourdough check` (or `--check`) compares the project with the template version it records and exits non-zero when the project is behind. Cruft's `cruft check` does this and is meant for pipelines. Why: this is what makes a starter "fed". Without a check, nobody finds out until the drift is large.
 Second pass: Copier has no `check` command, but `copier check-update` does the same job. It supports `--output-format json`, and `--quiet` makes it exit 2 when an update exists [S4]. That is a second model for the shape of `sourdough check`. The cruft project page showed no release or commit dates when fetched, so its maintenance status is unconfirmed.
 Sources: [S5], [S4].
-Stack: `Not yet`. The core-plus-adapters rule already requires `--check` gates for generated files, and the project brief says a starter must be fed, but the stack design notes does not describe it for Sourdough.
+Stack: `Checked`. The check exists: `sourdough feed --dry-run` exits 1 when feeding would change files and 0 when the app is fresh (`src/Command/FeedCommand.php`, `exitCode()`), and `sourdough manifest --check` exits 1 when a managed file drifted (`src/Command/ManifestCommand.php`). Every shape's `.gitlab-ci.yml` runs both in its `sourdough-feed` job, on the newest Sourdough release: an app behind its template exits 1, which `allow_failure: exit_codes: [1]` shows as a warning, so a pending feed never blocks a deploy; drift is listed and never fails, because feed merges it; a broken record (exit 2: no manifest, a newer manifest, leftover conflict markers, a failed bake) fails the job. `tests/TemplateFeedJobTest.php` holds every shape to the same job and runs its lines on a fresh, an edited, an older and a broken bake of each shape. It warns rather than fails on the one thing this practice names, so the tag is `Checked`, not `Enforced`. Sourdough's own smoke gate also runs both on every shape (`scripts/smoke-shape.sh`).
 
 ### 3.3 Provide an update that merges, not overwrites
 Update by regenerating the project from the new template version, comparing, and applying the difference on top of the developer's changes (a three-way merge). Require a clean git state first. (Second pass: Copier recommends a clean `git status` but does not enforce it, so Sourdough should enforce it.) Mark conflicts with inline markers or `.rej` files, and add a hook or CI check that blocks a commit containing leftover markers. Why: Laravel says its kits are code you own and "there is no need to update" them. That is true for a hobby app, not for an app that must stay on supported PHP. A merge keeps the developer's work.
 Sources: [S4], [S5], [S1].
-Stack: `Not yet`.
+Stack: `Enforced` for the merge and the clean tree: `sourdough feed` bakes the new loaf, three-way merges each changed file with `git merge-file`, marks same-line conflicts inline and never overwrites (`src/Feed/Feed.php`), and refuses a dirty tree, untracked files included (`Feed::assertReady()`); `tests/FeedCommandTest.php` covers every shape. Leftover markers block the next feed (`Feed::leftovers()`) and fail the app's `sourdough-feed` CI job (exit 2, `tests/TemplateFeedJobTest.php`), not the commit: there is no commit hook for markers.
 
 ### 3.4 Version templates with tags and write migration notes
 Tag template releases with semantic versions and put a short "what changed, what to do" entry in the changelog for each. Copier picks the newest tag by default. Why: an update tool is only as good as the history it can read.
 Sources: [S4].
-Stack: `Not yet`.
+Stack: `Documented`. The release steps in `MAINTAINING.md` ("Releasing") tag every release `X.Y.Z` and move the changelog lines under a dated heading, and `docs/upgrading.md` has a "what changed, what to do" section per release; tags `0.1.0` to `0.1.7` all follow it. Nothing fails when a release skips its notes. Feed leans on the tags: the manifest records the release that baked the app, and `src/Feed/Feed.php` refuses a manifest from a newer one.
 
 ### 3.5 Run compatibility CI that generates, installs and tests each permutation
 On every change to Sourdough, and on every release of WayneUI, SESAME, HELMET and PROCTOR, generate each permutation, install it and run its own tests and the PROCTOR check. Why: the starter is the place where all the stack libraries meet, so it is where a break shows first.
 Second pass: also run it on a schedule (nightly), not only on changes, and cover PHP 8.4 and 8.5 and the current and previous Laravel major (see 2.4 and 4.13). A starter with no commits still rots, because the things it depends on keep moving.
 Sources: [S16].
-Stack: `Documented`. The one-repo-per-project decision asks for compatibility CI against WayneUI releases. the stack design notes puts the Laravel generation tests in a pipeline job. No pipeline exists yet.
+Stack: `Checked`. The smoke gate bakes each of the five shapes on every pipeline and runs the app's own install, test suite, `composer proctor` and `composer ci`, then a live check (`.gitlab-ci.yml` jobs `smoke-raw` to `smoke-inertia`, `scripts/smoke-shape.sh`); the `proof` job runs every shape and every oven with the last release fed forward on a schedule that sets `SOURDOUGH_PROOF` (`scripts/proof.sh`). It warns rather than fails: the jobs are `allow_failure: true` until every shape has been seen green once. Gaps: it runs on PHP 8.5 only, not on 8.4 or the previous Laravel major, and releases of WayneUI, SESAME, HELMET and PROCTOR do not trigger it.
 
 ### 3.6 Keep the template thin; put shared behavior in libraries (second pass)
 Other universities ship starters as a Composer package plus an install command. Cornell's CIT Custom Development publishes a "starter kit and library": a new site installs it with `composer require` and `php artisan starterkit:install`, and an existing site can require it without publishing the project files (the README warns that publishing overwrites files). The README describes no update process and its releases list was empty when fetched, which is the gap `sourdough check` is meant to fill. Northwestern's system development team also publishes a Laravel starter on Packagist; the repository URL I tried returned 404, so only its Packagist listing (via search) was seen. Why: code that lives in SESAME, HELMET and PROCTOR updates with `composer update`, so only the glue lives in the template and the merge in 3.3 stays small. This is the "core plus adapters" rule applied to the starter itself.
@@ -165,7 +165,7 @@ Stack: `Not yet`. PROCTOR's `php-floor` check will catch an out-of-date floor in
 Include Preflight components with an exact version. GitLab supports a commit SHA, a tag or a branch. Its guidance is to pin to a SHA, or to a release tag from a maintainer you trust, and to avoid `~latest`. Why: an unpinned component changes your pipeline without a commit in your repo.
 Second pass: re-checked against the GitLab page. It says to pin to a commit SHA (preferred) or a release tag, to trust tags only from a maintainer you trust, to avoid `latest`, and to review changes before moving a pin. It also says component inputs are validated and variables are not, so pass settings as `inputs`. Components have been generally available since GitLab 17.0.
 Sources: [S16].
-Stack: `Partly enforced`. Baked apps now include the Preflight components pinned to the commit SHA of the 0.2.0 release tag, with the tag in a trailing comment; PROCTOR 0.4 warns on a bare tag. Moving a pin is a deliberate commit.
+Stack: `Enforced`. Baked apps include the Preflight components pinned to the commit SHA of the 0.3.0 release tag, with the tag in a trailing comment (`templates/*/.gitlab-ci.yml`); PROCTOR 0.4 to 0.7 warn on a bare tag, and 0.8 also accepts a full release tag. Sourdough's own pipeline pins the components to the `0.3.0` release tag (`.gitlab-ci.yml`); its GitHub workflow stays on 0.1.4, because GitHub's copy of Preflight has no later tag yet. `tests/PreflightPinTest.php` fails when any shape or Sourdough's own GitLab pipeline names another Preflight version, or when a component's `image` input carries a registry prefix (from Preflight 0.3.0 the components add it themselves through `image_prefix`). Moving a pin is a deliberate commit.
 
 ### 4.4 Keep configuration in the environment and out of the template
 Commit `.env.example` with names and safe placeholders, never `.env`. Templates hold no secrets, no real hostnames and no per-environment branches. A good test: could the generated repo be published right now without leaking anything? Why: config that varies per deploy belongs outside the code.

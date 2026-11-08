@@ -14,10 +14,11 @@ Front page: [`site/index.html`](site/index.html). It is static, with no build st
 On Citadel, the raw-PHP deploy layer in [`deploy/`](deploy/) serves it: a Squire kit whose front controller puts `site/` behind HELMET's security headers. For local development, serve `site/` directly.
 
 Rollcall is the fleet scanner for the Wayne State application stack. For each app it records the PHP image, the
-lowest PHP its `composer.json` allows, the Laravel version, the auth package and its version, and the PROCTOR
-result. Then it looks up each version by date in CREED's `policy.json`. It keeps one snapshot per scan, so you can
-see drift and an EOL burn-down over time. It prunes old snapshots after the retention window (default 90 days; the
-newest one always stays).
+lowest PHP its `composer.json` allows, the Laravel version, the auth package and its version, the PROCTOR result,
+and, when the app commits one, the result, Booster version and finish time of Booster's hop record
+(`booster-hop.json`). Then it looks up each version by date in CREED's `policy.json`. It keeps one snapshot per
+scan, so you can see drift and an EOL burn-down over time. It prunes old snapshots after the retention window
+(default 90 days; the newest one always stays).
 
 Rollcall enforces nothing. It never opens an issue, leaves a comment or deploys anything, and it exits `0` whatever
 the fleet looks like. The public report has totals only: counts and progress, no app names, owners or rankings. The
@@ -54,11 +55,16 @@ until Rollcall switches, the copy stays. To refresh it, run
 `composer creed-copy:check` proves the copy has not drifted (it reads the checkout from `CREED_PATH`); a hand edit
 to `src/Creed/` fails that check.
 
+Weekly CREED copy refresh: a scheduled GitLab job (`creed-copy-refresh`, Mondays, an hour after CREED's policy
+robot) re-exports the copy from CREED main, rebuilds the versions table and docs, runs `composer creed-copy:check`
+and `composer ci`, and pushes to main only when both pass. A red run leaves main untouched. Details in
+MAINTAINING.md, "Refreshing the CREED copy".
+
 Data comes in through three interfaces. Each has a fixture adapter, so you can try everything without a live host:
 
 | Source | Interface | Adapters |
 |---|---|---|
-| Repositories (`composer.json`, `composer.lock`) | `RepositorySource` | a directory of fixtures; GitLab over PSR-18, tested against recorded responses |
+| Repositories (`composer.json`, `composer.lock`, `booster-hop.json`) | `RepositorySource` | a directory of fixtures; GitLab over PSR-18, tested against recorded responses |
 | Runtime image per app | `ImageSource` | a JSON export of the app list from any platform, or Citadel's own registrations export (which adds forced upgrade dates) |
 | PROCTOR result | `ProctorReportSource` | a directory of PROCTOR `--format=json` reports |
 
@@ -148,6 +154,31 @@ rollcall prune      [--days=N] [--dry-run] [--today=YYYY-MM-DD]
 Exit codes: `0` ok, `2` tool error (bad option, unreadable policy, a source that refused). There is no `1`: Rollcall
 does not gate anything.
 
+### Which command when
+
+<!-- which-command-when: canonical copy in WELD docs/reference/which-command.md; edit there first, then copy word for word -->
+Several stack commands sound alike (`weld:doctor`, `squire doctor`, `proctor check`) and do different jobs. Find your question in the second column and run the command beside it. The doctors look at setup, the proctor grades against policy, and the gate decides deploys: same waiting room, different appointments.
+
+| Command | What it checks | When to run it | Where it runs |
+|---|---|---|---|
+| `composer ci` | **Will my pipeline pass?** The repo's own CI contract, the same command the pipeline runs: validation, the tests, Pint, PHPStan, `composer audit` and whatever checks the repo adds. | Before every push. | App repo, CI |
+| `bin/weld.sh doctor` or `.\bin\weld.ps1 doctor` (both run `php artisan weld:doctor`) | **Does my WELD app hold together?** The app key, writable `storage` and `bootstrap/cache`, the database connection and pending migrations. One PASS, WARN or FAIL line each; exit 1 on a FAIL. Standards are PROCTOR's. | After `up`, when the app will not start, and after every deploy off Citadel. | App repo (in the app container), deploy host (in the app container) |
+| `vendor/bin/squire doctor` | **Is my Citadel release setup right?** `build.sh`, the release scripts, the health check, script hygiene, line endings, secrets kept out of git and the local parity setup, against Squire's rules. Exit 1 on a failed rule. The lock file, audit and MySQL 5.6 checks are handed to PROCTOR. | After `squire init` or `squire update`, and before the first deploy. | App repo, CI |
+| `vendor/bin/squire init --check` | **Have the files Squire wrote drifted from its templates?** Missing, outdated or edited copies. Writes nothing; exit 1 on drift. | After you upgrade Squire (then run `squire update`), and in CI. | App repo, CI |
+| `vendor/bin/squire doctor oracle`, or `php artisan oracle:check` in WELD and Sourdough's Laravel apps | **Can my app reach Oracle?** The `ORACLE_*` settings, the host, the port, the `oci8` driver and the login, in plain language, printing setting names and never values. Silent when the app has no Oracle settings. | After you fill in the `ORACLE_*` settings, or when a connection fails. Squire's `release.sh` runs the same check on every release, as a report. | App repo, deploy host |
+| `vendor/bin/proctor check` (`composer proctor` in WELD and Sourdough's apps) | **Does my app meet CREED's policy?** The PHP floor, Laravel, Node and MySQL end of life, the committed lock, `composer audit`, open-ended constraints, portability, MySQL 5.6 safety, overrides and the rest of its checks. Exit 1 on a FAIL. | Before you merge; the pipeline runs it too. | App repo, CI |
+| `vendor/bin/proctor gate` | **May this commit deploy?** The deploy-time subset of `proctor check`, ratcheted against the last release's verdict, so a deploy that makes nothing worse goes. Exit 1 is a no-go. | At deploy time. Squire's `release.sh` calls it for you. | Deploy host |
+| `sourdough manifest --check` | **Which managed files did I change since Sourdough baked my app?** Managed files that changed or are missing against `.sourdough/manifest.json`; seeded files are yours and never reported. Exit 1 on a change. | Before `sourdough feed`. | App repo, CI |
+| `sourdough feed --dry-run` | **Is my app behind its Sourdough template?** The plan a feed would apply, with nothing written. Exit 1 when feeding would change files. | After you install a new Sourdough, and in CI to catch an app falling behind. | App repo, CI |
+| `booster plan` | **What does my upgrade take?** The ordered PHP, Laravel and front-end hops, the dependencies that block them, and advisory PHPCompatibility and PHPStan scans. Changes nothing. | Before an upgrade, and when PROCTOR says your PHP or Laravel is past support. | App repo |
+| `booster replay check` | **Does my app still answer the same after a change?** Replays the requests in `booster-replay.json` and compares the answers with the ones `booster replay record` saved. Exit 1 on a changed answer. | After an upgrade hop or a hand fix, once you have a recording. | App repo (in Docker) |
+| `booster init --check` | **Are Booster's coding-tab playbooks current?** The playbooks in `.agents/skills`. Changes nothing; exit 1 when one is missing or out of date. | After you upgrade Booster, and in CI. | App repo, CI |
+| `php bin/regen-check.php --generated <dir>` | **Is WELD still Sourdough's Inertia shape?** WELD, file by file, against a fresh `sourdough new --inertia`; fails only on drift that `.sourdough/regen-baseline.json` does not already accept. | When Sourdough's Inertia shape or WELD changes. | WELD repo, CI |
+| `rollcall report` | **Where does the whole fleet stand?** The latest scan's totals against CREED's policy: PHP, Laravel, the auth package, PROCTOR results and the end-of-life burn-down. Always exit 0; it never gates. | After `rollcall scan`, on the scan's schedule. | CI (a scheduled scan job) |
+<!-- /which-command-when -->
+
+The canonical copy of this table is in WELD's docs: [Which command when](https://weld.apps.wayne.edu/docs/reference/which-command.html).
+
 ## What the report says
 
 - **Apps present and scan notes**: the apps the scan read, then the notes it printed and carried on past
@@ -168,8 +199,10 @@ does not gate anything.
   ones written before it existed, so the history reaches back as far as `rollcall prune` keeps snapshots.
 
 - **Forced image upgrades**: with Citadel's export as the image source, how many apps have a forced base-image
-  upgrade pending, how many are due today or earlier, and the next date (`forced_upgrades`). The internal per-app
-  list carries each app's `upgrade_due`. Zero with any other image source. See
+  upgrade pending, how many are due today or earlier, and the next date (`forced_upgrades`). The same counts reach
+  `/metrics` (`rollcall_forced_upgrades_pending_apps`, `rollcall_forced_upgrades_overdue_apps` and
+  `rollcall_forced_upgrades_next_due_timestamp_seconds`) and ADVISOR's `rollcall_fleet_summary`. The internal
+  per-app list carries each app's `upgrade_due`. Zero with any other image source. See
   [docs/guides/citadel.md](docs/guides/citadel.md).
 
 State is never decided in code: it is derived from the dates in `policy.json` by CREED's reader. A version the
@@ -186,7 +219,7 @@ Every setting is an environment variable. `.env.example` holds placeholders; nev
 | `ROLLCALL_SOURCE` | `directory` (fixtures) or `gitlab` | `directory` |
 | `ROLLCALL_REPOS_DIR` | Fixture repositories as `<group>/<project>/composer.{json,lock}` | none |
 | `ROLLCALL_GITLAB_URL` | `https://` base URL of the GitLab instance | none |
-| `ROLLCALL_GITLAB_TOKEN` | A GitLab bot or personal access token with the read_api scope only and an expiry, whose user can read only the projects to scan. Never in git, never logged, never printed | none |
+| `ROLLCALL_GITLAB_TOKEN` | A GitLab group or project access token (a bot), or a service account's token, with the read_api scope only, the Reporter role and an expiry. The stack's is the group token rollcall-scanner, rotated by the stack maintainer (docs/security.md). Never in git, never logged, never printed | none |
 | `ROLLCALL_GITLAB_GROUPS` | Comma-separated group ids or paths; subgroups are included. Ignored when ROLLCALL_GITLAB_PROJECTS is set | none |
 | `ROLLCALL_GITLAB_PROJECTS` | Comma-separated full `group/project` paths; when set, only those projects are scanned and no group is listed | none |
 | `ROLLCALL_IMAGES_FILE` | Export of the app list: `{"apps": [{"project": "group/project", "image": "php:8.4-apache"}]}` | none |
@@ -194,7 +227,7 @@ Every setting is an environment variable. `.env.example` holds placeholders; nev
 | `ROLLCALL_PROCTOR_DIR` | PROCTOR JSON reports, one per app: `group/project` is read from `group__project.json` | none |
 | `ROLLCALL_AUTH_PACKAGES` | Comma-separated Composer packages that count as an auth package. An entry without a slash matches that package under any vendor (`wayne-cas` matches `anyvendor/wayne-cas`); an entry with a slash matches exactly. First match in list order wins | `waynestate/sesame`, `waynestate/wayne-cas`, `apereo/phpcas`, `jasig/phpcas`, `subfission/cas`, `wayne-cas`, `simplecas` |
 | `ROLLCALL_RETENTION_DAYS` | How many days of snapshots to keep; the newest is never deleted | `90` (0 keeps everything) |
-| `ROLLCALL_OWNERS_FILE` | Owners file for the digests: `{"owners": [{"contact": "team@example.test", "digest": true, "projects": ["group/project"]}]}`. Internal; never in git | none (no digests) |
+| `ROLLCALL_OWNERS_FILE` | Owners file for the digests: `{"owners": [{"contact": "team@example.test", "digest": true, "projects": ["group/project"]}]}`. Rollcall's own, for the stack's projects, is `owners.json` in the repo (roles only); keep another fleet's outside a public repo | none (no digests) |
 | `ROLLCALL_DIGEST_MAIL_ENABLED` | Allow `rollcall digest --send` to mail | `false` |
 | `ROLLCALL_DIGEST_MAIL_DSN` | Symfony Mailer DSN for sending, such as `smtp://mail.example.test:25`. A secret: never in git, never printed | none |
 | `ROLLCALL_DIGEST_MAIL_FROM` | The from address of the digests | none |
@@ -247,24 +280,28 @@ Next: after a good scan, `var/snapshots/<today>.json` holds the day's attendance
 Rollcall's own repository (on git.wayne.edu, its canonical home) carries a `rollcall-scan` job in `.gitlab-ci.yml`. It
 runs `scan` over the 13 stack projects read-only and keeps the snapshot in `var/snapshots/` as a 30 day artifact.
 It runs when a GitLab schedule says so, or when a person starts it by hand from the web; without a token it skips
-green. To make it run, create three things in GitLab:
+green. It needs three things in GitLab, and on git.wayne.edu all three exist:
 
-1. A token: a bot or personal access token for a user who is a member (role Reporter) of only the 13 projects the
-   job names in `.gitlab-ci.yml`, with the `read_api` scope only and an expiry (90 days, then rotate; Rollcall
-   prints a note 14 days before it expires).
+1. A token with the `read_api` scope only, the Reporter role and an expiry. The stack's is the group access token
+   `rollcall-scanner` on the `enterprise-apps` group, which expires 2027-11-06 (Rollcall prints a note 14 days
+   before).
 2. A CI/CD variable `ROLLCALL_GITLAB_TOKEN` on the ROLLCALL project: masked and hidden, protected (the schedule
    runs on the protected default branch), and not a file.
 3. A schedule on `main`: CI/CD > Schedules, weekly (Monday), with the variable `ROLLCALL_JOB` set to `scan`.
 
-Why a per-project token: a group token on enterprise-apps would see other teams' repositories, which the scan must
-not read. The allowlist `ROLLCALL_GITLAB_PROJECTS` limits what Rollcall asks for (it never lists the group and
-never asks for another project), but it does not limit what the token can read; only the token's membership does.
-So the token's user must be a member of just those projects.
+The token is rotated by a role, the stack maintainer, not a named person. The runbook (where the token lives, when
+it expires, the five steps, and what to look for in the job log) is "The scanner token and how to rotate it" in
+[docs/security.md](docs/security.md).
+
+About reach: a group token reads every project in its group. The project owner chose group reach for the stack's
+token; the allowlist `ROLLCALL_GITLAB_PROJECTS` keeps what Rollcall asks for to the 13 projects (it never lists the
+group and never asks for another project). If your fleet needs a tighter fence, give a service account Reporter on
+just the projects to scan and use its token instead, because only membership limits what a token can read.
 
 Exactly which scope, and why each other scope stays off: `read_api` covers all five calls Rollcall makes (listed
 one by one, with the role and the expiry rules, under "The GitLab token, exactly" in
 [docs/security.md](docs/security.md)). Not `api`, not `read_repository` (Rollcall never clones), not `read_user`,
-not `self_rotate` (a person rotates the token, never Rollcall).
+not `self_rotate` (the stack maintainer rotates the token, never Rollcall).
 
 ## Owner digests (opt-in)
 
@@ -272,19 +309,26 @@ An owner who asks can get a short digest of only their own apps: what changed si
 upgrade, a new drift flag, one cleared, a PROCTOR result that moved), then where each app stands. Nothing changed,
 no digest. Nobody gets one by default, and no owner is ever guessed from commit authors.
 
-1. Keep an owners file outside git and point `ROLLCALL_OWNERS_FILE` at it. An owner opts in with `"digest": true`;
-   leaving the key out means no.
+1. Point `ROLLCALL_OWNERS_FILE` at an owners file that maps each scanned project to its contacts (a mail address,
+   a team alias or a role). An owner opts in with `"digest": true`; leaving the key out means no. The shape is
+   `contract/owners.schema.json`.
 
    ```json
    {
+       "$schema": "contract/owners.schema.json",
        "owners": [
            {"contact": "team@example.test", "digest": true, "projects": ["group/project", "group/other-project"]}
        ]
    }
    ```
 
+   Rollcall keeps its own in the repo: [owners.json](owners.json) lists the 13 stack projects the scheduled scan
+   reads, all answered for by the stack maintainer. The repo is public, so it names roles and teams, never a person.
+   For another fleet, keep that fleet's file next to its snapshots, outside a public repo.
 2. After a scan, `rollcall digest` prints each digest with news (`--format=json` for a script, `--owner=CONTACT`
    for one owner). `--out=DIR` writes them as `<date>-<contact>.txt` instead, for a mail tool you already have.
+   A scanned app that no entry lists is never dropped: every run names it on stderr as "no owner on file", and the
+   JSON lists it under `no_owner_on_file`.
 3. To have Rollcall mail them itself, install `symfony/mailer`, set `ROLLCALL_DIGEST_MAIL_ENABLED=true`,
    `ROLLCALL_DIGEST_MAIL_DSN` and `ROLLCALL_DIGEST_MAIL_FROM`, and run `rollcall digest --send`. Without all four, it
    sends nothing. Every contact must be a mail address, or nothing goes out at all.
@@ -350,6 +394,13 @@ public package names: no app names or personal data. The dashboard JSON is in `g
 it into Grafana once a Prometheus server scrapes the endpoint. Run `rollcall scan`
 on a schedule so the series moves.
 
+Forced image upgrades from a Citadel export come through as three gauges, counts only, in the same style as the
+rest: `rollcall_forced_upgrades_pending_apps` (apps with one pending, overdue ones included),
+`rollcall_forced_upgrades_overdue_apps` (due today or earlier) and
+`rollcall_forced_upgrades_next_due_timestamp_seconds` (midnight of the next date still ahead, only while there is
+one). With any other image source the two counts are 0 and the date is absent. The dashboard shows pending and
+overdue as two stat panels.
+
 ## Laravel
 
 The package registers itself (`extra.laravel.providers`). Publish the config with
@@ -386,7 +437,7 @@ empty store each one says so in plain words and names `rollcall scan`.
 
 | Tool | What it answers |
 |---|---|
-| `rollcall_fleet_summary` | Counts from the latest snapshot: apps by PHP image, declared floor, Laravel line, auth package and PROCTOR result, drift per kind, progress since the previous scan, and the snapshot date |
+| `rollcall_fleet_summary` | Counts from the latest snapshot: apps by PHP image, declared floor, Laravel line, auth package and PROCTOR result, drift per kind, progress since the previous scan, forced image upgrades (`forced_upgrades`: pending, overdue, next due), and the snapshot date |
 | `rollcall_burn_down` | The dated EOL series, one point per scan day, each with its counts per support state, PHP minor and Laravel major; optional `days` (an integer, 1 to 365) keeps only the most recent days |
 | `rollcall_supported_versions` | Every version in CREED's policy, grouped by what it says today: active, security only, or end of life |
 
@@ -446,15 +497,16 @@ and macOS, `scripts/a11y.ps1` on Windows; MAINTAINING.md says when to run it.
 
 - Read-only toward GitLab and everything else: one gate in the GitLab adapter allows only `GET` and `HEAD`, and a test
   fails if a write verb appears in `src/`.
-- The GitLab token is a bot or personal access token with the `read_api` scope only and an expiry, whose user can
-  read only the projects to scan. It goes in the environment as `ROLLCALL_GITLAB_TOKEN`, never in git, is sent only
-  to the configured `https` host, and is hidden from debug output and error messages. `ROLLCALL_GITLAB_PROJECTS`
-  limits what Rollcall asks for, not what the token can read; only the token's membership does that, so the token's
-  user stays a member of just the listed projects. When the source is GitLab, `scan` reads the token's own record
-  (`GET /api/v4/personal_access_tokens/self`) and prints a note 14 days before it expires, or when it has already
-  expired. The note names the date; the owner rotates the token before its expiry, never Rollcall. The check is
-  advisory: a refused, unreachable or unparseable answer prints nothing and never fails the scan, and the token
-  value never appears in output.
+- The GitLab token is a group or project access token (a GitLab bot), or a service account's token, with the
+  `read_api` scope only, the Reporter role and an expiry; the stack's is the group access token `rollcall-scanner`,
+  which expires 2027-11-06. It goes in the environment as `ROLLCALL_GITLAB_TOKEN`, never in git, is sent only to the
+  configured `https` host, and is hidden from debug output and error messages. `ROLLCALL_GITLAB_PROJECTS` limits
+  what Rollcall asks for, not what the token can read; only the token's membership does that. When the source is
+  GitLab, `scan` reads the token's own record (`GET /api/v4/personal_access_tokens/self`) and prints a note 14 days
+  before it expires, or when it has already expired. The note names the date; the stack maintainer (a role, not a
+  named person) rotates the token before its expiry, never Rollcall, following the runbook in
+  [docs/security.md](docs/security.md). The check is advisory: a refused, unreachable or unparseable answer prints
+  nothing and never fails the scan, and the token value never appears in output.
 - Composer files are parsed as data. No `composer install`, script or plugin from a scanned repository ever runs.
 - PROCTOR reports, image tags and app ids are outside input: shapes are validated, text is bounded, and terminal output
   strips control characters.

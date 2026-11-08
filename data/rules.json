@@ -88,7 +88,7 @@
             "id": "accessibility-7",
             "chapter": "accessibility",
             "heading": "Checks",
-            "text": "Preflight has no accessibility component yet (not built yet).",
+            "text": "Preflight's `a11y` component (0.3.0) is the stack's CI check: it opens the app's pages in Chromium, runs axe-core in light and dark at 320 and 1280 px, and fails the pipeline on any violation. Add `wcag22aa` to its tags for the WCAG 2.2 AA target above.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -110,7 +110,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/accessibility.md:28"
+            "source": "handbook/accessibility.md:30"
         },
         {
             "id": "accessibility-9",
@@ -124,7 +124,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/accessibility.md:31"
+            "source": "handbook/accessibility.md:33"
         },
         {
             "id": "auth-1",
@@ -172,7 +172,7 @@
             "id": "auth-4",
             "chapter": "auth",
             "heading": "Auth",
-            "text": "Drivers: `cas` (the default today), `gateway`, `oidc`, `oauth2`, `saml` (not built yet), and `fake` for local development and tests (the stack's auth design).",
+            "text": "Drivers: `cas` (the default today), `gateway`, `oidc`, `oauth2`, `saml` (opt-in), and `fake` for local development and tests (the stack's auth design).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -200,7 +200,7 @@
             "id": "auth-6",
             "chapter": "auth",
             "heading": "Auth",
-            "text": "To be decided: the gateway's key distribution and rotation, and the SAML library choice if a `saml` driver is built (the stack's auth design).",
+            "text": "The gateway's public keys reach apps as one key set file (JWKS) that holds the current key and the next one. Drawbridge writes it (`keys:jwks`), Playbook carries WSU's copy (public keys only), and the app points SESAME's `gateway.jwks_file` (`SESAME_GATEWAY_JWKS_FILE`) at it. An app SHOULD read that file rather than copy keys into config values, and the `gateway` driver never fetches keys over the network at sign-in (the stack's signing-key decision). SESAME config: the file is checked at boot, and a missing file, private key material or a repeated `kid` stops the app.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -214,6 +214,34 @@
             "id": "auth-7",
             "chapter": "auth",
             "heading": "Auth",
+            "text": "The gateway's signing key MUST be rotated every 12 months, and at once when a private key could have been exposed. A retired key MUST stay in the key set for at least 5 minutes after the switch, so assertions signed just before it still verify (the stack's signing-key decision). No check exists yet. Still open: where the private keys live on Citadel and who runs the yearly rotation.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/auth.md:26"
+        },
+        {
+            "id": "auth-8",
+            "chapter": "auth",
+            "heading": "Auth",
+            "text": "The `saml` driver is built on `onelogin/php-saml`, is opt-in, sets no default WSU identity provider, and requires the provider to sign its assertions (the stack's SAML decision). SESAME config: the `saml` block.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/auth.md:32"
+        },
+        {
+            "id": "auth-9",
+            "chapter": "auth",
+            "heading": "Auth",
             "text": "API and other stateless requests are authenticated with signed, short-lived bearer tokens in an `Authorization` header, verified on every request. A token is signed, not merely encrypted; JSON Web Tokens are a good fit (WSU developer standards, 2024).",
             "applies_to": [
                 "raw-php",
@@ -222,10 +250,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:19"
+            "source": "handbook/auth.md:35"
         },
         {
-            "id": "auth-8",
+            "id": "auth-10",
             "chapter": "auth",
             "heading": "Auth",
             "text": "Authentication is checked before any content is shown or any script function runs, on every request. Deny by default: routes are protected unless listed as public, and an unauthenticated person is sent to sign in (WSU developer standards, 2024).",
@@ -236,10 +264,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:20"
+            "source": "handbook/auth.md:36"
         },
         {
-            "id": "auth-9",
+            "id": "auth-11",
             "chapter": "auth",
             "heading": "Auth",
             "text": "When authentication or an authorization lookup fails, the result is fail closed: access is withheld (WSU developer standards, 2024).",
@@ -250,10 +278,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:21"
+            "source": "handbook/auth.md:37"
         },
         {
-            "id": "auth-10",
+            "id": "auth-12",
             "chapter": "auth",
             "heading": "Auth",
             "text": "Administrative access MUST be limited to named users or roles, and access that is due to end is revoked on a regular schedule (WSU developer standards, 2024).",
@@ -264,10 +292,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:22"
+            "source": "handbook/auth.md:38"
         },
         {
-            "id": "auth-11",
+            "id": "auth-13",
             "chapter": "auth",
             "heading": "Auth",
             "text": "Access that is due to end when a person's status changes (for example an ended employment) MUST be removed by an automated process, not by memory (WSU developer standards, 2024).",
@@ -278,19 +306,21 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:23"
+            "source": "handbook/auth.md:39"
         },
         {
-            "id": "auth-12",
+            "id": "auth-14",
             "chapter": "auth",
             "heading": "Auth",
-            "text": "Idle sessions MUST time out after a configurable period of inactivity. The stack sets no number yet; Laravel's default session lifetime applies until it does (WSU developer standards, 2024).",
+            "text": "Idle sessions MUST time out after a configurable period of inactivity (WSU developer standards, 2024). The stack's numbers are in `policy/policy.json`, under `sessions`, which is the source for them: SESAME signs a user out after 120 minutes idle and 720 minutes in all (`sessions.sesame`), and Drawbridge after 3600 seconds idle and 28800 seconds in all (`sessions.gateway`). SESAME config: `session.idle_minutes` (`SESAME_SESSION_IDLE_MINUTES`) and `session.absolute_minutes` (`SESAME_SESSION_ABSOLUTE_MINUTES`), with those defaults. An app that does not use SESAME sets its own idle limit; that is documented only.",
             "applies_to": [
+                "raw-php",
+                "raw-php-vue",
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/auth.md:24"
+            "source": "handbook/auth.md:40"
         },
         {
             "id": "ci-1",
@@ -886,7 +916,7 @@
             "id": "code-36",
             "chapter": "code",
             "heading": "How it is enforced",
-            "text": "Pint, PHPStan, Rector dry-runs and ESLint run in CI through Preflight components, not in the deploy gate (the stack's coding standard). The Preflight components are Planned.",
+            "text": "Pint, PHPStan, Rector dry-runs and ESLint run in CI through Preflight components, not in the deploy gate (the stack's coding standard). Preflight 0.3.0 ships the `pint`, `phpstan` and `eslint` components; a Rector dry-run component is Planned.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -908,7 +938,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:91"
+            "source": "handbook/code.md:92"
         },
         {
             "id": "code-38",
@@ -922,7 +952,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:93"
+            "source": "handbook/code.md:94"
         },
         {
             "id": "code-39",
@@ -936,7 +966,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:111"
+            "source": "handbook/code.md:112"
         },
         {
             "id": "code-40",
@@ -950,7 +980,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:113"
+            "source": "handbook/code.md:114"
         },
         {
             "id": "code-41",
@@ -964,7 +994,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:117"
+            "source": "handbook/code.md:118"
         },
         {
             "id": "code-42",
@@ -978,7 +1008,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:119"
+            "source": "handbook/code.md:120"
         },
         {
             "id": "code-43",
@@ -992,7 +1022,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:120"
+            "source": "handbook/code.md:121"
         },
         {
             "id": "code-44",
@@ -1006,7 +1036,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:124"
+            "source": "handbook/code.md:125"
         },
         {
             "id": "code-45",
@@ -1020,7 +1050,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:125"
+            "source": "handbook/code.md:126"
         },
         {
             "id": "code-46",
@@ -1032,7 +1062,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:126"
+            "source": "handbook/code.md:127"
         },
         {
             "id": "code-47",
@@ -1046,7 +1076,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:127"
+            "source": "handbook/code.md:128"
         },
         {
             "id": "code-48",
@@ -1060,7 +1090,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:128"
+            "source": "handbook/code.md:129"
         },
         {
             "id": "code-49",
@@ -1074,7 +1104,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:129"
+            "source": "handbook/code.md:130"
         },
         {
             "id": "code-50",
@@ -1088,7 +1118,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:130"
+            "source": "handbook/code.md:131"
         },
         {
             "id": "code-51",
@@ -1100,7 +1130,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:131"
+            "source": "handbook/code.md:132"
         },
         {
             "id": "code-52",
@@ -1112,7 +1142,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:132"
+            "source": "handbook/code.md:133"
         },
         {
             "id": "code-53",
@@ -1126,7 +1156,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:134"
+            "source": "handbook/code.md:135"
         },
         {
             "id": "code-54",
@@ -1140,7 +1170,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:136"
+            "source": "handbook/code.md:137"
         },
         {
             "id": "code-55",
@@ -1152,7 +1182,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:138"
+            "source": "handbook/code.md:139"
         },
         {
             "id": "code-56",
@@ -1166,7 +1196,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:139"
+            "source": "handbook/code.md:140"
         },
         {
             "id": "code-57",
@@ -1178,7 +1208,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:140"
+            "source": "handbook/code.md:141"
         },
         {
             "id": "code-58",
@@ -1192,7 +1222,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:142"
+            "source": "handbook/code.md:143"
         },
         {
             "id": "code-59",
@@ -1206,7 +1236,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:143"
+            "source": "handbook/code.md:144"
         },
         {
             "id": "code-60",
@@ -1220,7 +1250,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:144"
+            "source": "handbook/code.md:145"
         },
         {
             "id": "code-61",
@@ -1234,7 +1264,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:145"
+            "source": "handbook/code.md:146"
         },
         {
             "id": "code-62",
@@ -1248,7 +1278,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:147"
+            "source": "handbook/code.md:148"
         },
         {
             "id": "code-63",
@@ -1262,10 +1292,24 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:148"
+            "source": "handbook/code.md:149"
         },
         {
             "id": "databases-1",
+            "chapter": "databases",
+            "heading": "Grace period",
+            "text": "For MySQL and MariaDB the check warns and does not fail yet. While Citadel's shared server runs 5.6, an app has no supported MySQL to move to there, so a security-only, `Eol` or `EolGraceExpired` version warns, and still says to move to 8.4 or later. It starts failing past the window when Citadel offers a supported MySQL (the stack's MySQL gate decision). PROCTOR check: `mysql-eol` (on PROCTOR main, due in 0.8.0).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:32"
+        },
+        {
+            "id": "databases-2",
             "chapter": "databases",
             "heading": "Names, comments and connections",
             "text": "Table and column names are descriptive. Add table and column comments (Laravel's `->comment()`) where the database supports them, to say what an element is for (SHOULD) (WSU developer standards, 2024).",
@@ -1274,10 +1318,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:35"
+            "source": "handbook/databases.md:41"
         },
         {
-            "id": "databases-2",
+            "id": "databases-3",
             "chapter": "databases",
             "heading": "Names, comments and connections",
             "text": "The connection between the app and the database MUST be encrypted. The database account MUST have only the privileges the app needs, never an administrator account (WSU developer standards, 2024).",
@@ -1288,10 +1332,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:36"
+            "source": "handbook/databases.md:42"
         },
         {
-            "id": "databases-3",
+            "id": "databases-4",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
             "text": "Set `Schema::defaultStringLength(191)` in `AppServiceProvider::boot()`, before any migration runs. 5.6 caps an indexed `utf8mb4` column at 767 bytes, which is 191 characters. PROCTOR check: `mysql56`.",
@@ -1302,10 +1346,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:40"
+            "source": "handbook/databases.md:46"
         },
         {
-            "id": "databases-4",
+            "id": "databases-5",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
             "text": "Keep `utf8mb4` and `utf8mb4_unicode_ci`, the defaults. Never use an 8.0-only collation such as `utf8mb4_0900_ai_ci` (not yet confirmed on a 5.6 server).",
@@ -1316,10 +1360,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:43"
+            "source": "handbook/databases.md:49"
         },
         {
-            "id": "databases-5",
+            "id": "databases-6",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
             "text": "Store JSON as `text` or `longText`, with Eloquent `array` or `json` casts, and filter in PHP. 5.6 has no JSON column type. PROCTOR check: `mysql56`.",
@@ -1328,10 +1372,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:46"
+            "source": "handbook/databases.md:52"
         },
         {
-            "id": "databases-6",
+            "id": "databases-7",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
             "text": "Leave `use_upsert_alias` unset, so `upsert()` uses `VALUES()`. The row alias that setting switches to needs MySQL 8.0.19.",
@@ -1342,10 +1386,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:48"
+            "source": "handbook/databases.md:54"
         },
         {
-            "id": "databases-7",
+            "id": "databases-8",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
             "text": "Rename a column with raw `DB::statement('ALTER TABLE ... CHANGE ...')`. Avoid `renameColumn` and `renameIndex`, which emit 5.7 syntax. PROCTOR check: `mysql56`.",
@@ -1356,10 +1400,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:50"
+            "source": "handbook/databases.md:56"
         },
         {
-            "id": "databases-8",
+            "id": "databases-9",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
             "text": "Use `Schema::hasTable` only. Column introspection is not reliable on 5.6 (not yet confirmed on a 5.6 server).",
@@ -1370,10 +1414,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:53"
+            "source": "handbook/databases.md:59"
         },
         {
-            "id": "databases-9",
+            "id": "databases-10",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
             "text": "Skip `db:show` and `db:monitor`, and run one database-queue worker (or another driver if the platform offers one). 5.6 has no `SKIP LOCKED`, so a single worker avoids double-processing.",
@@ -1384,10 +1428,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:55"
+            "source": "handbook/databases.md:61"
         },
         {
-            "id": "databases-10",
+            "id": "databases-11",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
             "text": "Use `timestamp`, not `date`, for `useCurrent()`. A `date` column cannot take a current-timestamp default on 5.6.",
@@ -1398,10 +1442,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:58"
+            "source": "handbook/databases.md:64"
         },
         {
-            "id": "databases-11",
+            "id": "databases-12",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
             "text": "Run migrations in CI against a real 5.6 container. SQLite-only tests pass code that 5.6 rejects.",
@@ -1412,10 +1456,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:60"
+            "source": "handbook/databases.md:66"
         },
         {
-            "id": "databases-12",
+            "id": "databases-13",
             "chapter": "databases",
             "heading": "Schema",
             "text": "JSON and jsonb columns",
@@ -1426,10 +1470,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:67"
+            "source": "handbook/databases.md:73"
         },
         {
-            "id": "databases-13",
+            "id": "databases-14",
             "chapter": "databases",
             "heading": "Schema",
             "text": "Generated columns",
@@ -1440,10 +1484,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:68"
+            "source": "handbook/databases.md:74"
         },
         {
-            "id": "databases-14",
+            "id": "databases-15",
             "chapter": "databases",
             "heading": "Schema",
             "text": "`renameIndex` and `renameColumn`",
@@ -1454,10 +1498,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:69"
+            "source": "handbook/databases.md:75"
         },
         {
-            "id": "databases-15",
+            "id": "databases-16",
             "chapter": "databases",
             "heading": "Schema",
             "text": "Column introspection",
@@ -1468,10 +1512,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:70"
+            "source": "handbook/databases.md:76"
         },
         {
-            "id": "databases-16",
+            "id": "databases-17",
             "chapter": "databases",
             "heading": "Schema",
             "text": "`invisible`, `instant` and `vector` columns",
@@ -1482,10 +1526,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:71"
+            "source": "handbook/databases.md:77"
         },
         {
-            "id": "databases-17",
+            "id": "databases-18",
             "chapter": "databases",
             "heading": "Schema",
             "text": "InnoDB `spatialIndex` (needs 5.7.5, not yet confirmed on a 5.6 server)",
@@ -1496,10 +1540,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:72"
+            "source": "handbook/databases.md:78"
         },
         {
-            "id": "databases-18",
+            "id": "databases-19",
             "chapter": "databases",
             "heading": "Schema",
             "text": "DESC indexes and CHECK constraints",
@@ -1510,10 +1554,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:73"
+            "source": "handbook/databases.md:79"
         },
         {
-            "id": "databases-19",
+            "id": "databases-20",
             "chapter": "databases",
             "heading": "Queries",
             "text": "`whereJson*` and JSON-path updates",
@@ -1524,10 +1568,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:77"
+            "source": "handbook/databases.md:83"
         },
         {
-            "id": "databases-20",
+            "id": "databases-21",
             "chapter": "databases",
             "heading": "Queries",
             "text": "Window functions and CTEs",
@@ -1538,10 +1582,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:78"
+            "source": "handbook/databases.md:84"
         },
         {
-            "id": "databases-21",
+            "id": "databases-22",
             "chapter": "databases",
             "heading": "Queries",
             "text": "`SKIP LOCKED` and `NOWAIT` in raw SQL",
@@ -1552,10 +1596,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:79"
+            "source": "handbook/databases.md:85"
         },
         {
-            "id": "databases-22",
+            "id": "databases-23",
             "chapter": "databases",
             "heading": "Queries",
             "text": "`joinLateral`",
@@ -1566,10 +1610,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:80"
+            "source": "handbook/databases.md:86"
         },
         {
-            "id": "databases-23",
+            "id": "databases-24",
             "chapter": "databases",
             "heading": "Queries",
             "text": "Joined deletes with an order or a limit",
@@ -1580,10 +1624,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:81"
+            "source": "handbook/databases.md:87"
         },
         {
-            "id": "databases-24",
+            "id": "databases-25",
             "chapter": "databases",
             "heading": "Commands",
             "text": "`db:show`",
@@ -1594,10 +1638,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:85"
+            "source": "handbook/databases.md:91"
         },
         {
-            "id": "databases-25",
+            "id": "databases-26",
             "chapter": "databases",
             "heading": "Commands",
             "text": "`db:monitor`",
@@ -1608,10 +1652,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:86"
+            "source": "handbook/databases.md:92"
         },
         {
-            "id": "databases-26",
+            "id": "databases-27",
             "chapter": "databases",
             "heading": "Sources",
             "text": "Laravel 13 database docs: https://laravel.com/docs/13.x/database",
@@ -1620,10 +1664,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:111"
+            "source": "handbook/databases.md:117"
         },
         {
-            "id": "databases-27",
+            "id": "databases-28",
             "chapter": "databases",
             "heading": "Sources",
             "text": "Laravel docs, `migrations.md` (index-length section): https://github.com/laravel/docs/blob/10.x/migrations.md",
@@ -1632,10 +1676,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:112"
+            "source": "handbook/databases.md:118"
         },
         {
-            "id": "databases-28",
+            "id": "databases-29",
             "chapter": "databases",
             "heading": "Sources",
             "text": "Laravel 13 migrations docs: https://laravel.com/docs/13.x/migrations",
@@ -1644,10 +1688,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:114"
+            "source": "handbook/databases.md:120"
         },
         {
-            "id": "databases-29",
+            "id": "databases-30",
             "chapter": "databases",
             "heading": "Sources",
             "text": "Laravel 13 query builder docs: https://raw.githubusercontent.com/laravel/docs/13.x/queries.md",
@@ -1656,10 +1700,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:115"
+            "source": "handbook/databases.md:121"
         },
         {
-            "id": "databases-30",
+            "id": "databases-31",
             "chapter": "databases",
             "heading": "Sources",
             "text": "Laravel database queue: https://github.com/laravel/framework/blob/13.x/src/Illuminate/Queue/DatabaseQueue.php",
@@ -1668,10 +1712,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:117"
+            "source": "handbook/databases.md:123"
         },
         {
-            "id": "databases-31",
+            "id": "databases-32",
             "chapter": "databases",
             "heading": "Sources",
             "text": "Laravel schema builder: https://github.com/laravel/framework/blob/13.x/src/Illuminate/Database/Schema/Builder.php",
@@ -1680,10 +1724,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:119"
+            "source": "handbook/databases.md:125"
         },
         {
-            "id": "databases-32",
+            "id": "databases-33",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL 5.7.7 release notes: https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-7.html",
@@ -1694,10 +1738,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:121"
+            "source": "handbook/databases.md:127"
         },
         {
-            "id": "databases-33",
+            "id": "databases-34",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL 5.7.8 release notes (JSON): https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html",
@@ -1708,10 +1752,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:123"
+            "source": "handbook/databases.md:129"
         },
         {
-            "id": "databases-34",
+            "id": "databases-35",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL 5.7.6 release notes (generated columns): https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-6.html",
@@ -1722,10 +1766,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:125"
+            "source": "handbook/databases.md:131"
         },
         {
-            "id": "databases-35",
+            "id": "databases-36",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL 5.6 CREATE INDEX (767 and 3072 byte limits): https://dev.mysql.com/doc/refman/5.6/en/create-index.html",
@@ -1736,10 +1780,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:127"
+            "source": "handbook/databases.md:133"
         },
         {
-            "id": "databases-36",
+            "id": "databases-37",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL 8.0, what is new: https://dev.mysql.com/doc/refman/8.0/en/mysql-nutshell.html",
@@ -1750,10 +1794,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:129"
+            "source": "handbook/databases.md:135"
         },
         {
-            "id": "databases-37",
+            "id": "databases-38",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL CHECK constraints: https://dev.mysql.com/doc/refman/8.0/en/create-table-check-constraints.html",
@@ -1764,10 +1808,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:130"
+            "source": "handbook/databases.md:136"
         },
         {
-            "id": "databases-38",
+            "id": "databases-39",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL 5.7 INFORMATION_SCHEMA COLUMNS: https://dev.mysql.com/doc/mysql-infoschema-excerpt/5.7/en/information-schema-columns-table.html",
@@ -1778,10 +1822,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:132"
+            "source": "handbook/databases.md:138"
         },
         {
-            "id": "databases-39",
+            "id": "databases-40",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL RENAME INDEX worklog: https://dev.mysql.com/worklog/task/?id=6555",
@@ -1792,10 +1836,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:134"
+            "source": "handbook/databases.md:140"
         },
         {
-            "id": "databases-40",
+            "id": "databases-41",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL INSERT ... ON DUPLICATE KEY UPDATE (row alias from 8.0.19): https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html",
@@ -1806,10 +1850,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:135"
+            "source": "handbook/databases.md:141"
         },
         {
-            "id": "databases-41",
+            "id": "databases-42",
             "chapter": "databases",
             "heading": "Sources",
             "text": "Oracle MySQL end-of-life notices: https://www.mysql.com/support/eol-notice.html",
@@ -1820,10 +1864,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:137"
+            "source": "handbook/databases.md:143"
         },
         {
-            "id": "databases-42",
+            "id": "databases-43",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL 5.6 TLS protocols: https://docs.oracle.com/cd/E17952_01/mysql-5.6-en/encrypted-connection-protocols-ciphers.html",
@@ -1834,10 +1878,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:138"
+            "source": "handbook/databases.md:144"
         },
         {
-            "id": "databases-43",
+            "id": "databases-44",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL 9.7, native pluggable authentication: https://dev.mysql.com/doc/refman/9.7/en/native-pluggable-authentication.html",
@@ -1848,7 +1892,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:140"
+            "source": "handbook/databases.md:146"
         },
         {
             "id": "dependencies-1",
@@ -2580,7 +2624,7 @@
             "id": "runtime-and-headers-3",
             "chapter": "runtime-and-headers",
             "heading": "Headers",
-            "text": "Cross-Origin-Resource-Policy is off by default (the stack's runtime and headers design).",
+            "text": "Cross-Origin-Resource-Policy is off by default and opt-in, because a blanket `same-site` can break an app whose assets are read cross-origin (the stack's runtime and headers design). HELMET 1.0.0 ships that default: `corp` (raw PHP) or `HELMET_CORP` (Laravel) set to `same-site`, `same-origin` or `cross-origin` sends it.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2602,7 +2646,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:22"
+            "source": "handbook/runtime-and-headers.md:24"
         },
         {
             "id": "runtime-and-headers-5",
@@ -2616,7 +2660,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:30"
+            "source": "handbook/runtime-and-headers.md:32"
         },
         {
             "id": "runtime-and-headers-6",
@@ -2630,7 +2674,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:32"
+            "source": "handbook/runtime-and-headers.md:34"
         },
         {
             "id": "runtime-and-headers-7",
@@ -2644,7 +2688,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:34"
+            "source": "handbook/runtime-and-headers.md:36"
         },
         {
             "id": "runtime-and-headers-8",
@@ -2658,7 +2702,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:39"
+            "source": "handbook/runtime-and-headers.md:41"
         },
         {
             "id": "runtime-and-headers-9",
@@ -2672,7 +2716,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:40"
+            "source": "handbook/runtime-and-headers.md:42"
         },
         {
             "id": "runtime-and-headers-10",
@@ -2686,13 +2730,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:45"
+            "source": "handbook/runtime-and-headers.md:47"
         },
         {
             "id": "runtime-and-headers-11",
             "chapter": "runtime-and-headers",
-            "heading": "Errors in production",
-            "text": "PHP `display_errors` MUST be `Off` and `log_errors` `On` in production (Squire's deploy kit ships that php.ini; HELMET neither sets nor checks it). No check exists yet.",
+            "heading": "Metrics",
+            "text": "HELMET's metrics endpoint speaks the Prometheus text format and is off by default. It stays off until a Prometheus server scrapes the app; then the app turns it on with `HELMET_METRICS_ENABLED=true` (the stack's metrics decision). HELMET: with neither `HELMET_METRICS_TOKEN` nor `HELMET_METRICS_ALLOW` set, the endpoint answers 404 and logs a warning.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2700,25 +2744,27 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:49"
+            "source": "handbook/runtime-and-headers.md:51"
         },
         {
             "id": "runtime-and-headers-12",
             "chapter": "runtime-and-headers",
-            "heading": "Errors in production",
-            "text": "Laravel `APP_DEBUG` MUST be `false` in production (WSU developer standards, 2024). The Laravel adapter writes one warning `helmet.debug_enabled_in_production` when it is true in the production environment.",
+            "heading": "Metrics",
+            "text": "The scrape token MUST NOT be committed. On Citadel it goes in the app's `.env` through Citadel's configuration files step, which writes the file at deploy time (the stack's metrics decision). PROCTOR check: `app-key` (`proctor/app-key/committed-env` flags a committed `.env`).",
             "applies_to": [
+                "raw-php",
+                "raw-php-vue",
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:51"
+            "source": "handbook/runtime-and-headers.md:55"
         },
         {
             "id": "runtime-and-headers-13",
             "chapter": "runtime-and-headers",
-            "heading": "Not decided here",
-            "text": "The Cross-Origin-Resource-Policy default.",
+            "heading": "Metrics",
+            "text": "On Citadel, request counts use the `sqlite` store for now (`HELMET_METRICS_STORAGE=sqlite`, with `HELMET_METRICS_SQLITE_PATH` on a file in the app's writable storage); the final store is picked when the stack's Prometheus server exists (the stack's metrics decision). Documented only.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2731,6 +2777,32 @@
         {
             "id": "runtime-and-headers-14",
             "chapter": "runtime-and-headers",
+            "heading": "Errors in production",
+            "text": "PHP `display_errors` MUST be `Off` and `log_errors` `On` in production (Squire's deploy kit ships that php.ini; HELMET neither sets nor checks it). No check exists yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:64"
+        },
+        {
+            "id": "runtime-and-headers-15",
+            "chapter": "runtime-and-headers",
+            "heading": "Errors in production",
+            "text": "Laravel `APP_DEBUG` MUST be `false` in production (WSU developer standards, 2024). The Laravel adapter writes one warning `helmet.debug_enabled_in_production` when it is true in the production environment.",
+            "applies_to": [
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/runtime-and-headers.md:66"
+        },
+        {
+            "id": "runtime-and-headers-16",
+            "chapter": "runtime-and-headers",
             "heading": "Not decided here",
             "text": "The Content-Security-Policy report endpoints.",
             "applies_to": [
@@ -2740,27 +2812,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:59"
-        },
-        {
-            "id": "runtime-and-headers-15",
-            "chapter": "runtime-and-headers",
-            "heading": "Not decided here",
-            "text": "The metrics endpoint.",
-            "applies_to": [
-                "raw-php",
-                "raw-php-vue",
-                "laravel-blade",
-                "laravel-blade-vue",
-                "laravel-inertia-vue"
-            ],
-            "source": "handbook/runtime-and-headers.md:60"
+            "source": "handbook/runtime-and-headers.md:73"
         },
         {
             "id": "secrets-1",
             "chapter": "secrets",
             "heading": "Credentials",
-            "text": "Credentials (database and service passwords, API keys, tokens) MUST NOT be committed to version control, because history keeps them forever. Commit `.env.example` with placeholders instead. A credential that was ever committed is treated as exposed and rotated (WSU developer standards, 2024). PROCTOR checks: `app-key` (a committed `.env` or `APP_KEY`) and `repo-url-credentials` (a token in a package source URL); no general secret scan exists yet.",
+            "text": "Credentials (database and service passwords, API keys, tokens) MUST NOT be committed to version control, because history keeps them forever. Commit `.env.example` with placeholders instead. A credential that was ever committed is treated as exposed and rotated (WSU developer standards, 2024). PROCTOR checks: `app-key` (a committed `.env` or `APP_KEY`) and `repo-url-credentials` (a token in a package source URL). The general secret scan is Preflight's `secret-detection` component (0.3.0), which runs Gitleaks over the tree and fails the pipeline on a match.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",

@@ -86,8 +86,9 @@ for plain bans, and a custom rule only when neither fits.
 ## How it is enforced
 
 - Pint, PHPStan, Rector dry-runs and ESLint run in CI through Preflight
-  components, not in the deploy gate (the stack's coding standard). The Preflight components
-  are Planned.
+  components, not in the deploy gate (the stack's coding standard). Preflight 0.3.0
+  ships the `pint`, `phpstan` and `eslint` components; a Rector dry-run component
+  is Planned.
 - New rules arrive as warnings and become errors on a stated date, the same
   staging as PHP versions (the stack's enforcement design).
 - PROCTOR reports whether an app uses the presets (the stack's coding standard). The PROCTOR

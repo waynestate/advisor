@@ -26,9 +26,15 @@ MUST set the server's plugin explicitly in its database config.
 
 An app MAY stay on a database version for 90 days after it leaves support, the
 policy's `eol_grace_days`; the version is `Eol` through that window and
-`EolGraceExpired` the day after, when the gate fails with no override. The
-window is a bridge for the upgrade, not a second support window: the fix is
-still the upgrade.
+`EolGraceExpired` the day after. The window is a bridge for the upgrade, not a
+second support window: the fix is still the upgrade.
+
+- For MySQL and MariaDB the check warns and does not fail yet. While Citadel's
+  shared server runs 5.6, an app has no supported MySQL to move to there, so a
+  security-only, `Eol` or `EolGraceExpired` version warns, and still says to
+  move to 8.4 or later. It starts failing past the window when Citadel offers a
+  supported MySQL (the stack's MySQL gate decision). PROCTOR check: `mysql-eol`
+  (on PROCTOR main, due in 0.8.0).
 
 ## Names, comments and connections
 

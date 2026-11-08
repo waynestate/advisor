@@ -299,7 +299,7 @@ How the stack holds it: `Enforced`. `SpoofingTest`, `PathAttackTest`, and SESAME
 A PROCTOR rule flags app code that reads an identity header or a server variable directly instead of going through SESAME.
 Why: one app that trusts a bare header reopens the whole hole for that app.
 Sources: [oauth2-proxy configuration](https://oauth2-proxy.github.io/oauth2-proxy/configuration/overview/) (an upstream must trust only what the proxy sends).
-How the stack holds it: `Not yet`. It belongs in PROCTOR, not here, and it is requested there.
+How the stack holds it: `Documented`. PROCTOR holds it, not the gateway: its `raw-identity-header` rule warns when app code reads `X-Sesame-Assertion`, `REMOTE_USER`, `X-Authenticated-*`, `X-Drawbridge-*`, `OIDC_CLAIM_*` or a like header itself instead of taking the user from SESAME (`src/Check/RawIdentityHeaderCheck.php` in PROCTOR).
 
 ### D37. Track advisories for the gateway's software
 Watch security notices for Apache httpd and mod_auth_openidc, and raise the floor in D15 when one lands.

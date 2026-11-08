@@ -300,6 +300,58 @@ Proven on fixtures: `composer ci` runs the preset against a modern app (`tests/f
 old-style one (`tests/fixtures/rector-old`) on every run, and fails if the clean one changes or the old one is left
 alone. Rector is the tailor's press: it smooths old code to the standard without changing the cut.
 
+## Banned calls
+
+Every cut (raw, Laravel and strict) fails the build on a short list of calls no Wayne State app should ship. The list
+is `phpstan/disallowed.neon`, included from `base.neon`, and the rules are
+[spaze/phpstan-disallowed-calls](https://github.com/spaze/phpstan-disallowed-calls), which Pinstripe requires and the
+extension installer loads, so your `phpstan.neon` needs no new line. A `dd()` left in after debugging now turns the
+pipeline red, the same as any other PHPStan error.
+
+| Call | Why it is banned | Use instead | OWASP Top 10:2025 |
+|---|---|---|---|
+| `eval()` | Runs a string as PHP, so one untrusted value is remote code execution. | Write the code out, or pick a callable with `match`. | A05 Injection |
+| `extract()` | Turns array keys into variables, so request data can overwrite any variable in scope. | Read the keys you need by name, or destructure the array. | A05 Injection |
+| `var_dump()` | Debug output left in ships paths, config and secrets to the browser. | A PSR-3 logger (`Log::debug()` in Laravel), or Xdebug. | A02 Security Misconfiguration |
+| `dd()` | Dumps internals to the browser and halts the request in production. | The same. | A02 Security Misconfiguration |
+| `dump()` | The same leak as `var_dump()`, Symfony and Laravel flavored. | The same. | A02 Security Misconfiguration |
+| `withoutVerifying()` | Turns off TLS certificate checks in Laravel's HTTP client (`PendingRequest`), so anyone on the path can read or change the traffic. | Keep verification on; for a private CA, pass its bundle through `withOptions` and the `verify` option. | A02 Security Misconfiguration |
+
+Each ban has a stable identifier: `pinstripe.banned.eval`, `pinstripe.banned.extract`, `pinstripe.banned.varDump`,
+`pinstripe.banned.dd`, `pinstripe.banned.dump` and `pinstripe.banned.withoutVerifying`.
+
+The `withoutVerifying()` ban catches both `Http::withoutVerifying()` and the method partway down a chain such as
+`Http::acceptJson()->withoutVerifying()`. Each message ends with its OWASP tag and carries a link to the
+[Banned calls](https://pinstripe.apps.wayne.edu/docs/reference/banned-calls.html) page.
+
+**Keeping one on purpose.** Use the ban's identifier and say why, as with any other ignore:
+
+```php
+// @phpstan-ignore pinstripe.banned.varDump (CLI-only diagnostics; output goes to the operator's terminal)
+var_dump($report);
+```
+
+Fix the ones an existing app already has rather than baselining them: each is usually one line, and a baseline
+would hide the next one too.
+
+**Adding your own.** List more bans under the same parameters (`disallowedFunctionCalls`, `disallowedMethodCalls`,
+`disallowedStaticCalls`) in your app's `phpstan.neon`. NEON appends lists, so yours join Pinstripe's.
+
+**Not covered yet.** The `dd()` and `dump()` methods on collections, queries and requests (`$users->dd()`), and
+turning verification off through `withOptions(['verify' => false])`.
+
+Proven on fixtures: `tests/fixtures/raw-disallowed` makes each banned call once and must be reported for each, by
+identifier and with its OWASP tag, in both the raw and strict cuts; its clean twin defines methods named `dump()` and
+`dd()` and must stay green; `tests/fixtures/laravel/src/InsecureHttp.php` turns TLS checks off both ways; and the
+Laravel app fixture installs Pinstripe through Composer and must fail on a leftover `dd()`. A suit with a `dd()` in
+the pocket does not leave the shop.
+
+### Not banned yet
+
+`md5()`, `sha1()`, `rand()` and `mt_rand()` are weak for passwords, tokens and signatures, but they are fine for cache
+keys, checksums and other non-security uses, and apps across the fleet use them that way. Whether Pinstripe bans
+them (and how it would allow the safe uses) is an open call, so for now they pass.
+
 ## The strict cut
 
 New apps can include `vendor/waynestate/pinstripe/phpstan/strict.neon` instead of `raw.neon` or `laravel.neon`. It keeps the base cut and turns on `phpstan/phpstan-strict-rules`, so loose comparisons like `==` fail the build. Existing apps stay on the base cut and baseline their way over.
@@ -412,6 +464,7 @@ Maintainers: how to build, test and release this project, and where its data com
 - PHPStan strict-rules 2.1.0
 - Larastan 3.13.2
 - Rector 2.8.2
+- PHPStan disallowed-calls 4.15.0
 - ESLint 10.13.0
 - Prettier 3.9.10
 - eslint-plugin-vue 10.12.0
@@ -433,6 +486,7 @@ PHP tools:
 | `phpstan/phpstan-deprecation-rules` | 2.0.5 | `^7.4 \|\| ^8.0` |
 | `larastan/larastan` | v3.13.2 | `^8.2` |
 | `rector/rector` | 2.8.2 | `^7.4\|^8.0` |
+| `spaze/phpstan-disallowed-calls` | v4.15.0 | `^7.4 \|\| ^8.0` |
 
 Node tools:
 
@@ -459,6 +513,8 @@ min-release-age=3
 ```
 
 `ignore-scripts=true` stops npm from running any lifecycle script (`preinstall`, `install`, `postinstall`) while installing dependencies, so a package cannot execute code merely by being installed. `min-release-age=3` makes npm refuse to install a release published fewer than 3 days ago, leaving time to pull a compromised publish before it reaches a lockfile. The stack's Renovate `minimumReleaseAge` rule waits the same 3 days before updating, so the two guards agree. New cloth rests on the rail for three days before it is cut.
+
+The guard is proven, not claimed: `tests/js/npm-hardening.test.mjs` installs a local package whose `postinstall` drops a marker file, once with the flag and once without, and the marker appears only without it. The lock gets the same care: `eslint-config-prettier` is floored at `^10.1.8`, past the releases hit by CVE-2025-54313.
 
 ## Coming next
 
