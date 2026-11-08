@@ -20,7 +20,7 @@ Each practice ends with one tag that says how the stack holds it today.
 - `Documented`: written down in an ADR or design doc only. Where the design says a test will cover it, the text says so, but the test does not exist yet.
 - `Not yet`: a gap. Nothing holds it.
 
-Sourdough itself has no code on its main branch at the time of writing, and a delegate is building step 1 on a branch. So most tags describe the design, not a working tool. Sibling projects (SESAME, HELMET, PROCTOR, Preflight) do have code, and where a practice leans on them the tag says so.
+Sourdough is a working tool (0.1.7): `sourdough new` bakes all five shapes (raw PHP, raw PHP with a Vue SPA, Laravel with Blade, Laravel with Blade and Vue islands, Laravel with Inertia and Vue), `sourdough manifest --check` and `sourdough feed` ship, and the smoke gate bakes every shape for real. Many tags below were first written while Sourdough was still a design, so some may undersell what the code now does; each is re-checked against the code when its practice is next touched. Sibling projects (SESAME, HELMET, PROCTOR, Preflight) hold part of several practices, and where one leans on them the tag says so.
 
 ---
 
@@ -165,7 +165,7 @@ Stack: `Not yet`. PROCTOR's `php-floor` check will catch an out-of-date floor in
 Include Preflight components with an exact version. GitLab supports a commit SHA, a tag or a branch. Its guidance is to pin to a SHA, or to a release tag from a maintainer you trust, and to avoid `~latest`. Why: an unpinned component changes your pipeline without a commit in your repo.
 Second pass: re-checked against the GitLab page. It says to pin to a commit SHA (preferred) or a release tag, to trust tags only from a maintainer you trust, to avoid `latest`, and to review changes before moving a pin. It also says component inputs are validated and variables are not, so pass settings as `inputs`. Components have been generally available since GitLab 17.0.
 Sources: [S16].
-Stack: `Partly enforced`. Baked apps now include the Preflight components pinned to the commit SHA of the 0.1.4 release tag, with the tag in a trailing comment; PROCTOR 0.4 warns on a bare tag. Moving a pin is a deliberate commit.
+Stack: `Partly enforced`. Baked apps now include the Preflight components pinned to the commit SHA of the 0.2.0 release tag, with the tag in a trailing comment; PROCTOR 0.4 warns on a bare tag. Moving a pin is a deliberate commit.
 
 ### 4.4 Keep configuration in the environment and out of the template
 Commit `.env.example` with names and safe placeholders, never `.env`. Templates hold no secrets, no real hostnames and no per-environment branches. A good test: could the generated repo be published right now without leaking anything? Why: config that varies per deploy belongs outside the code.
@@ -287,10 +287,10 @@ Stack: `Not yet`.
 ### 6.1 Wire the stack in by default, not as an option
 Every generated app has SESAME, HELMET, PROCTOR as a dev dependency, a `.gitlab-ci.yml` that includes the Preflight components, a `/up` route that does not touch the database, and a README that points at the CREED handbook. Why: Laravel's own kits include sign-in, rate limiting and two-factor login out of the box for the same reason. Defaults decide what most apps end up doing.
 Sources: [S1].
-Stack: `Documented`. The libraries are tagged (SESAME, HELMET with a health check, PROCTOR, Preflight templates), and `sourdough new --raw` wires them into every generated app. Only the raw shape generates in 0.1; the Laravel shapes are not built yet.
+Stack: `Enforced`. `sourdough new` wires SESAME, HELMET, PROCTOR (as a dev dependency), Pinstripe, a `.gitlab-ci.yml` with the Preflight components, a `/up` route and a README with a Handbook section into all five shapes. The generator tests (`tests/RawGeneratorTest.php`, `tests/LaravelBladeGeneratorTest.php`, `tests/LaravelInertiaGeneratorTest.php` and the Vue variants) fail `composer ci` when a bake loses them, and the smoke gate bakes each shape and runs its PROCTOR check and `/up`.
 
 ### 6.2 Have the release script run the check, but do not call it the gate
-The Citadel release script runs `proctor check` and stops on exit 1. Treat that as a report. A failure in a release script cannot stop bad code from going live on a Quick Update, so the real gates are CI before merge and, later, a platform check. Why: promising a gate that does not hold is worse than having none.
+The Citadel release script asks PROCTOR's deploy gate (`proctor gate`, from Squire's kit 0.6.0 and PROCTOR 0.7) for a go or no-go, ratcheted against the last release that went on, so a failure that is already live is held and only a new one blocks. By default it only reports a no-go; `SQUIRE_PROCTOR=enforce` stops the release on one, before the frontend build and the migrations. Treat it as a report either way. A failure in a release script cannot stop bad code from going live on a Quick Update, so the real gates are CI before merge and, later, a platform check. Why: promising a gate that does not hold is worse than having none.
 Sources: the stack's staged-enforcement and release-gate decisions.
 Stack: `Documented`. The limitation is written in the stack's staged-enforcement decision. Nothing prevents someone from describing the script as a gate in a README.
 

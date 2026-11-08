@@ -556,6 +556,26 @@ It is good for trying Squire out and not for proving parity. If the build step f
 `vendor/`, the source folder is not writable by the container's `citadel` user (uid 1000 by default); on Linux set
 `SQUIRE_SOURCE_UID` and `SQUIRE_SOURCE_GID` to yours.
 
+### Image hardening
+
+What the kit's images harden, and the switch for each, is on the docs page
+[Image hardening](https://squire.apps.wayne.edu/docs/guides/image-hardening.html). In short:
+
+- **Apache** (the fallback base, `.squire/apache-hardening.conf`): `ServerTokens Prod`, `ServerSignature Off`,
+  `TraceEnable Off`. It lives in the base, not the app image, so a run on the real Citadel image shows what that image
+  really says.
+- **opcache** (`.squire/php.ini`): on for the web, 128 MB, 20000 files, and set by how code arrives. Pulled into a
+  running container (Citadel, a bind mount, or unknown): files are checked every 2 seconds, the default. Baked into an
+  immutable image: build with `SQUIRE_OPCACHE_VALIDATE=0` and they are never checked. The release script warns when
+  a release in place meets `0`.
+- **disable_functions** (`.squire/php-web.ini`, the web only): `exec`, `passthru`, `shell_exec`, `system`, `pcntl_exec`,
+  `phpinfo`, `show_source`, `highlight_file`. `proc_open` and `popen` stay for mail and Laravel's Process; the CLI
+  (Composer scripts, artisan, the health check) keeps everything. `SQUIRE_PHP_DISABLE_FUNCTIONS=none` turns it off.
+- **Secrets** stay out of every image layer: on Citadel they are configuration files (`./.env`) written into the source
+  tree at deploy time; with Docker, Compose or OpenShift they are files mounted at `/run/secrets`, which the release
+  script and the fallback entrypoint turn into variables (`SQUIRE_SECRETS_DIR`). Tests keep secrets out of the
+  Dockerfiles, the build context and `build.sh`.
+
 ## Oracle-ready images (local)
 
 Apps that talk to Oracle need the Instant Client and the `oci8` extension. Squire ships two opt-in Docker recipes
@@ -603,6 +623,7 @@ Release script (`scripts/release.sh`):
 | `SQUIRE_COMPOSER_AUDIT` | `report` | `report`, `fail` or `skip`. |
 | `SQUIRE_NPM` | `auto` | `auto` or `skip` (for committed built assets). |
 | `SQUIRE_NPM_IGNORE_SCRIPTS` | `1` | Install with `--ignore-scripts`. |
+| `SQUIRE_NPM_REBUILD` | empty | Packages, separated by spaces, whose install scripts run after the install (`npm rebuild --ignore-scripts=false`, or `pnpm rebuild`; pnpm 10 also needs them in `pnpm.onlyBuiltDependencies`). The escape hatch for a package that needs its own scripts, such as a native addon. |
 | `SQUIRE_NPM_BUILD_SCRIPT` | `build` | The `package.json` script to run. |
 | `SQUIRE_MIGRATE` | `1` | Laravel: `migrate --force`. |
 | `SQUIRE_ARTISAN_OPTIMIZE` | `1` | Laravel: `optimize`. |
@@ -614,6 +635,7 @@ Release script (`scripts/release.sh`):
 | `SQUIRE_SMOKE_URL` | `http://127.0.0.1:80/up` (Laravel), `/up.php` (raw and static) | Full URL. |
 | `SQUIRE_SMOKE_RETRIES` | `5` | Attempts. |
 | `SQUIRE_SMOKE_DELAY` | `2` | Seconds between attempts. |
+| `SQUIRE_SECRETS_DIR` | `/run/secrets` | A folder of secret files: each file named like a variable becomes that variable, unless the environment sets it. |
 
 Front controller (raw `public/index.php`): `SQUIRE_APP_ENTRY` (`app.php`), the app's entry, relative to the app
 directory. Static `public/index.php`: `SQUIRE_STATIC_ROOT` (`../../site`).
@@ -621,11 +643,15 @@ directory. Static `public/index.php`: `SQUIRE_STATIC_ROOT` (`../../site`).
 Health check (`health.php`): `SQUIRE_HEALTH_PATH`, `SQUIRE_HEALTH_PORT` (80), `SQUIRE_HEALTH_TIMEOUT` (5, at most 14, inside
 Citadel's 15), `SQUIRE_HEALTH_VENDOR` (`1` also requires `vendor/autoload.php`).
 
+PHP in the image (`.squire/php.ini`, read from the container's environment): `SQUIRE_OPCACHE_VALIDATE` (`1`; `0` for an
+image that bakes its code in), `SQUIRE_OPCACHE_MEMORY` (`128`), `SQUIRE_OPCACHE_MAX_FILES` (`20000`), `SQUIRE_PHP_DISABLE_FUNCTIONS` (the web's list, from
+`.squire/php-web.ini`; `none` disables nothing).
+
 Local parity (`.env.squire`): `SQUIRE_PROJECT`, `SQUIRE_BASE_IMAGE`, `SQUIRE_PROXY_IMAGE`, `SQUIRE_MYSQL_IMAGE`,
 `SQUIRE_PUBLIC_DIR`, `SQUIRE_SERVER_NAME`, `SQUIRE_TZ`, `SQUIRE_ENVIRONMENT`, `SQUIRE_DEPLOYMENTS`, `SQUIRE_HTTP_PORT`,
 `SQUIRE_APP_MEMORY`, `SQUIRE_SOURCE_UID`, `SQUIRE_SOURCE_GID`, `SQUIRE_DB_NAME`, `SQUIRE_DB_USER`, `SQUIRE_DB_PASSWORD`,
 `SQUIRE_DB_ROOT_PASSWORD`, `SQUIRE_DB_PORT`, `SQUIRE_DB_MEMORY`. The Vue layer's compose file also reads
-`SQUIRE_NODE_IMAGE` (default `node:22-bookworm-slim`), `SQUIRE_NODE_ENV` (default `production`) and `SQUIRE_NODE_MEMORY`
+`SQUIRE_NODE_IMAGE` (default `node:22.23.4-bookworm-slim`, pinned by digest), `SQUIRE_NODE_ENV` (default `production`) and `SQUIRE_NODE_MEMORY`
 (default `512m`). The compose file refuses to start without the two passwords. See `.env.squire.example`; it holds
 placeholders only.
 
@@ -664,8 +690,9 @@ See [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md). The big ones: the local `php.ini` ho
 platform's file, the Citadel image has no digest to pin, and a full Update may not refresh `vendor/`. The release asks
 PROCTOR's `proctor gate` for a go or no-go once the installed PROCTOR has it; what is still missing on PROCTOR's side is a published phar.
 
-- The release script is contract-tested inside the fallback image on GitHub, not yet on the real image (OPEN_QUESTIONS
-  19, "Contract suite on the real image and on GitLab").
+- The release script and the image hardening are contract-tested inside the built fallback image on GitHub (both
+  platforms) and on a maintainer's machine, not yet on the real image or on GitLab (OPEN_QUESTIONS 19, "Contract
+  suite on the real image and on GitLab").
 
 ## License
 

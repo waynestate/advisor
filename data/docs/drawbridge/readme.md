@@ -274,17 +274,17 @@ each open question E-1 to E-8.
 
 ## Getting the image
 
-The pipeline builds the gateway image on every merge request and on the default branch, and publishes it to the stack's image registry (the group's `images` project) when a tag is pushed. The image is at `<registry>/enterprise-apps/images/drawbridge-gateway:<tag>` (for example `<registry>/enterprise-apps/images/drawbridge-gateway:0.2.0`).
+The pipeline builds the gateway image on every merge request and on the default branch, and publishes it to the stack's image registry (the group's `images` project) when a tag is pushed. The image is at `<registry>/enterprise-apps/images/drawbridge-gateway:<tag>` (for example `<registry>/enterprise-apps/images/drawbridge-gateway:0.3.0`).
 `<registry>` is the stack's container registry; Enterprise Applications has its address. There is no `latest` tag: pin a release.
 
 ```sh
-docker pull <registry>/enterprise-apps/images/drawbridge-gateway:0.2.0
+docker pull <registry>/enterprise-apps/images/drawbridge-gateway:0.3.0
 ```
 
 The publish job prints the digest it pushed. Verify the image you pulled against it:
 
 ```sh
-docker inspect --format='{{index .RepoDigests 0}}' <registry>/enterprise-apps/images/drawbridge-gateway:0.2.0
+docker inspect --format='{{index .RepoDigests 0}}' <registry>/enterprise-apps/images/drawbridge-gateway:0.3.0
 ```
 
 The image carries OCI labels (`org.opencontainers.image.source`, `.revision`, `.version`, `.licenses`) set from the

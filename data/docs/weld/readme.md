@@ -140,7 +140,7 @@ What is on the bench today:
 - `.gitattributes` sets `* text=auto eol=lf`
 - `composer ci` is the CI contract: it runs validate, the tests with Pest, Pint, PHPStan level 8, the agent-ready check and audit, the
   same command on GitLab and GitHub
-- `pint.json` and `phpstan.neon` still copy Pinstripe's 0.1 Laravel presets; Pinstripe 0.1.1 is on Packagist
+- `pint.json` and `phpstan.neon` still copy Pinstripe's 0.1 Laravel presets; Pinstripe 0.1.4 is on Packagist
   (tagged), and they switch to `includes: vendor/waynestate/pinstripe/...` when WELD requires it
 - HELMET runs its security headers and CSP middleware in the global chain, so every response carries the baseline;
   the Vite build takes the per-request nonce; trusted proxies are a literal list in `bootstrap/app.php`; `/up` stays
