@@ -6,6 +6,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Changed
 
+- Docs: BEST_PRACTICES gains a threat model: eleven threats, each mapped to the rules that answer it and to OWASP Top 10:2025, OWASP ASVS 5.0 or NIST SSDF, plus what is out of scope (ADVISOR-16).
 - Changed: CI saves its Composer and npm caches even when a job fails, so a retry after a dropped download fetches only what is missing (D-072).
 - Changed: CI caches Composer and npm downloads under a fixed key, so a lock change downloads only what changed (D-072).
 - Fixed: OPEN_QUESTIONS.md names the Preflight commit the GitHub workflow really pins and says the README badges are real.

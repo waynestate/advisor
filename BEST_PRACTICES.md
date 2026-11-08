@@ -39,8 +39,36 @@ Documented (written down only), Not yet (a gap).
 14. **Cite sources and date.** Policy answers carry the day they were worked out for and the file they came from.
     Enforced.
 
+## Threat model
+
+ADVISOR is a local stdio MCP server started by a developer's AI client. What it protects: the developer's
+machine and project, the AI session it answers, and the trust people put in its answers. It has no network
+listener, no sign-in and no network calls of its own.
+
+| Threat | Rules | Framework |
+|---|---|---|
+| A cloned project's `.mcp.json` starts a program the developer never approved | 1, 3 | OWASP Top 10:2025 A02 Security Misconfiguration |
+| Served text steers the AI client (prompt injection through answers) | 2, 10, 14 | OWASP Top 10:2025 A05 Injection |
+| A tool's description changes quietly after approval (tool poisoning) | 13, 10 | OWASP Top 10:2025 A08 Software or Data Integrity Failures |
+| Secrets pasted into prompts end up in logs or reports | 4 | OWASP Top 10:2025 A09 Security Logging and Alerting Failures; OWASP ASVS 5.0 (logging) |
+| A tool argument smuggles a command, URL or path outside the project | 7, 8 | OWASP Top 10:2025 A05 Injection and A01 Broken Access Control; OWASP ASVS 5.0 (input validation) |
+| A tool writes when the developer expected a read | 6 | OWASP Top 10:2025 A01 Broken Access Control |
+| Stray output on stdout corrupts the protocol stream | 9 | OWASP Top 10:2025 A10 Mishandling of Exceptional Conditions |
+| A planted class is loaded as a module | 11 | OWASP Top 10:2025 A03 Software Supply Chain Failures |
+| Bundled content is tampered with after release | 12 | OWASP Top 10:2025 A08; NIST SP 800-218 (SSDF) PS.2, release integrity |
+| A stale or unsourced policy answer is taken as current | 14, 2 | OWASP Top 10:2025 A06 Insecure Design |
+| The server runs in production, where nobody reviews its use | 3 | OWASP Top 10:2025 A02 Security Misconfiguration |
+
+**Out of scope**
+
+- A network attacker (stdio only, no HTTP listener in 0.1).
+- Sign-in and identity (no accounts, so NIST SP 800-63 does not apply).
+- A developer machine that is already compromised.
+
+Rule 5 (run Boost beside it) is a usage note and answers no threat.
+
 ## Not yet
 
 - Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.
 - Signing of any state handed back to a client (no tool needs it in 0.1).
-- A threat model mapped to OWASP and NIST; a full-capture audit mode.
+- A full-capture audit mode.

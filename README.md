@@ -371,6 +371,7 @@ It also runs as the `a11y` job in GitLab CI.
 - `run_proctor_check` runs one fixed program with an argument array and an allowlisted environment, never a shell.
 - `upgrade_path` runs Booster's read-only `plan` the same way: one fixed program, an argument array, an allowlisted command, never a shell. It plans; it never runs a hop.
 - No network calls, and no model calls, from ADVISOR itself.
+- The threat model, each threat mapped to the rules that answer it, is in BEST_PRACTICES.md, "Threat model".
 
 See `BEST_PRACTICES.md`, and `OPEN_QUESTIONS.md` for what is decided, assumed and not yet built.
 
