@@ -343,16 +343,17 @@ php bin/proof.php --units=FILE --corpus=DIR --work=DIR --out=FILE --proctor-bin=
 
 ## Accessibility check
 
-Every `*.html` page under `site/` (except `site/assets/`) is loaded in a real browser by `scripts/a11y/check.mjs`
-and run through axe-core (WCAG tags only), in light and dark themes at phone (390 px) and desktop (1440 px) width,
-plus one reduced-motion pass. Each page must also have one `<h1>`, a `lang` attribute, a non-empty title, and no
-horizontal scroll at phone width. Run it from the repo root (works in PowerShell):
+The `a11y` job in GitLab CI is Preflight's `a11y` component: axe-core 4.14.0 over `site/index.html` and
+`site/docs/**/*.html`, WCAG tags only, in light and dark color schemes at 320 and 1280 px widths, plus the
+reflow check for WCAG 1.4.10.
+
+ADVISOR's own checker, `scripts/a11y/check.mjs`, runs too, as the `a11y-extra` job. It loads the same pages in light and dark themes at phone (390 px) and desktop (1440 px) width, plus one reduced-motion pass, and also requires one `<h1>`, a `lang` attribute, a non-empty title, and no horizontal scroll at phone width. Run it from the repo root (works in PowerShell):
 
 ```
 docker run --rm -v "${PWD}:/app" -e npm_config_cache=/npm-cache -v stack-npm-cache:/npm-cache -w /app/scripts/a11y mcr.microsoft.com/playwright:v1.49.1-noble sh -c "npm install --no-audit --no-fund && node check.mjs"
 ```
 
-It also runs as the `a11y` job in GitLab CI.
+It also runs as the `a11y-extra` job in GitLab CI.
 
 ## Safety, in short
 
@@ -362,6 +363,7 @@ It also runs as the `a11y` job in GitLab CI.
 - `run_proctor_check` runs one fixed program with an argument array and an allowlisted environment, never a shell.
 - `upgrade_path` runs Booster's read-only `plan` the same way: one fixed program, an argument array, an allowlisted command, never a shell. It plans; it never runs a hop.
 - No network calls, and no model calls, from ADVISOR itself.
+- The threat model, each threat mapped to the rules that answer it, is in BEST_PRACTICES.md, "Threat model".
 
 See `BEST_PRACTICES.md`, and `OPEN_QUESTIONS.md` for what is decided, assumed and not yet built.
 

@@ -48,7 +48,7 @@ older PHP or needing an extension the image lacks still gets its report.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
     inputs:
       proctor_command: vendor/bin/proctor check --format=codequality
 ```
@@ -70,7 +70,7 @@ Runs the test command on each supported PHP version through `parallel:matrix`.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
     inputs:
       test_command: vendor/bin/phpunit
 ```
@@ -89,9 +89,9 @@ include:
 #### Caching
 
 The jobs always cache Composer downloads in `.composer-cache/` so repeat runs
-do not re-download every package. The cache key depends on `composer.lock`
-and is prefixed with the PHP version, so a dependency change invalidates the
-cache and each PHP version gets its own cache.
+do not re-download every package. The cache key is fixed per PHP version, not
+a `composer.lock` hash, so a lock change downloads only the packages
+that changed and each PHP version gets its own cache.
 
 #### Try the next PHP release without breaking the pipeline
 
@@ -120,7 +120,7 @@ Runs `composer audit --locked` and fails on advisories.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
     inputs:
       working_dir: .
 ```
@@ -150,7 +150,7 @@ Generates a CycloneDX SBOM with `cyclonedx/cyclonedx-php-composer`, validates it
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
     inputs:
       output: sbom.cdx.json
 ```
@@ -172,7 +172,7 @@ Runs the app's own [Laravel Pint](https://laravel.com/docs/12.x/pint) in test mo
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
     inputs:
       config: pint.json
 ```
@@ -194,7 +194,7 @@ Runs the app's own [PHPStan](https://phpstan.org/) and fails the pipeline on sta
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
     inputs:
       config: phpstan.neon
       memory_limit: 1G
@@ -218,7 +218,7 @@ Runs the app's own [ESLint](https://eslint.org/) (and [Prettier](https://prettie
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
     inputs:
       eslint_args: .
 ```
@@ -241,7 +241,7 @@ Runs [Gitleaks](https://github.com/gitleaks/gitleaks) over the checked-out tree 
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/secret-detection@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/secret-detection@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
 ```
 
 | Input | Type | Default | What it does |
@@ -266,7 +266,7 @@ curl and PHP, which the job uses for the registry round trip.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/package-publish@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/package-publish@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
     inputs:
       group_id: "<your group id>"
 ```
@@ -293,7 +293,7 @@ auto-merges and what waits.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
     inputs:
       git_author: "Preflight Bot <preflight-bot@example.com>"
 ```
@@ -331,7 +331,7 @@ No takeoff without a clean pre-flight.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/portability@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/portability@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
     inputs:
       env: ["APP_KEY=${PORTABILITY_APP_KEY}", "APP_URL=https://myapp.example.edu"]
       session_login_path: /_portability/login
@@ -387,7 +387,7 @@ person to review. Every page gets a walk-round, in daylight and at night.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/a11y@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/a11y@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
     inputs:
       pages: ["index.html", "docs/**/*.html"]
       wcag_tags: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]
@@ -428,7 +428,7 @@ recorded version, so a new Squire never turns main red by itself: Renovate's Squ
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/squire-kit@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/squire-kit@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
     inputs:
       working_dir: deploy
 ```
@@ -479,7 +479,7 @@ on:
 
 jobs:
   ci:
-    uses: waynestate/preflight/.github/workflows/php-package.yml@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+    uses: waynestate/preflight/.github/workflows/php-package.yml@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
 ```
 
 This workflow ships in the `0.1.1` tag, so pin the full commit SHA of the
@@ -636,13 +636,13 @@ workflow:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@23038dfe767f6ef60e3b2efca1128f53d9acdff7 # 0.3.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@b90323b5823287a7840095d0d5f0682aaeedf327 # 0.3.1
 ```
 
 The `workflow:rules` block must live in the app's own file. A component
@@ -759,7 +759,7 @@ Pins change only through a reviewed merge request.
 Docker Hub images come through the group's GitLab Dependency Proxy: each Docker Hub component pulls
 `image_prefix/image`, and `image_prefix` defaults to `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}`. On a GitLab or group
 without the proxy, set `image_prefix: docker.io`. Composer and npm downloads are cached per job (`.composer-cache/`,
-`.npm-cache/`), keyed on the lock file where there is one. `tests/check-dependency-cache.sh` (and its `.ps1` twin)
+`.npm-cache/`) under a fixed key, not a lock-file hash. `tests/check-dependency-cache.sh` (and its `.ps1` twin)
 fails a component that skips either. Details, and the upgrade step for apps that passed a proxied `image`:
 [Dependency caching](docs/guides/dependency-caching.md).
 
