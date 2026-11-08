@@ -32,13 +32,16 @@ final class BoosterRunner
     /**
      * @return array<string, mixed>
      */
-    public function plan(string $path, ?string $toPhp = null, ?string $toLaravel = null): array
+    public function plan(string $path, ?string $toPhp = null, ?string $toLaravel = null, ?string $fromPhp = null): array
     {
         if ($toPhp !== null && !preg_match('/^\d{1,2}\.\d{1,2}$/', $toPhp)) {
             throw new ToolInputError('to_php must be a PHP version, major.minor, for example 8.4.');
         }
         if ($toLaravel !== null && !preg_match('/^\d{1,2}$/', $toLaravel)) {
             throw new ToolInputError('to_laravel must be a Laravel major version, for example 11.');
+        }
+        if ($fromPhp !== null && !preg_match('/^\d{1,2}\.\d{1,2}$/', $fromPhp)) {
+            throw new ToolInputError('from_php must be a PHP version, major.minor, for example 7.4.');
         }
 
         $app = $this->guard->resolve($path);
@@ -62,6 +65,9 @@ final class BoosterRunner
         if ($toLaravel !== null) {
             $argv[] = '--to-laravel=' . $toLaravel;
         }
+        if ($fromPhp !== null) {
+            $argv[] = '--from-php=' . $fromPhp;
+        }
         CommandAllowlist::assertBooster($argv, $this->php, $script);
 
         $result = $this->runner->run($argv, $this->guard->root(), $this->timeoutSeconds);
@@ -81,7 +87,7 @@ final class BoosterRunner
             throw new ToolInputError('BOOSTER did not return a JSON plan.');
         }
 
-        return $this->shape($plan, $app, $toPhp, $toLaravel);
+        return $this->shape($plan, $app, $toPhp, $toLaravel, $fromPhp);
     }
 
     /**
@@ -125,7 +131,7 @@ final class BoosterRunner
      *
      * @return array<string, mixed>
      */
-    private function shape(array $plan, string $app, ?string $toPhp, ?string $toLaravel): array
+    private function shape(array $plan, string $app, ?string $toPhp, ?string $toLaravel, ?string $fromPhp): array
     {
         $plan = $this->cleanArray($plan);
 
@@ -153,6 +159,9 @@ final class BoosterRunner
         }
         if ($toLaravel !== null) {
             $command .= ' --to-laravel=' . $toLaravel;
+        }
+        if ($fromPhp !== null) {
+            $command .= ' --from-php=' . $fromPhp;
         }
 
         return [

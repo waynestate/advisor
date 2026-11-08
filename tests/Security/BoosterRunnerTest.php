@@ -91,6 +91,18 @@ final class BoosterRunnerTest extends TestCase
         $this->assertSame('booster run --path=app --to-php=8.4 --to-laravel=11', $result['next_command']);
     }
 
+    public function testPassesTheStartingVersion(): void
+    {
+        $this->fake->answer($this->plan());
+        $result = $this->runner()->plan('app', null, null, '7.4');
+
+        $argv = $this->fake->calls[0]['argv'];
+        $this->assertContains('--from-php=7.4', $argv);
+        $this->assertNotContains('--to-php=8.4', $argv);
+        $this->assertNotContains('--to-laravel=11', $argv);
+        $this->assertSame('booster run --path=app --from-php=7.4', $result['next_command']);
+    }
+
     public function testReturnsTheOrderedHopsWarningsAndNextCommand(): void
     {
         $this->fake->answer($this->plan());

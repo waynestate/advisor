@@ -60,4 +60,45 @@ final class CommandAllowlistTest extends TestCase
         $this->expectException(ToolInputError::class);
         CommandAllowlist::assertProctor($argv, self::PHP, self::SCRIPT);
     }
+
+    private const BOOSTER_SCRIPT = '/app/vendor/bin/booster';
+
+    /**
+     * @return list<string>
+     */
+    private static function goodBooster(): array
+    {
+        return [self::PHP, self::BOOSTER_SCRIPT, 'plan', '--path=/app', '--format=json', '--policy=/adv/data/policy.json'];
+    }
+
+    public function testAcceptsABoosterPlanWithFromPhp(): void
+    {
+        CommandAllowlist::assertBooster([...self::goodBooster(), '--from-php=7.4'], self::PHP, self::BOOSTER_SCRIPT);
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * @return array<string, array{list<string>}>
+     */
+    public static function badBooster(): array
+    {
+        $good = self::goodBooster();
+
+        return [
+            'another subcommand' => [[$good[0], $good[1], 'run', ...array_slice($good, 3)]],
+            'from php with a shell' => [[...$good, '--from-php=7.4;rm']],
+            'from php not a version' => [[...$good, '--from-php=abc']],
+            'extra flag' => [[...$good, '--output=/etc/cron.d/x']],
+        ];
+    }
+
+    /**
+     * @param list<string> $argv
+     */
+    #[DataProvider('badBooster')]
+    public function testRefusesAnythingElseOnBooster(array $argv): void
+    {
+        $this->expectException(ToolInputError::class);
+        CommandAllowlist::assertBooster($argv, self::PHP, self::BOOSTER_SCRIPT);
+    }
 }

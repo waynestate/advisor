@@ -36,6 +36,7 @@ final class CommandAllowlist
         '--path' => '#^[^\0]{1,1024}$#',
         '--format' => '#^json$#',
         '--policy' => '#^[^\0]{1,1024}$#',
+        '--from-php' => '#^\d{1,2}\.\d{1,2}$#',
         '--to-php' => '#^\d{1,2}\.\d{1,2}$#',
         '--to-laravel' => '#^\d{1,2}$#',
     ];
