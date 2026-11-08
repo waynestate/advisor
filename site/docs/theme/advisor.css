@@ -449,6 +449,17 @@ body {
   block-size: auto;
 }
 
+/* The README's centered tagline ("What applies, and what's next."): a line of
+   its own, with a paragraph's room above and below so it reads as the map's
+   title strip, not as the first words of the paragraph under it. */
+.docs-article > div[align="center"] {
+  margin-block: 1.4rem 1.6rem;
+  font-family: var(--adv-display);
+  font-size: 1.1875rem;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
 /* A margin rule on the map: a dotted contour. */
 .docs-article hr {
   margin-block: 2.5rem;

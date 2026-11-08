@@ -660,6 +660,9 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 #### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
 
+- Fixed: the docs kit's copy button no longer covers the first line of code when it says Copied or Failed: over the code it keeps its resting width and shows a check or a cross when the word does not fit (docs kit synced from Squire).
+- Fixed: the front page's version chip shows the full version the docs show (Sheet 0.1.7, was Sheet 0.1). It carries `data-docs-version` now, so the docs builder (synced from Squire) rewrites it at every release and `composer docs:check` fails while it is stale.
+- Fixed: the docs overview's tagline (What applies, and what's next.) has a paragraph's room above and below, in the map's display face, instead of sitting tight on the text under it.
 - the pipeline's PROCTOR jobs no longer pass `--policy`, which PROCTOR 0.7 refuses in CI; PROCTOR checks against the CREED policy it bundles.
 - The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (`-v stack-composer-cache:/tmp/cache`), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.
 - The front page's parts list says Sourdough starts all five app shapes; it said "the raw PHP starter".
