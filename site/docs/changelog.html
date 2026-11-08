@@ -53,6 +53,7 @@
 </ul>
 <h3 id="fixed">Fixed<a class="docs-heading-link" aria-label="Link to this section" href="#fixed">#</a></h3>
 <ul>
+<li>the pipeline's PROCTOR jobs no longer pass <code>--policy</code>, which PROCTOR 0.7 refuses in CI; PROCTOR checks against the CREED policy it bundles.</li>
 <li>The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (<code>-v stack-composer-cache:/tmp/cache</code>), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.</li>
 <li>The front page's parts list says Sourdough starts all five app shapes; it said &quot;the raw PHP starter&quot;.</li>
 </ul>
