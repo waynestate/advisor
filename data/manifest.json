@@ -63,7 +63,7 @@
             "source": "proctor/BEST_PRACTICES.md"
         },
         "docs/proctor/readme.md": {
-            "sha256": "4a752d7d434160229743037283116f08a183618ead52d45d7957b72167fc0146",
+            "sha256": "4dc297566c1b92801ef850a8e4588054a6e30359afa041ca9e3b6e73399a6546",
             "source": "proctor/README.md"
         },
         "docs/rollcall/best-practices.md": {
@@ -183,7 +183,7 @@
             "source": "generator/ownership.json"
         },
         "policy.json": {
-            "sha256": "de71fbbf4a92d8f94216dd28c22d215592978743b4c176f7c0a77963cdad71a5",
+            "sha256": "b81968e843e853358eceefe22e7ba5f3863b4605ff0bc84db8ac70af9c4bd486",
             "source": "creed/policy/policy.json"
         },
         "projects.json": {
