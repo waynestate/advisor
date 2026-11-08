@@ -546,7 +546,7 @@
             "id": "code-11",
             "chapter": "code",
             "heading": "Source control and documentation",
-            "text": "Register the project in the catalog Enterprise Apps names, and keep its environments current. Stack apps also register with ROLLCALL, the stack's census (WSU developer standards, 2024).",
+            "text": "Register the project in the catalog Enterprise Apps names, and keep its environments current. Stack apps also register with Rollcall, the stack's census (WSU developer standards, 2024).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",

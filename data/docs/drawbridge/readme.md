@@ -111,7 +111,7 @@ To end a person's sessions from outside, on every app host at once, run `drawbri
 gateway reads its revocation list (`DRAWBRIDGE_REVOCATION_FILE`). On their next protected request a browser is sent
 through the sign-out above and an `api` caller gets 401; a fresh sign-in works as before, so disable the account in
 Entra to keep someone out. Entra offers other apps only an iframe front-channel logout, which blocked third-party
-cookies break, so DRAWBRIDGE uses none: every sign-out hop is a top-level redirect.
+cookies break, so Drawbridge uses none: every sign-out hop is a top-level redirect.
 
 Signing in is held the same way: a sign-in started with a `target_link_uri` on another host (written plainly, protocol-relative or with a userinfo trick) never sends the visitor there, and the answer never names that host. The rig proves it (`GatewayTest::testLoginReturnsOnlyToTheSameHost`).
 

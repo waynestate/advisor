@@ -1129,7 +1129,7 @@ Maintainers: how to build, test and release this project, and where its data com
 No PHP on the machine? Fine. Docker runs the suite. PowerShell:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2 composer install --no-interaction
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2 composer install --no-interaction
 docker run --rm -v "${PWD}:/app" -w /app php:8.5-cli vendor/bin/phpunit
 docker run --rm -v "${PWD}:/app" -w /app php:8.4-cli vendor/bin/phpunit
 docker run --rm -v "${PWD}:/app" -w /app php:8.3-cli vendor/bin/phpunit
@@ -1138,7 +1138,7 @@ docker run --rm -v "${PWD}:/app" -w /app php:8.3-cli vendor/bin/phpunit
 sh:
 
 ```
-docker run --rm -v "$PWD:/app" -w /app composer:2 composer install --no-interaction
+docker run --rm -v "$PWD:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2 composer install --no-interaction
 docker run --rm -v "$PWD:/app" -w /app php:8.5-cli vendor/bin/phpunit
 docker run --rm -v "$PWD:/app" -w /app php:8.4-cli vendor/bin/phpunit
 docker run --rm -v "$PWD:/app" -w /app php:8.3-cli vendor/bin/phpunit
