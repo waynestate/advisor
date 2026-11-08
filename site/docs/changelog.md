@@ -12,6 +12,10 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[Unreleased\][#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
 
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
+
+- Added: upgrade_path takes from_php, so a project with no composer.json or no php constraint still gets a plan (BOOSTER's --from-php); the 2026-11-08 proof run found 71 such refusals.
+
 ### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
 - Changed: CI's accessibility gate is Preflight's a11y component (light and dark, 320 and 1280 px, and the WCAG 1.4.10 reflow check); ADVISOR's own page checks (one h1, lang, title, reduced motion) stay as the a11y-extra job.
@@ -48,7 +52,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - The front page's deploy layer (`deploy/`) completes Squire's kit 0.5.0: `oracle-check.php`, which the 0.5.0 `squire update` did not add, is written and recorded, so `squire init --check` passes. `site/assets/stack-env.js` takes the stack's one copy, with bindingless catch blocks.
 - The canonical repository is git.wayne.edu (ADR-0021); docs, links and package metadata no longer point at the archived nougat copy.
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-1)
 
 - `owner_of` answers from an ownership table rebuilt from the stack's decisions, the one-owner-per-rule table first (version policy, lock file, `composer audit`, MySQL 5.6, `/up`, deploy files, CI contents, the parts list), then app wiring, sign-in and the coding standard. Every match carries `decision`, the decision it comes from, named by title and date. Rows gain `aliases` ("composer.lock", ".gitlab-ci.yml", "/up"), question words are ignored ("who owns composer audit" works), words match at word starts, and exact topic or alias matches come first. `content:verify` requires the decision and refuses an alias that names two rows.
 - `read_project_docs` trims image boilerplate again at read time, so docs bundled before a trim rule existed are served clean without editing `data/docs`. The trim (now `Content\ImageTrim`, shared with the generator) also drops linked hero images (`[![...](https://github.com/waynestate/advisor/-/blob/main/...)](...)`) and rows of nothing but badges, which the generator used to let through (Sourdough's README hero and badge row).
@@ -58,7 +62,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.1.6\] - 2026-11-06[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-6-2026-11-06)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-1)
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-2)
 
 - data: resync 2026-11-05 evening (booster:eaf2758 drawbridge:aa403f3 helmet:36cb918 sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:335c4e4 preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:4fdc7b0)
 - data: resync 2026-11-05 late (booster:5b25715 drawbridge:19698ea helmet:417129a sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:9384c1d preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:ba8b7e1)
@@ -108,7 +112,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.1.3\] - 2026-11-02[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-3-2026-11-02)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-2)
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-3)
 
 - Added: hand-written guides bundled from generator/guides/ and served as advisor://guide/; first guide: Connect to Oracle on Citadel.
 - Added: policy_lookup returns latest_patch; the bundled docs drop hero images, badges and GIFs.
@@ -123,7 +127,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.1.2\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-2-2026-10-29)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-3)
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-4)
 
 - Added: agent-ready site (prompt blocks, Markdown twins, llms.txt), from Squire's kit.
 - `playbook_lookup` tool: answers "what is the value of X?" for WSU shared values. An environment variable of the same name wins, then the private `waynestate/playbook` package (Playbook) supplies the rest; without it the tool says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are refused. `waynestate/playbook` is suggested, never required.
@@ -139,7 +143,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.1.1\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-1-2026-10-29)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-4)
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-5)
 
 - `owner_of` tool: answers "which project owns X?" from a new bundled `data/ownership.json` table (sourced from `generator/ownership.json`, verified by `content:verify`). Fuzzy match: every word of the topic must appear in a row's topic or role; a no-match answer lists every known topic.
 
@@ -152,7 +156,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 First build, aimed at 0.1.0.
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-5)
+### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-6)
 
 - Read-only MCP server over stdio (`php vendor/bin/advisor mcp`) on the official `mcp/sdk` 0.9.0, speaking both the legacy `initialize` handshake and the 2026-07-28 per-request form.
 - Seven tools: `list_projects`, `get_project_status`, `read_project_docs`, `policy_lookup`, `list_stack_rules`, `run_proctor_check`, `upgrade_path`. Resources `advisor://policy` and `advisor://creed/<chapter>`. Prompts `orient_me` and `plan_upgrade`.
