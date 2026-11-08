@@ -1373,11 +1373,12 @@ first. What the hop does:
   `eloquent`, adding a model key when the provider has none.
 - Rewrites user models that use `WayneCasable` as a trait to
   `implements WayneCasable` plus `use ReadOnlyAttributes`.
-- Swaps the Composer requirement to `waynestate/sesame:^0.4` (SESAME is on
+- Swaps the Composer requirement to `waynestate/sesame:^0.6` (SESAME is on
   Packagist, so no extra repository is needed) and drops the `wayne-cas`
   package, any `wayne-cas` path entry and its VCS repository entries.
-  Booster 1.10.0 pins the 0.4 line, so take the 0.5.0 steps in the
-  [upgrading guide](docs/upgrading.md) after the hop.
+  Booster 1.12.0 and later write `^0.6`; an app hopped by an earlier Booster
+  got `^0.4`, so take the 0.5.0 and 0.6.0 steps in the
+  [upgrading guide](docs/upgrading.md).
 - Removes `config/wayne-cas.php` when nothing in the app reads its config
   keys any more; while anything still does, the file stays and a manual note
   names the readers.
@@ -1520,9 +1521,10 @@ validate through tests, Pint and PHPStan:
 docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2 composer ci
 ```
 
-The committed site gets checked in a real browser too: axe-core with the WCAG 2.2 AA
-tag set, run in Docker through Playwright, so no host browser is needed. It looks at
-the front page and every docs page, in light and dark at two widths:
+The committed site gets checked in a real browser too: Preflight's own a11y
+checker, vendored at the CI tag (0.3.1) and pinned by a test, run in Docker
+through Playwright, so no host browser is needed. It looks at every page under
+site/, in light and dark at 320 and 1280 px, with the WCAG 1.4.10 reflow check:
 
 ```
 scripts/a11y.sh      # Linux and macOS

@@ -173,7 +173,7 @@ by SHA keep working afterwards. That is unverified.
 
 Sources: [GitLab: components, unpublishing](https://docs.gitlab.com/ci/components/).
 
-**How the stack holds it: Not yet.** There is no deprecation or removal policy in the repo or the design documents.
+**How the stack holds it: Documented.** `docs/guides/deprecation.md` sets the policy: tags never move, one release of deprecation notice, 6 months before a component is removed, and the Catalog toggle stays on while any version is pinned.
 
 ---
 
@@ -919,7 +919,7 @@ warning. An advisory job must not become a gate: only a final, supported version
 Sources: [Docker Official Image: php](https://github.com/docker-library/docs/blob/master/php/README.md);
 [PHP supported versions](https://www.php.net/supported-versions.php). The tag names for release candidates were not checked.
 
-**How the stack holds it: Not yet.** `php-test` has no input for an advisory version.
+**How the stack holds it: Documented.** `php-test` takes `php_advisory_version`, which adds a `<job_name>-advisory` job with `allow_failure: true` (`templates/php-test/template.yml`); nothing yet proves the job in a pipeline.
 
 ### 6.5 Aim the future accessibility component at WCAG 2.2 AA
 When Preflight gets an accessibility suite, use WCAG 2.2 Level AA as the floor, and keep a manual review step.

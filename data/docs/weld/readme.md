@@ -158,8 +158,10 @@ PHPUnit class tests keep working and are converted only when you touch them. `co
 Feature tests to the Laravel app and a fresh database. The suite reads `.env` when it exists, otherwise `.env.example`
 (`tests/Support/SkipEnvFile.php`, the same file Sourdough ships), and runs on a fixed dummy `APP_KEY` set in `phpunit.xml`, so it boots
 with no `.env`; the app refuses that key in production, so a copied test config cannot ship. CI's `php-test` matrix runs `vendor/bin/pest`.
-The accessibility gate checks every committed HTML page under `site/` with axe-core (WCAG 2.2 AA, light and dark,
-at 360 px and 1280 px) in Docker: `scripts/a11y.sh` from Git Bash, Linux or macOS, `scripts/a11y.ps1` on Windows.
+The accessibility gate runs Preflight's own checker (vendored in `tools/a11y/check.mjs`, pinned to the CI tag
+0.3.1 by `tests/Unit/A11yCheckerPinTest.php`) over every page under `site/` with axe-core 4.14.0 (WCAG 2.2 AA,
+light and dark, at 320 and 1280 px, plus the WCAG 1.4.10 reflow check), so a page that passes locally passes
+CI. It runs in Docker: `scripts/a11y.sh` from Git Bash, Linux or macOS, `scripts/a11y.ps1` on Windows.
 
 Best practices for building, running and deploying WELD live in [BEST_PRACTICES.md](BEST_PRACTICES.md).
 

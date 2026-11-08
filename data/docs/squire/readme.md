@@ -17,7 +17,7 @@ Squire is the Citadel kit: build.sh, the release script, the health check, and l
 Front page: [`site/index.html`](site/index.html), a static page you can serve from anywhere.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Status: 0.6.0, tagged and on Packagist.
+Status: 0.7.1, tagged and on Packagist.
 
 ## Where the code lives
 
@@ -656,8 +656,10 @@ Release script (`scripts/release.sh`):
 | `SQUIRE_NPM_IGNORE_SCRIPTS` | `1` | Install with `--ignore-scripts`. |
 | `SQUIRE_NPM_REBUILD` | empty | Packages, separated by spaces, whose install scripts run after the install (`npm rebuild --ignore-scripts=false`, or `pnpm rebuild`; pnpm 10 also needs them in `pnpm.onlyBuiltDependencies`). The escape hatch for a package that needs its own scripts, such as a native addon. |
 | `SQUIRE_NPM_BUILD_SCRIPT` | `build` | The `package.json` script to run. |
+| `SQUIRE_CACHE_DIR` | `.cache/squire` | Where Composer and npm keep their download caches between releases, inside the app folder so a Citadel Update keeps them; `off` leaves their defaults. |
 | `SQUIRE_MIGRATE` | `1` | Laravel: `migrate --force`. |
 | `SQUIRE_ARTISAN_OPTIMIZE` | `1` | Laravel: `optimize`. |
+| `SQUIRE_ARTISAN_RESTART` | `1` | Laravel: tell queue workers and `schedule:work` to restart on the new code (`reload`, or `queue:restart` and `schedule:interrupt`). Report only. |
 | `SQUIRE_PROCTOR` | `auto` | `auto`, `skip` or `enforce`. The release asks `proctor gate` for a go or no-go (`proctor check` on a PROCTOR without the gate). By default a no-go is a report and never stops the release; `enforce` makes a no-go stop it, before the frontend build and the migrations. |
 | `SQUIRE_PROCTOR_BIN` | `vendor/bin/proctor`, then `PATH` | Where PROCTOR is. It is a dev dependency, so `--no-dev` removes it: point this at a copy. |
 | `SQUIRE_PROCTOR_POLICY` | `vendor/waynestate/creed/policy/policy.json`, when installed | Path to the policy file. When unset, the script falls back to the policy the CREED package ships (the deploy wizard has no environment field); when CREED is not installed, PROCTOR runs on its own default policy with a notice. An explicit value always wins. |
@@ -711,9 +713,11 @@ Windows) and the PowerShell with PSScriptAnalyzer (`scripts/lint-powershell.ps1`
 against stub `composer`, `curl`, `npm`, `corepack` and `proctor` programs, and start a PHP server to test `health.php`.
 
 The front page has its own accessibility gate: `scripts/a11y.sh` on Linux and macOS, `scripts\a11y.ps1` on Windows.
-It serves `site/`, opens it in a real Chromium (Playwright in Docker, so no host browser is needed) and runs
-axe-core against it with the WCAG 2.2 AA tag set, in light and dark mode at 360 px and 1280 px. It stays out of
-`composer ci` because CI has no browser; GitHub runs it as a separate `a11y` job.
+It runs Preflight's own a11y checker, vendored in `tools/a11y/check.mjs` from the same Preflight tag the CI job
+runs at and pinned by `tests/A11yCheckerPinTest.php`, in a real Chromium (Playwright in Docker, so no host browser
+is needed): every page of `site/` in light and dark mode at 320 px and 1280 px, with the WCAG 2.2 AA tag set and
+the WCAG 1.4.10 reflow check. It stays out of `composer ci` because CI has no browser; GitHub runs it as a separate
+`a11y` job.
 
 ## Known limits
 

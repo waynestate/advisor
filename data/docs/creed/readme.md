@@ -270,7 +270,10 @@ The policy validates against its schema:
 docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 composer validate-policy
 ```
 
-The site carries an accessibility gate (axe-core in Playwright, WCAG 2.2 AA, run in Docker): `scripts/a11y.sh` on Linux and macOS, `scripts/a11y.ps1` on Windows.
+The site carries an accessibility gate: Preflight's own checker (vendored in `tools/a11y/check.mjs` at the same
+Preflight tag as CI), axe-core against WCAG 2.2 AA in a real Chromium browser, run in Docker. Every page is checked
+in light and dark at 320 and 1280 pixels wide, so a page that passes locally passes CI. `scripts/a11y.sh` on Linux
+and macOS, `scripts/a11y.ps1` on Windows.
 
 ## Strongly recommended: a git.wayne.edu instance runner
 

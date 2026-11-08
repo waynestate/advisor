@@ -58,7 +58,7 @@ Options:
 - `--docker` generate a Dockerfile and compose.yaml for local work (native on every OS; amd64 and arm64): the app's own base images, pinned by digest, are the single place to swap in Squire's Citadel-parity image when it exists; MySQL 8.4; Playbook credentials reach the build only as a BuildKit secret, never a build arg
 - `--dry-run` print the plan and write nothing
 - `--name` app name (default: the basename of `<dir>`)
-- `--no-input` never prompt (Sourdough 0.1 has no prompts)
+- `--no-input` never prompt (Sourdough has no prompts)
 - `--json` with `--dry-run`, print the plan as JSON
 - `--describe "<sentence>"` describe what the app does; a model plans it (needs the `SOURDOUGH_LLM_*` env vars)
 - `--plan-only` with `--describe`, print the plan as JSON and write nothing
@@ -195,7 +195,7 @@ Exit codes: `0` fed cleanly (or nothing to feed), `1` fed with conflicts to reso
 
 Feed needs git and nothing else: git is the merge engine and the undo button (`git restore . && git clean -fd`). The Laravel shapes bake on a fresh `laravel/laravel` skeleton, so feeding one needs Composer and the network, the same as `sourdough new`; skeleton updates arrive as template updates. The full story is in [Keeping apps current](docs/guides/keeping-current.md). A fed starter is a happy starter.
 
-The deploy files in your app (`build.sh`, `scripts/release.sh`, the `.squire/` config, and their friends) come from Squire's exported copy, checked into this repository at `templates/squire/`. The copy is Squire 0.6.0's kit, so `scripts/release.sh` asks PROCTOR's deploy gate (`proctor gate`) for a go or no-go before the frontend build and the migrations, and keeps the verdict in `storage/squire/` (`SQUIRE_PROCTOR_RECORD_DIR`) as the next release's baseline. Squire owns them; Sourdough installs them as-is and records them in the manifest, so you never edit them by hand. To refresh them, run `composer squire-copy:sync`, which rewrites the copy from the installed `waynestate/squire` package, then verify it with `composer squire-copy:check` (part of `composer ci`).
+The deploy files in your app (`build.sh`, `scripts/release.sh`, the `.squire/` config, and their friends) come from Squire's exported copy, checked into this repository at `templates/squire/`. The copy is Squire 0.7.0's kit, so `scripts/release.sh` asks PROCTOR's deploy gate (`proctor gate`) for a go or no-go before the frontend build and the migrations, keeps the verdict in `storage/squire/` (`SQUIRE_PROCTOR_RECORD_DIR`) as the next release's baseline, and after the optimize step restarts Laravel's long-lived processes (`php artisan reload`, or `queue:restart` and `schedule:interrupt` on an older Laravel; report only, `SQUIRE_ARTISAN_RESTART=0` turns it off). The image hardens too: the web's PHP loses its shell functions (`SQUIRE_PHP_DISABLE_FUNCTIONS` sets the list), opcache runs with production settings (`SQUIRE_OPCACHE_VALIDATE`), Apache answers `ServerTokens Prod`, and secrets can be read from `/run/secrets`. Squire owns them; Sourdough installs them as-is and records them in the manifest, so you never edit them by hand. To refresh them, run `composer squire-copy:sync`, which rewrites the copy from the installed `waynestate/squire` package, then verify it with `composer squire-copy:check` (part of `composer ci`).
 
 ## Which command when
 
@@ -240,7 +240,7 @@ The `stack-composer-cache` volume keeps Composer's downloads between runs; Docke
 
 The proof harness runs that gate on every shape and every Laravel shape in each oven, one after another in Docker: it bakes each with this checkout, checks the manifest, feeds a bake of the last release forward, installs the app, runs its own suite, PROCTOR and `composer ci`, then boots it and fetches its front page. `sh scripts/proof.sh` on Linux and macOS, `.\scripts\proof.ps1` on Windows. What each run proves, and the Last run table, are on the [Proof](docs/reference/proof.md) page.
 
-The site accessibility gate runs axe-core (WCAG 2.2 AA) over every committed page under `site/` in Docker, in light and dark at 360 px and 1280 px: `sh scripts/a11y.sh` from Git Bash, Linux or macOS, `scripts\a11y.ps1` on Windows.
+The site accessibility gate runs Preflight's own a11y checker (vendored in `tools/a11y/check.mjs` from the 0.3.1 tag CI pins, held there by `tests/A11yCheckerPinTest.php`) over every page under `site/` in Docker, in light and dark at 320 px and 1280 px with the WCAG 1.4.10 reflow check: `sh scripts/a11y.sh` from Git Bash, Linux or macOS, `scripts\a11y.ps1` on Windows. It uses the same image and inputs as the a11y job in CI, so a page that passes here passes the pipeline.
 
 ### Tests in the apps it bakes
 

@@ -19,7 +19,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
   - Cross-Origin-Opener-Policy `same-origin`.
   - Strict-Transport-Security `max-age=31536000; includeSubDomains`, on HTTPS responses only.
 - Cross-Origin-Resource-Policy is off by default and opt-in, because a blanket `same-site` can break an app whose
-  assets are read cross-origin (the stack's runtime and headers design). HELMET 1.0.0 ships that default: `corp` (raw
+  assets are read cross-origin (the stack's runtime and headers design). HELMET 1.0 ships that default: `corp` (raw
   PHP) or `HELMET_CORP` (Laravel) set to `same-site`, `same-origin` or `cross-origin` sends it.
 - An app SHOULD NOT weaken the default Content-Security-Policy with `'unsafe-inline'` for scripts; it uses the nonce
   instead (the stack's runtime and headers design). No check exists yet.

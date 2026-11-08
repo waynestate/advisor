@@ -57,7 +57,7 @@
             "role": "Protocol-neutral sign-in: drivers for CAS, a signed gateway assertion, OpenID Connect (Entra sign-in) and OAuth2 bearer tokens (SAML is planned). It returns a verified identity and leaves the session to the app.",
             "state": "built",
             "package": "waynestate/sesame",
-            "version": "0.5.0",
+            "version": "0.6.0",
             "php": "^8.3",
             "next_step": "Pick the driver your platform supports and read its README before wiring routes.",
             "docs": [
@@ -137,7 +137,7 @@
             "role": "The upgrade tool: Rector recipes and checks that move an app one PHP or Laravel version at a time.",
             "state": "built",
             "package": "waynestate/booster",
-            "version": "1.10.0",
+            "version": "1.12.0",
             "php": "^8.3",
             "next_step": "Plan one hop at a time with `upgrade_path`, and read its README for the Rector recipes.",
             "docs": [
@@ -185,7 +185,7 @@
             "role": "The Citadel kit: the app-side release script, local parity with the platform, and upstream merge requests. Platform-specific deploy code lives here and nowhere else.",
             "state": "built",
             "package": "waynestate/squire",
-            "version": "0.6.0",
+            "version": "0.7.1",
             "php": "^8.3",
             "next_step": "Use its release script for Citadel deploys; other platforms use their own targets.",
             "docs": [
