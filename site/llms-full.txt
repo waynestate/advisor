@@ -178,7 +178,7 @@ Nine tools, all read-only. Each one says where its answer came from:
 | `list_projects` | The stack's projects, WayneUI first, with built or proposed state, package and version. |
 | `get_project_status` | One project: state, package, version, PHP constraint, its floor under today's policy, next step. |
 | `read_project_docs` | A project's README, best practices, or (WayneUI only) markup contract and 1.x to 2.x migration guide, paged. |
-| `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. |
+| `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. A version older than every one the policy lists is answered as end of life, with a note. |
 | `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
 | `owner_of` | Answers "which project owns X?" from the bundled ownership table, built from the stack's one-owner-per-rule decision first: the owner, its role, the projects around it, and the decision each answer comes from. Pass a topic or the whole question ("who owns composer audit"). |
 | `playbook_lookup` | A shared value by key, or every key: an environment variable of the same name wins, then Playbook; secret-looking keys are refused. |
@@ -652,6 +652,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 #### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
+- Changed: policy_lookup answers end of life (with a note) for a version older than every one the policy lists, instead of refusing; the 2026-11-08 proof run found 13 such refusals for PHP 5.5 to 7.3.
 - Changed: CI's accessibility gate is Preflight's a11y component (light and dark, 320 and 1280 px, and the WCAG 1.4.10 reflow check); ADVISOR's own page checks (one h1, lang, title, reduced motion) stay as the a11y-extra job.
 - Docs: BEST_PRACTICES gains a threat model: eleven threats, each mapped to the rules that answer it and to OWASP Top 10:2025, OWASP ASVS 5.0 or NIST SSDF, plus what is out of scope (ADVISOR-16).
 - Changed: CI pins the Preflight components to 0.3.1 (fixed cache keys, and caches saved even when a job fails; D-072).
