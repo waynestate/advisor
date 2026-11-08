@@ -2148,7 +2148,7 @@
             "id": "deploy-gate-4",
             "chapter": "deploy-gate",
             "heading": "Deploy gate",
-            "text": "Each rule moves through stages, `report`, `warn`, `block`, with dates in `policy.json` (the stack's deploy-gate decision).",
+            "text": "Each rule moves through stages, `report`, `warn`, `block`, with dates in `policy.json` (the stack's deploy-gate decision). The `gate` block holds them: `default_stage` (`block`) and `stages`, a list of `{stage, from}` entries per PROCTOR check; the latest `from` on or before the run date wins. It ships empty, so every check blocks until a date is agreed with the Citadel team.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2170,7 +2170,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/deploy-gate.md:21"
+            "source": "handbook/deploy-gate.md:22"
         },
         {
             "id": "deploy-gate-6",
@@ -2184,7 +2184,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/deploy-gate.md:23"
+            "source": "handbook/deploy-gate.md:24"
         },
         {
             "id": "deploy-gate-7",
@@ -2198,7 +2198,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/deploy-gate.md:29"
+            "source": "handbook/deploy-gate.md:30"
         },
         {
             "id": "deploy-gate-8",
@@ -2212,7 +2212,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/deploy-gate.md:31"
+            "source": "handbook/deploy-gate.md:32"
         },
         {
             "id": "every-os-1",

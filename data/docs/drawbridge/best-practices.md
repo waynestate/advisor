@@ -199,7 +199,7 @@ How the stack holds it: `Enforced`. The module checks them, and the signer also 
 A sign-in response is good for the one sign-in that asked for it.
 Why: a copied response should not give a second session.
 Sources: [ASVS 5.0 V6.8.3](https://github.com/OWASP/ASVS/blob/v5.0.0/5.0/en/0x15-V6-Authentication.md), [NIST SP 800-63C-4](https://pages.nist.gov/800-63-4/sp800-63c.html).
-How the stack holds it: `Documented`. mod_auth_openidc ties each callback to the state and nonce it set when that sign-in began, and the authorization code is single use at the provider. No test here replays a used callback.
+How the stack holds it: `Enforced`. mod_auth_openidc ties each callback to the state and nonce it set when that sign-in began, and the authorization code is single use at the provider: `OidcTest::testAUsedCallbackIsNotAcceptedAgain`.
 
 ### D23. Start sign-ins at the gateway only
 Accept a callback only for a sign-in the gateway started.
@@ -371,7 +371,7 @@ How the stack holds it: `Enforced`. `MetricsGateTest::testDisabledIs404`, `Metri
 Run as a non-root user on a port above 1024, keep state under `/tmp`, log to stdout and stderr, and keep no host paths in the image, so it runs the same on Citadel, OpenShift, Coolify or plain Docker. Bound every dependency and audit them.
 Why: a gateway that needs root or a host path is a gateway one platform can run and the next cannot, and an unbounded dependency is an untested one.
 Sources: [CIS Docker Benchmark](https://www.cisecurity.org/benchmark/docker), [Composer audit](https://getcomposer.org/doc/03-cli.md#audit).
-How the stack holds it: `Checked`. The image runs as `USER 1001:0` on port 8080; `composer ci` ends in `composer audit`; the CI image jobs run unprivileged and never mount the Docker socket (`GitlabCiTest::testNoJobRunsPrivileged`, `GitlabCiTest::testNoJobMountsTheDockerSocket`). No test reads the image's user or port.
+How the stack holds it: `Checked`. The image runs as `USER 1001:0` on port 8080; `composer ci` ends in `composer audit`; the CI image jobs run unprivileged and never mount the Docker socket (`GitlabCiTest::testNoJobRunsPrivileged`, `GitlabCiTest::testNoJobMountsTheDockerSocket`). `DockerfileFloorTest::testTheImageRunsNonRootOnAPortAbove1024` fails when the image's last `USER` is not `1001:0` or it stops exposing 8080.
 
 ## Retired with SAML
 

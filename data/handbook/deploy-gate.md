@@ -15,6 +15,7 @@ released, and refuses EOL PHP (the stack's deploy-gate decision).
   (the stack's deploy-gate decision).
 - Each rule moves through stages, `report`, `warn`, `block`, with dates in
   `policy.json` (the stack's deploy-gate decision).
+  - The `gate` block holds them: `default_stage` (`block`) and `stages`, a list of `{stage, from}` entries per PROCTOR check; the latest `from` on or before the run date wins. It ships empty, so every check blocks until a date is agreed with the Citadel team.
 
 ## On Citadel
 

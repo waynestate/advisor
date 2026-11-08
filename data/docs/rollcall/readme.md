@@ -120,6 +120,7 @@ runs.
 rollcall scan       [--today=YYYY-MM-DD] [--prune[=DAYS]]
 rollcall report     [--format=text|json|prometheus] [--internal] [--today=YYYY-MM-DD]
 rollcall digest     [--owner=CONTACT] [--format=text|json] [--out=DIR] [--send] [--today=YYYY-MM-DD]
+rollcall owners     [--format=text|json]
 rollcall drift      --feed=<file> [--component=php] [--today=YYYY-MM-DD]
 rollcall advisories --feed=<file> [--today=YYYY-MM-DD]
 rollcall prune      [--days=N] [--dry-run] [--today=YYYY-MM-DD]
@@ -136,6 +137,9 @@ rollcall prune      [--days=N] [--dry-run] [--today=YYYY-MM-DD]
 - `digest` builds the opt-in owner digests (see "Owner digests" below): plain words about only one owner's apps,
   only when something changed since the previous scan. It prints them; `--out=DIR` writes one text file each;
   `--send` mails them, and only when sending is switched on too.
+- `owners` reads the same owners file as `digest`, checks it against the latest scan, and names every scanned app
+  no entry lists. It exits 1 when there is one, and the weekly scan job runs it, so a new app without an owner
+  fails that job.
 - `drift` compares `policy.json` with a saved endoflife.date v1 product page (for example
   `https://endoflife.date/api/v1/products/php/` saved to a file). A difference is a flag for a person to look at; the
    policy stays the source of truth. Rollcall does not fetch that page itself.
