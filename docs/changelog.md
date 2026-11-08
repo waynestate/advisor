@@ -11,6 +11,10 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Changed
+
+- Changed: the front page deploy layer requires HELMET ^1.0 (lock at 1.0.1, was 0.4.0), like the rest of the stack; its shared front controller already runs on HELMET 1.0 in Squire, Sourdough and Pinstripe.
+
 ### Added
 
 - Added: upgrade_path takes from_php, so a project with no composer.json or no php constraint still gets a plan (BOOSTER's --from-php); the 2026-11-08 proof run found 71 such refusals.
