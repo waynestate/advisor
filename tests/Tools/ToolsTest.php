@@ -150,6 +150,29 @@ final class ToolsTest extends TestCase
         $this->assertSame($policy['components']['php']['versions']['8.3']['latest_patch_checked'], $one['answer']['latest_patch_checked']);
     }
 
+    public function testPolicyLookupAnswersEndOfLifeForAVersionOlderThanEveryListedOne(): void
+    {
+        $booted = Boot::core();
+        $twoParts = $this->data($this->call($booted, 'policy_lookup', ['component' => 'php', 'version' => '5.6']));
+        $threeParts = $this->data($this->call($booted, 'policy_lookup', ['component' => 'php', 'version' => '7.4.33']));
+
+        foreach ([$twoParts, $threeParts] as $answer) {
+            $this->assertContains($answer['answer']['state'], ['eol', 'eol_grace_expired']);
+            $this->assertFalse($answer['answer']['supported']);
+            $this->assertNull($answer['answer']['matched']);
+            $this->assertStringContainsString('8.1', $answer['answer']['note']);
+        }
+        $this->assertSame($twoParts['answer']['state'], $threeParts['answer']['state']);
+    }
+
+    public function testPolicyLookupStillRefusesAVersionNewerThanEveryListedOne(): void
+    {
+        $outcome = $this->call(Boot::core(), 'policy_lookup', ['component' => 'php', 'version' => '9.9']);
+
+        $this->assertTrue($outcome->isError);
+        $this->assertStringContainsString('The policy has no entry for php 9.9', $outcome->text);
+    }
+
     public function testListStackRulesFiltersAndCites(): void
     {
         $data = $this->data($this->call(Boot::core(), 'list_stack_rules', ['permutation' => 'laravel-inertia-vue']));

@@ -206,7 +206,7 @@
             ],
             "additionalProperties": false
         },
-        "description": "Answers \"is this version supported?\" from the bundled CREED policy.json: for a runtime or framework (php, laravel, node, mysql, vue, inertia) it returns each version's active and security-support end dates and its state today (active, security, eol, eol_grace_expired); for a developer tool (composer) it returns the minimum version. Rows carry latest_patch (the newest patch release on that line, with the date it was checked) when the policy has it. Pass a version such as 8.3 or 8.3.12 to get one answer. Read-only; every answer names its source and date.",
+        "description": "Answers \"is this version supported?\" from the bundled CREED policy.json: for a runtime or framework (php, laravel, node, mysql, vue, inertia) it returns each version's active and security-support end dates and its state today (active, security, eol, eol_grace_expired); for a developer tool (composer) it returns the minimum version. Rows carry latest_patch (the newest patch release on that line, with the date it was checked) when the policy has it. Pass a version such as 8.3 or 8.3.12 to get one answer. A version older than every one the policy lists is answered as end of life, with a note. Read-only; every answer names its source and date.",
         "annotations": {
             "title": "Look up support dates",
             "readOnlyHint": true,

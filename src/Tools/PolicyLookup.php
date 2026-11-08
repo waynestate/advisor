@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Waynestate\Advisor\Tools;
 
+use Waynestate\Advisor\Content\State;
 use Waynestate\Advisor\Exception\ToolInputError;
 use Waynestate\Advisor\Module\ModuleContext;
 use Waynestate\Advisor\Module\ToolDefinition;
@@ -19,7 +20,7 @@ final class PolicyLookup
         return new ToolDefinition(
             name: 'policy_lookup',
             title: 'Look up support dates',
-            description: 'Answers "is this version supported?" from the bundled CREED policy.json: for a runtime or framework (php, laravel, node, mysql, vue, inertia) it returns each version\'s active and security-support end dates and its state today (active, security, eol, eol_grace_expired); for a developer tool (composer) it returns the minimum version. Rows carry latest_patch (the newest patch release on that line, with the date it was checked) when the policy has it. Pass a version such as 8.3 or 8.3.12 to get one answer. Read-only; every answer names its source and date.',
+            description: 'Answers "is this version supported?" from the bundled CREED policy.json: for a runtime or framework (php, laravel, node, mysql, vue, inertia) it returns each version\'s active and security-support end dates and its state today (active, security, eol, eol_grace_expired); for a developer tool (composer) it returns the minimum version. Rows carry latest_patch (the newest patch release on that line, with the date it was checked) when the policy has it. Pass a version such as 8.3 or 8.3.12 to get one answer. A version older than every one the policy lists is answered as end of life, with a note. Read-only; every answer names its source and date.',
             inputSchema: [
                 'type' => 'object',
                 'properties' => [
@@ -72,6 +73,30 @@ final class PolicyLookup
                 if ($version !== null) {
                     $key = $policy->resolveVersion($component, $version);
                     if ($key === null) {
+                        $listed = $policy->versions($component);
+                        $listedKeys = array_map('strval', array_keys($listed));
+                        usort($listedKeys, static fn(string $a, string $b): int => version_compare($a, $b));
+                        $oldest = $listedKeys[0] ?? null;
+                        $askedMajorMinor = implode('.', array_slice(explode('.', $version), 0, 2));
+                        if ($oldest !== null && version_compare($askedMajorMinor, $oldest, '<')) {
+                            $oldestState = $policy->stateOf($component, $oldest, $today);
+                            $oldestSecurityUntil = $listed[$oldest]['security_until'] ?? null;
+                            $note = "Older than every {$component} version the policy lists (oldest: {$oldest}"
+                                . ($oldestSecurityUntil !== null ? ", security support ended {$oldestSecurityUntil}" : '')
+                                . '), so it is past its end of life.';
+                            $answer['answer'] = [
+                                'asked' => $version,
+                                'matched' => null,
+                                'state' => $oldestState?->value === State::EolGraceExpired->value ? 'eol_grace_expired' : 'eol',
+                                'supported' => false,
+                                'latest_patch' => null,
+                                'latest_patch_checked' => null,
+                                'note' => $note,
+                            ];
+
+                            return $answer;
+                        }
+
                         throw new ToolInputError("The policy has no entry for {$component} {$version}. Call policy_lookup without a version to see the versions it covers.");
                     }
                     $state = $policy->stateOf($component, $key, $today);
