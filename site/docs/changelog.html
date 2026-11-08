@@ -46,6 +46,9 @@
 <h3 id="changed">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></h3>
 <ul>
 <li>
+<p>Changed: CI saves its Composer and npm caches even when a job fails, so a retry after a dropped download fetches only what is missing (D-072).</p>
+</li>
+<li>
 <p>Changed: CI caches Composer and npm downloads under a fixed key, so a lock change downloads only what changed (D-072).</p>
 </li>
 <li>
