@@ -27,7 +27,7 @@
             "source": "creed/README.md"
         },
         "docs/drawbridge/best-practices.md": {
-            "sha256": "9d84f824d7a4aebfe199074ec2b6bb9df30b31195e1d72bb53d9f57b545cf85f",
+            "sha256": "067010f3ca9fedb9081770845776278910c637730b2c2ad360a1b9d50d0d4b23",
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
@@ -39,7 +39,7 @@
             "source": "helmet/BEST_PRACTICES.md"
         },
         "docs/helmet/readme.md": {
-            "sha256": "a319ef1aa03197101872c643472cc1cedd79e4e7f18f03e5525801cee586860b",
+            "sha256": "94ef754474c2088eb712bc540ed0da300672f667c35bfc52c9461eddfeb24a06",
             "source": "helmet/README.md"
         },
         "docs/pinstripe/best-practices.md": {

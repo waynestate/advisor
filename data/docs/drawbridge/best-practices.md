@@ -267,7 +267,7 @@ How the stack holds it: `Enforced`. `drawbridge revoke <subject>` writes the tim
 Sign out with top-level redirects only, and test it with a browser that holds only first-party cookies.
 Why: a sign-out that loads another site in a hidden frame gets no cookies there when the browser blocks third-party cookies, so it silently does nothing.
 Sources: [REFEDS, Why are third party cookies relevant to single logout](https://wiki.refeds.org/display/GROUPS/Why+are+third+party+cookies+relevant+to+single+logout).
-How the stack holds it: `Enforced`. The rig walks every hop with a browser that holds only the app host's cookies: no frame, no provider image, no navigating script, the session dead even with no provider cookie at all: `LogoutTest::testTheGatewaySessionIsDeadWithNoProviderCookieAtAll`, `LogoutTest::testTheAppsLogoutLinkCanBeAPlainLink`, `KeycloakTest::testLogoutWithThirdPartyCookiesBlocked`. A run in a real browser engine with its cookie rules on needs a browser harness, which OPEN_QUESTIONS.md lists.
+How the stack holds it: `Enforced`. The rig walks every hop with a browser that holds only the app host's cookies: no frame, no provider image, no navigating script, the session dead even with no provider cookie at all: `LogoutTest::testTheGatewaySessionIsDeadWithNoProviderCookieAtAll`, `LogoutTest::testTheAppsLogoutLinkCanBeAPlainLink`, `KeycloakTest::testLogoutWithThirdPartyCookiesBlocked`. A real browser engine with its cookie rules on runs the same round trip in `tools/a11y/signout.mjs` against the rig's keycloak profile.
 
 ### D57. Keep sessions across a reload when the store allows it
 Offer a session store that outlives one process, and say which store loses sessions on a reload.
