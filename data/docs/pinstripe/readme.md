@@ -295,6 +295,7 @@ return $base->withPaths([__DIR__ . '/src']);
 
 The preset reads the PHP floor from your app's own `composer.json`, so it cannot drift out of step with the version
 the app actually runs on. Check with `vendor/bin/rector process --dry-run` and apply with `vendor/bin/rector process`.
+CREED's PHP floor reaches your app through PROCTOR: its `php-floor` check fails an app whose `require.php` still allows an end-of-life PHP, Booster moves the constraint, and Rector and PHPStan follow with no edit to the preset.
 
 The preset also turns on Rector's composer-based Laravel sets (`withComposerBased(laravel: true)`). Add
 `driftingly/rector-laravel` as a dev dependency and it applies the Laravel upgrade rules that match your app's
@@ -523,7 +524,7 @@ The guard is proven, not claimed: `tests/js/npm-hardening.test.mjs` installs a l
 
 ## Coming next
 
-Reading the PHP floor from CREED. (Preflight's pint, phpstan and eslint jobs already run your app's Pinstripe config.)
+Nothing on the cutting table right now: the banned calls link to their CREED rule, and the PHP floor comes from CREED through PROCTOR. Preflight's pint, phpstan and eslint jobs already run your app's Pinstripe config.
 
 ## The cast
 

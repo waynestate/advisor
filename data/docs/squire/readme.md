@@ -17,7 +17,7 @@ Squire is the Citadel kit: build.sh, the release script, the health check, and l
 Front page: [`site/index.html`](site/index.html), a static page you can serve from anywhere.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Status: 0.7.1, tagged and on Packagist.
+Status: 0.8.0, tagged and on Packagist.
 
 ## Where the code lives
 
@@ -165,6 +165,7 @@ The canonical copy of this table is in WELD's docs: [Which command when](https:/
 | `.npmrc` | Vue layer only: sets `min-release-age=1` for the frontend install. |
 | Vue `docker-compose.squire.yml` | Vue layer only: the common parity compose plus a Node 22 service for frontend tooling. |
 | `docker-compose.squire.yml`, `.squire/`, `.env.squire.example`, `scripts/parity.sh`, `scripts/parity.ps1` | Local parity. |
+| `.squire/portable.Dockerfile`, `.squire/portable/` | The portable image for platforms other than Citadel: one image as web, worker, scheduler or migrate, non-root in group 0 on 8080. Citadel never reads it. |
 
 Every shell script uses `set -euo pipefail` (`build.sh` uses `set -eu`, because Citadel runs it with `/bin/sh`), prints a
 `[squire] ==> step N: ...` marker for each step, and can be run twice with the same result.
@@ -607,6 +608,18 @@ What the kit's images harden, and the switch for each, is on the docs page
   script and the fallback entrypoint turn into variables (`SQUIRE_SECRETS_DIR`). Tests keep secrets out of the
   Dockerfiles, the build context and `build.sh`.
 
+### The portable image
+
+Citadel builds its own image, and `.squire/Dockerfile` stays a mirror of it. For OpenShift, Coolify or raw Docker
+(an ADR's portable path), `.squire/portable.Dockerfile` bakes the code in and runs as any of four roles, picked by the
+first argument or `SQUIRE_ROLE`: `web` (Apache on 8080), `worker` (`php artisan queue:work --tries=3 --max-time=3600
+--sleep=3`), `scheduler` (`php artisan schedule:work`) and `migrate` (once per release). It runs as `USER 10001:0`, and
+every folder it writes belongs to group 0 and is group-writable, so OpenShift's arbitrary UID runs it as it is
+(`docker run --user 1000123:0` shows the same). It stops gracefully on `SIGTERM`, logs to stdout and stderr, and caches
+Laravel's config when a container starts, never at build. The compose file's `portable` profile runs the four roles from
+one image; a plain `up` still starts only the parity stack. Full page:
+[The portable image](https://squire.apps.wayne.edu/docs/guides/portable-image.html).
+
 ## Oracle-ready images (local)
 
 Apps that talk to Oracle need the Instant Client and the `oci8` extension. Squire ships two opt-in Docker recipes
@@ -664,6 +677,7 @@ Release script (`scripts/release.sh`):
 | `SQUIRE_PROCTOR_BIN` | `vendor/bin/proctor`, then `PATH` | Where PROCTOR is. It is a dev dependency, so `--no-dev` removes it: point this at a copy. |
 | `SQUIRE_PROCTOR_POLICY` | `vendor/waynestate/creed/policy/policy.json`, when installed | Path to the policy file. When unset, the script falls back to the policy the CREED package ships (the deploy wizard has no environment field); when CREED is not installed, PROCTOR runs on its own default policy with a notice. An explicit value always wins. |
 | `SQUIRE_PROCTOR_RECORD_DIR` | `storage/squire` | Where the gate keeps its verdicts, relative to the app root: `proctor-gate.json` (the last verdict) and `proctor-gate-baseline.json` (the verdict of the last release that went on, the next run's baseline). The folder gets a `.gitignore` of `*`, so it never reaches git. |
+| `SQUIRE_PHP_RUNTIME` | `auto` | The PHP version the gate grades for PROCTOR's unpatched check, passed as `--php-runtime`: `auto` reads the php that runs `release.sh` (it is the one serving the app; a suffix such as `-dev` is cut), `skip` grades no runtime, and an `X.Y.Z` value is graded as given. A value that is not `X.Y.Z` is a note and grades nothing. Only `proctor gate` gets it; the older `proctor check` fallback does not. |
 | `SQUIRE_SMOKE` | `1` | Request the health URL at the end and fail unless it answers 200. |
 | `SQUIRE_SMOKE_URL` | `http://127.0.0.1:80/up` (Laravel), `/up.php` (raw and static) | Full URL. |
 | `SQUIRE_SMOKE_RETRIES` | `5` | Attempts. |

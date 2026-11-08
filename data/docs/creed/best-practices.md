@@ -688,10 +688,21 @@ Why: build tools run with your credentials and your source (practice 16), and th
 Sources: [npm config](https://docs.npmjs.com/cli/v11/using-npm/config),
 [Composer config, `policy`](https://getcomposer.org/doc/06-config.md#policy).
 
-How the stack holds it: `Not yet`. Preflight 0.3.1 has `proctor`, `php-test`, `composer-audit`, `sbom`, `pint`,
-`phpstan`, `eslint`, `a11y`, `secret-detection`, `portability`, `renovate`, `package-publish` and `squire-kit`. None of
-them audits `package-lock.json`. The `audit_severity_threshold`
-rule is read by the Composer audit alone.
+How the stack holds it: `Partially`. The install options are built into the release: Squire's release script defaults
+`SQUIRE_NPM_IGNORE_SCRIPTS=1` (deploy/scripts/release.sh:166), takes `--ignore-scripts` from it (:412), installs with
+`npm ci --prefer-offline --no-audit --no-fund` plus the flag from the committed lock file (:445), fails a `package.json`
+without a lock file (:462), and allows install scripts back by package name through `SQUIRE_NPM_REBUILD` (:448). The Vue
+layer's `.npmrc` sets `min-release-age=1` (templates/vue/.npmrc:11), and `squire doctor` rule S57 reads the script's code
+and the file and passes or warns on both (src/Doctor/Check/ReleaseScriptCheck.php:53-59, BEST_PRACTICES.md:31). Sourdough
+ships the script unchanged into every generated app (sourdough BEST_PRACTICES.md:203,
+templates/squire/laravel/scripts/release.sh:419,436). The rest is written down only: the generated pipelines still run
+`npm install --no-audit --no-fund` (sourdough templates/laravel-inertia/.gitlab-ci.yml:82,
+templates/raw-vue/.gitlab-ci.yml:73), WELD's own CI runs `npm ci --no-audit --no-fund` (weld .gitlab-ci.yml:80),
+Preflight 0.3.1 has no component that audits `package-lock.json` (its thirteen templates are a11y, composer-audit,
+eslint, package-publish, php-test, phpstan, pint, portability, proctor, renovate, sbom, secret-detection and
+squire-kit), and the `audit_severity_threshold` rule is read by the Composer audit alone (proctor README.md:111), so the
+mapping between npm's `moderate` and Composer's `medium` is unwritten. (Sourdough grades the same release install
+`Documented` from its own seat, sourdough BEST_PRACTICES.md:203; the tag here counts the built code in the stack.)
 
 ### 42. Gate on tools that work on every GitLab tier
 
@@ -764,8 +775,13 @@ Why: a compromised CI host defeats every other gate in this guide.
 Sources: [BleepingComputer on CVE-2026-110264](https://www.bleepingcomputer.com/news/security/gitlab-warns-of-new-max-severity-code-execution-vulnerability/),
 [GitLab releases](https://docs.gitlab.com/releases/patches/).
 
-How the stack holds it: `Not yet`. The patch level of git.wayne.edu and of its runners is not known to this guide, and
-CREED cannot enforce it. It is listed so that the owners of the instance see it.
+How the stack holds it: `Documented`. The patch level is no longer unknown to the guides: PROCTOR's best practices
+record that the stack's own instances run GitLab 19.5.1 CE, next to the 18.7 floor (proctor BEST_PRACTICES.md:855-859,
+added 2026-11-07), and 19.5.1 is among the releases the BleepingComputer report names as fixing CVE-2026-110264 (a
+secondary source, as before). It stays out of reach of the code: PROCTOR cannot see the server version (proctor
+BEST_PRACTICES.md:871-873), no check reads it, and the runners' patch level is still not stated (CREED
+handbook/ci.md names the instance runner but not its patch level). Listed so that the owners of the instance see it, and
+so the line gets re-checked when a patch release lands.
 
 ## 8. Platform and database (second pass)
 

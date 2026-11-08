@@ -64,6 +64,8 @@ php artisan key:generate
 
 The `advisor install` line writes `.mcp.json`, the MCP config that points Claude Code at ADVISOR's server; the file is git-ignored, because a committed `.mcp.json` would run a program on whoever opens the project. Set `ADVISOR_ENABLED=1` in `.env` to switch the advisor on. Running WELD through Docker instead? PHP is not on your host PATH, so `bin/weld.ps1 up` and `bin/weld.sh up` run the same install inside the app container for you (skip it with `--no-advisor`, or `-NoAdvisor` on Windows); see ADVISOR's README for the details.
 
+Laravel Boost is in `require-dev` too: run `php artisan boost:install` once per checkout to wire it into your agent. It writes `CLAUDE.md`, `AGENTS.md`, `boost.json` and the agent's skills, all git-ignored, and folds in the committed team guidance from `.ai/guidelines/` and `.ai/rules/`. `composer update` refreshes it through `composer boost-update`. Boost knows Laravel, ADVISOR knows the stack, and neither reaches production: the `no-dev-install` CI job fails if a `--no-dev` install brings Boost along. Its MCP server runs queries, so keep the development `.env` on a local database.
+
 ## Clone it and rename
 
 Want an app that is yours instead of a copy of WELD? Clone it, rename the four things that still say WELD, give it its own key, and re-run the checks.
@@ -117,6 +119,7 @@ Want a smaller starting point than a full Laravel app? Sourdough is the starter 
 | PROCTOR | The checks, run in CI and as the deploy gate |
 | SESAME | Sign-in: CAS, Entra ID (OpenID Connect) and the auth gateway driver, and app-native sessions |
 | HELMET | The baseline runtime: security headers and CSP, sessions, trusted proxies, `/up` |
+| Laravel Boost | Dev only: the MCP server, guidelines and skills that teach your coding agent Laravel, with WELD's conventions in `.ai/` |
 | Ziggy | Route names as URLs: the route list ships inside the Vite bundle, so `route()` works in Vue templates and scripts without an inline script |
 
 
@@ -163,6 +166,17 @@ The accessibility gate runs Preflight's own checker (vendored in `tools/a11y/che
 light and dark, at 320 and 1280 px, plus the WCAG 1.4.10 reflow check), so a page that passes locally passes
 CI. It runs in Docker: `scripts/a11y.sh` from Git Bash, Linux or macOS, `scripts/a11y.ps1` on Windows.
 
+**The app's own gates.** The pipeline carries the three gates every Sourdough app carries, with the jobs copied
+from the Inertia shape. The `a11y-pages` job boots WELD with SESAME's fake driver and saves `/` signed out and
+`/dashboard` signed in into `a11y-site/`. The `a11y-app` job checks them with the same checker, blocking. Add each
+page you build to `A11Y_PATHS` and to the `a11y-app` include's `pages`. Automated checks find only part of the
+problems, so try each page with a keyboard and a screen reader too. Preflight's `sbom` job keeps `sbom.cdx.json`
+(Composer) and the `frontend` job keeps `sbom-npm.cdx.json` (npm), each for 30 days. Preflight's `secret-detection`
+job runs Gitleaks over the repository. WELD deploys by Quick Update, so its pipeline holds no deploy credential. A
+deploy job added later extends `.deploy`, which never runs for a merge request and runs only on a protected branch
+or tag. The project settings a file cannot hold (protected `main` and tags, protected and masked variables, the job
+token allowlist) are listed under "Pipeline" in the README Sourdough bakes.
+
 Best practices for building, running and deploying WELD live in [BEST_PRACTICES.md](BEST_PRACTICES.md).
 
 ## Run it locally
@@ -188,7 +202,9 @@ The same subcommands work on every OS:
 | `logs` | Follow the container logs |
 
 Deploying somewhere other than a laptop? [Running WELD off Citadel](docs/running-off-citadel.md) covers OpenShift,
-Coolify and plain Docker, with Citadel for comparison.
+Coolify and plain Docker, with Citadel for comparison. Off Citadel, WELD ships as one image from Squire's kit
+(`deploy/.squire/portable.Dockerfile`) that runs as `web`, `worker`, `scheduler` or `migrate`, as any UID in group 0
+on port 8080: the same bead, four passes.
 
 Does it hold? [Proof](docs/reference/proof.md) is the bend test: on 2026-11-06 a new app went from an empty folder to
 a signed-in WayneUI dashboard in about four and a half minutes and to every CI gate green in about eight, with 0

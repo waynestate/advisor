@@ -392,7 +392,11 @@ Sources: [OWASP CICD-SEC-1 Insufficient Flow Control Mechanisms](https://owasp.o
 [OpenSSF Scorecard: SAST](https://github.com/ossf/scorecard/blob/main/docs/checks.md) (a check for whether analysis
 runs at all).
 
-**How the stack holds it: Not yet.** PROCTOR does not read `.gitlab-ci.yml`. Rollcall's "apps with CI" number is a plan.
+**How the stack holds it: Partly.** PROCTOR's `ci-pipelines` check reads `.gitlab-ci.yml` and
+`.github/workflows/ci.yml`: it fails a stack package whose pipeline is missing or runs no `composer ci`, and warns when
+the pipeline switches Composer's audit off or runs `composer update`. Nothing yet flags a missing Preflight include, an
+unpinned include, `allow_failure: true` on a gate or a missing `proctor` job. Rollcall's "apps with CI" number is a
+plan.
 
 ### 3.4 Control when pipelines run, once, in the app
 Set `workflow:rules` so a branch with an open merge request does not run twice, and so merge request pipelines exist.
@@ -965,7 +969,7 @@ Why: a component that never fails looks the same as one that works.
 
 Sources: [GitLab: components, testing](https://docs.gitlab.com/ci/components/).
 
-**How the stack holds it: Partly.** Seven components carry a fixture that must fail them, each kept in place by a
+**How the stack holds it: Partly.** Ten components carry a fixture that must fail them, each kept in place by a
 check: `proctor` runs `tests/proctor-fails`, a fake proctor that prints one blocker finding and exits 1, against the
 clean stub in `tests/fixture-app` (`tests/check-proctor-fails`); `composer-audit` runs `composer audit` on
 `tests/audit-fixtures/advisory`, which fails in every mode, and `tests/audit-fixtures/abandoned`, which fails only in
@@ -976,11 +980,20 @@ passes only when the clean build passes and each flaw fails the check it targets
 CI by `must-fail-portability`); `php-test` runs PHPUnit on
 `tests/php-test-fails`, which carries a failing test, against the clean case in `tests/fixture-app`
 (`tests/check-php-test-fails`); `phpstan` runs PHPStan on `tests/phpstan-fails`, which carries a type error, against
-the clean case in `tests/fixture-app` (`tests/check-phpstan-fails`); and `pint` runs Pint in test mode on
+the clean case in `tests/fixture-app` (`tests/check-phpstan-fails`); `pint` runs Pint in test mode on
 `tests/pint-fails`, which is not formatted to the standard, against the clean case in `tests/fixture-app`
-(`tests/check-pint-fails`). Still missing: a malware-flagged version fixture for `composer-audit` (see 4.6 and 4.11),
-and a must-fail fixture for `eslint`, `package-publish`, `sbom` and `secret-detection`; `renovate` is a config, not a
-job, so it has nothing to fail.
+(`tests/check-pint-fails`); `eslint` runs the app's own ESLint and Prettier on `tests/eslint-fails`, which
+carries one unused `const`, against the clean case in `tests/eslint-clean` (`tests/check-eslint-fails`);
+`secret-detection` runs the template's own gitleaks command, with the template's own config, on
+`tests/secret-detection-clean` plus a token built at run time in `src/config.php`, which must fail with
+`gitlab-pat` named and the value redacted from the log, while the same token planted in `vendor/` and
+`node_modules/` must stay invisible (`tests/check-secret-detection-fails`, run in CI by
+`must-fail-secret-detection`); and
+`sbom` runs Composer and the CycloneDX plugin on `tests/sbom-fails`, whose `composer.lock` is not valid JSON,
+against the clean case in `tests/sbom-clean`, whose SBOM lists `psr/log` and not the dev-only `psr/container`
+(`tests/check-sbom-fails`, run in CI by `must-fail-sbom`).
+Still missing: a malware-flagged version fixture for `composer-audit` (see 4.6 and 4.11), and a must-fail fixture
+for `package-publish`; `renovate` is a config, not a job, so it has nothing to fail.
 
 ### 7.3 Use the stack's own projects as the first users
 Each stack repo includes Preflight, pinned.

@@ -65,7 +65,7 @@ Options:
 - `--plan <file>` a ready-made plan file (JSON, or YAML ending in `.yaml` or `.yml`, matching `resources/plan.schema.json`), such as the `.sourdough/plan.yaml` every bake saves
 - `--playbook` kept for compatibility: Playbook is now the default
 - `--no-playbook` skip the Playbook wiring (for CI and automated tests only; WSU apps need Playbook)
-- `--no-advisor` skip the ADVISOR wiring (no `require-dev` entry, no `.mcp.json` git-ignore, no README section)
+- `--no-advisor` skip the ADVISOR wiring (no `require-dev` entry, no `.mcp.json` git-ignore line of its own, no README section; the Laravel shapes still ignore `/.mcp.json` for Laravel Boost)
 
 Exit codes: `0` done, `1` refused (invalid flags, non-empty target, not available, model gave up), `2` tool error.
 
@@ -78,6 +78,8 @@ php vendor/bin/advisor install --client=claude --write
 ```
 
 `--no-advisor` skips all of it.
+
+The three Laravel shapes also ship Laravel Boost as a dev-only tool, whatever the ADVISOR answer: `laravel/boost` in `require-dev`, a guarded `composer boost-update` after `composer update`, a `.gitignore` block for what `php artisan boost:install` writes (`/.mcp.json`, `/boost.json`, `/CLAUDE.md`, `/AGENTS.md`, `/.claude/skills/`, `/.junie/`), the stack's guidelines and two starter rules in `.ai/`, and `tests/Feature/BoostDevOnlyTest.php`. ADVISOR complements Boost: Boost knows Laravel, ADVISOR knows the stack. See [Laravel Boost, dev only](docs/guides/laravel.md#laravel-boost-dev-only).
 
 The app name (from `--name`, from the plan, or from the basename of `<dir>`) must start with a letter or number and use only letters, numbers, spaces, dots, dashes and underscores, at most 63 characters; anything else is refused before anything is written.
 
@@ -92,6 +94,8 @@ The app name (from `--name`, from the plan, or from the basename of `<dir>`) mus
 | `--laravel --inertia` (or `--inertia`) | Laravel + Inertia/Vue |
 
 All five permutations generate in 0.1. `--raw --vue` is the raw PHP bake with a Vue 3 front end over it: PHP answers JSON under `/api/`, Vite builds the Vue app, and `src/Vite.php` loads it from the build or the dev server.
+
+Every bake takes its PHP floor from CREED's policy, not from a number baked into the template: the oldest PHP line still supported a year after the policy's refresh date (raised to what the Laravel major needs) becomes `require.php`, `config.platform.php` and the start of the CI test matrix. If the policy cannot be read, the bake falls back to the pinned `^8.3` and says so. `sourdough new` prints both a `PHP:` line and a `Support:` line, and every shape has an owner, a support window and a sunset path, so no starter goes stale on the counter. The rules are in [Support and sunset](docs/guides/support.md).
 
 Oracle is wired but dormant in every generated app. The settings `ORACLE_USERNAME`, `ORACLE_PASSWORD`, and either `ORACLE_TNS` or `ORACLE_HOST`, `ORACLE_PORT`, `ORACLE_SERVICE_NAME` ship commented out in `.env.example`; while they are empty, nothing connects and nothing errors. Once you fill them in, Laravel apps check the wiring with `php artisan oracle:check`, and raw PHP apps run queries through the `App\Oracle` helper, which takes values only as binds and answers mistakes with plain sentences. The command finds the check file where it lives: `oracle-check.php` at the app root, where Squire's Laravel layout ships it, first, then `deploy/oracle-check.php`.
 
@@ -253,6 +257,11 @@ Strongly recommended: a git.wayne.edu instance runner.
 Every baked `.gitlab-ci.yml` caches its downloads: Docker Hub images come through the group's GitLab Dependency Proxy
 when the GitLab has one (`IMAGE_PREFIX`, Docker Hub otherwise), and Composer and npm installs are cached per lock
 file. See [Dependency caching](docs/guides/ci.md#dependency-caching).
+
+Every baked pipeline also carries three gates from Preflight: an accessibility check of the app's own pages
+(signed in, at WCAG 2.2 AA, blocking), a CycloneDX bill of materials for Composer and, in the front-end shapes, npm,
+and Gitleaks over the repository. A `.deploy` template keeps any deploy job on protected refs, and each generated
+README lists the GitLab settings a file cannot hold. See [CI](docs/guides/ci.md#the-accessibility-gate).
 
 <details>
 <summary>On the bench: the five loaves and the feeding schedule</summary>
