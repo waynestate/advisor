@@ -45,14 +45,33 @@
 <h2 id="unreleased">[Unreleased]<a class="docs-heading-link" aria-label="Link to this section" href="#unreleased">#</a></h2>
 <h3 id="changed">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></h3>
 <ul>
-<li>data: resync 2026-11-08 morning (booster:9d76fee drawbridge:829f465 helmet:e96f7f6 sesame:aea6871 proctor:181bb7e rollcall:2a053b9 creed:e7818c4 sourdough:2182baf weld:bf9c2e4 squire:5276918 preflight:3aa18d2 pinstripe:b56f077 advisor:e82d901 wayne-ui:dedc66f): HELMET's README matches its code (the presets set proxies only, so the app picks its log file; a relative CSP report path is valid), and Drawbridge's third-party-cookie sign-out practice now runs in a real browser engine.</li>
-<li>data: resync 2026-11-08 (booster:b8b5e5a drawbridge:a7c42fb helmet:b8196b9 sesame:7195b63 proctor:97c2005 rollcall:091bd8b creed:e7818c4 sourdough:2182baf weld:bf9c2e4 squire:34bd199 preflight:3aa18d2 pinstripe:54790ca advisor:fcc5974 wayne-ui:dedc66f): the policy gains CREED's <code>sessions</code> block (SESAME and Drawbridge session lifetimes), and PROCTOR's README gains its ADVISOR module section.</li>
-<li>data: resync 2026-11-07 late (booster:4fbf3ed drawbridge:a7c42fb helmet:b8196b9 sesame:2302725 proctor:e00dda4 rollcall:45b0837 creed:be2a0b2 sourdough:2182baf weld:bf9c2e4 squire:55b89c7 preflight:3aa18d2 pinstripe:54790ca advisor:4d8f41a wayne-ui:dedc66f): the word-name sweep (Rollcall, Squire, Preflight, Drawbridge in prose), WELD 0.1.5, PROCTOR's crlf-deploy-script check.</li>
-<li>Changed: the GitLab pipeline pins the Preflight components to 0.2.0 (was 0.1.0 and 0.1.2).</li>
-<li>The front page's deploy layer (<code>deploy/</code>) runs Squire's kit 0.6.0 (was 0.5.0): <code>scripts/release.sh</code> asks PROCTOR's deploy gate for a go or no-go on each release (a report, not a stop, unless <code>SQUIRE_PROCTOR=enforce</code>), and <code>.env.squire.example</code> lists the new setting. The layer's pins move to HELMET <code>^0.4</code> (locked 0.4.0) and PROCTOR <code>^0.7</code> (locked 0.7.0).</li>
-<li>CI caches Composer and npm downloads per lock file (<code>.composer-cache</code>, keyed on <code>composer.lock</code> and <code>deploy/composer.lock</code>, and <code>.npm-cache</code>), so a pipeline stops fetching every package from Packagist and npm on every run. Images already come through the Dependency Proxy.</li>
-<li>data: resync 2026-11-07 evening (booster:d99b049 creed:39fa8c3 drawbridge:27cc793 helmet:902b522 pinstripe:cdabcb0 preflight:f26584b proctor:e9ede7e rollcall:06dcfda sesame:b5a0c09 sourdough:181b884 squire:dba0686 weld:2746423 wayne-ui:dedc66f advisor:45c8379): README and best-practices updates from Drawbridge, Preflight, PROCTOR, Rollcall, SESAME and Sourdough, and ADVISOR's own README. Versions in <code>projects.json</code> are unchanged.</li>
-<li>data: Sourdough's entry lists all five shapes, <code>--raw --vue</code> included (it said that shape was not available yet), and its next step names <code>sourdough feed</code>, which ships (it said feed was a later release).</li>
+<li>
+<p>Changed: the pipeline pins every Preflight CI component to 0.3.0 (<a rel="noopener" href="mailto:preflight@0.3.0">preflight@0.3.0</a>); component image inputs are plain image names, since Preflight adds the Dependency Proxy prefix itself.</p>
+</li>
+<li>
+<p>data: resync 2026-11-08 morning (booster:9d76fee drawbridge:829f465 helmet:e96f7f6 sesame:aea6871 proctor:181bb7e rollcall:2a053b9 creed:e7818c4 sourdough:2182baf weld:bf9c2e4 squire:5276918 preflight:3aa18d2 pinstripe:b56f077 advisor:e82d901 wayne-ui:dedc66f): HELMET's README matches its code (the presets set proxies only, so the app picks its log file; a relative CSP report path is valid), and Drawbridge's third-party-cookie sign-out practice now runs in a real browser engine.</p>
+</li>
+<li>
+<p>data: resync 2026-11-08 (booster:b8b5e5a drawbridge:a7c42fb helmet:b8196b9 sesame:7195b63 proctor:97c2005 rollcall:091bd8b creed:e7818c4 sourdough:2182baf weld:bf9c2e4 squire:34bd199 preflight:3aa18d2 pinstripe:54790ca advisor:fcc5974 wayne-ui:dedc66f): the policy gains CREED's <code>sessions</code> block (SESAME and Drawbridge session lifetimes), and PROCTOR's README gains its ADVISOR module section.</p>
+</li>
+<li>
+<p>data: resync 2026-11-07 late (booster:4fbf3ed drawbridge:a7c42fb helmet:b8196b9 sesame:2302725 proctor:e00dda4 rollcall:45b0837 creed:be2a0b2 sourdough:2182baf weld:bf9c2e4 squire:55b89c7 preflight:3aa18d2 pinstripe:54790ca advisor:4d8f41a wayne-ui:dedc66f): the word-name sweep (Rollcall, Squire, Preflight, Drawbridge in prose), WELD 0.1.5, PROCTOR's crlf-deploy-script check.</p>
+</li>
+<li>
+<p>Changed: the GitLab pipeline pins the Preflight components to 0.2.0 (was 0.1.0 and 0.1.2).</p>
+</li>
+<li>
+<p>The front page's deploy layer (<code>deploy/</code>) runs Squire's kit 0.6.0 (was 0.5.0): <code>scripts/release.sh</code> asks PROCTOR's deploy gate for a go or no-go on each release (a report, not a stop, unless <code>SQUIRE_PROCTOR=enforce</code>), and <code>.env.squire.example</code> lists the new setting. The layer's pins move to HELMET <code>^0.4</code> (locked 0.4.0) and PROCTOR <code>^0.7</code> (locked 0.7.0).</p>
+</li>
+<li>
+<p>CI caches Composer and npm downloads per lock file (<code>.composer-cache</code>, keyed on <code>composer.lock</code> and <code>deploy/composer.lock</code>, and <code>.npm-cache</code>), so a pipeline stops fetching every package from Packagist and npm on every run. Images already come through the Dependency Proxy.</p>
+</li>
+<li>
+<p>data: resync 2026-11-07 evening (booster:d99b049 creed:39fa8c3 drawbridge:27cc793 helmet:902b522 pinstripe:cdabcb0 preflight:f26584b proctor:e9ede7e rollcall:06dcfda sesame:b5a0c09 sourdough:181b884 squire:dba0686 weld:2746423 wayne-ui:dedc66f advisor:45c8379): README and best-practices updates from Drawbridge, Preflight, PROCTOR, Rollcall, SESAME and Sourdough, and ADVISOR's own README. Versions in <code>projects.json</code> are unchanged.</p>
+</li>
+<li>
+<p>data: Sourdough's entry lists all five shapes, <code>--raw --vue</code> included (it said that shape was not available yet), and its next step names <code>sourdough feed</code>, which ships (it said feed was a later release).</p>
+</li>
 </ul>
 <h3 id="fixed">Fixed<a class="docs-heading-link" aria-label="Link to this section" href="#fixed">#</a></h3>
 <ul>
