@@ -14,6 +14,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Fixed
 
+- the pipeline's PROCTOR jobs no longer pass `--policy`, which PROCTOR 0.7 refuses in CI; PROCTOR checks against the CREED policy it bundles.
 - The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (`-v stack-composer-cache:/tmp/cache`), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.
 - The front page's parts list says Sourdough starts all five app shapes; it said "the raw PHP starter".
 
