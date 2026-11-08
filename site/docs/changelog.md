@@ -14,6 +14,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
+- Changed: CI caches Composer and npm downloads under a fixed key, so a lock change downloads only what changed (D-072).
 - Fixed: OPEN_QUESTIONS.md names the Preflight commit the GitHub workflow really pins and says the README badges are real.
 - Fixed: the docs menu closes with Escape and hands focus back to its button (docs kit synced from Squire).
 - Changed: the deploy layer requires PROCTOR ^0.8 (locked 0.8.0).
