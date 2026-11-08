@@ -352,16 +352,17 @@ php bin/proof.php --units=FILE --corpus=DIR --work=DIR --out=FILE --proctor-bin=
 
 ## Accessibility check
 
-Every `*.html` page under `site/` (except `site/assets/`) is loaded in a real browser by `scripts/a11y/check.mjs`
-and run through axe-core (WCAG tags only), in light and dark themes at phone (390 px) and desktop (1440 px) width,
-plus one reduced-motion pass. Each page must also have one `<h1>`, a `lang` attribute, a non-empty title, and no
-horizontal scroll at phone width. Run it from the repo root (works in PowerShell):
+The `a11y` job in GitLab CI is Preflight's `a11y` component: axe-core 4.14.0 over `site/index.html` and
+`site/docs/**/*.html`, WCAG tags only, in light and dark color schemes at 320 and 1280 px widths, plus the
+reflow check for WCAG 1.4.10.
+
+For a quicker pass while you work, `scripts/a11y/check.mjs` loads the pages in a real browser and runs them
+through axe-core in light mode at one width. It is a faster check than the component, and CI no longer runs
+it. Run it from the repo root (works in PowerShell):
 
 ```
 docker run --rm -v "${PWD}:/app" -e npm_config_cache=/npm-cache -v stack-npm-cache:/npm-cache -w /app/scripts/a11y mcr.microsoft.com/playwright:v1.49.1-noble sh -c "npm install --no-audit --no-fund && node check.mjs"
 ```
-
-It also runs as the `a11y` job in GitLab CI.
 
 ## Safety, in short
 

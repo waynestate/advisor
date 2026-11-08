@@ -1,6 +1,6 @@
 # composer ci is the contract: the checks are defined there, and this pipeline only wraps them.
 # ADVISOR's pipeline, built from the Preflight components on this GitLab.
-# Pinned to Preflight 0.3.0. Never use ~latest.
+# Pinned to Preflight 0.3.1. Never use ~latest.
 # ADVISOR requires PHP ^8.3, so the test matrix starts at 8.3.
 # Docker Hub images go through the GitLab Dependency Proxy to avoid the anonymous pull limit.
 include:
@@ -19,6 +19,14 @@ include:
       proctor_command: vendor/bin/proctor check --format=codequality
       allow_failure: true
       image: "php:8.4-cli-trixie@sha256:9cf851bc2c1b37c3e59dfd677a3c3e56d485af5a47c93f629424bb039eafcb69"
+  # The accessibility gate: Preflight's a11y component checks every page under site/ in a real browser
+  # (axe-core, WCAG tags only, light and dark, 320 and 1280 px, reflow). Its image is on mcr.microsoft.com,
+  # which the Dependency Proxy does not front, so a11y takes no image prefix.
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/a11y@0.3.1
+    inputs:
+      site_dir: site
+      pages: ["index.html", "docs/**/*.html"]
+      wcag_tags: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]
 
 # Dependency caching: images already come through the Dependency Proxy, and
 # every job that installs packages extends a cache under a fixed key, not a
@@ -55,15 +63,6 @@ composer-ci:
   script:
     - composer install --no-interaction --no-progress --prefer-dist
     - composer ci
-
-# The accessibility gate: every HTML page under site/ in a real browser, axe-core WCAG tags only.
-a11y:
-  extends: .npm-cache
-  image: mcr.microsoft.com/playwright:v1.49.1-noble
-  script:
-    - cd scripts/a11y
-    - npm install --no-audit --no-fund
-    - node check.mjs
 
 # content-drift needs a schedule created in the project's CI settings by a maintainer
 # (Settings, CI/CD, Schedules), and the job token needs read access to the sibling repos.
