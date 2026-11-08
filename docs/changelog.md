@@ -11,6 +11,11 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Changed
+
+- data: resync 2026-11-07 evening (booster:d99b049 creed:39fa8c3 drawbridge:27cc793 helmet:902b522 pinstripe:cdabcb0 preflight:f26584b proctor:e9ede7e rollcall:06dcfda sesame:b5a0c09 sourdough:181b884 squire:dba0686 weld:2746423 wayne-ui:dedc66f advisor:45c8379): README and best-practices updates from Drawbridge, Preflight, PROCTOR, Rollcall, SESAME and Sourdough, and ADVISOR's own README. Versions in `projects.json` are unchanged.
+- data: Sourdough's entry lists all five shapes, `--raw --vue` included (it said that shape was not available yet), and its next step names `sourdough feed`, which ships (it said feed was a later release).
+
 ### Fixed
 
 - The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (`-v stack-composer-cache:/tmp/cache`), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.

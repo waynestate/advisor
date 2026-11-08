@@ -1,6 +1,6 @@
 {
     "schema_version": 1,
-    "generated_on": "2026-11-07",
+    "generated_on": "2026-11-08",
     "files": {
         "docs/advisor/best-practices.md": {
             "sha256": "58b060f8a34ef9d95b597f742ec8cb7362dcb43ff0c9871d366c9c3affa2fd8d",
@@ -187,7 +187,7 @@
             "source": "creed/policy/policy.json"
         },
         "projects.json": {
-            "sha256": "826e76c1897f558fd02b76b359444c91d214291044f4f3cb0f76defd73e24ca7",
+            "sha256": "10d443a28597b74cea7eac4255581afd5fee8c190a55399db761040897047bb8",
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {

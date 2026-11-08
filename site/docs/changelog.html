@@ -43,13 +43,18 @@
 <h1 id="changelog">Changelog<a class="docs-heading-link" aria-label="Link to this section" href="#changelog">#</a></h1>
 <p>All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.</p>
 <h2 id="unreleased">[Unreleased]<a class="docs-heading-link" aria-label="Link to this section" href="#unreleased">#</a></h2>
+<h3 id="changed">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></h3>
+<ul>
+<li>data: resync 2026-11-07 evening (booster:d99b049 creed:39fa8c3 drawbridge:27cc793 helmet:902b522 pinstripe:cdabcb0 preflight:f26584b proctor:e9ede7e rollcall:06dcfda sesame:b5a0c09 sourdough:181b884 squire:dba0686 weld:2746423 wayne-ui:dedc66f advisor:45c8379): README and best-practices updates from Drawbridge, Preflight, PROCTOR, Rollcall, SESAME and Sourdough, and ADVISOR's own README. Versions in <code>projects.json</code> are unchanged.</li>
+<li>data: Sourdough's entry lists all five shapes, <code>--raw --vue</code> included (it said that shape was not available yet), and its next step names <code>sourdough feed</code>, which ships (it said feed was a later release).</li>
+</ul>
 <h3 id="fixed">Fixed<a class="docs-heading-link" aria-label="Link to this section" href="#fixed">#</a></h3>
 <ul>
 <li>The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (<code>-v stack-composer-cache:/tmp/cache</code>), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.</li>
 <li>The front page's parts list says Sourdough starts all five app shapes; it said &quot;the raw PHP starter&quot;.</li>
 </ul>
 <h2 id="0-1-7-2026-11-07">[0.1.7] - 2026-11-07<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-7-2026-11-07">#</a></h2>
-<h3 id="changed">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></h3>
+<h3 id="changed-1">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-1">#</a></h3>
 <ul>
 <li>The front page's deploy layer (<code>deploy/</code>) completes Squire's kit 0.5.0: <code>oracle-check.php</code>, which the 0.5.0 <code>squire update</code> did not add, is written and recorded, so <code>squire init --check</code> passes. <code>site/assets/stack-env.js</code> takes the stack's one copy, with bindingless catch blocks.</li>
 <li>The canonical repository is git.wayne.edu (ADR-0021); docs, links and package metadata no longer point at the archived nougat copy.</li>
@@ -84,7 +89,7 @@
 <li>Added: an accessibility gate (scripts/a11y/check.mjs) that loads every HTML page under site/ in a real browser and fails on any axe-core WCAG violation, in light and dark themes at phone and desktop width, plus a reduced-motion pass; runs as the a11y job in GitLab CI.</li>
 <li>Added: a docs site (site/docs/) built by the shared docs builder from docs/, checked in composer ci.</li>
 </ul>
-<h3 id="changed-1">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-1">#</a></h3>
+<h3 id="changed-2">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-2">#</a></h3>
 <ul>
 <li>Changed: resynced the bundled content (data/) with the stack as of 2026-11-05, including Booster 1.8.2 and 1.8.3, DRAWBRIDGE (session store, secret files, GitHub references removed), HELMET (H21 partly enforced, warn_broad_proxies), SESAME (CAS login bound to its browser), PROCTOR, ROLLCALL, CREED handbook chapters, Sourdough (--sail, --docker, Pest 4) and the WELD and SQUIRE guides; the Sourdough role now lists every shape that generates; the docs builder and kit follow SQUIRE 97744a4, which keeps the changelog page h1 itself.</li>
 <li>Changed: the docs pages wear the front page's look: the same sheet head and main menu (Docs marked current), Fraunces titles with a plotted maroon route, the legend's mono labels, commands on the dark code ground with the gold Copy tab, callouts drawn as map marks (note, tip, out of bounds), the green footer band, and a dark mode derived from the Directions band. Motion only without a reduced-motion preference. Source: <code>docs/_header.html</code> and <code>docs/theme/advisor.css</code> through the builder's <code>theme</code> key. The front page site owes a Quick Update.</li>
@@ -142,7 +147,7 @@
 <li>Docs: a one-line <code>claude mcp add</code> and a Docker <code>.mcp.json</code> for machines without PHP.</li>
 <li>Added: composer content:drift and an optional CI job that fail when data/ no longer matches the sibling repos.</li>
 </ul>
-<h3 id="changed-2">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-2">#</a></h3>
+<h3 id="changed-3">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-3">#</a></h3>
 <ul>
 <li>Changed: the deploy layer's Squire kit is refreshed to 0.3.3 (release options can now live in ./.env.squire).</li>
 <li>Changed: the deploy layer's Squire kit is refreshed to 0.3.4 (the local .env.squire file is now git-ignored).</li>
@@ -156,7 +161,7 @@ same name wins, then the private <code>waynestate/playbook</code> package (Playb
 says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are
 refused. <code>waynestate/playbook</code> is suggested, never required.</li>
 </ul>
-<h3 id="changed-3">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-3">#</a></h3>
+<h3 id="changed-4">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-4">#</a></h3>
 <ul>
 <li>Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.</li>
 <li>Changed: project names written as words except acronyms.</li>
@@ -172,7 +177,7 @@ refused. <code>waynestate/playbook</code> is suggested, never required.</li>
 <code>generator/ownership.json</code>, verified by <code>content:verify</code>). Fuzzy match: every word of the topic must appear in a
 row's topic or role; a no-match answer lists every known topic.</li>
 </ul>
-<h3 id="changed-4">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-4">#</a></h3>
+<h3 id="changed-5">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-5">#</a></h3>
 <ul>
 <li><code>upgrade_path</code> moves from the <code>stack</code> group to a new <code>booster</code> group, so <code>ADVISOR_GROUPS=stack</code> offers reference
 tools only and never starts a program. <code>ADVISOR_GROUPS</code> now accepts <code>stack</code>, <code>proctor</code> and <code>booster</code>.</li>
@@ -205,7 +210,7 @@ GitLab (PREFLIGHT 0.1.0) and GitHub.</li>
     </main>
     <nav class="docs-pager" aria-label="Pages"><a class="docs-pager__link" href="../docs/contributing.html"><span class="docs-pager__dir">Previous</span><span class="docs-pager__title">Contributing</span></a></nav>
   </div>
-  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#unreleased">[Unreleased]</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-7-2026-11-07">[0.1.7] - 2026-11-07</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added">Added</a></li><li class="docs-toc__item"><a href="#0-1-6-2026-11-06">[0.1.6] - 2026-11-06</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-1">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-1">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-1">Fixed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#security">Security</a></li><li class="docs-toc__item"><a href="#0-1-5-2026-11-03">[0.1.5] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-4-2026-11-03">[0.1.4] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-3-2026-11-02">[0.1.3] - 2026-11-02</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-2">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-2">Changed</a></li><li class="docs-toc__item"><a href="#0-1-2-2026-10-29">[0.1.2] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-3">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-3">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-2">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-1-2026-10-29">[0.1.1] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-4">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-4">Changed</a></li><li class="docs-toc__item"><a href="#0-1-0-2026-10-29">[0.1.0] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-5">Added</a></li></ul></nav>
+  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#unreleased">[Unreleased]</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-7-2026-11-07">[0.1.7] - 2026-11-07</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-1">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added">Added</a></li><li class="docs-toc__item"><a href="#0-1-6-2026-11-06">[0.1.6] - 2026-11-06</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-1">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-2">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-1">Fixed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#security">Security</a></li><li class="docs-toc__item"><a href="#0-1-5-2026-11-03">[0.1.5] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-4-2026-11-03">[0.1.4] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-3-2026-11-02">[0.1.3] - 2026-11-02</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-2">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-3">Changed</a></li><li class="docs-toc__item"><a href="#0-1-2-2026-10-29">[0.1.2] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-3">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-4">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-2">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-1-2026-10-29">[0.1.1] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-4">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-5">Changed</a></li><li class="docs-toc__item"><a href="#0-1-0-2026-10-29">[0.1.0] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-5">Added</a></li></ul></nav>
 </div>
 <footer class="docs-footer">
   <span>Documents ADVISOR <span data-docs-version>0.1.7</span></span>
