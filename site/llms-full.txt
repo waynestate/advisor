@@ -355,6 +355,7 @@ It also runs as the `a11y` job in GitLab CI.
 - `run_proctor_check` runs one fixed program with an argument array and an allowlisted environment, never a shell.
 - `upgrade_path` runs Booster's read-only `plan` the same way: one fixed program, an argument array, an allowlisted command, never a shell. It plans; it never runs a hop.
 - No network calls, and no model calls, from ADVISOR itself.
+- The threat model, each threat mapped to the rules that answer it, is in BEST_PRACTICES.md, "Threat model".
 
 See `BEST_PRACTICES.md`, and `OPEN_QUESTIONS.md` for what is decided, assumed and not yet built.
 
@@ -646,6 +647,8 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 #### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
+- Docs: BEST_PRACTICES gains a threat model: eleven threats, each mapped to the rules that answer it and to OWASP Top 10:2025, OWASP ASVS 5.0 or NIST SSDF, plus what is out of scope (ADVISOR-16).
+- Changed: CI pins the Preflight components to 0.3.1 (fixed cache keys, and caches saved even when a job fails; D-072).
 - Changed: CI saves its Composer and npm caches even when a job fails, so a retry after a dropped download fetches only what is missing (D-072).
 - Changed: CI caches Composer and npm downloads under a fixed key, so a lock change downloads only what changed (D-072).
 - Fixed: OPEN_QUESTIONS.md names the Preflight commit the GitHub workflow really pins and says the README badges are real.
