@@ -45,6 +45,7 @@
 <h2 id="unreleased">[Unreleased]<a class="docs-heading-link" aria-label="Link to this section" href="#unreleased">#</a></h2>
 <h3 id="changed">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></h3>
 <ul>
+<li>Changed: CI pins the Preflight components to 0.4.0 (the proctor job clones the full history, so the override-approver check can read git blame).</li>
 <li>Changed: the deploy layer runs Squire's kit 0.7.1 (was 0.6.0): <code>.squire/php.ini</code> no longer sets the deprecated <code>session.sid_*</code> lines, web requests get a <code>disable_functions</code> list and Apache hardening (<code>.squire/php-web.ini</code>, <code>.squire/apache-hardening.conf</code>), and opcache gets production settings with <code>SQUIRE_OPCACHE_VALIDATE</code> as the one switch.</li>
 <li>Changed: the front page deploy layer requires HELMET ^1.0 (lock at 1.0.1, was 0.4.0), like the rest of the stack; its shared front controller already runs on HELMET 1.0 in Squire, Sourdough and Pinstripe.</li>
 </ul>
