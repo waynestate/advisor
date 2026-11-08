@@ -364,7 +364,7 @@ authentication event through it:
 | `sesame.login_failed` | `warning` | The driver's login threw `AuthenticationFailed`. |
 | `sesame.login_refused` | `warning` | The resolver refused the identity and returned null. |
 | `sesame.logout` | `info` | The session was signed out (a logout, a timeout, or a deleted user). |
-| `sesame.session_anomaly` | `warning` | The session state looks wrong or tampered with: `reason` is `missing_timestamps`, `bad_session_ref` or `destroyed_session_reused` (an old session ID used after its grace; see [Session timeouts](docs/guides/session-timeouts.md)). |
+| `sesame.session_anomaly` | `warning` | The session state looks wrong or tampered with: `reason` is `missing_timestamps`, `bad_session_ref`, `destroyed_session_reused` (an old session ID used after its grace) or `logged_out_session_reused` (a logged-out session ID presented again inside the reuse window; see [Session timeouts](docs/guides/session-timeouts.md)). |
 
 Each record carries `event`, `driver`, `username` and `at` (the time in UTC)
 in its context, and `sesame.logout` adds `reason` (`logout`, `idle_timeout`,
@@ -1030,11 +1030,23 @@ spot the first time anything asks who is signed in.
 |---|---|---|
 | `session.idle_minutes` | `120` | Drop the session after this much quiet time. |
 | `session.absolute_minutes` | `720` | End the session this long after sign-in, even if it is still active. |
+| `logoutReuseTtlSeconds` | `60` | The window in which a reused logged-out session ID is logged as an anomaly, in seconds. A `new NativeSession()` option, not a config key; `0` makes `invalidate()` destroy the session outright instead of leaving the logout marker. |
 
 On login the session stores the sign-in time and the last activity time, and
 `user()` refreshes the last activity time on every call that finds a live
 session. A session made before the timeouts existed (a user, no timestamps)
 counts as expired.
+
+The native session adds a third clock for logouts. When `invalidate()` retires
+a session it leaves a "logged out at" marker in the session store itself, under
+the same ID, so no extra cache is needed and every worker sees the same
+marker. A later request that presents that ID is not revived: the marked
+session is retired, a fresh empty one starts, and while the reuse window lasts
+(60 seconds by default, the `logoutReuseTtlSeconds` option of
+`new NativeSession()`) the reuse is logged once with `reason`
+`logged_out_session_reused`. Past the window the marked session is still
+retired, just not logged. Pass `logoutReuseTtlSeconds: 0` to turn the check
+off: the session is destroyed outright on logout, the old behavior.
 
 In Laravel the keys are `SESAME_SESSION_IDLE_MINUTES` and
 `SESAME_SESSION_ABSOLUTE_MINUTES`.

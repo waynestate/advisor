@@ -7,6 +7,9 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
   (the stack's version policy). PROCTOR check: `overrides`.
 - Check prints every override on every run, and Fleet lists them (the stack's version policy).
 - An expired override is a failure (first-repos). PROCTOR check: `overrides`.
+- An override runs at most `rules.override_max_days` days past today (90
+  in the policy). A longer one is a failure and does not apply.
+  PROCTOR check: `overrides`.
 - On the Citadel side, overrides are held by Citadel admins, per app and per
   rule, with an expiry, a reason and an approver. There is no permanent
   override (the stack's deploy-gate decision).

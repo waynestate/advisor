@@ -296,6 +296,11 @@ return $base->withPaths([__DIR__ . '/src']);
 The preset reads the PHP floor from your app's own `composer.json`, so it cannot drift out of step with the version
 the app actually runs on. Check with `vendor/bin/rector process --dry-run` and apply with `vendor/bin/rector process`.
 
+The preset also turns on Rector's composer-based Laravel sets (`withComposerBased(laravel: true)`). Add
+`driftingly/rector-laravel` as a dev dependency and it applies the Laravel upgrade rules that match your app's
+installed `laravel/framework` version; without it the call is a no-op, so an app that does not want Laravel rules
+sees no change.
+
 Proven on fixtures: `composer ci` runs the preset against a modern app (`tests/fixtures/rector-clean`) and an
 old-style one (`tests/fixtures/rector-old`) on every run, and fails if the clean one changes or the old one is left
 alone. Rector is the tailor's press: it smooths old code to the standard without changing the cut.

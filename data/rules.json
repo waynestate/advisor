@@ -2344,7 +2344,7 @@
             "id": "overrides-5",
             "chapter": "overrides",
             "heading": "Overrides",
-            "text": "On the Citadel side, overrides are held by Citadel admins, per app and per rule, with an expiry, a reason and an approver. There is no permanent override (the stack's deploy-gate decision).",
+            "text": "An override runs at most `rules.override_max_days` days past today (90 in the policy). A longer one is a failure and does not apply. PROCTOR check: `overrides`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2353,6 +2353,20 @@
                 "laravel-inertia-vue"
             ],
             "source": "handbook/overrides.md:10"
+        },
+        {
+            "id": "overrides-6",
+            "chapter": "overrides",
+            "heading": "Overrides",
+            "text": "On the Citadel side, overrides are held by Citadel admins, per app and per rule, with an expiry, a reason and an approver. There is no permanent override (the stack's deploy-gate decision).",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/overrides.md:13"
         },
         {
             "id": "production-1",
@@ -3039,6 +3053,20 @@
             "chapter": "policy",
             "heading": "rules",
             "text": "policy.json sets rules.eol_grace_days to 90.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "policy.json"
+        },
+        {
+            "id": "policy-override_max_days",
+            "chapter": "policy",
+            "heading": "rules",
+            "text": "policy.json sets rules.override_max_days to 90.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
