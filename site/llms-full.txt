@@ -655,6 +655,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 #### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
+- Changed: the deploy kit is Squire 0.10.0 (was 0.7.1): release.sh keeps Composer and npm download caches in the app folder and the gate takes SQUIRE_PHP_RUNTIME; the compose file, health.php and .env.squire.example follow the template, and the portable image files are added.
 - Docs: the README, MAINTAINING and the contributing page list everything `composer ci` runs (the agent-ready and docs site checks were missing); "What it offers" says `policy_lookup` answers end of life for a version older than the policy lists and names `upgrade_path`'s `from_php` input, as the README does; the docs overview says what main carries since 0.1.7; and the front page footer links the docs, git.wayne.edu and the GitHub mirror.
 - Changed: CI pins the Preflight components to 0.4.0 (the proctor job clones the full history, so the override-approver check can read git blame).
 - Changed: the deploy layer runs Squire's kit 0.7.1 (was 0.6.0): `.squire/php.ini` no longer sets the deprecated `session.sid_*` lines, web requests get a `disable_functions` list and Apache hardening (`.squire/php-web.ini`, `.squire/apache-hardening.conf`), and opcache gets production settings with `SQUIRE_OPCACHE_VALIDATE` as the one switch.
