@@ -12,6 +12,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: CI pins the Preflight components to 0.5.0 (was 0.4.0). The composer-audit job drops its own `composer:2@sha256:b6dc...` image input, since 0.5.0's default is `composer:2.11.1` by digest, and the proctor job keeps PROCTOR's JSON report as `proctor.json` for Rollcall. The a11y component is the same at 0.5.0, so `scripts/a11y/` does not change.
 - Changed: the proctor job on the front page deploy layer blocks the pipeline (no `allow_failure`). Its stale reason (unbounded constraints, CI files missing in `deploy/`) no longer holds: `vendor/bin/proctor check --format=codequality` in `deploy/` passes on PROCTOR 0.11.1 with warnings only.
 - Docs: MAINTAINING's "Who maintains it" names a role, the stack maintainer, instead of a person, and says to reach them with an issue on git.wayne.edu. The CI cache comment says what the internal decision ID stood for.
+- Docs: `.env.example` says no write tools exist "yet" (it said "in 0.1"), as the README and docs already do.
 - Docs: the Proof page's "Last run" table records `composer ci` on the 0.2.0 release commit on 2026-11-09 (282 tests, 1535 assertions; the 2026-11-07 run had 249).
 
 ## [0.2.0] - 2026-11-09

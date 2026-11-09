@@ -51,6 +51,7 @@
 <li>Changed: CI pins the Preflight components to 0.5.0 (was 0.4.0). The composer-audit job drops its own <code>composer:2@sha256:b6dc...</code> image input, since 0.5.0's default is <code>composer:2.11.1</code> by digest, and the proctor job keeps PROCTOR's JSON report as <code>proctor.json</code> for Rollcall. The a11y component is the same at 0.5.0, so <code>scripts/a11y/</code> does not change.</li>
 <li>Changed: the proctor job on the front page deploy layer blocks the pipeline (no <code>allow_failure</code>). Its stale reason (unbounded constraints, CI files missing in <code>deploy/</code>) no longer holds: <code>vendor/bin/proctor check --format=codequality</code> in <code>deploy/</code> passes on PROCTOR 0.11.1 with warnings only.</li>
 <li>Docs: MAINTAINING's &quot;Who maintains it&quot; names a role, the stack maintainer, instead of a person, and says to reach them with an issue on git.wayne.edu. The CI cache comment says what the internal decision ID stood for.</li>
+<li>Docs: <code>.env.example</code> says no write tools exist &quot;yet&quot; (it said &quot;in 0.1&quot;), as the README and docs already do.</li>
 <li>Docs: the Proof page's &quot;Last run&quot; table records <code>composer ci</code> on the 0.2.0 release commit on 2026-11-09 (282 tests, 1535 assertions; the 2026-11-07 run had 249).</li>
 </ul>
 <h2 id="0-2-0-2026-11-09">[0.2.0] - 2026-11-09<a class="docs-heading-link" aria-label="Link to this section" href="#0-2-0-2026-11-09">#</a></h2>
