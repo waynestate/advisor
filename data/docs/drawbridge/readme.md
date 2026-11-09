@@ -293,8 +293,15 @@ pipeline's commit; a local `docker build` leaves them empty.
 The image also refuses to build if Debian serves apache2 or mod_auth_openidc below the versions the rig tested:
 the Dockerfile checks the installed versions with `dpkg --compare-versions` right after the install (apt-get has
 no `>=` syntax) and stops the build with a clear message when one is lower. The floor is apache2 2.4.69-1~deb13u1
-and mod_auth_openidc 2.4.17-1, checked 2026-11-03 against debian:trixie-slim. To raise it, bump the two versions
-in the Dockerfile's install step and in `tests/Unit/DockerfileFloorTest.php`, which pins them.
+(checked 2026-11-03) and mod_auth_openidc 2.4.17-1+deb13u1 (raised 2026-11-08 for CVE-2026-54789, a bug in the
+state-cookie parser), both against debian:trixie-slim. To raise it, bump the two versions in the Dockerfile's
+install step and in `tests/Unit/DockerfileFloorTest.php`, which pins them.
+
+The advisory watch says when to raise it. `composer advisories` reads the floors and the Debian release from the
+Dockerfile, asks [OSV.dev](https://osv.dev/) (which republishes Debian's security tracker) which advisories still
+affect each floor version, and exits 1 when Debian has a fixed build above a floor, naming the advisory and the fix.
+An advisory with no fix yet is listed to watch and does not fail. It needs the network, so it is not part of
+`composer ci`; the GitLab `advisories` job runs it from a pipeline schedule or by hand.
 
 ## WSU values (Playbook)
 
@@ -463,6 +470,7 @@ Maintainers: how to build, test and release this project, and where its data com
 
 ```sh
 composer ci          # manifest, unit tests, Pint, PHPStan level 8, composer audit
+composer advisories  # needs the network: does the image's module floor admit a build Debian has patched?
 ```
 
 The PHPStan and Pint settings come from Pinstripe, the stack's coding standard: `phpstan.neon` includes the raw

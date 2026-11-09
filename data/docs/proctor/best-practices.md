@@ -443,9 +443,10 @@ line, and the `composer-version` check (see 4.6) fails when the Composer on PATH
 CVE-2024-35241 and CVE-2024-35242 or is Composer 1. Since 0.7.0, the same check also fails when the
 Composer on PATH is below the CREED policy's `tools.composer.minimum` (2.8.0 in the bundled policy), naming the
 policy in the message; the CVE floors stay as absolute floors underneath it. Preflight's `php-test` and `proctor` jobs
-install the Composer release named by their `composer_version` input (default `2.10.3` in Preflight 0.3.1), which
-carries the 2026 Perforce fixes. What remains: the policy minimum (2.8.0) sits below those fixes in 2.9.6 and 2.10.3,
-so the check passes a Composer that lacks them, and an app can set `composer_version` to an older release.
+install the Composer release named by their `composer_version` input (default `2.10.3` in Preflight 0.4.0, the pin
+PROCTOR's own pipeline uses), which carries the 2026 Perforce fixes, and since Preflight 0.4.0 that input refuses a
+release older than 2.9.6. What remains: the policy minimum (2.8.0) sits below those fixes in 2.9.6 and 2.10.3, so the
+check passes a Composer that lacks them, and an app on an older Preflight pin can still set `composer_version` lower.
 
 ### 4.9 Report an app that switches the dependency policy off (second pass)
 Look for `config.policy` set to `false`, `policy.malware` or `policy.advisories` set to `false`, and the matching
@@ -1057,6 +1058,22 @@ declares one of the Preflight job names (`proctor`, `php-test`, `composer-audit`
 `renovate`, `package-publish`) with `script`, `before_script` or `after_script` while a Preflight component is
 included (`proctor/preflight-pinned/script-override`). `PreflightPinnedCheckTest` pins the fixture outcomes for
 pinned and unpinned includes and for overridden jobs.
+
+### Flag a pipeline that skips or weakens Preflight
+Preflight's practice 3.3 asks for a check that flags an app with no Preflight include, an unpinned include,
+`allow_failure` on a gate, or no `proctor` job: on GitLab Community Edition an app can leave an include out or soften
+it, and a standard nobody can see being skipped is not a standard. The unpinned include is `preflight-pinned`'s
+finding (above).
+
+**How the stack holds it: Checked.** The `preflight-gates` check reads `.gitlab-ci.yml` as YAML and warns, never
+fails, on the other three: no `component:` include whose path contains `/preflight/`
+(`proctor/preflight-gates/no-include`); a gate component (every Preflight component but `renovate` and
+`package-publish`) included with the `allow_failure` input set to `true`, or its job re-declared with `allow_failure`
+set to anything but `false` (`proctor/preflight-gates/allow-failure`); and no Preflight `proctor` include and no job
+whose `script` runs `proctor check` or `proctor gate` (`proctor/preflight-gates/no-proctor-job`). A warning, not a
+fail: PROCTOR's own pipeline and Sourdough's keep `allow_failure` on the deploy layer's proctor job while its findings
+are fixed. `PreflightGatesCheckTest` pins each rule, its line and its message. What remains: the check sees only the
+committed file, so a fleet view across every app is ROLLCALL's to build.
 
 ## Framework lines
 

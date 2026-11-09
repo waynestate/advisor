@@ -20,6 +20,8 @@ Both run in CI on GitLab and GitHub, so a preset that stops working fails the pi
 | `phpstan/laravel.neon` | PHPStan + Larastan | Enforced | `PresetsTest::testLaravelPresetLoadsLarastanThroughTheExtensionInstaller`, `PresetsTest::testPhpStanLaravelConfigAcceptsTheLaravelAppFixture`, `PresetsTest::testPhpStanLaravelConfigReportsTheUndefinedEloquentProperty` |
 | `Larastan env() rule` | PHPStan + Larastan | Enforced | `PresetsTest::testLaravelPresetReportsAnEnvCallOutsideConfig`, `PresetsTest::testLaravelPresetAcceptsAConfigCallOutsideConfig` |
 | `PHPStan ignore comments` | PHPStan | Enforced | `PresetsTest::testPhpStanRawConfigReportsAnIgnoreWithoutAComment`, `PresetsTest::testPhpStanRawConfigReportsAnIgnoreThatMatchesNothing`, `PresetsTest::testPhpStanRawConfigAcceptsAnIgnoreWithAComment` |
+| `Laravel dd() and dump() methods banned` | PHPStan + Larastan | Enforced | `PresetsTest::testLaravelPresetReportsDdAndDumpMethodsLeftIn`, `PresetsTest::testLaravelPresetAcceptsASchemaDump` |
+| `TLS checks turned off banned` | PHPStan (+ Pinstripe's curl rule) | Enforced | `PresetsTest::testPhpStanReportsTlsChecksTurnedOffInRawPhp`, `PresetsTest::testPhpStanAcceptsTlsChecksLeftOnInRawPhp`, `PresetsTest::testLaravelPresetReportsTheVerifyOptionSetToFalse`, `PresetsTest::testLaravelPresetAcceptsVerifyPointedAtACaBundle`, `PresetsTest::testPhpStanLaravelConfigReportsCurlVerifyOffInTheLaravelAppFixture` |
 | `Banned call tips link to the CREED rule` | PHPStan | Enforced | `tests/BannedCallLinksTest.php` |
 | `rector/base.php` | Rector | Enforced | `PresetsTest::testRectorPresetAcceptsTheCleanFixture`, `PresetsTest::testRectorPresetReportsChangesOnTheOldFixture` |
 | `eslint/javascript.js` | ESLint | Enforced | `tests/js/presets.test.mjs` (`npm test`) |

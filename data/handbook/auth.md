@@ -21,8 +21,8 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
   that file rather than copy keys into config values, and the `gateway` driver
   never fetches keys over the network at sign-in (the stack's signing-key
   decision).
-  SESAME config: the file is checked at boot, and a missing file, private key
-  material or a repeated `kid` stops the app.
+  Held by: SESAME config, which checks the file at boot: a missing file,
+  private key material or a repeated `kid` stops the app.
 - The gateway's signing key MUST be rotated every 12 months, and at once when
   a private key could have been exposed. A retired key MUST stay in the key set
   for at least 5 minutes after the switch, so assertions signed just before it
@@ -35,6 +35,6 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 - API and other stateless requests are authenticated with signed, short-lived bearer tokens in an `Authorization` header, verified on every request. A token is signed, not merely encrypted; JSON Web Tokens are a good fit (WSU developer standards, 2024).
 - Authentication is checked before any content is shown or any script function runs, on every request. Deny by default: routes are protected unless listed as public, and an unauthenticated person is sent to sign in (WSU developer standards, 2024).
 - When authentication or an authorization lookup fails, the result is fail closed: access is withheld (WSU developer standards, 2024).
-- Administrative access MUST be limited to named users or roles, and access that is due to end is revoked on a regular schedule (WSU developer standards, 2024).
-- Access that is due to end when a person's status changes (for example an ended employment) MUST be removed by an automated process, not by memory (WSU developer standards, 2024).
-- Idle sessions MUST time out after a configurable period of inactivity (WSU developer standards, 2024). The stack's numbers are in `policy/policy.json`, under `sessions`, which is the source for them: SESAME signs a user out after 120 minutes idle and 720 minutes in all (`sessions.sesame`), and Drawbridge after 3600 seconds idle and 28800 seconds in all (`sessions.gateway`). SESAME config: `session.idle_minutes` (`SESAME_SESSION_IDLE_MINUTES`) and `session.absolute_minutes` (`SESAME_SESSION_ABSOLUTE_MINUTES`), with those defaults. An app that does not use SESAME sets its own idle limit; that is documented only.
+- Administrative access MUST be limited to named users or roles, and access that is due to end is revoked on a regular schedule (WSU developer standards, 2024). No check exists yet.
+- Access that is due to end when a person's status changes (for example an ended employment) MUST be removed by an automated process, not by memory (WSU developer standards, 2024). No check exists yet.
+- Idle sessions MUST time out after a configurable period of inactivity (WSU developer standards, 2024). The stack's numbers are in `policy/policy.json`, under `sessions`, which is the source for them: SESAME signs a user out after 120 minutes idle and 720 minutes in all (`sessions.sesame`), and Drawbridge after 3600 seconds idle and 28800 seconds in all (`sessions.gateway`). Held by: SESAME config, `session.idle_minutes` (`SESAME_SESSION_IDLE_MINUTES`) and `session.absolute_minutes` (`SESAME_SESSION_ABSOLUTE_MINUTES`), with those defaults. An app that does not use SESAME sets its own idle limit; that is documented only.

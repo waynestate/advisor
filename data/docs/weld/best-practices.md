@@ -59,13 +59,13 @@ The tags describe the repo as it stands on 2026-11-02. Since 2026-10-28 the Squi
 - **Practice:** Sail's own description is "Laravel's default Docker development environment". It is not a production image and WELD never deploys it.
 - **Why:** Sail's runtime images carry dev tooling and a bash-script CLI.
 - **Sources:** [Laravel Sail](https://laravel.com/docs/13.x/sail).
-- **Stack:** `Documented`. `composer.json:32` keeps `laravel/sail` in `require-dev`, so it is a local tool, not a runtime dependency. Target `Checked`: PROCTOR flags `laravel/sail` outside `require-dev` and any `vendor/laravel/sail` path in a production Dockerfile.
+- **Stack:** `Documented`. `composer.json:33` keeps `laravel/sail` in `require-dev`, so it is a local tool, not a runtime dependency. Target `Checked`: PROCTOR flags `laravel/sail` outside `require-dev` and any `vendor/laravel/sail` path in a production Dockerfile.
 
 ### W7. The supported dev path is Compose driven by native scripts, not Sail
 - **Practice:** Sail runs on Windows "via WSL2". The stack rule is that Windows needs no bash and no WSL. Ship `weld.ps1` and `weld.sh` (or one PHP command) over a plain `compose.yaml`; Sail stays an unsupported convenience.
 - **Why:** Every developer OS gets its own native path.
 - **Sources:** [Laravel Sail](https://laravel.com/docs/13.x/sail).
-- **Stack:** `Checked`. `compose.yaml` and the `bin/weld.ps1` / `bin/weld.sh` pair exist, and `tests/Unit/LocalStackTest.php:10-47` pins the pair's shared behaviour: the SQLite file is created only when missing and never truncated, and the Vite service writes a reachable listen address.
+- **Stack:** `Checked`. `compose.yaml` and the `bin/weld.ps1` / `bin/weld.sh` pair exist, and `tests/Unit/LocalStackTest.php:10-47` pins the pair's shared behavior: the SQLite file is created only when missing and never truncated, and the Vite service writes a reachable listen address.
 
 ### W8. One image, several process types
 - **Practice:** Build one image. Run it as `web`, `worker` and `scheduler` by changing the command only (plus `ssr` when Inertia SSR is on). On Compose these are services; on OpenShift a Deployment, a Deployment and a CronJob.
@@ -79,7 +79,7 @@ The tags describe the repo as it stands on 2026-11-02. Since 2026-10-28 the Squi
 - **Practice:** No `.env` in the image. Call `env()` only inside `config/*.php`.
 - **Why:** After `config:cache` the `.env` file is not loaded and `env()` returns `null` elsewhere.
 - **Sources:** [Laravel deployment](https://laravel.com/docs/13.x/deployment).
-- **Stack:** `Checked`. Every `env()` call is inside `config/*.php` except one documented exception: `bootstrap/app.php:27` reads `TRUSTED_PROXIES` because the middleware closure runs before config is loaded, and carries a `@phpstan-ignore` for `larastan.noEnvCallsOutsideOfConfig`. That rule is live (`phpstan.neon:10` sets `reportUnmatchedIgnoredErrors: true`), and `phpstan analyse` runs in the `ci` script (`composer.json:60`, `:64-72`), so a new `env()` outside `config/` fails CI.
+- **Stack:** `Checked`. Every `env()` call is inside `config/*.php` except one documented exception: `bootstrap/app.php:27` reads `TRUSTED_PROXIES` because the middleware closure runs before config is loaded, and carries a `@phpstan-ignore` for `larastan.noEnvCallsOutsideOfConfig`. That rule is live (`phpstan.neon:10` sets `reportUnmatchedIgnoredErrors: true`), and `phpstan analyse` runs in the `ci` script (`composer.json:61`, `:66-75`), so a new `env()` outside `config/` fails CI.
 
 ### W10. `config:cache` runs at container start, never at image build
 - **Practice:** Build time may run `route:cache`, `view:cache`, `event:cache`. `php artisan optimize` at start is acceptable if the build did not freeze config.
@@ -179,7 +179,7 @@ The tags describe the repo as it stands on 2026-11-02. Since 2026-10-28 the Squi
 - **Practice:** Require `laravel/framework` at or above the latest patched release, run `composer audit` in CI, and let CREED's `policy.json` name the minimum patch level. A critical TokenGuard authentication bypass was published on 2026-10-19 (fixed in 13.29.0 and 12.68.0).
 - **Why:** Framework advisories arrive several times a year.
 - **Sources:** [laravel/framework advisories](https://github.com/laravel/framework/security/advisories), [GHSA-f9x3-7vq9-cph6](https://github.com/laravel/framework/security/advisories/GHSA-f9x3-7vq9-cph6).
-- **Stack:** `Checked`. `composer.json:20` pins `laravel/framework: ^13.29` (at or above the patched release), `composer.json:71` runs `@composer audit` inside the `ci` script, and `.gitlab-ci.yml:14` includes the Preflight `composer-audit` component, so the audit runs in CI. CREED's `policy.json` is a dependency and PROCTOR measures against it, now also inside the test suite (`tests/Feature/ProctorCheckTest.php`).
+- **Stack:** `Checked`. `composer.json:20` pins `laravel/framework: ^13.29` (at or above the patched release), `composer.json:74` runs `@composer audit` inside the `ci` script, and `.gitlab-ci.yml:14` includes the Preflight `composer-audit` component, so the audit runs in CI. CREED's `policy.json` is a dependency and PROCTOR measures against it, now also inside the test suite (`tests/Feature/ProctorCheckTest.php`).
 
 ### W26. Debug is off outside local
 - **Practice:** `APP_DEBUG=false` in production. The debug page has had an XSS advisory (Low, 2026-09-10).
@@ -188,7 +188,7 @@ The tags describe the repo as it stands on 2026-11-02. Since 2026-10-28 the Squi
 - **Stack:** `Enforced`. `.env.example:4` sets `APP_DEBUG=true` for the local default, and `app/Support/ProductionDebug.php:23-30` refuses to boot when the environment is production and debug is on; `app/Providers/AppServiceProvider.php:29` calls it in `boot()`, and `tests/Feature/ProductionDebugTest.php:17-30` covers both the refusal and the pass.
 
 ### W27. CSRF uses the `PreventRequestForgery` middleware
-- **Practice:** Laravel 13 formalised request-forgery protection as `PreventRequestForgery` (origin-aware, still token-compatible). Any custom middleware stack or HELMET code must reference the new name.
+- **Practice:** Laravel 13 formalized request-forgery protection as `PreventRequestForgery` (origin-aware, still token-compatible). Any custom middleware stack or HELMET code must reference the new name.
 - **Why:** Code that removes or reorders the old name can silently drop protection.
 - **Sources:** [Laravel 13 release notes](https://laravel.com/docs/13.x/releases). Whether the old class name remains as an alias is not confirmed.
 - **Stack:** `Checked`. `bootstrap/app.php:31-34` appends to the default `web` middleware group. `tests/Feature/CsrfTest.php:15-19` posts without a token and expects 419, `:21-29` lets the session token through, and `:31-37` lets a same-origin `Sec-Fetch-Site` request through.
@@ -211,25 +211,25 @@ The tags describe the repo as it stands on 2026-11-02. Since 2026-10-28 the Squi
 - **Practice:** `composer.json` requires `php: ^8.3` with `config.platform.php` `8.3.0`. Tests run on 8.3, 8.4 and 8.5. Laravel 13 needs 8.3 or newer.
 - **Why:** The stack's floor and the framework agree.
 - **Sources:** [Laravel 13 releases](https://laravel.com/docs/13.x/releases).
-- **Stack:** `Checked`. `composer.json:18` requires `php: ^8.3`, `composer.json:122` sets `config.platform.php` to `8.3.0`, and the CI matrix runs on 8.3, 8.4 and 8.5 (`.gitlab-ci.yml:9` and `.github/workflows/ci.yml:18`).
+- **Stack:** `Checked`. `composer.json:18` requires `php: ^8.3`, `composer.json:131` sets `config.platform.php` to `8.3.0`, and the CI matrix runs on 8.3, 8.4 and 8.5 (`.gitlab-ci.yml:9` and `.github/workflows/ci.yml:18`).
 
 ### W31. Keep dev tools inside the PHP floor
 - **Practice:** Pest 5 requires PHP `^8.4`. On a `^8.3` floor use Pest 4 or PHPUnit and cap the constraint.
 - **Why:** An unconstrained `composer require pestphp/pest` breaks installs on 8.3.
 - **Sources:** [Pest on Packagist](https://repo.packagist.org/p2/pestphp/pest.json); Pint 1.32.1 requires `^8.3` ([Pint](https://repo.packagist.org/p2/laravel/pint.json)).
-- **Stack:** `Checked`. WELD adopted Pest 4 on 2026-11-03: `composer.json` requires `pestphp/pest ^4` (Pest 5 needs PHP `^8.4`, and the CI matrix starts at 8.3, `.gitlab-ci.yml:9`), the PHPUnit tests still run unchanged, and new tests are written in Pest.
+- **Stack:** `Checked`. WELD adopted Pest 4 on 2026-11-03: `composer.json` requires `pestphp/pest ^4` (Pest 5 needs PHP `^8.4`), and the CI matrix starts at 8.3 (`.gitlab-ci.yml:9`), so `composer install` runs on 8.3 and fails if a dev tool requires 8.4 or newer. The PHPUnit class tests still run unchanged, under Pest, and new tests are written in Pest.
 
 ### W32. Pinstripe owns style and static analysis
 - **Practice:** Use Pinstripe's Pint preset, PHPStan level 8 through Larastan, ESLint (flat config) and Prettier. No local overrides without a recorded reason.
 - **Why:** One standard across all stack repos.
 - **Sources:** [Larastan](https://repo.packagist.org/p2/larastan/larastan.json).
-- **Stack:** `Checked`, for the PHP side. `composer.json:58` runs `pint --test`, `composer.json:60` runs `phpstan analyse`, and both are in the `ci` script (`composer.json:64-72`), which CI runs; `pint.json:2` uses the `laravel` preset and `phpstan.neon:8` sets `level: 8`. The JS side runs in CI too: the `frontend` job (`.gitlab-ci.yml`, `.github/workflows/ci.yml`) runs `npm run lint` (`eslint.config.js`, flat config) and `npm run format:check` (`.prettierrc`). Pinstripe is not a dependency yet, so the presets are copied, not included.
+- **Stack:** `Checked`, for the PHP side. `composer.json:59` runs `pint --test`, `composer.json:61` runs `phpstan analyse`, and both are in the `ci` script (`composer.json:66-75`), which CI runs; `pint.json:2` uses the `laravel` preset and `phpstan.neon:8` sets `level: 8`. The JS side runs in CI too: the `frontend` job (`.gitlab-ci.yml`, `.github/workflows/ci.yml`) runs `npm run lint` (`eslint.config.js`, flat config) and `npm run format:check` (`.prettierrc`). Pinstripe is not a dependency yet, so the presets are copied, not included.
 
 ### W33. Pin shared CI components to a commit
 - **Practice:** Preflight components are referenced by commit SHA or a fixed tag, not a moving branch.
 - **Why:** A moved branch changes your pipeline without a review.
 - **Sources:** [GitLab CI/CD include](https://docs.gitlab.com/ci/yaml/include/).
-- **Stack:** `Checked`. `.gitlab-ci.yml` pins every Preflight component to the 0.4.0 release tag (`@0.4.0` at `.gitlab-ci.yml:7`, `:14`, `:19`, `:28`, `:37`, `:47`, `:51`), and `.github/workflows/ci.yml:16` pins the reusable workflow to Preflight 0.1.4's commit SHA until that mirror carries a release tag.
+- **Stack:** `Checked`. `.gitlab-ci.yml` pins every Preflight component to the 0.4.0 release tag (`@0.4.0` at `.gitlab-ci.yml:7`, `:14`, `:19`, `:28`, `:37`, `:47`, `:51`; published tags in the stack never move), and `.github/workflows/ci.yml:16` pins the reusable workflow to Preflight 0.1.4's commit SHA until that mirror carries a release tag. PROCTOR's `preflight-pinned` check, run by the `proctor-root` job (`composer proctor`), warns on an include without a full release tag or a commit SHA.
 
 ## Gaps for the backlog
 

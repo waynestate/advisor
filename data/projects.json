@@ -185,7 +185,7 @@
             "role": "The Citadel kit: the app-side release script, local parity with the platform, and upstream merge requests. Platform-specific deploy code lives here and nowhere else.",
             "state": "built",
             "package": "waynestate/squire",
-            "version": "0.8.0",
+            "version": "0.9.0",
             "php": "^8.3",
             "next_step": "Use its release script for Citadel deploys; other platforms use their own targets.",
             "docs": [

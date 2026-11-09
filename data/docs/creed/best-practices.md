@@ -445,8 +445,10 @@ Why: debug pages expose configuration values to users.
 Sources: [Laravel configuration docs](https://laravel.com/docs/13.x/configuration).
 
 How the stack holds it: `Documented`. `handbook/runtime-and-headers.md` and `handbook/secrets.md` write the rule.
-HELMET warns when the Laravel app boots with debug on in production (`helmet.debug_enabled_in_production`); no
-PROCTOR check reads `APP_DEBUG` yet.
+HELMET warns when the Laravel app boots with debug on in production (`helmet.debug_enabled_in_production`), and
+PROCTOR main's `app-debug` warns when a committed production env template (`.env.production`,
+`.env.squire.example`), a deploy file or a CI pipeline sets `APP_DEBUG` to true. It reads committed files only, never
+the deployed environment, and it is not in a PROCTOR release yet.
 
 ## 5. Overrides and rollout
 
@@ -479,8 +481,11 @@ Sources: none outside the stack. Second pass: the first pass also cited the GOV.
 security patches take priority and that teams should upgrade before EOL, but as read it does not describe `report`,
 `warn` and `block` stages, so the citation was removed and the staging is the stack's own design.
 
-How the stack holds it: `Documented`. The deploy gate is proposed and needs the Citadel team. The schema has no field
-for stage dates.
+How the stack holds it: `Documented`. The policy now has the field: its `gate` block holds a `default_stage` and
+per-check `stages` entries, each with a `from` date (it ships empty), `Policy::gateStage()` reads them
+(`tests/PolicyGateStageTest.php`), and `proctor gate` (PROCTOR 0.9.0) reports, warns or blocks each check by its
+stage. No rule has been staged yet, and the Citadel deploy gate that would run it on every release still needs the
+Citadel team.
 
 ### 29. Name where each rule is enforced
 
@@ -491,11 +496,11 @@ Why: a rule that nothing runs is only a wish.
 
 Sources: [OWASP ASVS](https://asvs.owasp.org/).
 
-How the stack holds it: `Partially`. Most rules in the handbook name their point: the PROCTOR check that enforces it,
-the command that measures it, or the plain words "no check exists yet". Some still name neither (the auth chapter's
-driver and access rules, for example). What remains: tags for those rules, the checks behind the "no check exists
-yet" tags, and a guard that fails when a rule loses its tag; the handbook lint (`bin/lint-handbook.php`) checks RFC
-2119 wording only.
+How the stack holds it: `Partially`. Every handbook rule that uses MUST, SHOULD or MAY names its point with one of
+three tags: "PROCTOR check: `<id>`", "Held by: ..." (a Preflight component, a runtime package's config, CREED's own
+CI) or "No check exists yet". The handbook lint (`bin/lint-handbook.php`, run by `composer ci`) fails when a rule
+carries none, so a rule cannot lose its tag. What remains: the checks behind the "No check exists yet" tags, and
+rules written without an RFC 2119 capital, which the lint does not see.
 
 ## 6. Writing the handbook
 
@@ -530,10 +535,10 @@ Why: a standard is a command that fails, not a sentence in a README.
 
 Sources: [OWASP ASVS](https://asvs.owasp.org/) (requirements written to be verified).
 
-How the stack holds it: `Partially`. Most handbook rules name, beside the rule, the PROCTOR check that enforces it,
-the command that measures it, or the plain words "no check exists yet"; some still name neither (practice 29). What
-remains: those tags, the checks behind them, and a mechanical guard that keeps every rule named; the handbook lint
-checks RFC 2119 wording only.
+How the stack holds it: `Partially`. Every handbook rule that uses an RFC 2119 capital names, beside the rule, the
+PROCTOR check that enforces it, the other point that holds it ("Held by:"), or the plain words "No check exists yet",
+and the handbook lint fails when one names none (practice 29). What remains: the checks behind the "No check exists
+yet" tags.
 
 ### 33. Judge with deterministic checks only
 
@@ -557,8 +562,9 @@ Sources: none outside the stack; this is the stack's every-OS design.
 
 How the stack holds it: `Partially`. The stack's every-OS design and `every-os.md` state it, and CREED has the
 `.gitattributes`. PROCTOR main's `proctor/crlf-deploy-script` fails when a deploy script (`build.sh`, `release.sh`, or
-a `.sh` file under `deploy/`, `deployments/`, `deploy_scripts/` or `scripts/`) has Windows line endings. No check
-reads `.gitattributes`, other server files or file-name case collisions yet.
+a `.sh` file under `deploy/`, `deployments/`, `deploy_scripts/` or `scripts/`) has Windows line endings, and warns
+when the app has a deploy script and `.gitattributes` does not pin `*.sh` to LF. PROCTOR 0.9.0's `case-clash` fails
+when two paths differ only by letter case. No check reads the rest of `.gitattributes` or other server files yet.
 
 ### 35. Run the test suite on every supported PHP version
 
@@ -798,7 +804,9 @@ Sources: [Laravel 13 database docs](https://laravel.com/docs/13.x/database), [en
 
 How the stack holds it: `Partially`. `policy.json` records the minimum MySQL and MariaDB for each Laravel release
 (Laravel 10 to 13), and the reader exposes them through `requires()`; `tests/PolicyRequiresTest.php` pins the values.
-The platform's MySQL timeline is still an open question, and no check compares an app with the policy yet.
+PROCTOR main's `mysql-minimum` warns when an app's declared MySQL or MariaDB image (in a compose file,
+`.env.squire.example` or `.env.example`) is below its locked Laravel line's minimum; it is not in a PROCTOR release yet. The platform's
+MySQL timeline is still an open question.
 
 ### 47. Plan the MySQL move around authentication and LTS lines
 
@@ -1092,15 +1100,19 @@ These are places where a source disagrees with the repository or with an earlier
 10. Done: Preflight 0.2.0's `secret-detection` component runs Gitleaks and fails on a match (practice 24).
 11. Done: PROCTOR main's `env-outside-config` warns on `env()` outside `config/` (practice 25). Larastan's own rule in
     Pinstripe would catch it earlier, in the editor.
-12. Partly done: the runtime and headers chapter is written (practice 26); the `config` check that `APP_DEBUG` is
-    false in production is not built.
-13. Partly done: versions, dependencies, auth, databases, ci, every-os and overrides carry check IDs; the other chapters
-    are still to walk (practices 29 and 32).
+12. Partly done: the runtime and headers chapter is written (practice 26), and PROCTOR main's `app-debug` warns on a
+    committed production template, deploy file or CI pipeline that sets `APP_DEBUG` to true; it waits for a PROCTOR
+    release, and nothing reads the deployed environment.
+13. Partly done: every handbook rule that uses an RFC 2119 capital carries a tag (a PROCTOR check ID, "Held by:" or
+    "No check exists yet"), and the handbook lint fails on an untagged one; rules phrased without a capital are still
+    to walk (practices 29 and 32).
 14. Done: `tests/OlderReaderContractTest.php` loads a future-shaped policy file with the reader and asserts every
     known line still answers the same (practice 10).
-15. Add stage dates (`report`, `warn`, `block`) to the schema (practice 28).
-16. Partly done: PROCTOR main's `crlf-deploy-script` fails on CRLF in deploy scripts; checks for `.gitattributes`,
-    other server files and file-name case collisions are still to add (practice 34).
+15. Done: the policy's `gate` block carries per-check stages (`report`, `warn`, `block`) with `from` dates, in the
+    schema and the reader, and `proctor gate` (PROCTOR 0.9.0) applies them; no rule is staged yet (practice 28).
+16. Partly done: PROCTOR's `crlf-deploy-script` fails on CRLF in deploy scripts and warns when `.gitattributes` does
+    not pin them to LF, and PROCTOR 0.9.0's `case-clash` fails on file-name case collisions; checks for other server
+    files are still to add (practice 34).
 17. Partly done: PROCTOR main's `preflight-pinned` warns when a Preflight include is not pinned to a commit SHA; other
     components are not checked (practice 23).
 18. Partly done: the accessibility chapter is written, with the WCAG 2.2 AA target (practices 30 and 54); the Title
@@ -1123,8 +1135,8 @@ Added in the second pass (2026-10-27):
 26. Partly done: `images.docker` is filled for PHP 8.3 to 8.5 and the rebuild rule is in `handbook/versions.md`;
     `citadel` waits for Citadel's image names.
 27. Ask the owners of git.wayne.edu to publish its GitLab patch level and a patch routine (practice 45).
-28. Partly done: policy.json records each Laravel release's minimum database (practice 46); the PROCTOR check that
-    compares an app with it is not built.
+28. Partly done: policy.json records each Laravel release's minimum database (practice 46), and PROCTOR main's
+    `mysql-minimum` warns when an app's declared database image is below it; it waits for a PROCTOR release.
 29. Done: `handbook/databases.md` writes down the MySQL auth plugin step and the rule "list LTS lines only" (practice 47).
 30. State a target for adding a new PHP image, per target (Citadel and elsewhere), and a notice period for retiring
     one (practice 48).

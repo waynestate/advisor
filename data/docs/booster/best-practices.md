@@ -35,8 +35,16 @@ tag for how Booster holds each rule today.
   temporary ignore into `config.policy.advisories.ignore`, retries once, and reports the unblock; PROCTOR keeps
   naming the entry until the app removes it. The unblock never ships: after a gated step passes, Booster warns
   while one of its entries remains, and the plan's last step fails until it is out of `composer.json`.
-- **Write characterization tests for code that has none.** `Documented`: the playbooks ask for it before the PHP 8.0
-  hop.
+- **Write characterization tests for code that has none.** `Checked`: the replay gate is the runnable form.
+  `booster replay init` drafts a request file (`booster-replay.json`) from the app's routes, and `booster run --replay`
+  records how the app answers those requests on its current PHP before the first hop, replays them after every hop,
+  and fails the hop on a changed answer (`src/Replay/ReplayGate.php`, `tests/HopExecutorReplayTest.php`,
+  `tests/ReplayDockerTest.php`; guide: `docs/guides/replay-gate.md`). It is off unless asked for, so a run whose gate
+  proves little (the built-in `php -l` check, or only Laravel's stock example tests) and that does not replay says so
+  under the baseline, names `booster replay init` (or `--replay`, when the file is already there) and the step most
+  likely to change an answer (the PHP 8.0 hop), in the text and JSON reports (`src/Replay/ReplaySuggestion.php`,
+  `tests/HopExecutorTest.php`). Advisory: it never changes the exit code. The PHP 8.0 hop's notes and playbook ask
+  for extra tests or a replay file before that hop.
 
 ## Rector
 
@@ -49,7 +57,12 @@ tag for how Booster holds each rule today.
 - **Run Rector from its own toolchain.** `Enforced`: Rector and rector-laravel come from Booster's `vendor/`, never
   from the app, so an app on PHP 7.4 can be upgraded.
 - **Pin Rector and its rule packages** for a whole campaign. `Enforced`: `composer.lock` is committed; Rector is
-  bounded `^2.8` and rector-laravel `^2.7`.
+  bounded `^2.8` and rector-laravel `^2.7`. Before the first hop rewrites code, `run` checks Booster's Rector config
+  with `rector validate-config` and stops on a broken one (`RectorRunner::validateConfig()` in
+  `src/Run/RectorRunner.php`), and the `composer-ci` job in `.gitlab-ci.yml` runs the same check. The run report
+  records the Rector version that ran (`rector_version`), and a real run writes the hop record `booster-hop.json` at
+  the app root (`src/Report/HopRecord.php`) with the installed `rector/rector` and `driftingly/rector-laravel`
+  versions, so every app in a campaign shows which rules moved it (`tests/HopExecutorTest.php`, `tests/CliTest.php`).
 - **Use maintained sets before writing rules.** `Enforced`: PHP and Laravel hops use the official per-version sets. The
   only Booster-owned rule set is the `wayne-cas` rename.
 - **Give Rector room to breathe.** `Checked`: the Rector process runs under `--memory-limit` (default `2G`, `-1`
@@ -70,6 +83,11 @@ tag for how Booster holds each rule today.
   counts. It never changes the exit code, a clean audit stays silent, a hop that changed no composer file skips it
   and says so, and an audit that cannot run is reported with the command to run by hand. Tests:
   `tests/ComposerAuditHopTest.php`, `tests/ComposerAuditScanTest.php`.
+- **Watch the framework fallbacks and helper clashes.** `Checked`: the behavior-changes block flags an app that
+  leaves its session cookie name or cache prefix to Laravel's fallback before the 12 to 13 hop (the fallback names
+  change, so users are signed out once and the cache starts cold), and each global `array_first()` or `array_last()`
+  call the PHP 8.5 polyfill would silently redefine (`tests/BehaviourDataTest.php`). Advisory: it never changes the
+  exit code.
 - **PHPCompatibility is advisory only.** `Enforced`: `plan` and `booster scan` run it as an advisory scan; it never changes the exit code and a scan that cannot run is reported, not failed.
 
 ## Safe edits
@@ -86,6 +104,11 @@ tag for how Booster holds each rule today.
 - **Deterministic tools first, model second.** `Enforced`: the playbooks (`booster init`) tell an assistant to drive
   the same `plan` and `run` commands a person types, to stop at every gate, and to leave the merge to a person. They are
   generated from the hop registry, and `booster init --check` fails CI when one is stale.
+- **Retry with the real error, cap the tries, then stop.** `Documented`: every hop playbook has a "When a gate fails"
+  section that feeds the fix the gate's own output and the files it names, allows one cause per try, forbids loosening
+  a test or skipping the gate, and hands the hop back to a person after 3 tries at one failure
+  (`SkillRenderer::MAX_TRIES`, `tests/SkillRendererTest.php`). Booster runs no model loop itself, so the cap is an
+  instruction the coding tool follows, not something Booster can enforce.
 
 ## Not yet
 

@@ -20,6 +20,8 @@ The stack's version policy states:
   reaches EOL, so security fixes require the upgrade (the stack's version policy).
 - `policy.json` is a contract, versioned like WayneUI's `/v2/`. Older Check
   versions MUST still read newer policy files (the stack's version policy).
+  Held by: CREED's own CI, where `tests/OlderReaderContractTest.php` reads a
+  future-shaped policy file with today's reader.
 
 ## Latest patches
 
@@ -44,7 +46,9 @@ changes. The policy robot lands that change itself: it pushes the refresh to
 person only when the gate is red. So an image never sits behind the patch
 level the policy records (the stack's version policy). Every such change
 to `latest_patch` is a rebuild. An image MUST NOT be pinned to a branch the
-policy marks EOL (the stack's version policy).
+policy marks EOL (the stack's version policy). PROCTOR check: `unpatched`,
+which warns when the PHP an app runs on (`--php-runtime`) is behind
+`latest_patch`; nothing reads the PHP image tag itself yet.
 
 `images.docker` names the official image for a plain Docker target. Citadel
 names its own images, so `images.citadel` stays unset until Citadel publishes
@@ -54,6 +58,9 @@ names. `openshift` and `coolify` are not filled yet.
 
 The policy lists even Node majors only, because even majors are the LTS lines;
 odd majors MUST NOT be a target and are not listed (the stack's version policy).
+Held by: CREED's own CI. The refresher adds even majors only, and
+`tests/PolicySchemaTest.php` fails if an odd major is ever written into
+`policy.json` by hand.
 
 An app MUST build on a Node line that has not reached end of life. PROCTOR
 check: `node-eol`. It reads `.nvmrc`, `.node-version`, `volta.node` and the

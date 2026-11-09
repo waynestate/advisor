@@ -17,11 +17,11 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 
 ## Checks
 
-- An automated accessibility check SHOULD run in CI on the app's key pages. GitLab's accessibility testing uses Pa11y
-  and is available on every self-managed tier (the stack's accessibility design).
+- An automated accessibility check SHOULD run in CI on the app's key pages (the stack's accessibility design).
+  Held by: Preflight's `a11y` component, below.
 - An automated tool catches regressions; it is not proof of conformance, and it never replaces a manual keyboard and
   screen reader pass before launch (the stack's accessibility design).
-- Preflight's `a11y` component (0.3.0) is the stack's CI check: it opens the app's pages in Chromium, runs axe-core
+- Preflight's `a11y` component (0.4.0) is the stack's CI check: it opens the app's pages in Chromium, runs axe-core
   in light and dark at 320 and 1280 px, and fails the pipeline on any violation. Add `wcag22aa` to its tags for the
   WCAG 2.2 AA target above.
 

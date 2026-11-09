@@ -5,7 +5,13 @@ states what the ADRs have decided or what WSU's developer standards (2024)
 already require, and names its undecided points under a "Not decided here"
 heading.
 
-A line that reads "PROCTOR check: `<id>`" names the PROCTOR check that reports a breach of that rule.
+Every rule that uses MUST, SHOULD or MAY names what holds it, with one of three tags:
+
+- "PROCTOR check: `<id>`" names the PROCTOR check that reports a breach of that rule.
+- "Held by: ..." names any other point that holds it: a Preflight component, a runtime package's config, CREED's own CI.
+- "No check exists yet" says that nothing does, so the gap is in plain sight.
+
+`composer lint-handbook` fails when a rule carries none of them, so a rule cannot quietly lose its tag.
 
 - [Versions](versions.md)
 - [Dependencies](dependencies.md)

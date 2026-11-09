@@ -64,9 +64,9 @@ HTTPS.
 - PHP `display_errors` MUST be `Off` and `log_errors` `On` in production (Squire's deploy kit ships that php.ini;
   HELMET neither sets nor checks it). No check exists yet.
 - Laravel `APP_DEBUG` MUST be `false` in production (WSU developer standards, 2024). The Laravel adapter writes one
-  warning `helmet.debug_enabled_in_production` when it is true in the production environment.
-
-A PROCTOR check for this is proposed, not built.
+  warning `helmet.debug_enabled_in_production` when it is true in the production environment. PROCTOR check:
+  `app-debug`, on PROCTOR main: it warns when a committed production env template, deploy file or CI pipeline sets
+  `APP_DEBUG` to true (`.env.example` is the local template and is skipped).
 
 ## Not decided here
 
