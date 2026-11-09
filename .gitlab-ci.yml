@@ -9,13 +9,12 @@ include:
       php_versions: ["8.3", "8.4", "8.5"]
       image: "php:${PHP_VERSION}-cli-trixie"
   - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@0.5.0
-  # The front page deploy layer (ADR-0017): PROCTOR checks deploy/ against CREED's policy.
-  # allow_failure: current findings: unbounded dev-main constraints; CI files missing in deploy/.
+  # The front page deploy layer (ADR-0017): PROCTOR checks deploy/ against CREED's policy. A failed check
+  # fails the pipeline; warnings are reported and pass.
   - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@0.5.0
     inputs:
       working_dir: deploy
       proctor_command: vendor/bin/proctor check --format=codequality
-      allow_failure: true
       image: "php:8.4-cli-trixie@sha256:9cf851bc2c1b37c3e59dfd677a3c3e56d485af5a47c93f629424bb039eafcb69"
   # The accessibility gate: Preflight's a11y component checks every page under site/ in a real browser
   # (axe-core, WCAG tags only, light and dark, 320 and 1280 px, reflow). Its image is on mcr.microsoft.com,
