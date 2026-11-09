@@ -51,7 +51,7 @@
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
-            "sha256": "a517ff6f63d4696f587f01987002fb20f8ad80cd8b458dbb7eb816b51adc4d4c",
+            "sha256": "9252b66fb35f0ad16bf3e332e7261ef55a370f72182248d5ca6703abb06439b8",
             "source": "preflight/BEST_PRACTICES.md"
         },
         "docs/preflight/readme.md": {
@@ -95,7 +95,7 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "919b79f82ed65eff77721bd8db274f0e123223661c9f046acdb756cfdf2c0f07",
+            "sha256": "347aea9c2d8143df6c1b423868373b186883c7a972320079e9b1d879713bc1a0",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {
@@ -187,7 +187,7 @@
             "source": "creed/policy/policy.json"
         },
         "projects.json": {
-            "sha256": "2f9703f864a76cd540832679e56c4010b6f3b210eaa519542113d5269fc30fd1",
+            "sha256": "31ae289a2144022757e4045a8c483e09477d0cd327996df4f0834c511f0f432d",
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {
