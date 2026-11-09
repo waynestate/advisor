@@ -7,6 +7,8 @@ description: How ADVISOR stays read-only and safe to run.
 
 This page collects the safety rules ADVISOR enforces and the settings behind them, so you know what it will and will not do.
 
+Each control is also written up as a threat page: [prompt injection](../threats/prompt-injection.md), [path traversal](../threats/path-traversal.md), [command injection](../threats/command-injection.md) and [data exfiltration](../threats/data-exfiltration.md).
+
 ## Safety, in short
 
 - Off unless enabled; refuses production; refuses to start on a bad setting or a content file that fails its hash.

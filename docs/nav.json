@@ -61,6 +61,27 @@
       ]
     },
     {
+      "title": "Threats",
+      "items": [
+        {
+          "title": "Prompt injection",
+          "path": "threats/prompt-injection"
+        },
+        {
+          "title": "Path traversal",
+          "path": "threats/path-traversal"
+        },
+        {
+          "title": "Command injection",
+          "path": "threats/command-injection"
+        },
+        {
+          "title": "Data exfiltration",
+          "path": "threats/data-exfiltration"
+        }
+      ]
+    },
+    {
       "title": "Reference",
       "items": [
         {
