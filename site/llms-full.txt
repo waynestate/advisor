@@ -311,8 +311,10 @@ Maintainers: how to build, test and release this project, and where its data com
 composer ci
 ```
 
-That runs `composer validate --strict`, `content:verify`, PHPUnit, Pint, PHPStan (level 8, Pinstripe's raw preset,
-included from `vendor/waynestate/pinstripe`) and `composer audit`. No PHP on your machine? Use Docker:
+That runs `composer validate --strict`, `content:verify`, `stack-parts --check=README.md`, PHPUnit, Pint, the
+agent-ready check (`site/index.md`, `llms.txt`, `llms-full.txt`), PHPStan (level 8, Pinstripe's raw preset, included
+from `vendor/waynestate/pinstripe`), `composer audit` and the docs site check (`site/docs/` is current and every link
+resolves). No PHP on your machine? Use Docker:
 
 ```
 docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
@@ -648,6 +650,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 #### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
+- Docs: the README, MAINTAINING and the contributing page list everything `composer ci` runs (the agent-ready and docs site checks were missing); "What it offers" says `policy_lookup` answers end of life for a version older than the policy lists and names `upgrade_path`'s `from_php` input, as the README does; the docs overview says what main carries since 0.1.7; and the front page footer links the docs, git.wayne.edu and the GitHub mirror.
 - Fixed: the docs and the front page keep their Docs link in the header on a phone (it used to vanish below 900px with the section links), the docs sidebar opens scrolled to the page you are on with a thin scrollbar, Troubleshooting's symptoms are h2 headings under the h1 (they skipped to h3), and the Overview's tagline sits under its title.
 - Added: docs/threats/ explains four threats (prompt injection, path traversal, command injection, data exfiltration), where each applies, the code and tests that stop it, and what risk is left (backlog row 16).
 - Changed: CI pins the Preflight components to 0.4.0 (the proctor job clones the full history, so the override-approver check can read git blame).
@@ -834,7 +837,7 @@ Development happens on git.wayne.edu, the canonical repository: [enterprise-apps
 | Regenerate the parts table in the README | `php bin/advisor stack-parts --write=README.md` |
 | Diagnose a client setup | `php vendor/bin/advisor doctor` (in an app) |
 
-`composer ci` runs `composer validate --strict`, `content:verify`, `stack-parts --check=README.md`, PHPUnit, Pint, PHPStan and `composer audit`. CI cannot see the sibling repos, so it verifies the manifest; regenerating is a local step.
+`composer ci` runs `composer validate --strict`, `content:verify`, `stack-parts --check=README.md`, PHPUnit, Pint, the agent-ready check, PHPStan, `composer audit` and the docs site check (`composer docs:check`). CI cannot see the sibling repos, so it verifies the manifest; regenerating is a local step.
 
 With only Docker:
 
@@ -1427,12 +1430,12 @@ Nine tools, all read-only. Each one says where its answer came from:
 | `list_projects` | The stack's projects, WayneUI first, with built or proposed state, package and version. |
 | `get_project_status` | One project: state, package, version, PHP constraint, its floor under today's policy, next step. |
 | `read_project_docs` | A project's README, best practices, or (WayneUI only) markup contract and 1.x to 2.x migration guide, paged. |
-| `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. |
+| `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. A version older than every one the policy lists is answered as end of life, with a note. |
 | `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
 | `owner_of` | Answers "which project owns X?" from the bundled ownership table, built from the stack's one-owner-per-rule decision first: the owner, its role, the projects around it, and the decision each answer comes from. Pass a topic or the whole question ("who owns composer audit"). |
 | `playbook_lookup` | A shared value by key, or every key: an environment variable of the same name wins, then Playbook; secret-looking keys are refused. |
 | `run_proctor_check` | Runs the app's own `vendor/bin/proctor check` against the bundled policy and returns the findings. |
-| `upgrade_path` | Plans the app's PHP and/or Laravel upgrade, one supported hop at a time, via Booster's read-only `plan`. |
+| `upgrade_path` | Plans the app's PHP and/or Laravel upgrade, one supported hop at a time, via Booster's read-only `plan`. Inputs: from_php (the version the app runs today, when the project names none), to_php, to_laravel. |
 
 Note
 
@@ -1563,7 +1566,7 @@ The command is `php vendor/bin/advisor`. This works the same on Windows, macOS a
 
 ### Status[#](https://advisor.apps.wayne.edu/docs/#status)
 
-Current release 0.1.7. PHP ^8.3, license MIT, MCP SDK 0.9.0. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
+Current release 0.1.7. PHP ^8.3, license MIT, MCP SDK 0.9.0. Main carries more since then: `upgrade_path` takes `from_php`, `policy_lookup` answers end of life for a version older than the policy lists, the [threat pages](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html), and a bundle resynced with the stack's 2026-11-09 main branches. The [changelog](https://advisor.apps.wayne.edu/docs/changelog.html) lists it under Unreleased. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
 
 ### Related[#](https://advisor.apps.wayne.edu/docs/#related)
 

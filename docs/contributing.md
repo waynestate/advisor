@@ -23,7 +23,7 @@ Development happens on git.wayne.edu, the canonical repository: [enterprise-apps
 | Regenerate the parts table in the README | `php bin/advisor stack-parts --write=README.md` |
 | Diagnose a client setup | `php vendor/bin/advisor doctor` (in an app) |
 
-`composer ci` runs `composer validate --strict`, `content:verify`, `stack-parts --check=README.md`, PHPUnit, Pint, PHPStan and `composer audit`. CI cannot see the sibling repos, so it verifies the manifest; regenerating is a local step.
+`composer ci` runs `composer validate --strict`, `content:verify`, `stack-parts --check=README.md`, PHPUnit, Pint, the agent-ready check, PHPStan, `composer audit` and the docs site check (`composer docs:check`). CI cannot see the sibling repos, so it verifies the manifest; regenerating is a local step.
 
 With only Docker:
 

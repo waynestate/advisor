@@ -43,7 +43,7 @@ docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app comp
 ```
 
 `composer ci` runs `composer validate --strict`, `content:verify`, `stack-parts --check=README.md`, PHPUnit, Pint,
-PHPStan and `composer audit`. CI cannot see the sibling repos, so it verifies the manifest; regenerating is a local
+the agent-ready check, PHPStan, `composer audit` and the docs site check (`composer docs:check`). CI cannot see the sibling repos, so it verifies the manifest; regenerating is a local
 step.
 
 ## CI

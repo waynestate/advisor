@@ -82,7 +82,7 @@
 </tr>
 </tbody>
 </table></div>
-<p><code>composer ci</code> runs <code>composer validate --strict</code>, <code>content:verify</code>, <code>stack-parts --check=README.md</code>, PHPUnit, Pint, PHPStan and <code>composer audit</code>. CI cannot see the sibling repos, so it verifies the manifest; regenerating is a local step.</p>
+<p><code>composer ci</code> runs <code>composer validate --strict</code>, <code>content:verify</code>, <code>stack-parts --check=README.md</code>, PHPUnit, Pint, the agent-ready check, PHPStan, <code>composer audit</code> and the docs site check (<code>composer docs:check</code>). CI cannot see the sibling repos, so it verifies the manifest; regenerating is a local step.</p>
 <p>With only Docker:</p>
 <pre tabindex="0"><code>docker run --rm -v &quot;${PWD}:/app&quot; -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c &quot;composer install --no-interaction &amp;&amp; composer ci&quot;
 </code></pre>

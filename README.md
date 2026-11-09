@@ -327,8 +327,10 @@ Maintainers: how to build, test and release this project, and where its data com
 composer ci
 ```
 
-That runs `composer validate --strict`, `content:verify`, PHPUnit, Pint, PHPStan (level 8, Pinstripe's raw preset,
-included from `vendor/waynestate/pinstripe`) and `composer audit`. No PHP on your machine? Use Docker:
+That runs `composer validate --strict`, `content:verify`, `stack-parts --check=README.md`, PHPUnit, Pint, the
+agent-ready check (`site/index.md`, `llms.txt`, `llms-full.txt`), PHPStan (level 8, Pinstripe's raw preset, included
+from `vendor/waynestate/pinstripe`), `composer audit` and the docs site check (`site/docs/` is current and every link
+resolves). No PHP on your machine? Use Docker:
 
 ```
 docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"

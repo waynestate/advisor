@@ -194,6 +194,10 @@ code, pre { font-family: var(--wsu-font-family-mono); }
   background: linear-gradient(90deg, #f4f1ea 0 25%, transparent 25% 50%, #f4f1ea 50% 75%, transparent 75%);
 }
 .sheet-foot__org { font-size: 0.875rem; color: rgba(244, 241, 234, 0.85); }
+/* The footer's links: cream on the deep green, underlined so they read as links without color alone. */
+.sheet-foot__org a { color: #f4f1ea; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sheet-foot__org a:hover { color: var(--adv-gold); }
+.sheet-foot__org a:focus-visible { outline: 3px solid var(--adv-gold); outline-offset: 2px; border-radius: 2px; }
 
 /* --------------------------------------------------- 3. hero, compass rose */
 
