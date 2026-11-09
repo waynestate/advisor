@@ -46,6 +46,7 @@
 <h3 id="changed">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></h3>
 <ul>
 <li>Changed: the <code>wayneui-copies</code>, <code>composer-ci</code> and <code>content-drift</code> CI jobs and the documented Docker commands (README, MAINTAINING, Contributing, Docker, Proof) use <code>composer:2.11.1</code> pinned by its multi-arch list digest (<code>sha256:8de2184c...</code>; was <code>composer:2.10.3</code>). 2.10 is no longer maintained, and 2.11.1 fixes GHSA-c968-33g3-wh7p and GHSA-fm2w-xgf2-f9fh.</li>
+<li>Changed: the deploy kit is Squire 0.10.2 (was 0.10.1): the kit's Dockerfiles name every image in full (<code>docker.io/library/...</code>), the fallback base takes Composer from a <code>COMPOSER_IMAGE</code> stage, <code>.squire/php.ini</code> sets <code>session.cookie_samesite = Lax</code>, and the portable image drops <code>node_modules/</code> after the frontend build. <code>squire init --check</code> passes.</li>
 <li>Docs: the Proof page's &quot;Last run&quot; table records <code>composer ci</code> on the 0.2.0 release commit on 2026-11-09 (282 tests, 1535 assertions; the 2026-11-07 run had 249).</li>
 </ul>
 <h2 id="0-2-0-2026-11-09">[0.2.0] - 2026-11-09<a class="docs-heading-link" aria-label="Link to this section" href="#0-2-0-2026-11-09">#</a></h2>
