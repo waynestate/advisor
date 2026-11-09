@@ -361,7 +361,7 @@ reflow check for WCAG 1.4.10.
 ADVISOR's own checker, `scripts/a11y/check.mjs`, runs too, as the `a11y-extra` job. It loads the same pages in light and dark themes at phone (390 px) and desktop (1440 px) width, plus one reduced-motion pass, and also requires one `<h1>`, a `lang` attribute, a non-empty title, and no horizontal scroll at phone width. Run it from the repo root (works in PowerShell):
 
 ```
-docker run --rm -v "${PWD}:/app" -e npm_config_cache=/npm-cache -v stack-npm-cache:/npm-cache -w /app/scripts/a11y mcr.microsoft.com/playwright:v1.49.1-noble sh -c "npm install --no-audit --no-fund && node check.mjs"
+docker run --rm -v "${PWD}:/app" -e npm_config_cache=/npm-cache -v stack-npm-cache:/npm-cache -w /app/scripts/a11y mcr.microsoft.com/playwright:v1.65.0-noble sh -c "npm install --no-audit --no-fund && node check.mjs"
 ```
 
 It also runs as the `a11y-extra` job in GitLab CI.

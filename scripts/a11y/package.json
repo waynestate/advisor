@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@axe-core/playwright": "4.10.2",
-    "@playwright/test": "1.49.1",
-    "axe-core": "4.10.3"
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.0",
+    "axe-core": "4.14.0"
   }
 }
