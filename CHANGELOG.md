@@ -11,6 +11,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Changed
 
+- Changed: the deploy kit is Squire 0.10.1 (was 0.10.0): `.squire/base-fallback.Dockerfile` copies Composer 2.11.1 (was 2.10.3, no longer maintained), and the deploy layer requires PROCTOR ^0.11 (locked 0.11.0, was ^0.8 at 0.8.0).
 - Changed: the deploy kit is Squire 0.10.0 (was 0.7.1): release.sh keeps Composer and npm download caches in the app folder and the gate takes SQUIRE_PHP_RUNTIME; the compose file, health.php and .env.squire.example follow the template, and the portable image files are added.
 - Changed: ADVISOR reads the policy through CREED's own reader (waynestate/creed ^0.1.8) instead of a mirrored copy, so policy_lookup and get_project_status answer exactly what PROCTOR decides; a line marked current (vue 3, inertia 2 and 3) now reads as active, where the mirror gave no state. A version the policy does not list keeps ADVISOR's answers: older than every line is end of life with a note, newer is refused with the same message.
 - Docs: the README, MAINTAINING and the contributing page list everything `composer ci` runs (the agent-ready and docs site checks were missing); "What it offers" says `policy_lookup` answers end of life for a version older than the policy lists and names `upgrade_path`'s `from_php` input, as the README does; the docs overview says what main carries since 0.1.7; and the front page footer links the docs, git.wayne.edu and the GitHub mirror.
