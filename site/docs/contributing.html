@@ -124,10 +124,10 @@
 <p>The following items are open questions or not yet built:</p>
 <ul>
 <li>Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.</li>
-<li>Signing of any state handed back to a client (no tool needs it in 0.1).</li>
-<li>A threat model mapped to OWASP and NIST; a full-capture audit mode.</li>
+<li>Signing of any state handed back to a client (no tool needs it yet).</li>
+<li>A full-capture audit mode (the threat model mapped to OWASP and NIST is done: see <code>BEST_PRACTICES.md</code> and the threat pages).</li>
 <li>&quot;Ask ADVISOR&quot; web chat: needs a model, an open stack question and an accessibility pass of its own.</li>
-<li>HTTP transport and OAuth: stdio first; remote needs a threat model.</li>
+<li>HTTP transport and OAuth: stdio first; remote needs a threat model of its own (the one in <code>BEST_PRACTICES.md</code> covers stdio only).</li>
 <li>Tools that write (scaffold with Sourdough, apply a Booster step): the approved list is read-only; the read-only switch and tool groups are built so they can arrive safely.</li>
 <li>Per-project modules in their own repositories: the loader and <code>Module</code> interface exist and are tested; the other projects have not published modules.</li>
 <li>WarriorGPT-backed features: no model calls until an open stack question is settled.</li>

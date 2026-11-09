@@ -8,7 +8,7 @@ generator: Squire agent-ready
 
 # Configuration[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#configuration)
 
-ADVISOR reads the process environment only, never a file. This page lists every variable with its default and its meaning, and the placeholders are in `.env.example`. Nothing in 0.1 needs a secret, key, certificate, token or host, so every setting is optional.
+ADVISOR reads the process environment only, never a file. This page lists every variable with its default and its meaning, and the placeholders are in `.env.example`. Nothing in ADVISOR needs a secret, key, certificate, token or host, so every setting is optional.
 
 ## Environment variables[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#environment-variables)
 
@@ -26,7 +26,7 @@ ADVISOR reads the process environment only, never a file. This page lists every 
 | ADVISOR_PRIVATE_DENYLIST | A file (kept outside the repo) with private strings to strip from the bundle; used by `content:generate` and the public-posture test. See "Releasing". | none | src/Content/Denylist.php |
 | ADVISOR_PROCTOR_TIMEOUT | Seconds before a PROCTOR run is stopped (1 to 900). | `120` | src/Config.php |
 | ADVISOR_PROJECT_ROOT | The folder `run_proctor_check` may look inside. Paths outside it are refused. | the working directory | src/Command/DoctorCommand.php |
-| ADVISOR_READ_ONLY | Set to `0` or `false` to allow tools that write. None exist in 0.1. Read-only wins over `ADVISOR_GROUPS`. | on | src/Config.php |
+| ADVISOR_READ_ONLY | Set to `0` or `false` to allow tools that write. None exist yet. Read-only wins over `ADVISOR_GROUPS`. | on | src/Config.php |
 | ADVISOR_STACK_DIR | Folder holding the sibling stack repos; used only by `content:generate`. | none | src/Command/ContentGenerateCommand.php |
 
 ## Example[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#example)

@@ -17,8 +17,9 @@ PHP 8.3 or newer (8.3, 8.4 and 8.5 are tested). The package requires:
 - `mcp/sdk` `0.9.0`
 - `opis/json-schema` `^2.4`
 - `psr/log` `^3.0`
-- `symfony/console` `^7.4`
-- `symfony/process` `^7.4`
+- `symfony/console` `^7.4 || ^8.0`
+- `symfony/process` `^7.4 || ^8.0`
+- `waynestate/creed` `^0.1.8` (CREED's policy reader)
 
 The platform is pinned to PHP 8.3.0 in `composer.json`.
 

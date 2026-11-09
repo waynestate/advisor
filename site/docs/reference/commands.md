@@ -120,7 +120,7 @@ Usage: `bin/advisor content:verify`
 ## Exit codes[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#exit-codes)
 
 - `content:generate --check` exits `1` on drift, when the bundled content no longer matches the source repos.
-- `doctor` exits `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
+- `doctor` exits `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON. If doctor itself cannot run, it reports a `doctor` failure and exits `2`.
 - `composer content:drift` exits `1` when `data/` no longer matches the stack repos, or when `ADVISOR_STACK_DIR` is not set.
 
 ## Related[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#related)

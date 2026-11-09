@@ -114,12 +114,12 @@
 <p>ADVISOR serves a bundled copy of what these projects publish, so it works offline. Each part:</p>
 <ul>
 <li><strong>WayneUI</strong> is the interface, project 0 of the stack. ADVISOR bundles its markup contract and its 1.x to 2.x migration guide.</li>
-<li><strong>CREED</strong> is the version policy and the written standards. ADVISOR bundles its policy file and handbook.</li>
+<li><strong>CREED</strong> is the version policy and the written standards. ADVISOR bundles its policy file and handbook, and reads the policy through CREED's own reader (<code>waynestate/creed</code>).</li>
 <li><strong>PROCTOR</strong> checks an app.</li>
 <li><strong>SESAME</strong> handles sign-in inside the app.</li>
 <li><strong>HELMET</strong> is the runtime baseline.</li>
 <li><strong>Sourdough</strong> is the starter.</li>
-<li><strong>Preflight</strong> provides the CI components (php-test and composer-audit).</li>
+<li><strong>Preflight</strong> provides the CI components (php-test, composer-audit, proctor and a11y).</li>
 <li><strong>Pinstripe</strong> is the coding standard; PHPStan includes its raw preset.</li>
 <li><strong>Booster</strong> does the upgrades.</li>
 <li><strong>Rollcall</strong> is the fleet census.</li>

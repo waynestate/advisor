@@ -57,7 +57,7 @@ Read this before you set off
 
 ## Legend
 
-ADVISOR 0.1 has nine tools. These six are the ones you'll use most; the others are `owner_of`, `playbook_lookup` and `upgrade_path`. Every tool is read-only, and every answer names its source.
+ADVISOR has nine tools. These six are the ones you'll use most; the others are `owner_of`, `playbook_lookup` and `upgrade_path`. Every tool is read-only, and every answer names its source.
 
 ### Tools
 
@@ -223,7 +223,7 @@ Hatched on the map, for a reason
 An advisor can tell you what's required. It cannot sit the exam for you, and this one cannot touch your files.
 
 - **Off unless you turn it on.** No `ADVISOR_ENABLED`, no server. `production` always refuses.
-- **Read-only.** No tool takes a command, a URL or a free path, and none of them writes a file in 0.1.
+- **Read-only.** No tool takes a command, a URL or a free path, and none of them writes a file.
 - **No network, no model calls.** It serves a bundled copy of the stack's docs, so it works offline.
 - **Verified content.** At start-up, every bundled file is checked against a SHA-256 manifest. If one doesn't match, the server won't start.
 - **Answers are data.** Every result is labeled as reference text and cleaned of invisible characters. Pass or fail is PROCTOR's call in CI.
@@ -254,7 +254,7 @@ Here be roadmaps
 
 ## Not yet surveyed
 
-The edges of the map. None of these is in 0.1, so none of them gets a command here.
+The edges of the map. None of these is built yet, so none of them gets a command here.
 
 - Coming soon
   ### Ask ADVISOR on the web

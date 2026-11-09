@@ -89,10 +89,10 @@ The denylist file is never committed. The bundle is regenerated with the file pr
 The following items are open questions or not yet built:
 
 - Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.
-- Signing of any state handed back to a client (no tool needs it in 0.1).
-- A threat model mapped to OWASP and NIST; a full-capture audit mode.
+- Signing of any state handed back to a client (no tool needs it yet).
+- A full-capture audit mode (the threat model mapped to OWASP and NIST is done: see `BEST_PRACTICES.md` and the threat pages).
 - "Ask ADVISOR" web chat: needs a model, an open stack question and an accessibility pass of its own.
-- HTTP transport and OAuth: stdio first; remote needs a threat model.
+- HTTP transport and OAuth: stdio first; remote needs a threat model of its own (the one in `BEST_PRACTICES.md` covers stdio only).
 - Tools that write (scaffold with Sourdough, apply a Booster step): the approved list is read-only; the read-only switch and tool groups are built so they can arrive safely.
 - Per-project modules in their own repositories: the loader and `Module` interface exist and are tested; the other projects have not published modules.
 - WarriorGPT-backed features: no model calls until an open stack question is settled.

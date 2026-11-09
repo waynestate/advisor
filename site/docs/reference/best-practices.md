@@ -68,11 +68,15 @@ Bundled content is checked against a SHA-256 manifest at start-up and in CI; a m
 
 Policy answers carry the day they were worked out for and the file they came from. Enforced.
 
+## Threat model[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#threat-model)
+
+`BEST_PRACTICES.md` carries the threat model: eleven threats, each mapped to the rules above and to OWASP Top 10:2025, OWASP ASVS 5.0 or NIST SSDF, plus what is out of scope. Four of them have a page of their own: [prompt injection](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html), [path traversal](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html), [command injection](https://advisor.apps.wayne.edu/docs/threats/command-injection.html) and [data exfiltration](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html).
+
 ## Not yet[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#not-yet)
 
 - Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.
-- Signing of any state handed back to a client (no tool needs it in 0.1).
-- A threat model mapped to OWASP and NIST; a full-capture audit mode.
+- Signing of any state handed back to a client (no tool needs it yet).
+- A full-capture audit mode.
 
 ## Related[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#related)
 

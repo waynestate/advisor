@@ -297,7 +297,7 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 <h2 id="exit-codes">Exit codes<a class="docs-heading-link" aria-label="Link to this section" href="#exit-codes">#</a></h2>
 <ul>
 <li><code>content:generate --check</code> exits <code>1</code> on drift, when the bundled content no longer matches the source repos.</li>
-<li><code>doctor</code> exits <code>0</code> when nothing failed and <code>1</code> when something did; <code>--json</code> prints the findings as JSON.</li>
+<li><code>doctor</code> exits <code>0</code> when nothing failed and <code>1</code> when something did; <code>--json</code> prints the findings as JSON. If doctor itself cannot run, it reports a <code>doctor</code> failure and exits <code>2</code>.</li>
 <li><code>composer content:drift</code> exits <code>1</code> when <code>data/</code> no longer matches the stack repos, or when <code>ADVISOR_STACK_DIR</code> is not set.</li>
 </ul>
 <h2 id="related">Related<a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></h2>

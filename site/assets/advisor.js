@@ -78,7 +78,7 @@
 
   // Positions are in the map's own units (viewBox 1200 x 700). Every place is
   // a stack project from ADVISOR's data/projects.json, and all fourteen are
-  // built at 0.1.
+  // built.
   var START = { x: 110, y: 612 };
   var HUB = { x: 560, y: 360 };
   var PLACES = {
@@ -163,13 +163,13 @@
   /* ------------------------------------------- 4. routes: questions to places */
 
   // CREED's policy.json as bundled in ADVISOR's data/ (active_until,
-  // security_until). The states below are worked out the same way ADVISOR's
-  // PolicyReader does, for the visitor's today, with the 90-day grace.
+  // security_until). The states below are worked out the same way CREED's
+  // reader (which ADVISOR calls) does, for the visitor's today, with the 90-day grace.
   var POLICY = {
     php: { "8.1": [null, "2025-12-31"], "8.2": ["2024-12-31", "2026-12-31"], "8.3": ["2025-12-31", "2027-12-31"], "8.4": ["2026-12-31", "2028-12-31"], "8.5": ["2027-12-31", "2029-12-31"] },
-    laravel: { "10": ["2024-08-06", "2025-02-04"], "11": ["2025-09-03", "2026-03-12"], "12": ["2026-08-13", "2027-02-24"], "13": ["2027-09-17", "2028-03-17"] },
+    laravel: { "10": ["2024-08-06", "2025-02-04"], "11": ["2025-09-03", "2026-03-12"], "12": ["2026-08-13", "2027-02-24"], "13": ["2027-09-30", "2028-03-17"] },
     node: { "20": ["2024-10-22", "2026-04-30"], "22": ["2025-10-21", "2027-04-30"], "24": ["2026-10-20", "2028-04-30"], "26": ["2027-10-20", "2029-04-30"] },
-    mysql: { "5.7": ["2020-10-31", "2023-10-31"], "8.0": ["2025-04-30", "2026-04-30"], "8.4": ["2029-04-30", "2032-04-30"], "9.7": ["2031-04-30", "2034-04-30"] }
+    mysql: { "5.6": ["2018-02-28", "2021-02-28"], "5.7": ["2020-10-31", "2023-10-31"], "8.0": ["2025-04-30", "2026-04-30"], "8.4": ["2029-04-30", "2032-04-30"], "9.7": ["2031-04-30", "2034-04-30"] }
   };
   var GRACE_DAYS = 90;
   var NAMES = { php: "PHP", laravel: "Laravel", node: "Node", mysql: "MySQL" };
@@ -240,7 +240,7 @@
       keys: ["upgrade", "8.1", "8.2", "off php", "old php", "migrate", "outdated", "booster", "get off", "move to"],
       steps: function () { return [{ prompt: "plan_upgrade" }, { tool: "policy_lookup", args: "component: php" }, { tool: "run_proctor_check", args: "checks: php-floor, unbounded-constraints" }, { tool: "read_project_docs", args: "project: booster" }]; },
       dest: "booster", detail: "the upgrade tool, one hop at a time",
-      answer: function () { return policyAnswer("php", "plan_upgrade reads the policy, runs PROCTOR's php-floor and unbounded-constraints checks, then reads BOOSTER's README and proposes one hop at a time. BOOSTER does the hop: Rector rewrites the code, BOOSTER raises the constraints, and your tests must pass on the target PHP."); }
+      answer: function () { return policyAnswer("php", "plan_upgrade reads the policy, runs PROCTOR's php-floor and unbounded-constraints checks, then reads Booster's README and proposes one hop at a time. Booster does the hop: Rector rewrites the code, Booster raises the constraints, and your tests must pass on the target PHP."); }
     },
     proctor: {
       keys: ["pass", "check", "standards", "standard", "proctor", "meet", "audit", "finding", "findings", "comply", "compliant"],
@@ -258,7 +258,7 @@
       keys: ["sign", "login", "log in", "cas", "auth", "saml", "oauth", "sso", "users", "identity"],
       steps: function () { return [{ tool: "read_project_docs", args: "project: sesame, doc: readme" }]; },
       dest: "sesame", detail: "its README",
-      answer: function () { return { text: "SESAME is protocol-neutral sign-in, with drivers for CAS, a signed gateway assertion, SAML and OAuth2. It returns a verified identity and leaves the session to your app. Pick the driver your platform supports first.", src: "Source: SESAME's README, as bundled." }; }
+      answer: function () { return { text: "SESAME is protocol-neutral sign-in, with drivers for CAS, a signed gateway assertion, OpenID Connect, OAuth2 and SAML. It returns a verified identity and leaves the session to your app. Pick the driver your platform supports first.", src: "Source: SESAME's README, as bundled." }; }
     },
     headers: {
       keys: ["header", "headers", "csp", "hsts", "security", "hardening", "health", "proxy", "proxies", "cookie", "session"],
@@ -270,7 +270,7 @@
       keys: ["ci", "pipeline", "pipelines", "gitlab", "github", "actions", "workflow"],
       steps: function () { return [{ tool: "list_stack_rules", args: "chapter: ci" }, { tool: "read_project_docs", args: "project: preflight" }]; },
       dest: "preflight", detail: "its CI templates",
-      answer: function () { return { text: "The CREED chapter on CI, rule by rule with citations, then PREFLIGHT's shared templates for GitLab and GitHub, which run the same checks on both.", src: "Source: CREED handbook and PREFLIGHT's README." }; }
+      answer: function () { return { text: "The CREED chapter on CI, rule by rule with citations, then Preflight's shared templates for GitLab and GitHub, which run the same checks on both.", src: "Source: CREED handbook and Preflight's README." }; }
     },
     style: {
       keys: ["lint", "pint", "phpstan", "eslint", "prettier", "style", "format", "formatting", "coding standard"],
@@ -282,25 +282,25 @@
       keys: ["deploy", "deploying", "release", "ship", "hosting", "server"],
       steps: function () { return [{ tool: "get_project_status", args: "project: squire" }, { tool: "read_project_docs", args: "project: squire" }]; },
       dest: "squire", detail: "the deploy kit",
-      answer: function () { return { text: "SQUIRE, the deploy kit: the build script, the release script, the health check, and local parity on the real images. A knight never suits up alone.", src: "Source: SQUIRE's README, as bundled." }; }
+      answer: function () { return { text: "Squire, the deploy kit: the build script, the release script, the health check, and local parity on the real images. A knight never suits up alone.", src: "Source: Squire's README, as bundled." }; }
     },
     census: {
       keys: ["fleet", "census", "inventory", "rollcall", "which apps"],
       steps: function () { return [{ tool: "read_project_docs", args: "project: rollcall" }]; },
       dest: "rollcall", detail: "the fleet scanner",
-      answer: function () { return { text: "ROLLCALL scans the fleet: for every app, the PHP image, the declared PHP floor, the Laravel version, the auth package and the PROCTOR result, each checked against CREED's policy by date. Every app answers “present”.", src: "Source: ROLLCALL's README, as bundled." }; }
+      answer: function () { return { text: "Rollcall scans the fleet: for every app, the PHP image, the declared PHP floor, the Laravel version, the auth package and the PROCTOR result, each checked against CREED's policy by date. Every app answers “present”.", src: "Source: Rollcall's README, as bundled." }; }
     },
     gateway: {
       keys: ["gateway", "drawbridge"],
       steps: function () { return [{ tool: "read_project_docs", args: "project: drawbridge" }]; },
       dest: "drawbridge", detail: "the auth gateway",
-      answer: function () { return { text: "DRAWBRIDGE is the auth gateway: one SAML service provider in front of the apps. It makes sure the visitor has a session, drops any identity header they tried to bring, and hands the app a short-lived signed assertion that SESAME's gateway driver verifies.", src: "Source: DRAWBRIDGE's README, as bundled." }; }
+      answer: function () { return { text: "Drawbridge is the auth gateway: Apache with mod_auth_openidc, one OpenID Connect client for Microsoft Entra ID, in front of the apps. It makes sure the visitor has a session, drops any identity header they tried to bring, and hands the app a short-lived signed assertion that SESAME's gateway driver verifies.", src: "Source: Drawbridge's README, as bundled." }; }
     },
     stack: {
       keys: ["projects", "stack", "parts", "list", "what's in", "what is in", "starter", "sourdough"],
       steps: function () { return [{ tool: "list_projects" }]; },
       dest: "wayne-ui", detail: "first on the list, always",
-      answer: function () { return { text: "Fourteen projects, WayneUI first, each with its role, its package and its state. All fourteen are built at 0.1, ADVISOR included; it no longer lists itself as proposed.", src: "Source: ADVISOR's data/projects.json." }; }
+      answer: function () { return { text: "Fourteen projects, WayneUI first, each with its role, its package and its state. All fourteen are built, ADVISOR included; it no longer lists itself as proposed.", src: "Source: ADVISOR's data/projects.json." }; }
     },
     start: {
       keys: ["new", "start", "begin", "orient", "where", "help", "first", "onboard", "onboarding", "hello"],

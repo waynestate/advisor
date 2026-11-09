@@ -25,7 +25,7 @@ Each control is also written up as a threat page: [prompt injection](https://adv
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
-| `ADVISOR_READ_ONLY` | on | Set to `0` or `false` to allow tools that write. None exist in 0.1. Read-only wins over `ADVISOR_GROUPS`. |
+| `ADVISOR_READ_ONLY` | on | Set to `0` or `false` to allow tools that write. None exist yet. Read-only wins over `ADVISOR_GROUPS`. |
 | `ADVISOR_ENV` | `APP_ENV`, then `local` | `production` or `prod` always refuses to start. |
 | `ADVISOR_PROJECT_ROOT` | the working directory | The folder `run_proctor_check` may look inside. Paths outside it are refused. |
 | `ADVISOR_AUDIT_LOG` | off | A file for a one-line-per-call audit log: time, tool, a hash of the arguments, outcome, duration. Arguments are hashed, never written. |

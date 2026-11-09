@@ -31,7 +31,7 @@
           "the working directory"
         ],
         "ADVISOR_READ_ONLY": [
-          "Set to `0` or `false` to allow tools that write. None exist in 0.1. Read-only wins over `ADVISOR_GROUPS`.",
+          "Set to `0` or `false` to allow tools that write. None exist yet. Read-only wins over `ADVISOR_GROUPS`.",
           "on"
         ],
         "ADVISOR_GROUPS": [
