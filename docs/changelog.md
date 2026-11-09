@@ -11,21 +11,17 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Added
+
+- Added: docs/threats/ explains four threats (prompt injection, path traversal, command injection, data exfiltration), where each applies, the code and tests that stop it, and what risk is left (backlog row 16).
+- Added: upgrade_path takes from_php, so a project with no composer.json or no php constraint still gets a plan (Booster's --from-php); the 2026-11-08 proof run found 71 such refusals.
+
 ### Changed
 
 - Docs: the README, MAINTAINING and the contributing page list everything `composer ci` runs (the agent-ready and docs site checks were missing); "What it offers" says `policy_lookup` answers end of life for a version older than the policy lists and names `upgrade_path`'s `from_php` input, as the README does; the docs overview says what main carries since 0.1.7; and the front page footer links the docs, git.wayne.edu and the GitHub mirror.
-- Fixed: the docs and the front page keep their Docs link in the header on a phone (it used to vanish below 900px with the section links), the docs sidebar opens scrolled to the page you are on with a thin scrollbar, Troubleshooting's symptoms are h2 headings under the h1 (they skipped to h3), and the Overview's tagline sits under its title.
-- Added: docs/threats/ explains four threats (prompt injection, path traversal, command injection, data exfiltration), where each applies, the code and tests that stop it, and what risk is left (backlog row 16).
 - Changed: CI pins the Preflight components to 0.4.0 (the proctor job clones the full history, so the override-approver check can read git blame).
 - Changed: the deploy layer runs Squire's kit 0.7.1 (was 0.6.0): `.squire/php.ini` no longer sets the deprecated `session.sid_*` lines, web requests get a `disable_functions` list and Apache hardening (`.squire/php-web.ini`, `.squire/apache-hardening.conf`), and opcache gets production settings with `SQUIRE_OPCACHE_VALIDATE` as the one switch.
 - Changed: the front page deploy layer requires HELMET ^1.0 (lock at 1.0.1, was 0.4.0), like the rest of the stack; its shared front controller already runs on HELMET 1.0 in Squire, Sourdough and Pinstripe.
-
-### Added
-
-- Added: upgrade_path takes from_php, so a project with no composer.json or no php constraint still gets a plan (BOOSTER's --from-php); the 2026-11-08 proof run found 71 such refusals.
-
-### Changed
-
 - Changed: policy_lookup answers end of life (with a note) for a version older than every one the policy lists, instead of refusing; the 2026-11-08 proof run found 13 such refusals for PHP 5.5 to 7.3.
 - Changed: CI's accessibility gate is Preflight's a11y component (light and dark, 320 and 1280 px, and the WCAG 1.4.10 reflow check); ADVISOR's own page checks (one h1, lang, title, reduced motion) stay as the a11y-extra job.
 - Docs: BEST_PRACTICES gains a threat model: eleven threats, each mapped to the rules that answer it and to OWASP Top 10:2025, OWASP ASVS 5.0 or NIST SSDF, plus what is out of scope (ADVISOR-16).
@@ -36,7 +32,6 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Fixed: the docs menu closes with Escape and hands focus back to its button (docs kit synced from Squire).
 - Changed: the deploy layer requires PROCTOR ^0.8 (locked 0.8.0).
 - Changed: the pipeline pins every Preflight CI component to 0.3.0 (preflight@0.3.0); component image inputs are plain image names, since Preflight adds the Dependency Proxy prefix itself.
-
 - data: resync 2026-11-08 morning (booster:9d76fee drawbridge:829f465 helmet:e96f7f6 sesame:aea6871 proctor:181bb7e rollcall:2a053b9 creed:e7818c4 sourdough:2182baf weld:bf9c2e4 squire:5276918 preflight:3aa18d2 pinstripe:b56f077 advisor:e82d901 wayne-ui:dedc66f): HELMET's README matches its code (the presets set proxies only, so the app picks its log file; a relative CSP report path is valid), and Drawbridge's third-party-cookie sign-out practice now runs in a real browser engine.
 - data: resync 2026-11-08 (booster:b8b5e5a drawbridge:a7c42fb helmet:b8196b9 sesame:7195b63 proctor:97c2005 rollcall:091bd8b creed:e7818c4 sourdough:2182baf weld:bf9c2e4 squire:34bd199 preflight:3aa18d2 pinstripe:54790ca advisor:fcc5974 wayne-ui:dedc66f): the policy gains CREED's `sessions` block (SESAME and Drawbridge session lifetimes), and PROCTOR's README gains its ADVISOR module section.
 - data: resync 2026-11-07 late (booster:4fbf3ed drawbridge:a7c42fb helmet:b8196b9 sesame:2302725 proctor:e00dda4 rollcall:45b0837 creed:be2a0b2 sourdough:2182baf weld:bf9c2e4 squire:55b89c7 preflight:3aa18d2 pinstripe:54790ca advisor:4d8f41a wayne-ui:dedc66f): the word-name sweep (Rollcall, Squire, Preflight, Drawbridge in prose), WELD 0.1.5, PROCTOR's crlf-deploy-script check.
@@ -48,10 +43,11 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Fixed
 
+- Fixed: the docs and the front page keep their Docs link in the header on a phone (it used to vanish below 900px with the section links), the docs sidebar opens scrolled to the page you are on with a thin scrollbar, Troubleshooting's symptoms are h2 headings under the h1 (they skipped to h3), and the Overview's tagline sits under its title.
 - Fixed: the docs kit's copy button no longer covers the first line of code when it says Copied or Failed: over the code it keeps its resting width and shows a check or a cross when the word does not fit (docs kit synced from Squire).
 - Fixed: the front page's version chip shows the full version the docs show (Sheet 0.1.7, was Sheet 0.1). It carries `data-docs-version` now, so the docs builder (synced from Squire) rewrites it at every release and `composer docs:check` fails while it is stale.
 - Fixed: the docs overview's tagline (What applies, and what's next.) has a paragraph's room above and below, in the map's display face, instead of sitting tight on the text under it.
-- the pipeline's PROCTOR jobs no longer pass `--policy`, which PROCTOR 0.7 refuses in CI; PROCTOR checks against the CREED policy it bundles.
+- The pipeline's PROCTOR jobs no longer pass `--policy`, which PROCTOR 0.7 refuses in CI; PROCTOR checks against the CREED policy it bundles.
 - The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (`-v stack-composer-cache:/tmp/cache`), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.
 - The front page's parts list says Sourdough starts all five app shapes; it said "the raw PHP starter".
 

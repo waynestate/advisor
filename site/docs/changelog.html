@@ -43,87 +43,48 @@
 <h1 id="changelog">Changelog<a class="docs-heading-link" aria-label="Link to this section" href="#changelog">#</a></h1>
 <p>All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.</p>
 <h2 id="unreleased">[Unreleased]<a class="docs-heading-link" aria-label="Link to this section" href="#unreleased">#</a></h2>
+<h3 id="added">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added">#</a></h3>
+<ul>
+<li>Added: docs/threats/ explains four threats (prompt injection, path traversal, command injection, data exfiltration), where each applies, the code and tests that stop it, and what risk is left (backlog row 16).</li>
+<li>Added: upgrade_path takes from_php, so a project with no composer.json or no php constraint still gets a plan (Booster's --from-php); the 2026-11-08 proof run found 71 such refusals.</li>
+</ul>
 <h3 id="changed">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></h3>
 <ul>
 <li>Docs: the README, MAINTAINING and the contributing page list everything <code>composer ci</code> runs (the agent-ready and docs site checks were missing); &quot;What it offers&quot; says <code>policy_lookup</code> answers end of life for a version older than the policy lists and names <code>upgrade_path</code>'s <code>from_php</code> input, as the README does; the docs overview says what main carries since 0.1.7; and the front page footer links the docs, git.wayne.edu and the GitHub mirror.</li>
-<li>Fixed: the docs and the front page keep their Docs link in the header on a phone (it used to vanish below 900px with the section links), the docs sidebar opens scrolled to the page you are on with a thin scrollbar, Troubleshooting's symptoms are h2 headings under the h1 (they skipped to h3), and the Overview's tagline sits under its title.</li>
-<li>Added: docs/threats/ explains four threats (prompt injection, path traversal, command injection, data exfiltration), where each applies, the code and tests that stop it, and what risk is left (backlog row 16).</li>
 <li>Changed: CI pins the Preflight components to 0.4.0 (the proctor job clones the full history, so the override-approver check can read git blame).</li>
 <li>Changed: the deploy layer runs Squire's kit 0.7.1 (was 0.6.0): <code>.squire/php.ini</code> no longer sets the deprecated <code>session.sid_*</code> lines, web requests get a <code>disable_functions</code> list and Apache hardening (<code>.squire/php-web.ini</code>, <code>.squire/apache-hardening.conf</code>), and opcache gets production settings with <code>SQUIRE_OPCACHE_VALIDATE</code> as the one switch.</li>
 <li>Changed: the front page deploy layer requires HELMET ^1.0 (lock at 1.0.1, was 0.4.0), like the rest of the stack; its shared front controller already runs on HELMET 1.0 in Squire, Sourdough and Pinstripe.</li>
-</ul>
-<h3 id="added">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added">#</a></h3>
-<ul>
-<li>Added: upgrade_path takes from_php, so a project with no composer.json or no php constraint still gets a plan (BOOSTER's --from-php); the 2026-11-08 proof run found 71 such refusals.</li>
-</ul>
-<h3 id="changed-1">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-1">#</a></h3>
-<ul>
-<li>
-<p>Changed: policy_lookup answers end of life (with a note) for a version older than every one the policy lists, instead of refusing; the 2026-11-08 proof run found 13 such refusals for PHP 5.5 to 7.3.</p>
-</li>
-<li>
-<p>Changed: CI's accessibility gate is Preflight's a11y component (light and dark, 320 and 1280 px, and the WCAG 1.4.10 reflow check); ADVISOR's own page checks (one h1, lang, title, reduced motion) stay as the a11y-extra job.</p>
-</li>
-<li>
-<p>Docs: BEST_PRACTICES gains a threat model: eleven threats, each mapped to the rules that answer it and to OWASP Top 10:2025, OWASP ASVS 5.0 or NIST SSDF, plus what is out of scope (ADVISOR-16).</p>
-</li>
-<li>
-<p>Changed: CI pins the Preflight components to 0.3.1 (fixed cache keys, and caches saved even when a job fails; D-072).</p>
-</li>
-<li>
-<p>Changed: CI saves its Composer and npm caches even when a job fails, so a retry after a dropped download fetches only what is missing (D-072).</p>
-</li>
-<li>
-<p>Changed: CI caches Composer and npm downloads under a fixed key, so a lock change downloads only what changed (D-072).</p>
-</li>
-<li>
-<p>Fixed: OPEN_QUESTIONS.md names the Preflight commit the GitHub workflow really pins and says the README badges are real.</p>
-</li>
-<li>
-<p>Fixed: the docs menu closes with Escape and hands focus back to its button (docs kit synced from Squire).</p>
-</li>
-<li>
-<p>Changed: the deploy layer requires PROCTOR ^0.8 (locked 0.8.0).</p>
-</li>
-<li>
-<p>Changed: the pipeline pins every Preflight CI component to 0.3.0 (<a rel="noopener" href="mailto:preflight@0.3.0">preflight@0.3.0</a>); component image inputs are plain image names, since Preflight adds the Dependency Proxy prefix itself.</p>
-</li>
-<li>
-<p>data: resync 2026-11-08 morning (booster:9d76fee drawbridge:829f465 helmet:e96f7f6 sesame:aea6871 proctor:181bb7e rollcall:2a053b9 creed:e7818c4 sourdough:2182baf weld:bf9c2e4 squire:5276918 preflight:3aa18d2 pinstripe:b56f077 advisor:e82d901 wayne-ui:dedc66f): HELMET's README matches its code (the presets set proxies only, so the app picks its log file; a relative CSP report path is valid), and Drawbridge's third-party-cookie sign-out practice now runs in a real browser engine.</p>
-</li>
-<li>
-<p>data: resync 2026-11-08 (booster:b8b5e5a drawbridge:a7c42fb helmet:b8196b9 sesame:7195b63 proctor:97c2005 rollcall:091bd8b creed:e7818c4 sourdough:2182baf weld:bf9c2e4 squire:34bd199 preflight:3aa18d2 pinstripe:54790ca advisor:fcc5974 wayne-ui:dedc66f): the policy gains CREED's <code>sessions</code> block (SESAME and Drawbridge session lifetimes), and PROCTOR's README gains its ADVISOR module section.</p>
-</li>
-<li>
-<p>data: resync 2026-11-07 late (booster:4fbf3ed drawbridge:a7c42fb helmet:b8196b9 sesame:2302725 proctor:e00dda4 rollcall:45b0837 creed:be2a0b2 sourdough:2182baf weld:bf9c2e4 squire:55b89c7 preflight:3aa18d2 pinstripe:54790ca advisor:4d8f41a wayne-ui:dedc66f): the word-name sweep (Rollcall, Squire, Preflight, Drawbridge in prose), WELD 0.1.5, PROCTOR's crlf-deploy-script check.</p>
-</li>
-<li>
-<p>Changed: the GitLab pipeline pins the Preflight components to 0.2.0 (was 0.1.0 and 0.1.2).</p>
-</li>
-<li>
-<p>The front page's deploy layer (<code>deploy/</code>) runs Squire's kit 0.6.0 (was 0.5.0): <code>scripts/release.sh</code> asks PROCTOR's deploy gate for a go or no-go on each release (a report, not a stop, unless <code>SQUIRE_PROCTOR=enforce</code>), and <code>.env.squire.example</code> lists the new setting. The layer's pins move to HELMET <code>^0.4</code> (locked 0.4.0) and PROCTOR <code>^0.7</code> (locked 0.7.0).</p>
-</li>
-<li>
-<p>CI caches Composer and npm downloads per lock file (<code>.composer-cache</code>, keyed on <code>composer.lock</code> and <code>deploy/composer.lock</code>, and <code>.npm-cache</code>), so a pipeline stops fetching every package from Packagist and npm on every run. Images already come through the Dependency Proxy.</p>
-</li>
-<li>
-<p>data: resync 2026-11-07 evening (booster:d99b049 creed:39fa8c3 drawbridge:27cc793 helmet:902b522 pinstripe:cdabcb0 preflight:f26584b proctor:e9ede7e rollcall:06dcfda sesame:b5a0c09 sourdough:181b884 squire:dba0686 weld:2746423 wayne-ui:dedc66f advisor:45c8379): README and best-practices updates from Drawbridge, Preflight, PROCTOR, Rollcall, SESAME and Sourdough, and ADVISOR's own README. Versions in <code>projects.json</code> are unchanged.</p>
-</li>
-<li>
-<p>data: Sourdough's entry lists all five shapes, <code>--raw --vue</code> included (it said that shape was not available yet), and its next step names <code>sourdough feed</code>, which ships (it said feed was a later release).</p>
-</li>
+<li>Changed: policy_lookup answers end of life (with a note) for a version older than every one the policy lists, instead of refusing; the 2026-11-08 proof run found 13 such refusals for PHP 5.5 to 7.3.</li>
+<li>Changed: CI's accessibility gate is Preflight's a11y component (light and dark, 320 and 1280 px, and the WCAG 1.4.10 reflow check); ADVISOR's own page checks (one h1, lang, title, reduced motion) stay as the a11y-extra job.</li>
+<li>Docs: BEST_PRACTICES gains a threat model: eleven threats, each mapped to the rules that answer it and to OWASP Top 10:2025, OWASP ASVS 5.0 or NIST SSDF, plus what is out of scope (ADVISOR-16).</li>
+<li>Changed: CI pins the Preflight components to 0.3.1 (fixed cache keys, and caches saved even when a job fails; D-072).</li>
+<li>Changed: CI saves its Composer and npm caches even when a job fails, so a retry after a dropped download fetches only what is missing (D-072).</li>
+<li>Changed: CI caches Composer and npm downloads under a fixed key, so a lock change downloads only what changed (D-072).</li>
+<li>Fixed: OPEN_QUESTIONS.md names the Preflight commit the GitHub workflow really pins and says the README badges are real.</li>
+<li>Fixed: the docs menu closes with Escape and hands focus back to its button (docs kit synced from Squire).</li>
+<li>Changed: the deploy layer requires PROCTOR ^0.8 (locked 0.8.0).</li>
+<li>Changed: the pipeline pins every Preflight CI component to 0.3.0 (<a rel="noopener" href="mailto:preflight@0.3.0">preflight@0.3.0</a>); component image inputs are plain image names, since Preflight adds the Dependency Proxy prefix itself.</li>
+<li>data: resync 2026-11-08 morning (booster:9d76fee drawbridge:829f465 helmet:e96f7f6 sesame:aea6871 proctor:181bb7e rollcall:2a053b9 creed:e7818c4 sourdough:2182baf weld:bf9c2e4 squire:5276918 preflight:3aa18d2 pinstripe:b56f077 advisor:e82d901 wayne-ui:dedc66f): HELMET's README matches its code (the presets set proxies only, so the app picks its log file; a relative CSP report path is valid), and Drawbridge's third-party-cookie sign-out practice now runs in a real browser engine.</li>
+<li>data: resync 2026-11-08 (booster:b8b5e5a drawbridge:a7c42fb helmet:b8196b9 sesame:7195b63 proctor:97c2005 rollcall:091bd8b creed:e7818c4 sourdough:2182baf weld:bf9c2e4 squire:34bd199 preflight:3aa18d2 pinstripe:54790ca advisor:fcc5974 wayne-ui:dedc66f): the policy gains CREED's <code>sessions</code> block (SESAME and Drawbridge session lifetimes), and PROCTOR's README gains its ADVISOR module section.</li>
+<li>data: resync 2026-11-07 late (booster:4fbf3ed drawbridge:a7c42fb helmet:b8196b9 sesame:2302725 proctor:e00dda4 rollcall:45b0837 creed:be2a0b2 sourdough:2182baf weld:bf9c2e4 squire:55b89c7 preflight:3aa18d2 pinstripe:54790ca advisor:4d8f41a wayne-ui:dedc66f): the word-name sweep (Rollcall, Squire, Preflight, Drawbridge in prose), WELD 0.1.5, PROCTOR's crlf-deploy-script check.</li>
+<li>Changed: the GitLab pipeline pins the Preflight components to 0.2.0 (was 0.1.0 and 0.1.2).</li>
+<li>The front page's deploy layer (<code>deploy/</code>) runs Squire's kit 0.6.0 (was 0.5.0): <code>scripts/release.sh</code> asks PROCTOR's deploy gate for a go or no-go on each release (a report, not a stop, unless <code>SQUIRE_PROCTOR=enforce</code>), and <code>.env.squire.example</code> lists the new setting. The layer's pins move to HELMET <code>^0.4</code> (locked 0.4.0) and PROCTOR <code>^0.7</code> (locked 0.7.0).</li>
+<li>CI caches Composer and npm downloads per lock file (<code>.composer-cache</code>, keyed on <code>composer.lock</code> and <code>deploy/composer.lock</code>, and <code>.npm-cache</code>), so a pipeline stops fetching every package from Packagist and npm on every run. Images already come through the Dependency Proxy.</li>
+<li>data: resync 2026-11-07 evening (booster:d99b049 creed:39fa8c3 drawbridge:27cc793 helmet:902b522 pinstripe:cdabcb0 preflight:f26584b proctor:e9ede7e rollcall:06dcfda sesame:b5a0c09 sourdough:181b884 squire:dba0686 weld:2746423 wayne-ui:dedc66f advisor:45c8379): README and best-practices updates from Drawbridge, Preflight, PROCTOR, Rollcall, SESAME and Sourdough, and ADVISOR's own README. Versions in <code>projects.json</code> are unchanged.</li>
+<li>data: Sourdough's entry lists all five shapes, <code>--raw --vue</code> included (it said that shape was not available yet), and its next step names <code>sourdough feed</code>, which ships (it said feed was a later release).</li>
 </ul>
 <h3 id="fixed">Fixed<a class="docs-heading-link" aria-label="Link to this section" href="#fixed">#</a></h3>
 <ul>
+<li>Fixed: the docs and the front page keep their Docs link in the header on a phone (it used to vanish below 900px with the section links), the docs sidebar opens scrolled to the page you are on with a thin scrollbar, Troubleshooting's symptoms are h2 headings under the h1 (they skipped to h3), and the Overview's tagline sits under its title.</li>
 <li>Fixed: the docs kit's copy button no longer covers the first line of code when it says Copied or Failed: over the code it keeps its resting width and shows a check or a cross when the word does not fit (docs kit synced from Squire).</li>
 <li>Fixed: the front page's version chip shows the full version the docs show (Sheet 0.1.7, was Sheet 0.1). It carries <code>data-docs-version</code> now, so the docs builder (synced from Squire) rewrites it at every release and <code>composer docs:check</code> fails while it is stale.</li>
 <li>Fixed: the docs overview's tagline (What applies, and what's next.) has a paragraph's room above and below, in the map's display face, instead of sitting tight on the text under it.</li>
-<li>the pipeline's PROCTOR jobs no longer pass <code>--policy</code>, which PROCTOR 0.7 refuses in CI; PROCTOR checks against the CREED policy it bundles.</li>
+<li>The pipeline's PROCTOR jobs no longer pass <code>--policy</code>, which PROCTOR 0.7 refuses in CI; PROCTOR checks against the CREED policy it bundles.</li>
 <li>The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (<code>-v stack-composer-cache:/tmp/cache</code>), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.</li>
 <li>The front page's parts list says Sourdough starts all five app shapes; it said &quot;the raw PHP starter&quot;.</li>
 </ul>
 <h2 id="0-1-7-2026-11-07">[0.1.7] - 2026-11-07<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-7-2026-11-07">#</a></h2>
-<h3 id="changed-2">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-2">#</a></h3>
+<h3 id="changed-1">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-1">#</a></h3>
 <ul>
 <li>The front page's deploy layer (<code>deploy/</code>) completes Squire's kit 0.5.0: <code>oracle-check.php</code>, which the 0.5.0 <code>squire update</code> did not add, is written and recorded, so <code>squire init --check</code> passes. <code>site/assets/stack-env.js</code> takes the stack's one copy, with bindingless catch blocks.</li>
 <li>The canonical repository is git.wayne.edu (ADR-0021); docs, links and package metadata no longer point at the archived nougat copy.</li>
@@ -158,7 +119,7 @@
 <li>Added: an accessibility gate (scripts/a11y/check.mjs) that loads every HTML page under site/ in a real browser and fails on any axe-core WCAG violation, in light and dark themes at phone and desktop width, plus a reduced-motion pass; runs as the a11y job in GitLab CI.</li>
 <li>Added: a docs site (site/docs/) built by the shared docs builder from docs/, checked in composer ci.</li>
 </ul>
-<h3 id="changed-3">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-3">#</a></h3>
+<h3 id="changed-2">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-2">#</a></h3>
 <ul>
 <li>Changed: resynced the bundled content (data/) with the stack as of 2026-11-05, including Booster 1.8.2 and 1.8.3, DRAWBRIDGE (session store, secret files, GitHub references removed), HELMET (H21 partly enforced, warn_broad_proxies), SESAME (CAS login bound to its browser), PROCTOR, ROLLCALL, CREED handbook chapters, Sourdough (--sail, --docker, Pest 4) and the WELD and SQUIRE guides; the Sourdough role now lists every shape that generates; the docs builder and kit follow SQUIRE 97744a4, which keeps the changelog page h1 itself.</li>
 <li>Changed: the docs pages wear the front page's look: the same sheet head and main menu (Docs marked current), Fraunces titles with a plotted maroon route, the legend's mono labels, commands on the dark code ground with the gold Copy tab, callouts drawn as map marks (note, tip, out of bounds), the green footer band, and a dark mode derived from the Directions band. Motion only without a reduced-motion preference. Source: <code>docs/_header.html</code> and <code>docs/theme/advisor.css</code> through the builder's <code>theme</code> key. The front page site owes a Quick Update.</li>
@@ -216,7 +177,7 @@
 <li>Docs: a one-line <code>claude mcp add</code> and a Docker <code>.mcp.json</code> for machines without PHP.</li>
 <li>Added: composer content:drift and an optional CI job that fail when data/ no longer matches the sibling repos.</li>
 </ul>
-<h3 id="changed-4">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-4">#</a></h3>
+<h3 id="changed-3">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-3">#</a></h3>
 <ul>
 <li>Changed: the deploy layer's Squire kit is refreshed to 0.3.3 (release options can now live in ./.env.squire).</li>
 <li>Changed: the deploy layer's Squire kit is refreshed to 0.3.4 (the local .env.squire file is now git-ignored).</li>
@@ -230,7 +191,7 @@ same name wins, then the private <code>waynestate/playbook</code> package (Playb
 says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are
 refused. <code>waynestate/playbook</code> is suggested, never required.</li>
 </ul>
-<h3 id="changed-5">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-5">#</a></h3>
+<h3 id="changed-4">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-4">#</a></h3>
 <ul>
 <li>Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.</li>
 <li>Changed: project names written as words except acronyms.</li>
@@ -246,7 +207,7 @@ refused. <code>waynestate/playbook</code> is suggested, never required.</li>
 <code>generator/ownership.json</code>, verified by <code>content:verify</code>). Fuzzy match: every word of the topic must appear in a
 row's topic or role; a no-match answer lists every known topic.</li>
 </ul>
-<h3 id="changed-6">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-6">#</a></h3>
+<h3 id="changed-5">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-5">#</a></h3>
 <ul>
 <li><code>upgrade_path</code> moves from the <code>stack</code> group to a new <code>booster</code> group, so <code>ADVISOR_GROUPS=stack</code> offers reference
 tools only and never starts a program. <code>ADVISOR_GROUPS</code> now accepts <code>stack</code>, <code>proctor</code> and <code>booster</code>.</li>
@@ -279,7 +240,7 @@ GitLab (PREFLIGHT 0.1.0) and GitHub.</li>
     </main>
     <nav class="docs-pager" aria-label="Pages"><a class="docs-pager__link" href="../docs/contributing.html"><span class="docs-pager__dir">Previous</span><span class="docs-pager__title">Contributing</span></a></nav>
   </div>
-  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#unreleased">[Unreleased]</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-1">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-7-2026-11-07">[0.1.7] - 2026-11-07</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-2">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-1">Added</a></li><li class="docs-toc__item"><a href="#0-1-6-2026-11-06">[0.1.6] - 2026-11-06</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-2">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-3">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-1">Fixed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#security">Security</a></li><li class="docs-toc__item"><a href="#0-1-5-2026-11-03">[0.1.5] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-4-2026-11-03">[0.1.4] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-3-2026-11-02">[0.1.3] - 2026-11-02</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-3">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-4">Changed</a></li><li class="docs-toc__item"><a href="#0-1-2-2026-10-29">[0.1.2] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-4">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-5">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-2">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-1-2026-10-29">[0.1.1] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-5">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-6">Changed</a></li><li class="docs-toc__item"><a href="#0-1-0-2026-10-29">[0.1.0] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-6">Added</a></li></ul></nav>
+  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#unreleased">[Unreleased]</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-7-2026-11-07">[0.1.7] - 2026-11-07</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-1">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-1">Added</a></li><li class="docs-toc__item"><a href="#0-1-6-2026-11-06">[0.1.6] - 2026-11-06</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-2">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-2">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-1">Fixed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#security">Security</a></li><li class="docs-toc__item"><a href="#0-1-5-2026-11-03">[0.1.5] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-4-2026-11-03">[0.1.4] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-3-2026-11-02">[0.1.3] - 2026-11-02</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-3">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-3">Changed</a></li><li class="docs-toc__item"><a href="#0-1-2-2026-10-29">[0.1.2] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-4">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-4">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-2">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-1-2026-10-29">[0.1.1] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-5">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-5">Changed</a></li><li class="docs-toc__item"><a href="#0-1-0-2026-10-29">[0.1.0] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-6">Added</a></li></ul></nav>
 </div>
 <footer class="docs-footer">
   <span>Documents ADVISOR <span data-docs-version>0.1.7</span></span>
