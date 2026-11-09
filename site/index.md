@@ -18,7 +18,7 @@ An MCP server for the stack, a bit like Laravel Boost but for Wayne State. Your 
 
 `$ composer require --dev waynestate/advisor`
 
-PHP 8.3 or newer. ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.1`.
+PHP 8.3 or newer. ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.2`.
 
 **Works alongside [WELD](https://weld.apps.wayne.edu/).** You can add ADVISOR to a WELD app or to any other Wayne State PHP app.
 

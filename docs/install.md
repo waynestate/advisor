@@ -33,7 +33,7 @@ composer require --dev waynestate/advisor
 
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.
 
-ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.1`. No extra repository needed.
+ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.2`. No extra repository needed.
 
 > [!NOTE]
 > Native Windows is not yet proven. ADVISOR is one PHP command, so it is built to run the same everywhere, but it has not been proven on native Windows. If you are on Windows, [use Docker](guides/docker.md).

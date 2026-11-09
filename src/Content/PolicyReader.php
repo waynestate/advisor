@@ -25,7 +25,7 @@ final class PolicyReader
     public static function fromArray(array $data): Policy
     {
         if (($data['schema_version'] ?? null) !== 1) {
-            throw new InvalidArgumentException('The bundled policy has an unsupported schema_version. ADVISOR 0.1 reads schema_version 1.');
+            throw new InvalidArgumentException('The bundled policy has an unsupported schema_version. This ADVISOR reads schema_version 1.');
         }
 
         /** @var array<string, mixed> $data */

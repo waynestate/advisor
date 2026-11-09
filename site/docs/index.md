@@ -38,7 +38,7 @@ The command is `php vendor/bin/advisor`. This works the same on Windows, macOS a
 
 ## Status[#](https://advisor.apps.wayne.edu/docs/#status)
 
-Current release 0.1.7. PHP ^8.3, license MIT, MCP SDK 0.9.0. Main carries more since then: ADVISOR reads the policy through CREED's own reader (`waynestate/creed` ^0.1.8), `upgrade_path` takes `from_php`, `policy_lookup` answers end of life for a version older than the policy lists, the [threat pages](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html), and a bundle resynced with the stack's 2026-11-09 main branches. The [changelog](https://advisor.apps.wayne.edu/docs/changelog.html) lists it under Unreleased. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
+Current release 0.2.0. PHP ^8.3, license MIT, MCP SDK 0.9.0. New in 0.2.0: ADVISOR reads the policy through CREED's own reader (`waynestate/creed` ^0.1.8), `upgrade_path` takes `from_php`, `policy_lookup` answers end of life for a version older than the policy lists, the [threat pages](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html), and a bundle resynced with the stack's 2026-11-09 main branches. The [changelog](https://advisor.apps.wayne.edu/docs/changelog.html) has the full list, and [Upgrading](https://advisor.apps.wayne.edu/docs/upgrading.html) the one step it needs. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
 
 ## Related[#](https://advisor.apps.wayne.edu/docs/#related)
 

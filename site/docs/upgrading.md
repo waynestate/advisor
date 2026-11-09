@@ -10,6 +10,15 @@ generator: Squire agent-ready
 
 This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
 
+## \[0.2.0\] - 2026-11-09[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-2-0-2026-11-09)
+
+A new minor line, so a `^0.1` constraint does not pick it up: move to `composer require --dev waynestate/advisor:^0.2`. ADVISOR now requires `waynestate/creed` (^0.1.8); if your app locks an older CREED (PROCTOR brings one), let Composer move it too with `composer update waynestate/advisor --with-dependencies`. The MCP server reports version 0.2.0.
+
+- `policy_lookup` and `get_project_status` answer through CREED's own reader, so they say exactly what PROCTOR decides. A line the policy marks current (Vue 3, Inertia 2 and 3) now reads `active` instead of having no state, and a version older than every line the policy lists is answered as end of life with a note instead of being refused.
+- `upgrade_path` takes `from_php`, for a project whose `composer.json` names no PHP constraint (Booster's `--from-php`).
+- Only for module authors: `ContentBundle::policy()` returns CREED's `Waynestate\Creed\Policy`, `Content\PolicyReader` only checks the schema version, and `Content\State` is gone (use `Waynestate\Creed\State`). No stack project ships a module yet.
+- The bundled data is resynced with the stack's 2026-11-09 main branches, the docs gain four threat pages, and the front page deploy layer runs Squire's kit 0.10.1 with HELMET ^1.0 and PROCTOR ^0.11.
+
 ## \[0.1.7\] - 2026-11-07[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-7-2026-11-07)
 
 No breaking changes are marked for this release. Update with `composer update waynestate/advisor`; the MCP server reports version 0.1.7.
@@ -86,7 +95,7 @@ This is the first release, so there is nothing to break.
 
 ## Taking a new version[#](https://advisor.apps.wayne.edu/docs/upgrading.html#taking-a-new-version)
 
-ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.1`. No extra repository needed.
+ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.2`. No extra repository needed.
 
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.
 

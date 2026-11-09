@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Upgrading | ADVISOR docs</title>
 <meta name="description" content="How to upgrade ADVISOR, version by version.">
-<meta name="docs-version" content="0.1.7">
+<meta name="docs-version" content="0.2.0">
 <link rel="stylesheet" href="../assets/wayne-ui/wayne-ui.css">
 <link rel="stylesheet" href="../assets/docs.css">
 <link rel="stylesheet" href="../docs/theme/advisor.css">
@@ -29,7 +29,7 @@
       <a href="../index.html#neighbors">Neighbors</a>
       <a class="sheet-nav__docs" href="../docs/index.html" aria-current="page">Docs</a>
     </nav>
-    <p class="sheet-head__meta"><span class="sheet-head__label">Sheet</span> 0.1.7</p>
+    <p class="sheet-head__meta"><span class="sheet-head__label">Sheet</span> 0.2.0</p>
   </div>
 </header><div class="docs-layout docs-layout--toc">
   <details class="docs-menu">
@@ -41,6 +41,14 @@
     <main id="main">
       <article class="docs-article"><h1 id="upgrading">Upgrading<a class="docs-heading-link" aria-label="Link to this section" href="#upgrading">#</a></h1>
 <p>This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.</p>
+<h2 id="0-2-0-2026-11-09">[0.2.0] - 2026-11-09<a class="docs-heading-link" aria-label="Link to this section" href="#0-2-0-2026-11-09">#</a></h2>
+<p>A new minor line, so a <code>^0.1</code> constraint does not pick it up: move to <code>composer require --dev waynestate/advisor:^0.2</code>. ADVISOR now requires <code>waynestate/creed</code> (^0.1.8); if your app locks an older CREED (PROCTOR brings one), let Composer move it too with <code>composer update waynestate/advisor --with-dependencies</code>. The MCP server reports version 0.2.0.</p>
+<ul>
+<li><code>policy_lookup</code> and <code>get_project_status</code> answer through CREED's own reader, so they say exactly what PROCTOR decides. A line the policy marks current (Vue 3, Inertia 2 and 3) now reads <code>active</code> instead of having no state, and a version older than every line the policy lists is answered as end of life with a note instead of being refused.</li>
+<li><code>upgrade_path</code> takes <code>from_php</code>, for a project whose <code>composer.json</code> names no PHP constraint (Booster's <code>--from-php</code>).</li>
+<li>Only for module authors: <code>ContentBundle::policy()</code> returns CREED's <code>Waynestate\Creed\Policy</code>, <code>Content\PolicyReader</code> only checks the schema version, and <code>Content\State</code> is gone (use <code>Waynestate\Creed\State</code>). No stack project ships a module yet.</li>
+<li>The bundled data is resynced with the stack's 2026-11-09 main branches, the docs gain four threat pages, and the front page deploy layer runs Squire's kit 0.10.1 with HELMET ^1.0 and PROCTOR ^0.11.</li>
+</ul>
 <h2 id="0-1-7-2026-11-07">[0.1.7] - 2026-11-07<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-7-2026-11-07">#</a></h2>
 <p>No breaking changes are marked for this release. Update with <code>composer update waynestate/advisor</code>; the MCP server reports version 0.1.7.</p>
 <ul>
@@ -108,7 +116,7 @@
 <li><code>composer ci</code>: validate, content verify, PHPUnit, Pint, PHPStan level 8 (Pinstripe settings), audit. CI files for GitLab (Preflight 0.1.0) and GitHub.</li>
 </ul>
 <h2 id="taking-a-new-version">Taking a new version<a class="docs-heading-link" aria-label="Link to this section" href="#taking-a-new-version">#</a></h2>
-<p>ADVISOR is on Packagist: <code>composer require --dev waynestate/advisor:^0.1</code>. No extra repository needed.</p>
+<p>ADVISOR is on Packagist: <code>composer require --dev waynestate/advisor:^0.2</code>. No extra repository needed.</p>
 <p>The command is then <code>php vendor/bin/advisor</code>. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.</p>
 <h2 id="related">Related<a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></h2>
 <ul>
@@ -121,10 +129,10 @@
     </main>
     <nav class="docs-pager" aria-label="Pages"><a class="docs-pager__link" href="../docs/troubleshooting.html"><span class="docs-pager__dir">Previous</span><span class="docs-pager__title">Troubleshooting</span></a><a class="docs-pager__link docs-pager__link--next" href="../docs/contributing.html"><span class="docs-pager__dir">Next</span><span class="docs-pager__title">Contributing</span></a></nav>
   </div>
-  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#0-1-7-2026-11-07">[0.1.7] - 2026-11-07</a></li><li class="docs-toc__item"><a href="#0-1-6-2026-11-06">[0.1.6] - 2026-11-06</a></li><li class="docs-toc__item"><a href="#0-1-5-2026-11-03">[0.1.5] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-4-2026-11-03">[0.1.4] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-3-2026-11-02">[0.1.3] - 2026-11-02</a></li><li class="docs-toc__item"><a href="#0-1-2-2026-10-29">[0.1.2] - 2026-10-29</a></li><li class="docs-toc__item"><a href="#0-1-1-2026-10-29">[0.1.1] - 2026-10-29</a></li><li class="docs-toc__item"><a href="#0-1-0-2026-10-29">[0.1.0] - 2026-10-29</a></li><li class="docs-toc__item"><a href="#taking-a-new-version">Taking a new version</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
+  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#0-2-0-2026-11-09">[0.2.0] - 2026-11-09</a></li><li class="docs-toc__item"><a href="#0-1-7-2026-11-07">[0.1.7] - 2026-11-07</a></li><li class="docs-toc__item"><a href="#0-1-6-2026-11-06">[0.1.6] - 2026-11-06</a></li><li class="docs-toc__item"><a href="#0-1-5-2026-11-03">[0.1.5] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-4-2026-11-03">[0.1.4] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-3-2026-11-02">[0.1.3] - 2026-11-02</a></li><li class="docs-toc__item"><a href="#0-1-2-2026-10-29">[0.1.2] - 2026-10-29</a></li><li class="docs-toc__item"><a href="#0-1-1-2026-10-29">[0.1.1] - 2026-10-29</a></li><li class="docs-toc__item"><a href="#0-1-0-2026-10-29">[0.1.0] - 2026-10-29</a></li><li class="docs-toc__item"><a href="#taking-a-new-version">Taking a new version</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
 </div>
 <footer class="docs-footer">
-  <span>Documents ADVISOR <span data-docs-version>0.1.7</span></span>
+  <span>Documents ADVISOR <span data-docs-version>0.2.0</span></span>
   <span><a rel="noopener" href="https://github.com/waynestate/advisor">Source</a> <a href="upgrading.md">Markdown</a></span>
 </footer>
 </body>
