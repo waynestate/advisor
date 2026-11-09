@@ -38,6 +38,24 @@ the same GitLab instance that hosts this project.
 
 <div align="center"><sub>The checklist, item by item, with each item's job and timeout read from <code>templates/</code>.</sub></div>
 
+### The inputs contract
+
+The inputs and job names below are a promise, written down in
+[`contract/inputs.json`](contract/inputs.json): every input's name, type, default
+and pattern, and every job each component adds. Preflight's own build fails when a
+template drifts from it (`tests/ComponentsContractTest.php` in `composer ci`, and the
+`contract` job), so the surface changes only on purpose, with the file rewritten by
+`composer contract:update` in the same commit. An input or job is renamed or removed
+only in a release whose [Upgrading](docs/upgrading.md) section lists it under Breaking,
+and before 1.0 that is a new minor, never a patch. Before you move a pin, see what moved:
+
+```
+git diff 0.4.0 0.5.0 -- contract/inputs.json
+```
+
+[The inputs contract](docs/guides/inputs-contract.md) explains what counts as breaking
+and why defaults such as image digests still move between releases.
+
 ### proctor
 
 Runs `vendor/bin/proctor check --format=codequality` and publishes the
@@ -48,7 +66,7 @@ older PHP or needing an extension the image lacks still gets its report.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
     inputs:
       proctor_command: vendor/bin/proctor check --format=codequality
 ```
@@ -59,11 +77,25 @@ include:
 | `job_name` | string | `proctor` | Name of the job. Set it when you include this component more than once. |
 | `image` | string | `php:8.4-cli-trixie@sha256:9cf851bc2c1b37c3e59dfd677a3c3e56d485af5a47c93f629424bb039eafcb69` | Docker image for the job. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
-| `composer_version` | string | `2.10.3` | Composer version to install. |
+| `composer_version` | string | `2.11.1` | Composer version to install. |
 | `allow_failure` | boolean | `false` | Whether the job can fail without failing the pipeline. |
 | `proctor_command` | string | `vendor/bin/proctor check --format=codequality` | The proctor command to run. |
 | `working_dir` | string | `.` | Directory to run the command in, relative to the project root. |
 | `git_depth` | string | `"0"` | How many commits the job clones (GitLab's `GIT_DEPTH`); the default `0` clones the full history, so PROCTOR's override-approver check can see who wrote each override. |
+
+The job also keeps PROCTOR's JSON report (what `--format=json` prints) as
+`proctor.json` in its artifact, for 30 days, whether it passed or failed.
+That file is what Rollcall reads with `ROLLCALL_PROCTOR_SOURCE=gitlab`: the
+fleet census takes each app's newest `proctor.json` instead of a folder of
+reports someone copied by hand. It needs PROCTOR 0.11.0 or later (`proctor
+check --record`). The job asks the app's own PROCTOR (`check --help`) and adds
+`--record "$CI_PROJECT_DIR/proctor.json"` only when it lists the option, so
+PROCTOR 0.10.0 and older run exactly as before and the runner just warns that
+`proctor.json` matched no files. The flag is added only to a plain
+`proctor check` command (letters, digits, spaces and `/ . _ = : , @ % + -`, no
+`--record` of its own); a `gate` command, or one with quotes, `$`, `;`, `&&`
+or a pipe, is left as written. The proctor line's exit code still decides the
+job.
 
 ### php-test
 
@@ -71,7 +103,7 @@ Runs the test command on each supported PHP version through `parallel:matrix`.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
     inputs:
       test_command: vendor/bin/phpunit
 ```
@@ -83,7 +115,7 @@ include:
 | `image` | string | `php:${PHP_VERSION}-cli-trixie` | Docker image for the jobs. The default carries the literal `${PHP_VERSION}`, which GitLab expands in the image at job time. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
 | `php_versions` | array | `["8.3", "8.4", "8.5"]` | PHP versions to test against. |
-| `composer_version` | string | `2.10.3` | Composer version to install. |
+| `composer_version` | string | `2.11.1` | Composer version to install. |
 | `test_command` | string | `vendor/bin/phpunit` | The test command to run. |
 | `working_dir` | string | `.` | Directory to run the command in, relative to the project root. |
 
@@ -121,7 +153,7 @@ Runs `composer audit --locked` and fails on advisories.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
     inputs:
       working_dir: .
 ```
@@ -130,7 +162,7 @@ include:
 |-------|------|---------|--------------|
 | `stage` | string | `test` | Pipeline stage for the job. |
 | `job_name` | string | `composer-audit` | Name of the job. Set it when you include this component more than once. |
-| `image` | string | `composer:2.10.3@sha256:2cf275428757e5435a667bfc0d038b14520ca02be2b1b70d44a05c8c19e2de48` | Docker image for the job. |
+| `image` | string | `composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0` | Docker image for the job. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
 | `working_dir` | string | `.` | Directory to run composer audit in, relative to the project root. |
 | `abandoned` | string | `fail` | How composer audit treats abandoned packages: fail (default), report (list them, do not fail) or ignore. |
@@ -150,13 +182,42 @@ pipelines like any other. Creating the schedule is a project setting, not a
 file in the app's repo, and someone with Maintainer rights on the app must
 do it. It is the one preflight check that books its own flight time.
 
+### npm-audit
+
+The front-end half of `composer-audit`: runs `npm audit` on the app's `package-lock.json` and fails on an advisory at
+or above `audit_level` in a runtime dependency, then prints a full report, dev dependencies included, that never fails.
+New in 0.5.0; 0.4.0 does not include it.
+
+```yaml
+include:
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/npm-audit@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
+    inputs:
+      audit_level: high
+```
+
+| Input | Type | Default | What it does |
+|-------|------|---------|--------------|
+| `stage` | string | `test` | Pipeline stage for the job. |
+| `job_name` | string | `npm-audit` | Name of the job. Set it when you include this component more than once. |
+| `image` | string | `node:22.13-alpine@sha256:e2b39f7b64281324929257d0f8004fb6cb4bf0fdfb9aa8cedb235a766aec31da` | Docker image for the job (the `eslint` component's pin). |
+| `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
+| `working_dir` | string | `.` | Directory that holds `package-lock.json`, relative to the project root. |
+| `audit_level` | string | `high` | Lowest severity that fails the job: `low`, `moderate`, `high` or `critical`; `medium` (CREED's and Composer's word) means `moderate`. |
+| `omit_dev` | boolean | `true` | Whether the failing audit leaves dev dependencies out. The full report always lists them. |
+
+An app with no lock file passes with a "nothing to audit" line, so a repo with no front end never goes red. The job
+passes `--audit=true --offline=false`, because an `.npmrc` with `audit=false` or `offline=true` makes npm print "found 0
+vulnerabilities" without asking anyone. An unreachable registry fails the job with a message that says so. Preflight's
+own `must-fail-npm-audit` job proves all of this on fixed locks. The severity map and the details:
+[The npm-audit component](docs/guides/component-npm-audit.md).
+
 ### sbom
 
 Generates a CycloneDX SBOM with `cyclonedx/cyclonedx-php-composer`, validates it, and publishes it as an artifact. The plugin is installed globally, so the app's `composer.json` is never touched.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
     inputs:
       output: sbom.cdx.json
 ```
@@ -165,7 +226,7 @@ include:
 |-------|------|---------|--------------|
 | `stage` | string | `test` | Pipeline stage for the job. |
 | `job_name` | string | `sbom` | Name of the job. Set it when you include this component more than once. |
-| `image` | string | `composer:2.10.3@sha256:2cf275428757e5435a667bfc0d038b14520ca02be2b1b70d44a05c8c19e2de48` | Docker image for the job. |
+| `image` | string | `composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0` | Docker image for the job. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
 | `omit_dev` | boolean | `true` | Whether to omit dev dependencies from the SBOM. |
 | `output` | string | `sbom.cdx.json` | Path of the SBOM file to publish, relative to the project root. It must be a relative path; GitLab refuses the pipeline at creation if it is not. |
@@ -178,7 +239,7 @@ Runs the app's own [Laravel Pint](https://laravel.com/docs/12.x/pint) in test mo
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
     inputs:
       config: pint.json
 ```
@@ -187,7 +248,7 @@ include:
 |-------|------|---------|--------------|
 | `stage` | string | `test` | Pipeline stage for the job. |
 | `job_name` | string | `pint` | Name of the job. Set it when you include this component more than once. |
-| `image` | string | `composer:2.10.3@sha256:2cf275428757e5435a667bfc0d038b14520ca02be2b1b70d44a05c8c19e2de48` | Docker image for the job. |
+| `image` | string | `composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0` | Docker image for the job. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
 | `config` | string | `pint.json` | Path to the app's Pint config file. It must be a relative path; GitLab refuses the pipeline at creation if it is not. |
 | `working_dir` | string | `.` | Directory to run Pint in, relative to the project root. |
@@ -200,7 +261,7 @@ Runs the app's own [PHPStan](https://phpstan.org/) and fails the pipeline on sta
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
     inputs:
       config: phpstan.neon
       memory_limit: 1G
@@ -210,7 +271,7 @@ include:
 |-------|------|---------|--------------|
 | `stage` | string | `test` | Pipeline stage for the job. |
 | `job_name` | string | `phpstan` | Name of the job. Set it when you include this component more than once. |
-| `image` | string | `composer:2.10.3@sha256:2cf275428757e5435a667bfc0d038b14520ca02be2b1b70d44a05c8c19e2de48` | Docker image for the job. |
+| `image` | string | `composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0` | Docker image for the job. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
 | `config` | string | `phpstan.neon` | Path to the app's PHPStan config file. It must be a relative path; GitLab refuses the pipeline at creation if it is not. |
 | `memory_limit` | string | `1G` | Memory limit passed to PHPStan. A PHP size such as `1G`, `512M` or `-1`; GitLab refuses the pipeline at creation if it is not. |
@@ -224,7 +285,7 @@ Runs the app's own [ESLint](https://eslint.org/) (and [Prettier](https://prettie
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
     inputs:
       eslint_args: .
 ```
@@ -247,7 +308,7 @@ Runs [Gitleaks](https://github.com/gitleaks/gitleaks) over the checked-out tree 
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/secret-detection@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/secret-detection@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
 ```
 
 | Input | Type | Default | What it does |
@@ -272,7 +333,7 @@ curl and PHP, which the job uses for the registry round trip.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/package-publish@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/package-publish@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
     inputs:
       group_id: "<your group id>"
 ```
@@ -281,7 +342,7 @@ include:
 |-------|------|---------|--------------|
 | `stage` | string | `deploy` | Pipeline stage for the job. |
 | `job_name` | string | `package-publish` | Name of the job. Set it when you include this component more than once. |
-| `image` | string | `composer:2.10.3@sha256:2cf275428757e5435a667bfc0d038b14520ca02be2b1b70d44a05c8c19e2de48` | Docker image for the job. The default ships curl and PHP, which the job uses for the registry round trip. |
+| `image` | string | `composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0` | Docker image for the job. The default ships curl and PHP, which the job uses for the registry round trip. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
 | `group_id` | string | none | Numeric id of the GitLab group whose built-in Composer registry hosts the package. Required. |
 | `read_token_variable` | string | `PACKAGE_READ_TOKEN` | Name of the masked CI variable holding a token with the `read_package_registry` scope, used to read the registry before publishing. |
@@ -299,7 +360,7 @@ auto-merges and what waits.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
     inputs:
       git_author: "Preflight Bot <preflight-bot@example.com>"
 ```
@@ -337,7 +398,7 @@ No takeoff without a clean pre-flight.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/portability@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/portability@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
     inputs:
       env: ["APP_KEY=${PORTABILITY_APP_KEY}", "APP_URL=https://myapp.example.edu"]
       session_login_path: /_portability/login
@@ -393,7 +454,7 @@ person to review. Every page gets a walk-round, in daylight and at night.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/a11y@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/a11y@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
     inputs:
       pages: ["index.html", "docs/**/*.html"]
       wcag_tags: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]
@@ -434,7 +495,7 @@ recorded version, so a new Squire never turns main red by itself: Renovate's Squ
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/squire-kit@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/squire-kit@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
     inputs:
       working_dir: deploy
 ```
@@ -446,7 +507,7 @@ a repository cleans up its first findings, set `allow_failure: true`.
 |-------|------|---------|--------------|
 | `stage` | string | `test` | Pipeline stage for the job. |
 | `job_name` | string | `squire-kit` | Name of the job. Set it when you include this component more than once. |
-| `image` | string | `composer:2.10.3@sha256:2cf275428757e5435a667bfc0d038b14520ca02be2b1b70d44a05c8c19e2de48` | Docker image for the job. It needs PHP 8.3 or later and Composer. |
+| `image` | string | `composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0` | Docker image for the job. It needs PHP 8.3 or later and Composer. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
 | `working_dir` | string | `.` | The kit folder: the one holding `.squire.json`, relative to the project root. |
 | `squire_version` | string | `""` | Squire release to check against, `x.y.z`. Empty reads the version recorded in `.squire.json`. |
@@ -485,7 +546,7 @@ on:
 
 jobs:
   ci:
-    uses: waynestate/preflight/.github/workflows/php-package.yml@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+    uses: waynestate/preflight/.github/workflows/php-package.yml@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
 ```
 
 This workflow ships in the `0.1.1` tag, so pin the full commit SHA of the
@@ -642,13 +703,13 @@ workflow:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@87d9b6fc6b0ed302dd729986525282cd7b567ebd # 0.4.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@60314791565a264e97cb210813ef4f3e76512402 # 0.5.0
 ```
 
 The `workflow:rules` block must live in the app's own file. A component
@@ -672,7 +733,7 @@ Four components take an `allow_failure` input, all defaulting to `false`: `proct
 `squire-kit`. A policy finding is a warning while an app adopts PROCTOR's rules, a secret finding while a repo
 allowlists its first false positives, an accessibility finding while a site fixes what the gate found on its first run,
 and a kit finding while a repo puts its deploy kit back to Squire's files, so each job may fail without failing the
-pipeline during adoption; the first three still write their reports. `composer-audit` has no such input on purpose: a known advisory must fail the pipeline. The other jobs have no
+pipeline during adoption; the first three still write their reports. `composer-audit` and `npm-audit` have no such input on purpose: a known advisory must fail the pipeline. The other jobs have no
 `allow_failure` input either.
 
 No template adds a global key such as `default:`, `variables:`, `workflow:` or `stages:`. `tests/check-contract.sh`
@@ -811,8 +872,8 @@ Maintainers: how to build, test and release this project, and where its data com
 Run the template lint and the fixture tests with Docker:
 
 ```sh
-docker run --rm -v "$(pwd):/app" -v stack-composer-cache:/tmp/cache -w /app composer:2 composer install
-docker run --rm -v "$(pwd):/app" -v stack-composer-cache:/tmp/cache -w /app composer:2 composer ci
+docker run --rm -v "$(pwd):/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 composer install
+docker run --rm -v "$(pwd):/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 composer ci
 ```
 
 The `stack-composer-cache` volume keeps Composer's downloads between runs; Docker creates it the first time.
@@ -820,21 +881,22 @@ The `stack-composer-cache` volume keeps Composer's downloads between runs; Docke
 In PowerShell, use `${PWD}` instead of `$(pwd)`:
 
 ```powershell
-docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2 composer install
-docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2 composer ci
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 composer install
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 composer ci
 ```
 
 Run the PHP fixture app separately:
 
 ```sh
-docker run --rm -v "$(pwd)/tests/fixture-app:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2 composer install
+docker run --rm -v "$(pwd)/tests/fixture-app:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 composer install
 docker run --rm -v "$(pwd)/tests/fixture-app:/app" -w /app php:8.4-cli vendor/bin/phpunit
 ```
 
 Run the portability fixtures with Docker. The check runs the component's own
 probe in its own Buildah image against `tests/portability/app`, once clean
 and once per flaw, and exits 0 only when the clean build passes and each flaw
-fails the check it targets. `seccomp=unconfined` lets Buildah open a user
+fails the check it targets (two regression builds, an Apache-style stderr
+reopen and group signal, must pass too). `seccomp=unconfined` lets Buildah open a user
 namespace; it is not `--privileged`:
 
 ```sh
@@ -853,8 +915,8 @@ Run the must-fail fixtures with Docker; each proves its component (`php-test`, `
 
 ```sh
 docker run --rm -v "$(pwd):/app" -w /app php:8.3-cli-trixie sh tests/check-php-test-fails.sh
-docker run --rm -v "$(pwd):/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3@sha256:2cf275428757e5435a667bfc0d038b14520ca02be2b1b70d44a05c8c19e2de48 sh tests/check-phpstan-fails.sh
-docker run --rm -v "$(pwd):/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3@sha256:2cf275428757e5435a667bfc0d038b14520ca02be2b1b70d44a05c8c19e2de48 sh tests/check-pint-fails.sh
+docker run --rm -v "$(pwd):/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh tests/check-phpstan-fails.sh
+docker run --rm -v "$(pwd):/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh tests/check-pint-fails.sh
 ```
 
 ```powershell
@@ -868,11 +930,24 @@ known advisory, one with a malware-flagged version and one with an abandoned pac
 `abandoned` is `fail`). It asks Packagist, so it needs the network. The `must-fail-composer-audit` job runs it in CI.
 
 ```sh
-docker run --rm -v "$(pwd):/app:ro" -w /app composer:2.10.3@sha256:2cf275428757e5435a667bfc0d038b14520ca02be2b1b70d44a05c8c19e2de48 sh tests/check-composer-audit-fails.sh
+docker run --rm -v "$(pwd):/app:ro" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh tests/check-composer-audit-fails.sh
 ```
 
 ```powershell
 pwsh -File tests/check-composer-audit-fails.ps1
+```
+
+`tests/check-npm-audit-fails.sh` does the same for `npm-audit`: a clean lock and an app with no lock must pass, and
+lodash 4.17.20 (GHSA-35jh-r3h4-6jhm) must fail at `high` and `medium` (and with an `.npmrc` that turns the audit off)
+and pass at `critical`; a dev-only finding fails only with `omit_dev: false`, and an unreachable registry fails a clean
+lock. It asks the npm registry, so it needs the network. The `must-fail-npm-audit` job runs it in CI.
+
+```sh
+docker run --rm -v "$(pwd):/app:ro" -v stack-npm-cache:/root/.npm -w /app node:22.13-alpine@sha256:e2b39f7b64281324929257d0f8004fb6cb4bf0fdfb9aa8cedb235a766aec31da sh tests/check-npm-audit-fails.sh
+```
+
+```powershell
+pwsh -File tests/check-npm-audit-fails.ps1
 ```
 
 <details>

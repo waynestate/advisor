@@ -9,7 +9,7 @@
 **The way in. One lock, any key.** Single Entry, Sessions App-Managed Everywhere: keys cut while you wait, and no
 key ever gets to keep the door.
 
-Checks: `composer ci` (the same command runs on GitLab and GitHub). Both pipelines run the same five checks (manifest, tests, Pint, PHPStan, audit), so a green build means the same thing on both sides.
+Checks: `composer ci` (the same command runs on GitLab and GitHub). Both pipelines run the same seven checks (manifest, tests, Pint, PHPStan, the agent-ready pages, the docs build, audit), so a green build means the same thing on both sides.
 
 Our CI is the same script on both sides, so when it fails, nobody gets to blame the other platform.
 
@@ -142,7 +142,9 @@ use Waynestate\Sesame\Sesame;
 use Waynestate\Sesame\Session\NativeSession;
 use Waynestate\Sesame\UserResolver;
 
-ini_set('session.use_strict_mode', '1'); // or helmet_boot(); NativeSession warns without it
+// Or call helmet_boot(), which sets all of this. NativeSession warns without it.
+ini_set('session.use_strict_mode', '1');
+session_set_cookie_params(['httponly' => true, 'secure' => true, 'samesite' => 'Lax']);
 session_start();
 
 $config = Config::fromArray([
@@ -223,13 +225,29 @@ client sends, so an attacker can plant one) and `session.use_only_cookies`
 when it is built before `session_start()`, and before every session start of
 its own. When your app already started the session with either one off, the
 first use in the request raises one `E_USER_WARNING` naming the setting and the
-fix, and the session keeps working. The fix is the one line in the examples
-above, `ini_set('session.use_strict_mode', '1')` before `session_start()`, or
-HELMET's `helmet_boot()`; Squire's `php.ini` already sets both. Pass
-`checkSessionSettings: true` to `new NativeSession()` for a hard stop (a
-`LogicException` on every call) instead of the warning, or `false` to leave the
-settings alone and stay quiet. The Laravel adapter uses Laravel's session and
-is not affected.
+fix, and the session keeps working. The fix is the `ini_set()` line in the
+examples above, `ini_set('session.use_strict_mode', '1')` before
+`session_start()`, or HELMET's `helmet_boot()`; Squire's `php.ini` already sets
+both.
+
+**The cookie flags, checked the same way.** SESAME never sets a cookie flag,
+but from 0.7.0 `NativeSession` looks at the ones your session started with.
+When the session cookie lacks `HttpOnly`, lacks `Secure` on an https request
+(`HTTPS` set, or `X-Forwarded-Proto: https`), or has a `SameSite` other than
+`Lax` or `Strict`, the first use in the request raises one `E_USER_WARNING`
+naming the missing flags and the fix, and the session keeps working. PHP's own
+defaults trip it (`HttpOnly` off and no `SameSite`), and so did Squire's kit
+`php.ini` before Squire 0.10.2 (it now sets `session.cookie_samesite = Lax`;
+run `squire update`). Where the host's `php.ini` decides, the fix is the
+`session_set_cookie_params()` line in the examples above, before
+`session_start()`, or HELMET's `helmet_boot()`, which sets all three. The
+[upgrading guide](docs/upgrading.md#session-cookie-warning) has the fix per
+case.
+
+Pass `checkSessionSettings: true` to `new NativeSession()` for a hard stop (a
+`LogicException` on every call) instead of either warning, or `false` to leave
+the settings alone and stay quiet about both. The Laravel adapter uses
+Laravel's session and is not affected.
 
 **Session regeneration grace.** On login SESAME regenerates the session ID.
 For the native session the old ID is not deleted at once: it is marked with
@@ -268,7 +286,8 @@ settings in `config/session.php`:
   cookie is not sent on that request: it would be
   missing, so the app would see no session on the return request and any login
   binding (S18) would fail for every user. `Lax` is what HELMET sets and what
-  Laravel does by default. A cross-site `POST` carries no `Lax` cookie at all,
+  Laravel does by default. `NativeSession` warns about a missing or `None`
+  value, but it lets `Strict` through, so that mistake is yours to avoid. A cross-site `POST` carries no `Lax` cookie at all,
   which is the defense you want; that is why the `saml` driver's ACS parks
   the IdP's POST without a session and sends the browser back to the login
   URL with a 303, where the `Lax` cookie is sent again (S35).
@@ -358,6 +377,14 @@ timer would keep a session alive past the idle timeout. Read it when the app
 loads and after a sign-in, and let the `idleExpiresAt` and
 `absoluteExpiresAt` in the answer tell you how long the state can be trusted.
 
+**A script that finds no one signed in gets a 401, never a redirect.** An
+XHR or `fetch` (the first `Accept` type is JSON, or it sends
+`X-Requested-With: XMLHttpRequest`) to a page behind `sesame_login()`, the
+Wayne Auth bridge or the `auth.sesame` middleware gets a 401 when the session
+has timed out or never existed: the body is `{"signedIn":false}` on the raw
+PHP and bridge paths, the same shape as above. Treat a 401 as "reload the
+page": the reload goes to the sign-in.
+
 **Add your own user fields.** Pass a closure that returns an array of extra
 fields for the app's user: `sesame_status(fn ($user) => ['name' => $user->name])`
 in raw PHP, or bind the closure as `sesame.describe_user` in Laravel. Its
@@ -412,7 +439,7 @@ throws never changes what the facade returns or throws.
 |---|---|
 | `fake` | Now. Local development and tests only. Refuses to boot in production. |
 | `cas` | Now. CAS 2.0 against Academica by default. |
-| `gateway` | Now. The recommended driver for apps on Citadel: a signed JWT assertion from the auth gateway (on Citadel, that is `auth.apps.wayne.edu`, the first planned one), never a bare header. No Entra registration per app: Drawbridge holds it once. |
+| `gateway` | Now (built and tested). The recommended driver for apps on Citadel once Drawbridge is live: a signed JWT assertion from the auth gateway (on Citadel, that is `auth.apps.wayne.edu`, the first planned one), never a bare header. No Entra registration per app: Drawbridge holds it once. Drawbridge is released (0.4.0) but has no production gateway yet, so a Citadel app uses `cas` today. |
 | `saml` | Now, opt-in. A SAML 2.0 service provider for a Shibboleth-style IdP; signed assertions required. No default IdP: the app names the IdP's metadata. Needs `onelogin/php-saml` 4.3.2 or later. |
 | `oauth2` | Now. A JWT bearer token verified against the issuer's key set (JWKS), RS256 only. Microsoft Entra ID first. APIs only. |
 | `oidc` | Now. Browser sign-in with OpenID Connect (code flow with PKCE), Microsoft Entra ID first. Needs its own Entra registration per app; for apps off Citadel and APIs. Needs `league/oauth2-client`. |
@@ -428,7 +455,10 @@ throws never changes what the facade returns or throws.
 The cas driver logs in against a CAS server, CAS 2.0 by default. The base
 URL is required config with no default, and it must include the path the
 CAS server lives under. For Academica, which serves CAS under `/cas`, it is
-`https://login.wayne.edu/cas`.
+`https://academica.aws.wayne.edu/cas`. People still see the familiar
+`login.wayne.edu` screen: Academica's `/cas/login` sends the browser there to
+sign in and back with a ticket, and SESAME checks the ticket against
+Academica.
 
 ```php
 <?php
@@ -443,7 +473,7 @@ $config = Config::fromArray([
     'driver' => 'cas',
     'environment' => 'production',
     'cas' => [
-        'base_url' => 'https://login.wayne.edu/cas',
+        'base_url' => 'https://academica.aws.wayne.edu/cas',
         'service_url' => 'https://app.apps.wayne.edu/login',
     ],
 ]);
@@ -454,9 +484,9 @@ $config = Config::fromArray([
 // five by default, to any host or to plain http) and leave TLS verification
 // on (`verify` is true by default; never set it to false). PSR-18 has no
 // standard option for either, so the client you hand SESAME must carry them.
-// SESAME treats any non-200 answer (including a redirect) as a failed login
-// and lets a client exception through, so a client that is set up wrong fails
-// the sign-in and never signs anyone in.
+// SESAME treats any non-200 answer (including a redirect) as a failed login,
+// and a client exception (a timeout, no route) as ProviderUnavailable, so a
+// client that is set up wrong fails the sign-in and never signs anyone in.
 $http = new \GuzzleHttp\Client([
     'timeout' => 10,
     'connect_timeout' => 5,
@@ -523,6 +553,13 @@ not send one, the MFA check fails because there is no sign-in time to age.
 `AuthenticationFailed` message can carry the CAS failure code (for example
 `INVALID_TICKET`), which tells an attacker how the server refused the ticket.
 Log the message for operators and show the user one generic line instead.
+
+**When CAS is down, answer 503.** A ticket check that cannot reach the CAS
+server, runs past the client's timeout or gets a 5xx answer throws
+`Waynestate\Sesame\Exception\ProviderUnavailable`, a subclass of
+`AuthenticationFailed`. Catch it first, log it, and answer 503 with a line
+such as "The university sign-in is not answering; try again in a minute."
+Nobody is signed in either way.
 
 ## The gateway driver
 
@@ -863,7 +900,9 @@ use Waynestate\Sesame\Session\NativeSession;
 use Waynestate\Sesame\Support\Setting;
 
 ini_set('session.gc_maxlifetime', '7200'); // at least SESAME's idle timeout; see Raw PHP
-ini_set('session.use_strict_mode', '1'); // or helmet_boot(); NativeSession warns without it
+// Or call helmet_boot(), which sets all of this. NativeSession warns without it.
+ini_set('session.use_strict_mode', '1');
+session_set_cookie_params(['httponly' => true, 'secure' => true, 'samesite' => 'Lax']);
 session_start();
 
 $config = Config::fromArray([
@@ -1058,15 +1097,23 @@ spot the first time anything asks who is signed in.
 
 | Key | Default | Meaning |
 |---|---|---|
-| `session.idle_minutes` | `120` | Drop the session after this much quiet time. |
-| `session.absolute_minutes` | `720` | End the session this long after sign-in, even if it is still active. |
+| `session.idle_minutes` | `120` | Drop the session after this much quiet time (2 hours by default). |
+| `session.absolute_minutes` | `720` | End the session this long after sign-in, even if it is still active (12 hours by default). |
 | `logoutReuseTtlSeconds` | `60` | The window in which a reused logged-out session ID is logged as an anomaly, in seconds. A `new NativeSession()` option, not a config key; `0` makes `invalidate()` destroy the session outright instead of leaving the logout marker. |
-| `checkSessionSettings` | `null` | How a native session treats `session.use_strict_mode` and `session.use_only_cookies`. A `new NativeSession()` option, not a config key. `null` turns both on whenever no session is active and warns once per request (`E_USER_WARNING`) when the app started its session with either one off; `true` also turns them on but throws `LogicException` on every call instead of warning; `false` leaves the settings alone and stays quiet. |
+| `checkSessionSettings` | `null` | How a native session treats `session.use_strict_mode`, `session.use_only_cookies` and the session cookie's flags. A `new NativeSession()` option, not a config key. `null` turns both settings on whenever no session is active and warns once per request (`E_USER_WARNING`) when the app started its session with either one off, or with a cookie that lacks `HttpOnly`, `Secure` (on https) or a `Lax` or `Strict` `SameSite`; `true` also turns the settings on but throws `LogicException` on every call instead of warning; `false` leaves the settings alone and stays quiet. SESAME never sets a cookie flag. |
 
 On login the session stores the sign-in time and the last activity time, and
 `user()` refreshes the last activity time on every call that finds a live
 session. A session made before the timeouts existed (a user, no timestamps)
 counts as expired.
+
+When a session times out, the request carries on as a guest's. The native
+session starts a fresh, empty session under a new ID in place of the old one
+(from 0.7.1; before that the next write threw "No session is active"), so a
+page goes to the sign-in as usual, and a script's request (XHR or `fetch`
+asking for JSON) gets a 401 instead of a redirect from `sesame_login()`, the
+Wayne Auth bridge and the Laravel middleware alike (the first two send
+`{"signedIn":false}`).
 
 The native session adds a third clock for logouts. When `invalidate()` retires
 a session it leaves a "logged out at" marker in the session store itself, under
@@ -1292,8 +1339,10 @@ back from its own store on every request, so a change made after the sign-in
 resolver also implements `Waynestate\Sesame\RefreshesUser`: its
 `refreshUser($user)` runs on every request, and a `null` answer signs the
 session out. The wayne-cas shim already implements it, looking the user up
-through `auth.providers.users.model`; a resolver that does not implement it
-keeps handing back the stored copy, as it always has.
+through `auth.providers.users.model` (an Eloquent model works as it is from
+0.6.2 on, and with JSON session serialization from 0.6.3 on, so a wayne-cas
+app needs no resolver of its own); a resolver that
+does not implement it keeps handing back the stored copy, as it always has.
 
 The same user is available through Laravel's own auth, because the provider
 registers a `sesame` guard driver. Point a guard in `config/auth.php` at it:
@@ -1397,7 +1446,8 @@ first. What the hop does:
   package, any `wayne-cas` path entry and its VCS repository entries.
   Booster 1.12.0 and later write `^0.6`; an app hopped by an earlier Booster
   got `^0.4`, so take the 0.5.0 and 0.6.0 steps in the
-  [upgrading guide](docs/upgrading.md).
+  [upgrading guide](docs/upgrading.md), and its 0.7.0 step to move from `^0.6`
+  to `^0.7`.
 - Removes `config/wayne-cas.php` when nothing in the app reads its config
   keys any more; while anything still does, the file stays and a manual note
   names the readers.
@@ -1450,6 +1500,16 @@ The one change a wayne-cas model needs: `getReadOnlyAttributes` goes from
 protected to public, keeping its `$persistedAttributes` parameter. The
 interface and the trait share that signature, so a model that satisfies one
 satisfies both.
+
+The shim also looks the signed-in user up again on every request (a plain
+find by primary key, never an import). Take SESAME 0.6.3 or later for this:
+from 0.6.2 an Eloquent model works as it is, with no resolver subclass and no
+`refreshUser()` of your own, and from 0.6.3 that holds when
+`config/session.php` sets `'serialization' => 'json'` too. On 0.6.1 and earlier every signed-in request
+failed with `InvalidConfig`, because the refresh asked for a declared static
+`find` method; an app that wrote its own resolver to get around that can
+delete it and set `user_resolver` back to
+`Waynestate\Sesame\WayneCas\UserResolver`.
 
 The `WayneCasable` interface and the `ReadOnlyAttributes` trait are in the
 `Waynestate\Sesame\WayneCas` namespace.
@@ -1509,8 +1569,10 @@ require_once('config/sesame.php'); // calls WayneAuth::boot([...cas config...])
 The bridge is deprecated on arrival: it is the short step, and SESAME's
 native `sesame_login()` is the next one. Wayne Auth's password mode
 (`_parseSSOCookie('d')`) has no equivalent, because CAS never gives an app the
-password. The full guide, with the call-by-call differences and the checks
-to run before shipping, is
+password. A page that calls `authenticateSSO()` should catch
+`ProviderUnavailable` (CAS down, answer 503) before `AuthenticationFailed`
+(a refused ticket). The full guide, with the call-by-call differences, the
+two catches and the checks to run before shipping, is
 [Moving off Wayne Auth](https://sesame.apps.wayne.edu/docs/guides/moving-off-wayne-auth.html).
 
 ## Proof

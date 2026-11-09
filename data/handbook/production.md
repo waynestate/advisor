@@ -14,7 +14,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 ## Running safely
 
 - The app and its scripts MUST run as a non-root, non-administrator user with the least access they need (WSU developer standards, 2024). No check exists yet.
-- The web server MUST NOT list directory contents (WSU developer standards, 2024). No check exists yet.
+- The web server MUST NOT list directory contents (WSU developer standards, 2024). PROCTOR check: `directory-listing` warns on committed server config that turns listing on (PROCTOR 0.10.0).
 - File permissions MUST be set per path; write access for the web server is granted only to specific files or folders, and mode `777` MUST NOT be used (WSU developer standards, 2024).
   PROCTOR check: `world-writable` (`chmod 777` in scripts, Dockerfiles, CI and PHP).
 - Debugging and diagnostic files, scripts, dumps and backups MUST NOT sit in the served folder (WSU developer standards, 2024).
@@ -28,6 +28,6 @@ Production is the encore. Keep the lights on and the doors locked, and the band 
 
 ## Who can reach it
 
-- Every app MUST set `robots.txt` to keep spiders out unless crawling is wanted (WSU developer standards, 2024). No check exists yet.
+- Every app MUST set `robots.txt` to keep spiders out unless crawling is wanted (WSU developer standards, 2024). An app that wants crawling says so in the file with `Allow: /` for `User-agent: *`; keeping spiders out is `Disallow: /`. PROCTOR check: `robots-txt` warns when a served app commits no `public/robots.txt`, or one that decides neither (PROCTOR 0.10.0).
 - Every app MUST limit access by network address to the audience it serves, as a second lock beside sign-in and never instead of it (WSU developer standards, 2024). No check exists yet.
 - The one named exception: the stack's own public front pages are crawlable by design (the stack's agent-ready sites decision). It is a special case for those pages, not a general exemption for public pages.

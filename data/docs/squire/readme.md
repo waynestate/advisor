@@ -17,7 +17,7 @@ Squire is the Citadel kit: build.sh, the release script, the health check, and l
 Front page: [`site/index.html`](site/index.html), a static page you can serve from anywhere.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Status: 0.8.0, tagged and on Packagist.
+Status: 0.10.3, tagged and on Packagist.
 
 ## Where the code lives
 
@@ -722,7 +722,7 @@ excludes.
 Run it in Docker the same way CI does:
 
 ```
-docker run --rm -v "$PWD:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "$PWD:/app" -w /app composer:2.11.1 sh -c "composer install --no-interaction && composer ci"
 ```
 
 The shell templates are linted with shellcheck in Docker (`scripts/lint-shell.sh`, or `scripts/lint-shell.ps1` on

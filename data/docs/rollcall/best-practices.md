@@ -10,11 +10,11 @@ Tags: **Enforced** (code or a failing test), **Checked** (a test or CI warns), *
 
 | Rule | Tag | How |
 |---|---|---|
-| Never write to the systems you scan | Enforced | `GitLabRepositorySource::send()` allows only `GET` and `HEAD`; `ReadOnlyAndDocsTest` fails on a write verb in `src/` and on file writes outside the snapshot store |
+| Never write to the systems you scan | Enforced | `GitLabRepositorySource::send()` allows only `GET` and `HEAD`; `ReadOnlyAndDocsTest` fails on a write verb in `src/` and on file writes outside the snapshot store and the digest writer |
 | Use the smallest token scope (`read_api`), on a GitLab group or project access token (a bot) | Checked | `docs/security.md` lists every API call and the scope that covers it, and `TokenScopeDocsTest` fails if the GitLab adapter calls a path the table does not list; Rollcall cannot see a token's scopes |
 | Plan token expiry and rotation; an expired token is a loud failure | Enforced (warning, loud failure) / Documented (rotation) | A 401 or 403 stops the scan with a plain message; `scan` prints a note 14 days before the token expires (and when it has already expired); the stack maintainer, a role, rotates the token before its expiry with the runbook in `docs/security.md` (question 4) |
 | List projects per group with subgroups, in the small form | Enforced | `include_subgroups=true&simple=true&archived=false`, tested |
-| Fetch only the files you need, never clone | Enforced | File endpoints only; the directory adapter reads two named files |
+| Fetch only the files you need, never clone | Enforced | File endpoints only (and one named file from a CI job's artifact with `ROLLCALL_PROCTOR_SOURCE=gitlab`); the directory adapter reads three named files, `composer.json`, `composer.lock` and `booster-hop.json` |
 | Skip what has not changed | Enforced | `HEAD` blob id compared with the last snapshot; tested for both adapters |
 | Respect rate limits and back off | Enforced | `429` waits for `Retry-After` (capped at 120 s), bounded retries, tested |
 | Follow pagination links, only to the configured host | Enforced | `Link: rel="next"`; a link to another host is refused so the token stays home |
@@ -43,7 +43,7 @@ Tags: **Enforced** (code or a failing test), **Checked** (a test or CI warns), *
 | Keep a snapshot per scan | Enforced | One atomic JSON file per day |
 | Owners hear about their own apps only if they ask | Enforced | `rollcall digest` reads only owners with `"digest": true`, sends nothing without `--send` and three settings, and checks every contact before sending; `DigestTest` |
 | Verify ownership on a schedule; an app with no owner, or an unconfirmed one, is "owner unknown", never guessed from commit authors | Enforced | Each owners-file entry carries a `"confirmed"` date; `rollcall owners` names every app no entry lists or none confirmed within `ROLLCALL_OWNERS_CONFIRM_DAYS` (365) and exits 1, and the weekly scan job runs it; `OwnersCommandTest`, and `OwnersFileTest` fails if an entry of Rollcall's own file has no date |
-| Per-app lists stay internal | Enforced | Off in the public report, `/report.json`, `/metrics`; the Laravel per-app page is opt-in behind your middleware |
+| Per-app lists stay internal | Enforced | Off in the public report, `/report.json`, `/metrics`; the Laravel per-app page, Blade or the Vue page, is opt-in behind your middleware, and the public Vue page's props carry no app (`DashboardInertiaTest`); the raw-PHP per-app page needs `ROLLCALL_INTERNAL_ENABLED` and `'internal' => true` from a file behind your sign-in, and answers 404 without either (`RawDashboardTest`) |
 | ADVISOR tools answer public counts only, read-only | Enforced | `RollcallModule` builds from the public report and declares every tool `readOnly`; `RollcallModuleTest` fails if a fixture app name or path appears in any tool output |
 
 ## Keep the shape promised
@@ -65,9 +65,10 @@ Tags: **Enforced** (code or a failing test), **Checked** (a test or CI warns), *
 
 | Rule | Tag | How |
 |---|---|---|
-| Pointer and focus rules (WCAG 2.2 AA) | Documented | The dashboard has no controls, sticky headers or tooltips; a positive tabindex fails DashboardAccessibilityTest; revisit when a filter is added |
-| Announce refreshed data | Checked | A role=status line names the apps shown and the scan date; DashboardAccessibilityTest |
-| Automated WCAG 2.2 AA check on the front page and the rendered dashboard | Enforced | CI jobs `a11y-site` and `dashboard-a11y` (Preflight's a11y component; `dashboard-render` renders the pages with `DashboardRenderTest`); `scripts/dashboard-a11y.sh` and `.ps1` run the dashboard check locally |
+| Pointer and focus rules (WCAG 2.2 AA) | Documented | The dashboard (the Laravel page, the Vue page and the raw-PHP page) has no controls, sticky headers or tooltips; a positive tabindex fails DashboardAccessibilityTest; revisit when a filter is added |
+| Announce refreshed data | Checked | A role=status line names the apps shown and the scan date, on the Laravel page, the Vue page and the raw-PHP page alike; DashboardAccessibilityTest, RawDashboardTest, and the dashboard-vue parity check for the Vue page |
+| One dashboard markup for every path | Enforced | The Laravel view and `rollcall_dashboard()` both print `DashboardPage`; `DashboardParityTest` fails unless the raw-PHP page and the Laravel page are byte for byte the same for the same snapshot. The Vue page (`resources/js/RollcallDashboard.vue`) gets the same report as props, and the CI job `dashboard-vue` (`tools/vue-dashboard/parity.mjs`) server-renders it and fails on any element, attribute or text that differs from the Laravel page |
+| Automated WCAG 2.2 AA check on the front page and the rendered dashboard | Enforced | CI jobs `a11y-site` and `dashboard-a11y` (Preflight's a11y component; `dashboard-render` renders the Laravel and the raw-PHP pages with `DashboardRenderTest` and `dashboard-vue` the Vue page, nine pages in light and dark at 320 and 1280 px); `scripts/dashboard-a11y.sh` and `.ps1` run the dashboard check locally |
 
 ## Not yet
 

@@ -38,11 +38,11 @@ The command is then `vendor/bin/proctor`.
 ## Single-file download
 
 The single-file PHAR is how Preflight and apps without Composer access run
-PROCTOR as one file, and from the next release it is attached to each GitLab
-Release with its `proctor.phar.sha256` checksum file. Both files come from the
-`release-phar` job in `.gitlab-ci.yml`; the lead tags, and no tag means no
-release. The `composer require` install above stays the current method; the
-phar is the one-file alternative.
+PROCTOR as one file. Since 0.6.0, every tag runs the `release-phar` job in
+`.gitlab-ci.yml`, which attaches `proctor.phar` and its `proctor.phar.sha256`
+checksum file to that tag's GitLab Release; the maintainer tags, and no tag
+means no release. The `composer require` install above stays the main method;
+the phar is the one-file alternative.
 
 Download both files for the tag you want, verify the checksum, then run it.
 Replace `<release>` with the base URL of the release's asset links (the
@@ -56,8 +56,8 @@ Windows (PowerShell), one line, no bash needed:
 
     Invoke-WebRequest "<release>/proctor.phar" -OutFile proctor.phar; Invoke-WebRequest "<release>/proctor.phar.sha256" -OutFile proctor.phar.sha256; if ((Get-FileHash proctor.phar -Algorithm SHA256).Hash -ne (Get-Content proctor.phar.sha256 -TotalCount 1).Trim().Split(' ')[0]) { throw "sha256 mismatch" }; php proctor.phar --version
 
-Until the first tagged release that runs the job, build it from a checkout
-with the script for your OS (both need Docker, and no PHP or Composer on the
+For a commit between tags, or a release whose job did not attach the files,
+build it from a checkout with the script for your OS (both need Docker, and no PHP or Composer on the
 host): `.\scripts\build-phar.ps1` on Windows, `scripts/build-phar.sh` on
 Linux / macOS. Each script writes `build/proctor.phar` and verifies it by
 printing PROCTOR's version.
@@ -65,11 +65,12 @@ printing PROCTOR's version.
 ## Usage
 
 ```
-vendor/bin/proctor check [--path=.] [--format=text|json|codequality|sarif] [--policy=<file>] [--today=YYYY-MM-DD] [--php-runtime=X.Y.Z] [--timeout=300]
+vendor/bin/proctor check [--path=.] [--format=text|json|codequality|sarif] [--record=<file>] [--policy=<file>] [--today=YYYY-MM-DD] [--php-runtime=X.Y.Z] [--timeout=300]
 ```
 
 - `--path`: path to the application to check (default `.`).
 - `--format`: output format: `text` (default), `json`, `codequality`, or `sarif`.
+- `--record`: also write the JSON report (exactly what `--format=json` prints) to this file, whatever `--format` says; its folder is created. A CI job keeps it as an artifact, so one run serves the merge request and Rollcall. A file it cannot write is a tool error (exit 2).
 - `--policy`: path to the CREED-format policy file. Optional: without it, PROCTOR resolves the policy from the `PROCTOR_POLICY` environment variable, then the app's `vendor/waynestate/creed/policy/policy.json`, then the copy bundled with PROCTOR (see [Policy](#policy)). In CI this option is refused unless a trusted job sets `PROCTOR_ALLOW_OVERRIDES=1`.
 - `--today`: override today's date (YYYY-MM-DD) so runs are deterministic. In CI this option is refused unless a trusted job sets `PROCTOR_ALLOW_OVERRIDES=1`.
 - `--php-runtime`: the PHP version that will serve the app (X.Y.Z), used by the `unpatched` check. CI should pass the deploy image's PHP, not the runner's.
@@ -84,12 +85,12 @@ vendor/bin/proctor gate [--path=.] [--format=text|json] [--baseline=<report or d
 ## Checks
 
 
-<div align="center"><sub>Nine of the thirty-six checks shown, asked in this order on every run; `policy-age` stays silent while the policy is fresh. The lines are real output from the test fixtures.</sub></div>
+<div align="center"><sub>Nine of the forty-one checks shown, asked in this order on every run; `policy-age` stays silent while the policy is fresh. The lines are real output from the test fixtures.</sub></div>
 
 - `php-floor`: fails when the lowest PHP version allowed by `require.php` is past security support plus the grace window, when composer.json has no usable php constraint, or when there is no composer.json at all.
 - `unpatched`: warns when a locked component is behind the policy's `latest_patch` for its version line, and passes when it is current. Reads laravel from composer.lock (`laravel/framework`), vue and inertia from package-lock.json (`vue`, `@inertiajs/vue3`), and the PHP runtime from `--php-runtime`. No finding when the component, its version line, or `latest_patch` is absent from the policy.
 - `laravel-eol`: classifies the locked `laravel/framework` version against the policy as of `--today`: active passes, naming the line's end date when it has one; security-only warns, naming the end date and the days left (`ends today`, `1 day left`, or `N days left`); eol fails, and past the security end date plus the policy's grace window it fails as `eol_grace_expired`, each naming the security end date when the line has one. It reads the version from composer.lock (`packages`, then `packages-dev`); a leading `v` is stripped, and a version that is not plain numeric (a dev alias) earns no finding. No finding when the lock has no `laravel/framework` or the version resolves to no policy line. An active override downgrades the eol fail to a warning, never the grace-expired one. The proctor keeps the hall on a textbook the publisher still corrects.
-- `laravel-php`: fails when composer.json's `require.php` allows a PHP version outside the range the policy records for the locked Laravel major, and passes when the constraint fits the range; the message names the app's constraint, the policy range and the Laravel major. The range's max counts as supported, so a max of `8.5` admits everything below `8.6`. No finding when the lock has no `laravel/framework`, the line has no recorded range, or composer.json declares no `require.php` (php-floor owns the missing-constraint verdict); a present `require.php` that is not a valid version constraint is a tool error. The proctor checks the desk before the student sits, because a book that will not open on the declared desk is a fail.
+- `laravel-php`: fails when composer.json's `require.php` allows no PHP version inside the range the policy records for the locked Laravel major, or when its lowest allowed version is below the range's floor, and passes otherwise: the upper end is open by design, so `^8.2` passes a Laravel whose range is 8.2 to 8.5; the message names the app's constraint, the policy range and the Laravel major. The range's max counts as supported, so a max of `8.5` admits everything below `8.6`. No finding when the lock has no `laravel/framework`, the line has no recorded range, or composer.json declares no `require.php` (php-floor owns the missing-constraint verdict); a present `require.php` that is not a valid version constraint is a tool error. The proctor checks the desk before the student sits, because a book that will not open on the declared desk is a fail.
 - `node-eol`: grades every Node version the repository pins against the policy as of `--today`: `.nvmrc`, `.node-version`, package.json `volta.node`, an official `node` image in `.gitlab-ci.yml` (`image:` or `name:`, a registry host or `$CI_DEPENDENCY_PROXY_...` prefix allowed), and an official `node` image on a Dockerfile `FROM` line. Each one gets the CREED state table: active passes, security-only warns with the days left, eol fails, and past the grace window it fails as `eol_grace_expired`, which no override softens. package.json `engines.node` is a declaration, not what runs, so its lowest allowed major is graded the same way but warns at worst (`proctor/node-eol/engines`). An odd major is never an LTS line and never a target, so it warns wherever it is named (`proctor/node-eol/odd-major`). Silent when the policy has no node component or the repository names no Node version, and for aliases (`lts/*`, `node`), tags without a version (`lts-alpine`) and another org's image named node. The proctor checks which calculator is on the desk, not only the one the syllabus allows.
 - `mysql-eol`: grades every MySQL or MariaDB version the repository names against the policy as of `--today`: an official `mysql` or `mariadb` image on an `image:` line in a root `docker-compose*.yml` or `compose*.yml` (a registry host or a `$VAR` prefix allowed, a `@sha256:` digest after the tag tolerated), and `SQUIRE_MYSQL_IMAGE=mysql:<version>` in `.env.squire.example` or `.env.example`. Each one gets the CREED state table: active stays silent, security-only warns with the days left, and eol and `eol_grace_expired` warn, never fail, until Citadel's shared database server offers a supported MySQL. Silent when the policy has no mysql or mariadb component, or the repository names no database version. The proctor checks which textbook the desk is set up for, not only the one the syllabus allows.
 - `mysql-minimum`: warns, never fails, when the app's MySQL or MariaDB image is below the minimum the policy records for its Laravel line (`proctor/mysql-minimum/below`).
@@ -101,6 +102,7 @@ vendor/bin/proctor gate [--path=.] [--format=text|json] [--baseline=<report or d
 - `mysql56`: warns when migrations or app code use MySQL features the shared 5.6 server rejects: JSON columns (in `database/`) and JSON queries, generated columns, `renameColumn`/`renameIndex`, vector, invisible and spatial columns, `Schema::hasColumn`-style introspection, raw SQL with 5.7+ syntax, the upsert row alias, indexed strings over 191 characters, date columns defaulting to the current time, and the `db:show`/`db:monitor` commands. Citadel's shared MySQL server is 5.6, so migrations must avoid newer features. Warnings, not failures: an app on its own newer database is not affected. Fix by avoiding the feature (a raw `ALTER TABLE ... CHANGE` instead of `renameColumn`, `timestamp` instead of a date column defaulting to now, `Schema::defaultStringLength(191)` in `boot()`) or by moving the app to its own database. HTTP `->json()` calls are not flagged, and a long string only warns when the same migration indexes it.
 - `destructive-deploy`: fails when a deploy script runs an artisan command that drops or rebuilds the database (`migrate:fresh`, `migrate:refresh`, `migrate:reset`, `db:wipe`), which erases production data on every deploy. Scans `.sh` and `.php` files under a top-level `deployments/`, `deploy_scripts/`, `deploy/` or `scripts/` directory, the top-level `build.sh`, `release.sh` and `.gitlab-ci.yml`, and the `scripts` section of composer.json; shell comments are ignored. Fix by running plain `php artisan migrate --force` in the deploy.
 - `crlf-deploy-script`: fails when a deploy script has Windows line endings (CRLF): bash on Linux reads the carriage return as part of each command, so the script breaks on Citadel's Linux hosts. Scans the top-level `build.sh` and `release.sh`, and every `.sh` file under a `deployments/`, `deploy_scripts/`, `deploy/` or `scripts/` directory at any depth; `vendor/`, `node_modules/` and `.git/` are skipped at any depth. One finding per file, on the line of its first carriage return. Fix by converting the file to LF (`sed -i 's/\r$//' build.sh`) and adding `*.sh text eol=lf` to .gitattributes. Warns (`proctor/crlf-deploy-script/no-gitattributes`) when the app has a deploy script and `.gitattributes` has no `*.sh`, `**/*.sh` or `*` line with `eol=lf`.
+- `gitattributes-eol`: warns, never fails, when the files a Linux container reads line by line are not pinned to LF (CREED every-os). `proctor/gitattributes-eol/not-pinned`: for each kind the app has (a `*.sh` file, a `*.conf` file, a `Dockerfile` or `*.Dockerfile`), every file of that kind must come out of `.gitattributes` with `eol=lf` and `text` not unset, worked out the way Git does it: every `.gitattributes` from the app root down to the file's folder, lines in order, a later line or a deeper file winning. Accepted: one line per kind (`*.sh text eol=lf`, `*.conf text eol=lf`, `Dockerfile text eol=lf`, `*.Dockerfile text eol=lf`), a broader line such as `* text=auto eol=lf` or `* text eol=lf`, `eol=lf` on its own, the old `crlf=input`, folder and `**` patterns, and a `.gitattributes` in a subfolder; a later `-text`, `binary`, `eol=crlf` or `!eol` undoes the pin. One warning, on `.gitattributes`, naming the first unpinned file of each kind and the exact lines to add. `proctor/gitattributes-eol/crlf`: a `Dockerfile`, `*.Dockerfile` or `*.conf` at any depth under the top-level `deploy/` or `.squire/` has a carriage return on disk; one warning per file, on the line of its first carriage return (shell scripts there are `crlf-deploy-script`'s). `vendor/`, `node_modules/`, `.git/` and `tests/` are skipped at any depth. Fix by adding the lines the message names at the end of `.gitattributes`, converting any CRLF file to LF, then running `git add --renormalize .` and committing. It reports, and is not in the deploy gate. The proctor collects the papers face up.
 - `entrypoint-migrate`: warns, never fails, when a container entrypoint runs migrations at start: with two replicas both would run `migrate` at the same moment, and a failed migration crash-loops the container, so migrations run once per release as a job (WELD W24). Scanned: every file whose name contains `entrypoint` (case-insensitive) at any depth; `vendor/`, `node_modules/` and `.git/` are skipped at any depth, and Dockerfiles themselves are not read. A line is flagged when it runs `artisan migrate` (a bare `migrate`; `migrate:status`, `migrate:fresh` and the other subcommands are not), after removing a trailing shell comment; a line whose first non-space character is `#` is ignored, and a line inside a `migrate)` case branch, to the branch's `;;` or `esac`, is not. One warning per file, on the line of its first flagged line. Fix by moving the migration out of the entrypoint and running it once per release as a job, the way Squire's entrypoint takes a `migrate` role. It reports, and is not in the deploy gate.
 - `case-clash`: fails when two paths differ only by letter case (`README.md` and `readme.md`): macOS and Windows checkouts ignore case, so one silently replaces the other, and a Linux host then loads a different file than the developer edited. Scanned: every file and directory under the app path; skipped at any depth: `vendor/`, `node_modules/` and `.git/`. One finding per topmost clash, naming every colliding path; a clash below a clashing directory is part of it, not its own finding. Fix by keeping one name and deleting or renaming the duplicate.
 - `ci-pipelines`: for stack packages (composer.json `name` starting with `waynestate/`), fails when `.gitlab-ci.yml` or `.github/workflows/ci.yml` is missing or runs no `composer ci`; for any other project, a missing or incomplete `.gitlab-ci.yml` is a warning and `.github/workflows/ci.yml` is optional. A private stack package that sets `extra.proctor.github-mirror` to `false` in composer.json must never be on GitHub: a missing `.github/workflows/ci.yml` then gives no finding, and a present one warns (`proctor/ci-pipelines/github-private`) along with the warning-only rules. Warns when a GitHub `uses:` ref is not a 40-hex commit SHA. Warns (`proctor/ci-pipelines/composer-audit-off`) when the pipeline environment switches Composer's audit or blocking policy off: `COMPOSER_NO_AUDIT` or `COMPOSER_NO_BLOCKING` set to anything but an empty string, `0` or `false`, or `COMPOSER_AUDIT_ABANDONED` set to `ignore`, in the GitLab top-level or job `variables:` (a scalar or a map with a `value` key) or the GitHub top-level, job or step `env:`. Warns (`proctor/ci-pipelines/composer-update`) once per line when a command segment of a GitLab job script line (`script`, `before_script` or `after_script`) or a GitHub step run starts with `composer update` or `composer require`: CI must install from the lock (rule 3.7). Warns (`proctor/ci-pipelines/allow-overrides`) once per file when the pipeline environment sets `PROCTOR_ALLOW_OVERRIDES` to `1`, which lets the app pass `--policy` and `--today` in CI (BEST_PRACTICES 1.2) and grade itself against a policy or a date it picks; any other value leaves the guard on. A warning, never a fail, for stack packages and other projects alike. The proctor fails the stack's own exam halls, and only leaves a note for everyone else's.
@@ -114,6 +116,10 @@ vendor/bin/proctor gate [--path=.] [--format=text|json] [--baseline=<report or d
 - `raw-identity-header`: warns, never fails, when app code reads an identity header directly instead of taking the user from SESAME. Drawbridge, the gateway, signs the session into the `X-Sesame-Assertion` header and passes the user's claims as request headers; only SESAME's gateway driver may open that pair, because it verifies the signature before a claim becomes the logged-in user (CREED auth-3), and app code that reads a claim header itself accepts whatever value the proxy, or a client, put there. Scanned: every `*.php` file except `vendor/`, `node_modules/`, `storage/`, `tests/` and `.git/` at any depth. PHP is read on the syntax tree with names resolved, so a header name in a comment or a log string, a variable named `$REMOTE_USER`, and `getenv()` with a computed argument are not flagged. Flagged read positions: a string key on `$_SERVER` or `$_ENV`, the quoted argument of `getenv()` or `apache_getenv()`, the quoted first argument of a method named `header`, `server`, `hasHeader`, `getHeader` or `getHeaderLine` (and of `get()` on a `->headers` object), and a string key on the result of `getallheaders()` or `apache_request_headers()`, directly or through a variable assigned from them. Names match case-insensitively with `-` and `_` interchangeable, and where the read comes from `$_SERVER` or the environment the `HTTP_` prefix Apache adds to request headers is accepted too. `X-Sesame-Assertion` is the signed assertion itself, so it is flagged like any other direct read; `PHP_AUTH_USER` is basic-auth material, so it is not an identity claim and is not flagged. Blade templates (`*.blade.php`) are matched line by line for `$_SERVER['...']` and `request()->header('...')` / `request()->server('...')`. A file that does not parse is skipped here; the portability check reports it. Fix by taking the user from SESAME (the gateway driver) and reading the claims it returns. The proctor checks the ID at the door; it does not trust the name written on the exam paper.
 - `app-key`: warns, never fails, when the repository gives away the APP_KEY or makes a leaked one worse. `proctor/app-key/committed-env`: a real env file is committed (`.env`, `.env.production`, any `.env.*` that is not an example or a test file). `proctor/app-key/committed-key`: a committed env file, examples included, sets `APP_KEY` or `APP_PREVIOUS_KEYS` to a real key (`base64:` and 16 or 32 bytes), or `config/app.php` carries one as a literal; the key is never printed. `proctor/app-key/cookie-sessions`: `SESSION_DRIVER=cookie` in a committed env file, or a `cookie` default in `config/session.php`. A real env file is graded only when PROCTOR knows it is committed (git lists it, or `CI`, `GITLAB_CI` or `GITHUB_ACTIONS` is set), so a developer's own `.env` never raises a flag; example files (`.example`, `.dist`, `.sample`, `.template`) are always graded, and test files (`.env.testing`, `.env.test`, `.env.ci`, `.env.dusk.*`) are skipped. Fix by removing the file or value, rotating the key with `php artisan key:generate` on every environment that used it, and moving sessions to the database or redis driver. The proctor does not read the answer key aloud; it only notes that it was left on the desk.
 - `app-debug`: warns, never fails, when a committed env, deploy or CI file sets `APP_DEBUG` to `true` or `1` (case-insensitive, optional spaces around `=` or `:`): `.env.production`, `.env.squire.example`, any file under `deploy/` or `deployments/`, and the CI pipelines (`.gitlab-ci.yml` and `.github/workflows/*.yml`). One warning per file, on the line of its first true value; it never reads `.env` (a committed `.env` is the app-key check's finding) or `.env.example`, the local-development template where debug is expected to be on. Fix by setting `APP_DEBUG=false`, which Laravel reads in config/app.php. It reports, and is not in the deploy gate. The proctor keeps the answer sheet from showing its workings to the crowd.
+- `display-errors`: warns, never fails, when a committed php.ini, .user.ini or .htaccess turns `display_errors` on (`proctor/display-errors/on`) or `log_errors` off (`proctor/display-errors/log-off`): any `*.ini` at the app root or at any depth under `public/`, `deploy/`, `deployments/` or `docker/`, and every `.htaccess` at the root or at any depth under those folders. A line whose first non-space character is `;` or `#` is ignored, and a file whose name contains `dev`, `local` or `development` (such as `php.dev.ini`) is the local-development template and is skipped, along with `vendor/`, `node_modules/`, `.git/` and anything under `tests/`. One warning per file per rule, on the line of its first match. Fix by keeping `display_errors` Off and `log_errors` On (CREED runtime-and-headers). It reports, and is not in the deploy gate. The proctor keeps the stack traces out of the hall.
+- `directory-listing`: warns, never fails, when a committed .htaccess or server config turns on directory listing: an Apache `Options` directive (case-insensitive, leading spaces allowed) whose arguments carry `+Indexes`, a bare `Indexes` or `All`, unless the same line also has `-Indexes` after it, or an nginx `autoindex on;` (case-insensitive, spaces allowed before the `;`) (CREED production). Scanned: every `.htaccess` at the app root or at any depth under `public/`, `deploy/`, `deployments/` or `docker/`, and every `*.conf` at any depth under `deploy/`, `deployments/` or `docker/`. A line whose first non-space character is `#` is ignored, and `vendor/`, `node_modules/`, `.git/` and anything under `tests/` are skipped at any depth. One warning per file, on the line of its first match. Fix by keeping `Indexes` off (`Options -Indexes`) and `autoindex off;`. It reports, and is not in the deploy gate. The proctor keeps the shelves out of the crowd's sight.
+- `csp-unsafe-inline`: warns, never fails, when committed app config, server config or an example env file lets scripts run inline: a `script-src`, `script-src-elem` or `script-src-attr` directive (case-insensitive) whose value list carries `'unsafe-inline'` (with the single quotes, case-insensitive) (CREED runtime-and-headers). Scanned: every `*.php` directly in `config/` and `bootstrap/`, `public/index.php` and every `*.php` at any depth under `app/`; every `.htaccess` at the app root or at any depth under `public/`, `deploy/`, `deployments/` or `docker/`, and every `*.conf` at any depth under `deploy/`, `deployments/` or `docker/`; and the `HELMET_CSP=` lines of `.env.example`, `.env.production` and `.env.squire.example`. In a header string (server config, an env line, or a PHP string such as `"script-src 'self' 'unsafe-inline'; img-src *"`) the value list runs from the directive name to the next `;`, the end of the quoted string or the end of the line; in a PHP array (`'script-src' => ["'self'", "'unsafe-inline'"]`) it runs from the `=>` to the first `]` after it, which may be on a later line. `style-src`, `style-src-elem` and `style-src-attr` never warn: HELMET's own default keeps `style-src-attr 'unsafe-inline'`. A nonce or `'strict-dynamic'` beside it still warns, and so does a report-only policy. A line whose first non-space characters are `//`, `#` or `*` is ignored, and `vendor/`, `node_modules/`, `.git/` and anything under `tests/` are skipped at any depth. One warning per file, on the line of its first offending `'unsafe-inline'`. Fix by removing `'unsafe-inline'` from the script source and letting HELMET's CSP nonce carry the inline scripts. It reports, and is not in the deploy gate. The proctor reads only the notes the hall hands out, never ones slipped in through the window.
+- `robots-txt`: warns, never fails, when an app served from a committed `public/index.php` commits no `public/robots.txt` (`proctor/robots-txt/missing`), or one that lets every crawler in by default (`proctor/robots-txt/allows-all`): no group for `User-agent: *` holds `Disallow: /` or `Allow: /` (CREED production). `Disallow: /` keeps every crawler out, and `Allow: /` is a written choice to be crawled; either one passes (`proctor/robots-txt`), and a group with both passes too. Laravel's skeleton ships `User-agent: *` with an empty `Disallow:`, which lets everyone in without anyone deciding so, and `Disallow: /admin` or `Allow: /public` covers one corner, not the hall. Field names are case-insensitive, `#` comments and blank lines are ignored, and a group is the run of rules after one or more `User-agent` lines. Only committed files count. No finding at all when the app has no committed `public/index.php`. Fix by committing `public/robots.txt` with `User-agent: *` and `Disallow: /`, or `Allow: /` when crawling is wanted (a public front page). It reports, and is not in the deploy gate. The proctor hangs a sign on the exam-room door: spectators welcome, or not, but say which.
 - `vite-secrets`: warns, never fails, when a secret-looking variable carries Vite's `VITE_` prefix: Vite exposes every `VITE_` variable to the browser bundle, so its value reaches every visitor. `proctor/vite-secrets/env-file`: a committed env file declares one (`VITE_API_KEY=...`); example files (`.env.example`, `.env.squire.example`, `.dist`, `.sample`, `.template`) are always read, any other `.env*` file only when PROCTOR knows it is committed (git lists it, or `CI`, `GITLAB_CI` or `GITHUB_ACTIONS` is set). `proctor/vite-secrets/source`: front-end code under the top-level `resources/js/` or `src/` (`.js`, `.ts`, `.jsx`, `.tsx`, `.vue`, `.svelte` and the `m`/`c` variants) reads one as `import.meta.env.VITE_...` or `import.meta.env['VITE_...']`; comment lines are skipped. Secret-looking: a word of the name is `SECRET`, `TOKEN`, `PASSWORD`, `PASSWD`, `PASSPHRASE`, `CREDENTIAL` (or a plural) or `APIKEY`, or starts with `PRIVATE`; `KEY` right after `API`, `ACCESS`, `SIGNING` or `ENCRYPTION`; or the name is `VITE_APP_KEY`. Pusher and Reverb app keys (`VITE_PUSHER_APP_KEY`, `VITE_REVERB_APP_KEY`) are public by design and pass. Only the name is matched: the value is never parsed or printed, and the process environment is never read. One warning per line; with nothing to flag it passes when the app uses Vite (a root `vite.config.*`, or `vite` in package.json), and is silent otherwise. Fix by keeping the secret on the PHP side under a name without the prefix and calling a route that uses it. It reports, and is not in the deploy gate. The proctor reads the names on the envelopes, never the letters inside.
 - `served-folder`: warns, never fails, when a committed file under the top-level `public/` can be downloaded by a stranger: a PHP file that calls `phpinfo()` (`proctor/served-folder/phpinfo`), or a database dump (`*.sql`, `*.sql.gz`, `*.dump`), a backup or editor copy (`*.bak`, `*.old`, `*.orig`, `*.swp`, a name ending in `~`), a log, an env file or a database admin tool (`adminer*.php`) (`proctor/served-folder/debug-file`). No finding when the app has no `public/` folder. Fix by deleting the file or moving it out of `public/`. The proctor clears the scratch paper off the desk before the hall opens.
 - `world-writable`: warns, never fails, when the repository sets mode 777: `chmod` with `777`, `0777`, `a+rwx` or `ugo+rwx` in a shell script, a Dockerfile, a Makefile, `.gitlab-ci.yml` or the `scripts` of composer.json and package.json, or a PHP `chmod()` with the literal `0777`. Comment lines, the sticky `1777` and `mkdir()` (the umask still applies to it) are not flagged; `tests/` is skipped. Fix by giving the web server user write access to the folders it needs (`storage/` and `bootstrap/cache/` in Laravel) and nothing more. The proctor does not prop the exam-room door open for anyone who wanders by.
@@ -127,7 +133,7 @@ vendor/bin/proctor gate [--path=.] [--format=text|json] [--baseline=<report or d
 
 - `0`: pass (warnings allowed)
 - `1`: one or more failures
-- `2`: tool error (bad options, unreadable policy, a present but malformed or unreadable composer.json, or an overrides file that is malformed, unreadable, or names a check that is not registered, the overrides check or the override-approver check). A missing composer.json is not a tool error: the app gets a verdict, with php-floor failing.
+- `2`: tool error (bad options, unreadable policy, a present but malformed or unreadable composer.json, or an overrides file that is malformed, unreadable, or names a check that is not registered, the overrides check or the override-approver check, or a `--record` file it could not write). A missing composer.json is not a tool error: the app gets a verdict, with php-floor failing.
 
 On a tool error every format still writes its report to stdout, next to the message on stderr: `text` prints the message as a FAIL line, `json` writes the report shape with `result` set to `error`, an `error` field carrying the message and empty findings, `codequality` lists the error as one blocker issue, and `sarif` writes a log whose single run reports an unsuccessful invocation.
 
@@ -172,8 +178,8 @@ flowchart LR
 
 Overrides are applied first, as in `proctor check`. Each remaining failure is then blocked (no baseline, so a first deploy; a regression, because the baseline passed that rule; or an expired override, for any check), held (the baseline failed the same rule id too, so owners of an EOL app can still ship the fix) or waived (composer-audit had no advisory data, which only warns at deploy time). Any block is a no-go.
 
-- `--baseline`: a PROCTOR JSON report (the file `--record` wrote last time) or the running deployment's source directory. Without it, every failure blocks.
-- `--record`: also write the JSON verdict to a file; pass it as `--baseline` next time.
+- `--baseline`: any PROCTOR JSON with its findings (the verdict `gate --record` wrote last time, or a `proctor check` report from `--format=json` or `check --record`) or the running deployment's source directory. Without it, every failure blocks.
+- `--record`: also write the JSON verdict to a file, whatever `--format` prints; pass it as `--baseline` next time. This is the gate's verdict (`command: gate`, `verdict`, `summary`, and each finding's `gate` outcome), not the check report that `proctor check --record` writes, and it is not the `proctor.json` Rollcall reads.
 - Exit codes: `0` go, `1` no-go, `2` the gate could not decide. A platform hook fails open on 2, with an alert, so a gate bug never takes down deploys.
 - Staged rules: when CREED's policy stages a check as `report` or `warn`, a failure that would block is logged as `STAGE` and the deploy goes ahead (an ADR item 4). The policy ships with no stages, so every check blocks today.
 
@@ -235,6 +241,9 @@ The full set, grouped by check:
 | `destructive-deploy` | `proctor/destructive-deploy` |
 | `crlf-deploy-script` | `proctor/crlf-deploy-script` |
 | `crlf-deploy-script` | `proctor/crlf-deploy-script/no-gitattributes` |
+| `gitattributes-eol` | `proctor/gitattributes-eol` |
+| `gitattributes-eol` | `proctor/gitattributes-eol/not-pinned` |
+| `gitattributes-eol` | `proctor/gitattributes-eol/crlf` |
 | `entrypoint-migrate` | `proctor/entrypoint-migrate` |
 | `entrypoint-migrate` | `proctor/entrypoint-migrate/runs` |
 | `case-clash` | `proctor/case-clash` |
@@ -326,6 +335,16 @@ The full set, grouped by check:
 | `app-key` | `proctor/app-key/cookie-sessions` |
 | `app-debug` | `proctor/app-debug` |
 | `app-debug` | `proctor/app-debug/enabled` |
+| `display-errors` | `proctor/display-errors` |
+| `display-errors` | `proctor/display-errors/on` |
+| `display-errors` | `proctor/display-errors/log-off` |
+| `directory-listing` | `proctor/directory-listing` |
+| `directory-listing` | `proctor/directory-listing/indexes` |
+| `csp-unsafe-inline` | `proctor/csp-unsafe-inline` |
+| `csp-unsafe-inline` | `proctor/csp-unsafe-inline/script-src` |
+| `robots-txt` | `proctor/robots-txt` |
+| `robots-txt` | `proctor/robots-txt/missing` |
+| `robots-txt` | `proctor/robots-txt/allows-all` |
 | `vite-secrets` | `proctor/vite-secrets` |
 | `vite-secrets` | `proctor/vite-secrets/env-file` |
 | `vite-secrets` | `proctor/vite-secrets/source` |
@@ -346,28 +365,36 @@ id, fails the suite too.
 ## GitHub code scanning
 
 The `sarif` format feeds GitHub code scanning on the GitHub mirror. Upload the
-log with the official action, pinned to a full commit SHA:
+log with the official action. Every `uses:` is pinned to a full commit SHA, the
+way the `ci-pipelines` check asks, and the job installs from the lock, the way
+`proctor/ci-pipelines/composer-update` asks (PROCTOR and CREED are already dev
+dependencies of the app):
 
 ```yaml
 name: proctor
 on: [push, pull_request]
 permissions:
+  contents: read
   security-events: write
 jobs:
   proctor:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: shivammathur/setup-php@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: '8.4'
-      - run: composer require waynestate/proctor --dev
-      # policy.json is the CREED policy file
-      - run: vendor/bin/proctor check --format=sarif --policy=policy.json > proctor.sarif
+      - run: composer install --no-interaction --no-progress
+      # No --policy here: CI refuses it, and PROCTOR reads vendor/waynestate/creed's policy itself.
+      - run: vendor/bin/proctor check --format=sarif > proctor.sarif
       - uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        if: always()
         with:
           sarif_file: proctor.sarif
 ```
+
+`if: always()` uploads the log even when the check exits 1, which is exactly
+when you want to read it.
 
 PROCTOR now files the mark sheet in the format the head office already reads.
 No more translating the exam results by hand.
@@ -457,7 +484,7 @@ what it cannot see: [Overrides](https://proctor.apps.wayne.edu/docs/guides/overr
 
 `--policy` takes a CREED-format policy file: schema_version 1, component
 versions with released, active_until and security_until dates, and rules
-(audit_severity_threshold, banned_constraints, eol_grace_days,
+(abandoned_packages, audit_severity_threshold, banned_constraints, eol_grace_days,
 override_max_days, override_self_approval). The policy-file wiring to `waynestate/creed` is
 described below.
 
@@ -522,7 +549,8 @@ PROCTOR ships a module for [ADVISOR](https://github.com/waynestate/advisor), the
 `waynestate/advisor` installed as a dev dependency and the class `Waynestate\Proctor\Advisor\ProctorModule` listed in the
 app's `modules.json`, a coding agent gains two read-only tools: `proctor_rules` (every rule id, and which are in the deploy
 gate) and `proctor_check` (PROCTOR's file checks on an app folder, in-process, with the subprocess and `.env` checks
-skipped and listed). PROCTOR does not require ADVISOR. The whole story:
+skipped and listed; the four checks it runs that read env files grade one only when git lists it, and name any they
+did not open). PROCTOR does not require ADVISOR. The whole story:
 [Use PROCTOR from your coding agent](https://proctor.apps.wayne.edu/docs/guides/advisor.html).
 
 ## Docs

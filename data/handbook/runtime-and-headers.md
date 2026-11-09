@@ -22,7 +22,8 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
   assets are read cross-origin (the stack's runtime and headers design). HELMET 1.0 ships that default: `corp` (raw
   PHP) or `HELMET_CORP` (Laravel) set to `same-site`, `same-origin` or `cross-origin` sends it.
 - An app SHOULD NOT weaken the default Content-Security-Policy with `'unsafe-inline'` for scripts; it uses the nonce
-  instead (the stack's runtime and headers design). No check exists yet.
+  instead (the stack's runtime and headers design). PROCTOR check: `csp-unsafe-inline` warns on
+  committed app config, server config or an example env file that does (PROCTOR 0.10.0).
 
 The headers are the setlist: the same one on every response. The HSTS encore plays only when the show is really on
 HTTPS.
@@ -62,7 +63,8 @@ HTTPS.
 ## Errors in production
 
 - PHP `display_errors` MUST be `Off` and `log_errors` `On` in production (Squire's deploy kit ships that php.ini;
-  HELMET neither sets nor checks it). No check exists yet.
+  HELMET neither sets nor checks it). PROCTOR check: `display-errors` warns on a committed php.ini,
+  .user.ini or .htaccess that turns `display_errors` on or `log_errors` off (PROCTOR 0.10.0).
 - Laravel `APP_DEBUG` MUST be `false` in production (WSU developer standards, 2024). The Laravel adapter writes one
   warning `helmet.debug_enabled_in_production` when it is true in the production environment. PROCTOR check:
   `app-debug`, on PROCTOR main: it warns when a committed production env template, deploy file or CI pipeline sets

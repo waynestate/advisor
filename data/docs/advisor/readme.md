@@ -29,7 +29,7 @@ guidance, and the parts list.
 Ask it "which PHP can I build on?" and it answers from the policy file, with the date and the source, instead of from
 whatever the model remembers.
 
-It is read-only in 0.1. It cannot write a file, run a shell command, or call out to the network. The two things it
+It is read-only. It cannot write a file, run a shell command, or call out to the network. The two things it
 can start are the app's own `vendor/bin/proctor` and Booster's read-only `plan`, both with a fixed argument shape.
 
 ## Where it sits in WELD
@@ -75,7 +75,7 @@ composer require --dev waynestate/advisor
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP
 command and not a shell script.
 
-ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.1`. No extra repository needed.
+ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.2`. No extra repository needed.
 
 ## Quick start
 
@@ -134,7 +134,7 @@ If PHP is not on your PATH, point the client at Docker instead. Run it from the 
         "ADVISOR_GROUPS=stack",
         "-e",
         "ADVISOR_READ_ONLY=1",
-        "composer:2.10.3",
+        "composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0",
         "php",
         "vendor/bin/advisor",
         "mcp"
@@ -176,7 +176,7 @@ Nine tools, all read-only. Each one says where its answer came from:
 | `list_projects` | The stack's projects, WayneUI first, with built or proposed state, package and version. |
 | `get_project_status` | One project: state, package, version, PHP constraint, its floor under today's policy, next step. |
 | `read_project_docs` | A project's README, best practices, or (WayneUI only) markup contract and 1.x to 2.x migration guide, paged. |
-| `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today. A version older than every one the policy lists is answered as end of life, with a note. |
+| `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today, worked out by CREED's own reader (`waynestate/creed`), the one PROCTOR carries a copy of. A version older than every one the policy lists is answered as end of life, with a note. |
 | `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
 | `owner_of` | Answers "which project owns X?" from the bundled ownership table, built from the stack's one-owner-per-rule decision first: the owner, its role, the projects around it, and the decision each answer comes from. Pass a topic or the whole question ("who owns composer audit"). |
 | `playbook_lookup` | A shared value by key, or every key: an environment variable of the same name wins, then Playbook; secret-looking keys are refused. |
@@ -218,7 +218,7 @@ ADVISOR reads the process environment only, never a file. The placeholders are i
 | `ADVISOR_ENABLED` | off | Must be `1` or `true`, or the server refuses to start. `advisor install` sets it in the client config. |
 | `ADVISOR_ENV` | `APP_ENV`, then `local` | `production` or `prod` always refuses to start. |
 | `ADVISOR_PROJECT_ROOT` | the working directory | The folder `run_proctor_check` may look inside. Paths outside it are refused. |
-| `ADVISOR_READ_ONLY` | on | Set to `0` or `false` to allow tools that write. None exist in 0.1. Read-only wins over `ADVISOR_GROUPS`. |
+| `ADVISOR_READ_ONLY` | on | Set to `0` or `false` to allow tools that write. None exist yet. Read-only wins over `ADVISOR_GROUPS`. |
 | `ADVISOR_GROUPS` | all | Comma list of tool groups to offer (`stack`, `proctor`, `booster`). See below for what each group may start. |
 | `ADVISOR_PROCTOR_TIMEOUT` | `120` | Seconds before a PROCTOR run is stopped (1 to 900). |
 | `ADVISOR_BOOSTER_TIMEOUT` | `60` | Seconds before a Booster plan is stopped (1 to 900). A plan is local and fast, so the default is shorter than a PROCTOR run. |
@@ -318,11 +318,13 @@ Maintainers: how to build, test and release this project, and where its data com
 composer ci
 ```
 
-That runs `composer validate --strict`, `content:verify`, PHPUnit, Pint, PHPStan (level 8, Pinstripe's raw preset,
-included from `vendor/waynestate/pinstripe`) and `composer audit`. No PHP on your machine? Use Docker:
+That runs `composer validate --strict`, `content:verify`, `stack-parts --check=README.md`, PHPUnit, Pint, the
+agent-ready check (`site/index.md`, `llms.txt`, `llms-full.txt`), PHPStan (level 8, Pinstripe's raw preset, included
+from `vendor/waynestate/pinstripe`), `composer audit` and the docs site check (`site/docs/` is current and every link
+resolves). No PHP on your machine? Use Docker:
 
 ```
-docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && composer ci"
 ```
 
 Tests drive the real SDK server in-process with a small MCP client, snapshot `tools/list`, and start
@@ -350,7 +352,7 @@ reflow check for WCAG 1.4.10.
 ADVISOR's own checker, `scripts/a11y/check.mjs`, runs too, as the `a11y-extra` job. It loads the same pages in light and dark themes at phone (390 px) and desktop (1440 px) width, plus one reduced-motion pass, and also requires one `<h1>`, a `lang` attribute, a non-empty title, and no horizontal scroll at phone width. Run it from the repo root (works in PowerShell):
 
 ```
-docker run --rm -v "${PWD}:/app" -e npm_config_cache=/npm-cache -v stack-npm-cache:/npm-cache -w /app/scripts/a11y mcr.microsoft.com/playwright:v1.49.1-noble sh -c "npm install --no-audit --no-fund && node check.mjs"
+docker run --rm -v "${PWD}:/app" -e npm_config_cache=/npm-cache -v stack-npm-cache:/npm-cache -w /app/scripts/a11y mcr.microsoft.com/playwright:v1.65.0-noble sh -c "npm install --no-audit --no-fund && node check.mjs"
 ```
 
 It also runs as the `a11y-extra` job in GitLab CI.

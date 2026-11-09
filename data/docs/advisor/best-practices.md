@@ -61,7 +61,7 @@ listener, no sign-in and no network calls of its own.
 
 **Out of scope**
 
-- A network attacker (stdio only, no HTTP listener in 0.1).
+- A network attacker (stdio only, no HTTP listener).
 - Sign-in and identity (no accounts, so NIST SP 800-63 does not apply).
 - A developer machine that is already compromised.
 
@@ -70,5 +70,5 @@ Rule 5 (run Boost beside it) is a usage note and answers no threat.
 ## Not yet
 
 - Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.
-- Signing of any state handed back to a client (no tool needs it in 0.1).
+- Signing of any state handed back to a client (no tool needs it yet).
 - A full-capture audit mode.

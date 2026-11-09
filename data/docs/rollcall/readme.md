@@ -20,9 +20,9 @@ and, when the app commits one, the result, Booster version and finish time of Bo
 scan, so you can see drift and an EOL burn-down over time. It prunes old snapshots after the retention window
 (default 90 days; the newest one always stays).
 
-Rollcall enforces nothing. It never opens an issue, leaves a comment or deploys anything, and it exits `0` whatever
-the fleet looks like. The public report has totals only: counts and progress, no app names, owners or rankings. The
-per-app list is internal. Like a good attendance sheet, it is for noticing who is missing, not for shaming them.
+Rollcall enforces nothing. It never opens an issue, leaves a comment or deploys anything, and `scan` and `report`
+exit `0` whatever the fleet looks like (only `rollcall owners`, a check of the owners file, exits `1`). The public
+report has totals only: counts and progress, no app names, owners or rankings. The per-app list is internal. Like a good attendance sheet, it is for noticing who is missing, not for shaming them.
 
 ## Where it sits in the stack
 
@@ -44,9 +44,14 @@ The parts of the Wayne State application stack, and their jobs. WELD is the Lara
 
 A framework-free core (`src/`) plus thin entry points that hold no rules:
 
-- `bin/rollcall`: the CLI (`scan`, `report`, `digest`, `drift`, `advisories`, `prune`). One PHP command, so it works the same on Windows, macOS and Linux.
+- `bin/rollcall`: the CLI (`scan`, `report`, `digest`, `owners`, `drift`, `advisories`, `prune`). One PHP command, so it works the same on Windows, macOS and Linux.
 - `public/index.php`: a raw-PHP front controller for `GET /metrics` and `GET /report.json`.
-- `src/Laravel/`: a Laravel adapter with a dashboard page, a `/metrics` route and `php artisan rollcall:scan` and `rollcall:prune`.
+- `rollcall_dashboard()`: the dashboard page for a raw PHP app, one call in a file you serve (see "The dashboard in a raw PHP app").
+- `src/Laravel/`: a Laravel adapter with a dashboard page (the Blade view, or an Inertia page in your own layout), a `/metrics` route and `php artisan rollcall:scan` and `rollcall:prune`.
+- `resources/js/RollcallDashboard.vue`: the same dashboard as a Vue component, for an Inertia app's own page (see "The dashboard in an Inertia app (Vue)").
+
+The Blade view and `rollcall_dashboard()` print the same renderer (`src/Dashboard/DashboardPage.php`) from the same
+report, so they cannot drift, and CI fails the Vue component on any difference from that renderer's markup.
 
 CREED's policy reader lives under `src/Creed/` (namespace `Waynestate\Rollcall\Creed`) as a generated copy, made
 by CREED's `bin/export.php`. CREED is on Packagist now, so the copy can become a `require` of `waynestate/creed`;
@@ -66,7 +71,7 @@ Data comes in through three interfaces. Each has a fixture adapter, so you can t
 |---|---|---|
 | Repositories (`composer.json`, `composer.lock`, `booster-hop.json`) | `RepositorySource` | a directory of fixtures; GitLab over PSR-18, tested against recorded responses |
 | Runtime image per app | `ImageSource` | a JSON export of the app list from any platform, or Citadel's own registrations export (which adds forced upgrade dates) |
-| PROCTOR result | `ProctorReportSource` | a directory of PROCTOR `--format=json` reports |
+| PROCTOR result | `ProctorReportSource` | a directory of PROCTOR `--format=json` reports (the default); or, with `ROLLCALL_PROCTOR_SOURCE=gitlab`, each project's proctor job artifact in GitLab CI (see [docs/architecture.md](docs/architecture.md#where-proctor-results-come-from)) |
 
 Rollcall only reads from every source. It writes its own snapshot directory, and digest files only when
 `rollcall digest --out` asks for them.
@@ -80,7 +85,11 @@ recorded in [DECISIONS.md](DECISIONS.md) and [ADR/](ADR/).
 composer require waynestate/rollcall
 ```
 
-Rollcall 1.0.0 is on Packagist. No extra repository needed. Requires PHP `^8.3`. The CLI is `vendor/bin/rollcall`.
+Rollcall 1.1.0 is on Packagist. No extra repository needed. Requires PHP `^8.3`. The CLI is `vendor/bin/rollcall`.
+
+From 1.0 Rollcall follows SemVer against its contract ([`contract/`](contract/README.md)): inside 1.x the report,
+the stored snapshot and the image list may gain a field (a minor release) but never lose or retype one. Promoted
+to 1.0 with perfect attendance.
 
 ## Quick start
 
@@ -156,8 +165,11 @@ rollcall prune      [--days=N] [--dry-run] [--today=YYYY-MM-DD]
   newest snapshot is never deleted, even if it is older than the cut-off, so the dashboard always has data.
   `--dry-run` lists what would go without deleting anything.
 
-Exit codes: `0` ok, `2` tool error (bad option, unreadable policy, a source that refused). There is no `1`: Rollcall
-does not gate anything.
+Exit codes: `0` ok, `1` owner unknown (`rollcall owners` only), `2` tool error (a bad option value, an unreadable
+policy, a source that refused). Rollcall does not gate the fleet, so no command exits `1` over what the apps run:
+`rollcall owners` exits `1` while an app's owner is unknown, and that is the register, not the fleet. A misspelled
+command or an option the CLI does not know never reaches Rollcall: the console library prints the usage and exits
+`1`.
 
 ### Which command when
 
@@ -222,14 +234,17 @@ Every setting is an environment variable. `.env.example` holds placeholders; nev
 | `ROLLCALL_POLICY_FILE` | Path to CREED's `policy.json` | none (required for `report`, `drift`) |
 | `ROLLCALL_STORE_DIR` | Snapshot directory, the only place Rollcall writes | `var/snapshots` |
 | `ROLLCALL_SOURCE` | `directory` (fixtures) or `gitlab` | `directory` |
-| `ROLLCALL_REPOS_DIR` | Fixture repositories as `<group>/<project>/composer.{json,lock}` | none |
+| `ROLLCALL_REPOS_DIR` | Fixture repositories as `<group>/<project>/composer.{json,lock}`, plus `booster-hop.json` where an app has one | none |
 | `ROLLCALL_GITLAB_URL` | `https://` base URL of the GitLab instance | none |
 | `ROLLCALL_GITLAB_TOKEN` | A GitLab group or project access token (a bot), or a service account's token, with the read_api scope only, the Reporter role and an expiry. The stack's is the group token rollcall-scanner, rotated by the stack maintainer (docs/security.md). Never in git, never logged, never printed | none |
 | `ROLLCALL_GITLAB_GROUPS` | Comma-separated group ids or paths; subgroups are included. Ignored when ROLLCALL_GITLAB_PROJECTS is set | none |
 | `ROLLCALL_GITLAB_PROJECTS` | Comma-separated full `group/project` paths; when set, only those projects are scanned and no group is listed | none |
 | `ROLLCALL_IMAGES_FILE` | Export of the app list: `{"apps": [{"project": "group/project", "image": "php:8.4-apache"}]}` | none |
 | `ROLLCALL_CITADEL_EXPORT` | Citadel's saved registrations export, used instead of `ROLLCALL_IMAGES_FILE` (not both): base images plus forced upgrade dates. See [docs/guides/citadel.md](docs/guides/citadel.md) | none |
-| `ROLLCALL_PROCTOR_DIR` | PROCTOR JSON reports, one per app: `group/project` is read from `group__project.json` | none |
+| `ROLLCALL_PROCTOR_SOURCE` | Where PROCTOR reports come from: `directory` (`ROLLCALL_PROCTOR_DIR`) or `gitlab` (each project's proctor job artifact from its newest finished default-branch pipeline, with the same `read_api` token and GitLab settings) | `directory` |
+| `ROLLCALL_PROCTOR_DIR` | PROCTOR JSON reports, one per app: `group/project` is read from `group__project.json`. Not read when `ROLLCALL_PROCTOR_SOURCE` is `gitlab` | none |
+| `ROLLCALL_PROCTOR_JOB` | `ROLLCALL_PROCTOR_SOURCE=gitlab`: the CI job whose artifact holds the report; set it when Preflight's proctor component is included with another `job_name` | `proctor` |
+| `ROLLCALL_PROCTOR_ARTIFACT` | `ROLLCALL_PROCTOR_SOURCE=gitlab`: the PROCTOR `--format=json` report's path inside that job's artifact | `proctor.json` |
 | `ROLLCALL_AUTH_PACKAGES` | Comma-separated Composer packages that count as an auth package. An entry without a slash matches that package under any vendor (`wayne-cas` matches `anyvendor/wayne-cas`); an entry with a slash matches exactly. First match in list order wins | `waynestate/sesame`, `waynestate/wayne-cas`, `apereo/phpcas`, `jasig/phpcas`, `subfission/cas`, `wayne-cas`, `simplecas` |
 | `ROLLCALL_RETENTION_DAYS` | How many days of snapshots to keep; the newest is never deleted | `90` (0 keeps everything) |
 | `ROLLCALL_OWNERS_FILE` | Owners file for the digests: `{"owners": [{"contact": "team@example.test", "digest": true, "projects": ["group/project"]}]}`. Rollcall's own, for the stack's projects, is `owners.json` in the repo (roles only); keep another fleet's outside a public repo | none (no digests) |
@@ -241,19 +256,25 @@ Every setting is an environment variable. `.env.example` holds placeholders; nev
 | `ROLLCALL_METRICS_TOKEN` | Bearer token a scraper must present | none |
 | `ROLLCALL_METRICS_ALLOW` | Comma-separated scraper IP addresses (exact match) | none |
 | `ROLLCALL_PUBLIC_REPORT_ENABLED` | Serve `GET /report.json` (public counts only) | `false` |
-| `ROLLCALL_DASHBOARD_ENABLED` | Laravel: serve the dashboard page | `false` |
+| `ROLLCALL_DASHBOARD_ENABLED` | Laravel and raw PHP: serve the dashboard page | `false` |
 | `ROLLCALL_DASHBOARD_PATH` | Laravel: dashboard URL path | `rollcall` |
-| `ROLLCALL_INTERNAL_ENABLED` | Laravel: serve the per-app page at `<path>/apps` (needs your sign-in middleware) | `false` |
-| `ROLLCALL_WAYNEUI_CSS` | Laravel: `https://` or absolute URL of WayneUI's stylesheet for the dashboard | none |
+| `ROLLCALL_INTERNAL_ENABLED` | Laravel and raw PHP: serve the per-app page (Laravel at `<path>/apps`, behind your sign-in middleware; raw PHP only where you call `rollcall_dashboard(['internal' => true])` behind your sign-in) | `false` |
+| `ROLLCALL_DASHBOARD_INERTIA` | Laravel + Inertia: answer the dashboard routes with the app's Vue page (`Rollcall/Dashboard`, published with `vendor:publish --tag=rollcall-inertia`) instead of the Blade view; same switches, same report. Needs `inertiajs/inertia-laravel` | `false` |
+| `ROLLCALL_WAYNEUI_CSS` | Laravel and raw PHP: `https://` or absolute URL of WayneUI's stylesheet for the dashboard | none |
 
 To scan GitLab you need the token and either a group or the project allowlist. The narrow way is
 `ROLLCALL_GITLAB_PROJECTS`: name the exact `group/project` paths and Rollcall reads only those, never listing a
 group. Otherwise set `ROLLCALL_GITLAB_GROUPS`. The token is a GitLab bot or personal access token with `read_api`
 only and an expiry, whose user can read only the projects to scan; until it exists Rollcall runs on its fixtures.
 Set `ROLLCALL_SOURCE=gitlab` and the GitLab variables. The `rollcall-scan` job in `.gitlab-ci.yml` does this on a
-schedule or by hand (see below). Rollcall sends only `GET` and `HEAD`, fetches the two Composer files without
-cloning, skips a file whose blob id has not changed, follows `Link` pagination only to the configured host, and
-waits out `429 Retry-After`.
+schedule or by hand (see below). Rollcall sends only `GET` and `HEAD`, fetches the two Composer files and Booster's
+`booster-hop.json` without cloning, skips a Composer file whose blob id has not changed, follows `Link` pagination
+only to the configured host, and waits out `429 Retry-After`.
+
+PROCTOR results can come from GitLab CI too: with `ROLLCALL_PROCTOR_SOURCE=gitlab` the scan reads each project's
+`proctor.json` from its proctor job's artifact, with the same token. That needs apps whose CI keeps `proctor.json`
+as an artifact: Preflight 0.5.0 or later, or a proctor job of your own that does (see
+[docs/architecture.md](docs/architecture.md#where-proctor-results-come-from)). Elsewhere every app reads `none`.
 
 ### Run the collector in Docker
 
@@ -304,7 +325,7 @@ token; the allowlist `ROLLCALL_GITLAB_PROJECTS` keeps what Rollcall asks for to 
 group and never asks for another project). If your fleet needs a tighter fence, give a service account Reporter on
 just the projects to scan and use its token instead, because only membership limits what a token can read.
 
-Exactly which scope, and why each other scope stays off: `read_api` covers all five calls Rollcall makes (listed
+Exactly which scope, and why each other scope stays off: `read_api` covers every call Rollcall makes (listed
 one by one, with the role and the expiry rules, under "The GitLab token, exactly" in
 [docs/security.md](docs/security.md)). Not `api`, not `read_repository` (Rollcall never clones), not `read_user`,
 not `self_rotate` (the stack maintainer rotates the token, never Rollcall).
@@ -415,8 +436,83 @@ The package registers itself (`extra.laravel.providers`). Publish the config wit
 dashboard shows counts and progress; the per-app page is a second route that stays off until you enable it, and it
 runs behind `rollcall.dashboard.internal_middleware` (default `web` and `auth.sesame`), so an app with no such
 middleware fails closed. The page uses WayneUI's class names and takes its stylesheet from `ROLLCALL_WAYNEUI_CSS`.
+In an Inertia app it can be one of your own Vue pages instead: see "The dashboard in an Inertia app (Vue)".
 The `/metrics` route is registered on its own path; if your app already serves `/metrics` (HELMET does), run Rollcall's
 on a separate app or leave metrics off.
+
+## The dashboard in a raw PHP app
+
+The same page, no framework. `rollcall_dashboard()` prints the renderer the Laravel page prints, from the same
+report, so the two answer the roll in the same words. Drop one file into the folder your web server serves:
+
+```php
+<?php
+// public/rollcall.php
+require __DIR__ . '/../vendor/autoload.php';
+
+$helmet = \Waynestate\Helmet\helmet_boot(['preset' => 'citadel']);
+rollcall_dashboard(['nonce' => $helmet['nonce']]);
+```
+
+It answers 404 until `ROLLCALL_DASHBOARD_ENABLED=true`, sends `X-Robots-Tag: noindex` with every answer, and never
+runs a scan: it reads the latest snapshot, so set `ROLLCALL_POLICY_FILE` and `ROLLCALL_STORE_DIR` as for the CLI
+and schedule `vendor/bin/rollcall scan`. The page has no script. Its one small style element takes HELMET's nonce;
+link WayneUI's stylesheet with `ROLLCALL_WAYNEUI_CSS` and the page keeps its look under HELMET's CSP even without
+one. No HELMET? Call `rollcall_dashboard()` with no options.
+
+The per-app page is a second file, behind your sign-in: call `rollcall_dashboard(['internal' => true])` after
+SESAME's `sesame_login()` has returned a user. It also needs `ROLLCALL_INTERNAL_ENABLED=true`; with either one
+missing it answers 404, so it fails closed. For a front controller of your own,
+`Waynestate\Rollcall\Dashboard\RawDashboard::response()` returns the same answer as data (status, headers, body).
+
+## The dashboard in an Inertia app (Vue)
+
+In a Laravel + Inertia + Vue app (WELD's shape) the dashboard can be one of the app's own pages, inside its own
+layout. Same routes, same switches, same report: with `ROLLCALL_DASHBOARD_INERTIA=true` the controller hands what
+`DashboardPage::report()` built to an Inertia page as props (`report`, `internal`, `scanCommand`) instead of printing
+the Blade view. From a WELD app:
+
+```bash
+php artisan vendor:publish --tag=rollcall-inertia   # writes resources/js/pages/Rollcall/Dashboard.vue
+# .env: ROLLCALL_DASHBOARD_ENABLED=true and ROLLCALL_DASHBOARD_INERTIA=true
+npm run build
+```
+
+The published page is short and it is yours. In essence it puts the component in WELD's `AppLayout` with a title
+and a `noindex` tag (the full file adds breadcrumbs and a few lines of scoped CSS, in WayneUI's spacing tokens, that space the sections and set the three totals side by side):
+
+```vue
+<script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
+import { Head } from '@inertiajs/vue3';
+import RollcallDashboard from '../../../../vendor/waynestate/rollcall/resources/js/RollcallDashboard.vue';
+
+defineProps<{ report: Record<string, unknown> | null; internal: boolean; scanCommand: string }>();
+</script>
+
+<template>
+    <Head title="Rollcall"><meta name="robots" content="noindex" /></Head>
+    <AppLayout>
+        <RollcallDashboard :report="report" :internal="internal" :scan-command="scanCommand" />
+    </AppLayout>
+</template>
+```
+
+Why this shape: the page is published because the layout is the app's, and the component is imported straight
+from `vendor/` because the markup is Rollcall's. `composer update` moves the component together with the PHP
+renderer it must match, and there is no npm package to install or keep in step (Rollcall publishes none). Vite and
+`vue-tsc` follow the relative import like any file in the project, and the component imports nothing but `vue`,
+which the app already has. An app that does not use the Vue page loads none of it; `inertiajs/inertia-laravel` is
+needed only when the switch is on.
+
+The component renders what the Blade page shows inside `<main>`: the same WayneUI classes, the `role="status"` line,
+the captions and headers, and the per-app table only on the internal page (`<path>/apps`, still behind
+`rollcall.dashboard.internal_middleware` and `ROLLCALL_INTERNAL_ENABLED`). It has no style block, no style attribute
+and no script of its own, so it works under HELMET's CSP, and it takes its look from the app's WayneUI stylesheet.
+Every Inertia answer carries `X-Robots-Tag: noindex`. CI holds the rooms together: `dashboard-vue` server-renders
+the component with the props the route sends and fails on any difference from the Blade page (elements, attributes
+and text; only whitespace, attribute order and Vue's hydration comments are normalized), and `dashboard-a11y`
+checks the three Vue pages with the other six.
 
 ## Use Rollcall from your coding agent (ADVISOR)
 
@@ -481,14 +577,15 @@ run `composer docs`. Never edit `site/assets/docs.css` or `docs.js`: they are Sq
 Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
 Why it is built this way is in [DECISIONS.md](DECISIONS.md) and the ADRs under [ADR/](ADR/).
 
-`composer ci` runs every check: manifest, tests (the contract suite among them), Pint, PHPStan, `composer audit`, a
-check that the front page versions table still matches CREED's policy, and a check that the docs site is current.
+`composer ci` runs every check: manifest, tests (the contract suite among them), Pint, the agent-ready files, a
+check that the docs site is current, a check that the front page's versions table and quick-start printout still
+match CREED's policy, PHPStan and `composer audit`.
 The contract itself is JSON Schema in [`contract/`](contract/README.md): the report, the stored snapshot and the
 image list export. `tests/ContractTest.php` runs the real commands on the fixtures and validates their output
 against it, so a field cannot appear or vanish without the contract changing in the same commit. PHP is not needed on the host:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && composer ci"
 ```
 
 (On Windows PowerShell `${PWD}` works as written; in Git Bash use `$(pwd -W)` and set `MSYS_NO_PATHCONV=1`.)

@@ -50,12 +50,23 @@ Add Pinstripe as a dev dependency:
 
 ```
 composer config allow-plugins.phpstan/extension-installer true
-composer require --dev waynestate/pinstripe:^0.1
+composer require --dev waynestate/pinstripe:^0.3
 ```
 
 Pinstripe loads its PHPStan rules through `phpstan/extension-installer`, and Composer will not ask when it cannot prompt.
 If Composer stops because a package your app already locks (often an older PHPStan) does not fit, run the same `composer require` again with `-W`, as Composer suggests, so it may update that package too.
-Pinstripe 0.1.4 is on Packagist. The npm package, `@waynestate/pinstripe`, is published by hand after each tag; `npm view @waynestate/pinstripe version` shows where it is.
+
+`^0.3` gets you 0.3.0, the current release, with every [banned call](#banned-calls) below. Packagist reads the GitHub
+mirror, which can trail a release by a while. If Composer says it cannot find a 0.3 version, point it at the
+canonical repository first (it asks for your git.wayne.edu sign-in), then run the `composer require` again:
+
+```
+composer config repositories.pinstripe vcs https://git.wayne.edu/enterprise-apps/pinstripe.git
+```
+
+The npm package, `@waynestate/pinstripe`, is published by hand after each tag; `npm view @waynestate/pinstripe version`
+shows where it is. The ESLint and Prettier presets have not changed since 0.1.4, so any version from 0.1.4 up is
+today's cut.
 
 Point PHPStan at the raw config. `phpstan.neon`:
 
@@ -129,7 +140,7 @@ Same, with the Laravel parts:
 
 ```
 composer config allow-plugins.phpstan/extension-installer true
-composer require --dev waynestate/pinstripe:^0.1 larastan/larastan
+composer require --dev waynestate/pinstripe:^0.3 larastan/larastan
 ```
 
 Pinstripe loads its PHPStan rules through `phpstan/extension-installer`, and Composer will not ask when it cannot prompt.
@@ -148,8 +159,8 @@ Proven on Laravel: `composer ci` lints a minimal Laravel 13 app (`tests/fixtures
 passing. A smaller fixture (`tests/fixtures/laravel`) proves the preset really loads Larastan: it plants an
 undefined Eloquent property that only Larastan reports, and a clean twin it leaves alone. The combined fixture
 `tests/fixtures/laravel-vue` is one app tree with both PHP and Vue files, with `resources/js` beside `app/`.
-`composer ci` lints its PHP side with Pint and PHPStan and its Vue side with ESLint and Prettier on every run,
-with one planted PHP error and two planted Vue defects that each preset must report.
+`composer ci` lints its PHP side with Pint and PHPStan, and `npm test` lints its Vue side with ESLint and Prettier,
+on every run, with one planted PHP error and two planted Vue defects that each preset must report.
 
 ## Use it for Vue
 

@@ -4,14 +4,14 @@
 
 **Comes down for signed-in people.**
 
-Checks: `composer ci` (the same command runs on GitLab and GitHub). The container rig has its own script, see "Run the checks".
+Checks: `composer ci` (the same command runs in the GitLab pipeline and in the GitHub Actions workflow kept in `.github/`). The container rig has its own script, see "Run the checks".
 
 > The one way into the Citadel. It only comes down for people who signed in.
 
 Drawbridge is the sign-in gateway for the apps on Citadel, Wayne State's container platform. It is Apache with
 mod_auth_openidc, set up as one OpenID Connect client for Microsoft Entra ID. It is not live yet: its home will be
 `auth.apps.wayne.edu`, in front of every app on the platform, once the Citadel routing for it exists.
-The latest release, 0.4.0, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
+The latest release, 0.6.0, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
 checks that the visitor has a session, drops any identity header the visitor sent, and passes the app a
 short-lived signed assertion that SESAME's `gateway` driver verifies. Which paths need a login, and which need an
 Entra authentication context on top, is declared per app in a config file. Nothing else decides it.
@@ -151,16 +151,16 @@ answers, including the unknown-host 403 and the error pages.
 ## Install and quick start
 
 You need Docker and nothing else. The PHP component needs PHP 8.3 or newer and Composer, and these steps run both
-inside the `composer:2.10.3` container.
+inside the `composer:2.11.1` container.
 
 **Windows (PowerShell)**
 
 ```powershell
 git clone https://git.wayne.edu/enterprise-apps/drawbridge.git; cd drawbridge
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 composer install --no-interaction
+docker run --rm -v "${PWD}:/app" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 composer install --no-interaction
 Copy-Item .env.example .env
 Copy-Item config\drawbridge.example.yaml config\drawbridge.yaml
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 php bin/drawbridge config:validate --config=config/drawbridge.yaml
+docker run --rm -v "${PWD}:/app" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 php bin/drawbridge config:validate --config=config/drawbridge.yaml
 docker build -f docker/gateway/Dockerfile -t drawbridge-gateway .
 ```
 
@@ -168,10 +168,10 @@ docker build -f docker/gateway/Dockerfile -t drawbridge-gateway .
 
 ```sh
 git clone https://git.wayne.edu/enterprise-apps/drawbridge.git && cd drawbridge
-docker run --rm -v "$PWD:/app" -w /app composer:2.10.3 composer install --no-interaction
+docker run --rm -v "$PWD:/app" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 composer install --no-interaction
 cp .env.example .env
 cp config/drawbridge.example.yaml config/drawbridge.yaml
-docker run --rm -v "$PWD:/app" -w /app composer:2.10.3 php bin/drawbridge config:validate --config=config/drawbridge.yaml
+docker run --rm -v "$PWD:/app" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 php bin/drawbridge config:validate --config=config/drawbridge.yaml
 docker build -f docker/gateway/Dockerfile -t drawbridge-gateway .
 ```
 
@@ -241,6 +241,31 @@ rig\run.ps1 rotation   # Windows
 sh rig/run.sh rotation # Linux, macOS
 ```
 
+The `redis` argument runs the gateway with its sessions in a Redis service (`gateway.session_store: redis`), signs
+in, sends Apache a graceful reload, and replays the saved cookie, which must still be accepted.
+
+```powershell
+rig\run.ps1 redis      # Windows
+```
+
+```sh
+sh rig/run.sh redis    # Linux, macOS
+```
+
+The `redis-rotation` argument changes the castle password with the sessions in Redis. It signs in under passphrase
+A, reloads with B current and A previous (`DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS`), and checks that the saved
+cookie is still accepted and that a new sign-in works under B. It then reloads with B alone: the cookie from A is sent
+back to sign in (a redirect, not an error page) while the session from B keeps working. Last, it recreates the
+gateway from its environment on B, the way an operator finishes a rotation, and the session from B survives that too.
+
+```powershell
+rig\run.ps1 redis-rotation      # Windows
+```
+
+```sh
+sh rig/run.sh redis-rotation    # Linux, macOS
+```
+
 When the rig is green, the next step is the first real sign-in: [ENTRA_TEST.md](ENTRA_TEST.md).
 
 ### Register Drawbridge in Entra ID
@@ -253,8 +278,9 @@ One app registration covers every app host. In the Entra admin center, under App
    redirect URI; add one whenever an app is added to the config. Leave the implicit grant boxes unticked: the gateway
    uses the authorization code flow with PKCE.
 3. **Certificates & secrets.** Make a client secret and put it in the deployment's secret store as
-   `DRAWBRIDGE_OIDC_CLIENT_SECRET`. Note its expiry date: Entra secrets expire, and the gateway cannot sign anyone in
-   once it has (see `OPEN_QUESTIONS.md`, secret rotation).
+   `DRAWBRIDGE_OIDC_CLIENT_SECRET`. Put its expiry date in `DRAWBRIDGE_OIDC_CLIENT_SECRET_EXPIRES` (`YYYY-MM-DD`):
+   Entra secrets expire, the gateway cannot sign anyone in once it has, and with the date set `config:validate`,
+   `/metrics` and the container log count down to it (see `OPEN_QUESTIONS.md`, E-6).
 4. **Token configuration.** Add the optional ID token claims the config reads: `accessid` (the AccessID, transformed
    from the user principal name with `ExtractMailPrefix`; this is what the example config uses for `oidc.user_claim`),
    `email`, `auth_time`, and `acrs` if any path uses an authentication context. Add `wsu_roles` as a mapped claim
@@ -274,17 +300,17 @@ each open question E-1 to E-8.
 
 ## Getting the image
 
-The pipeline builds the gateway image on every merge request and on the default branch, and publishes it to the stack's image registry (the group's `images` project) when a tag is pushed. The image is at `<registry>/enterprise-apps/images/drawbridge-gateway:<tag>` (for example `<registry>/enterprise-apps/images/drawbridge-gateway:0.4.0`).
+The pipeline builds the gateway image on every merge request and on the default branch, and publishes it to the stack's image registry (the group's `images` project) when a tag is pushed. The image is at `<registry>/enterprise-apps/images/drawbridge-gateway:<tag>` (for example `<registry>/enterprise-apps/images/drawbridge-gateway:0.6.0`).
 `<registry>` is the stack's container registry; Enterprise Applications has its address. There is no `latest` tag: pin a release.
 
 ```sh
-docker pull <registry>/enterprise-apps/images/drawbridge-gateway:0.4.0
+docker pull <registry>/enterprise-apps/images/drawbridge-gateway:0.6.0
 ```
 
 The publish job prints the digest it pushed. Verify the image you pulled against it:
 
 ```sh
-docker inspect --format='{{index .RepoDigests 0}}' <registry>/enterprise-apps/images/drawbridge-gateway:0.4.0
+docker inspect --format='{{index .RepoDigests 0}}' <registry>/enterprise-apps/images/drawbridge-gateway:0.6.0
 ```
 
 The image carries OCI labels (`org.opencontainers.image.source`, `.revision`, `.version`, `.licenses`) set from the
@@ -354,7 +380,7 @@ oidc:
   client_id: <application-client-id>
   client_secret_env: DRAWBRIDGE_OIDC_CLIENT_SECRET   # the NAME of the variable, never the secret
   user_claim: accessid                               # the AccessID; preferred_username for a tenant that does not send it
-  extra_claims: [wsu_roles]                          # copied into the assertion when present
+  extra_claims: [wsu_roles]                          # copied into the assertion when present; rename a long claim with {from, as}
 
 apps:
   - id: app1
@@ -392,7 +418,7 @@ not end the others.
 | Layer | Default lifetime | What ends it | What the visitor sees next |
 |---|---|---|---|
 | Entra (the identity provider) | set by Entra and its Conditional Access policy, not by Drawbridge | Entra's own policy, or the visitor signing out of Entra | Entra may sign them in again without a prompt, or ask for credentials |
-| Gateway (mod_auth_openidc, one per app host) | 8 hours total, 1 hour idle (`session_seconds`, `session_idle_seconds`) | either clock, the `?logout=` link above, or a restart or reload of the gateway (the cache lives in shared memory and starts empty) | a protected path sends them to Entra; an `api` path answers 401 |
+| Gateway (mod_auth_openidc, one per app host) | 8 hours total, 1 hour idle (`session_seconds`, `session_idle_seconds`) | either clock, the `?logout=` link above, `drawbridge revoke`, or, with the default `shm` store, a restart or reload of the gateway (the cache lives in shared memory and starts empty) | a protected path sends them to Entra; an `api` path answers 401 |
 | App (SESAME) | 720 minutes total, 120 minutes idle (`session.absolute_minutes`, `session.idle_minutes`) | either clock, or the app calling `sesame_logout()` | the app's login route asks the gateway for a fresh assertion |
 
 How they fit together:
@@ -405,8 +431,8 @@ How they fit together:
   `session.absolute_minutes` to `session_seconds / 60` or less (480 for the default).
 - Signing out through the `?logout=` link ends the gateway session and asks Entra to end its own for that browser, not
   the app's. The app ends its own session first (`sesame_logout()`), then sends the browser to the link.
-- A gateway restart signs everyone out of the gateway layer only; apps keep their sessions until their own clocks run
-  out.
+- With the default `shm` store, a gateway restart signs everyone out of the gateway layer only; apps keep their
+  sessions until their own clocks run out.
 
 ### Session store
 
@@ -416,12 +442,25 @@ The `gateway` block decides where the gateway sessions are kept:
   graceful reload rebuilds the store empty, so everyone signs in again. Removing the setting returns to this
   behavior.
 - `redis`: the sessions live in a Redis server named by `redis_host` (and `redis_port`, default 6379). Sessions
-  then survive a restart and a graceful passphrase rotation, and more than one gateway instance can serve the same
-  hosts when every instance points at the same Redis and uses the same passphrase. The password never goes in the
-  config file: it comes from `DRAWBRIDGE_REDIS_PASSWORD`.
+  then survive a restart and a graceful reload (the rig's `redis` run proves the reload:
+  `RedisTest::testSessionSurvivesAGatewayReload`; the last step of `redis-rotation` proves the restart:
+  `RedisRotationTest::testRestartTheSessionSurvivesAGatewayRecreatedFromItsEnvironment`), and more than one gateway instance can serve the same
+  hosts when every instance points at the same Redis and uses the same passphrase. A passphrase change kept graceful
+  by `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS` needs this store, and is proven by `rig/run.sh redis-rotation`
+  (`RedisRotationTest`). The password never goes in the config file: it comes from `DRAWBRIDGE_REDIS_PASSWORD`.
 
-Redis is not a revocation list: it holds the sessions, but Drawbridge still cannot end one user's sessions from
-outside (per-user revocation needs an index that is not built).
+Changing the passphrase with the `redis` store, without signing anyone out (one instance in the rig; with several,
+change them all together):
+
+1. Set `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS` to the value in use now and `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE`
+   to a new one, then restart the gateway. Old sessions keep working; new sign-ins use the new value.
+2. Wait `session_seconds` (8 hours by default).
+3. Remove `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS` and restart. A session still sealed under the old value is
+   sent to sign in, not shown an error.
+
+Redis holds the sessions, not the revocation list: ending one person's sessions from outside is `drawbridge revoke`
+and its revocation list (see [Signing out](#signing-out)), which works with either store and which every gateway
+instance must share.
 
 ## Environment variables
 
@@ -434,9 +473,10 @@ outside (per-user revocation needs an index that is not built).
 | `DRAWBRIDGE_COOKIE_SECURE` | `true` | Secure session cookie; `false` only for a plain-HTTP local rig |
 | `DRAWBRIDGE_TRUSTED_PROXIES` | empty | comma-separated CIDRs allowed to set `X-Forwarded-For`; empty trusts nobody |
 | `DRAWBRIDGE_OIDC_CLIENT_SECRET` | none, required | the Entra client secret (or whichever name `oidc.client_secret_env` gives) |
-| `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE` | none, required | encrypts state cookies and sessions; 32+ characters; changing it signs everyone out (the `rotation` rig run documents why a previous passphrase cannot keep them) |
-| `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS` | unset | an old passphrase, rendered as the second value (new first, old second); mod_auth_openidc accepts it, but sessions live in shared memory that every reload or restart empties, so today it keeps nobody signed in (see the `rotation` rig run); it becomes useful once sessions move to a shared store |
+| `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE` | none, required | encrypts state cookies and sessions; 32+ characters; with the default `shm` store, changing it signs everyone out (the `rotation` rig run documents why a previous passphrase cannot keep them); with `gateway.session_store: redis`, setting the old value as `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS` keeps everyone signed in, proven by `rig/run.sh redis-rotation` |
+| `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS` | unset | an old passphrase, rendered as the second value (new first, old second); mod_auth_openidc accepts it, but with the default `shm` store every reload or restart empties the sessions, so it keeps nobody signed in (see the `rotation` rig run); with `gateway.session_store: redis` (0.2.1) it keeps the sessions sealed under the old value working while new ones use the new value, proven by `rig/run.sh redis-rotation`; remove it after `session_seconds` (8 hours by default), when those sessions have run out anyway; any still left are sent to sign in again |
 | `DRAWBRIDGE_OIDC_CLIENT_SECRET_FILE` | unset | path to a file holding the client secret (Docker secrets, Kubernetes volumes); used only when `DRAWBRIDGE_OIDC_CLIENT_SECRET` is unset or empty |
+| `DRAWBRIDGE_OIDC_CLIENT_SECRET_EXPIRES` | unset | the day the client secret expires (`YYYY-MM-DD`, from Entra; not a secret). `config:validate` prints the days left and the state (`ok`, `soon` at 30 days or fewer, `urgent` at 7 or fewer, `expired`), `/metrics` serves `drawbridge_oidc_client_secret_days_left`, and `render` warns once in the container log from `soon` on. Never refuses a request; a value that is not a real date stops the container at start |
 | `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_FILE` | unset | the same for the crypto passphrase |
 | `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS_FILE` | unset | the same for the previous passphrase |
 | `DRAWBRIDGE_SIGNING_KEY_FILE` | `/run/drawbridge/signing.key` | ES256 private key for assertions (mounted) |
@@ -456,10 +496,10 @@ Run as `php bin/drawbridge <command>` (or `vendor/bin/drawbridge` when installed
 
 | Command | Does |
 |---|---|
-| `config:validate` | checks the config and prints every problem at once, then the provider settings (never the secret, only whether its variable is set); exit 1 if any |
+| `config:validate` | checks the config and prints every problem at once, then the provider settings (never the secret, only whether its variable is set, and its expiry date with the days left when `DRAWBRIDGE_OIDC_CLIENT_SECRET_EXPIRES` is set); exit 1 if any |
 | `explain <host> <path>` | says which rule applies to a request, the authentication context and groups it needs, and whether it is denied |
 | `revoke <subject>... [--list]` | ends every gateway session those people hold now, on every app host (the revocation list the gateway rereads each second) |
-| `render` | checks the two secrets in the environment, then writes `apps.conf` and `policy.lua` for Apache (the entrypoint runs this) |
+| `render` | checks the two secrets in the environment, then writes `apps.conf` and `policy.lua` for Apache (the entrypoint runs this); warns on stderr when the client secret expires in 30 days or fewer |
 | `keys:generate` | makes an ES256 key pair; refuses to overwrite a file |
 | `keys:jwks --key=KID=FILE ... [--out=FILE]` | writes the key set file apps verify with: the public keys, current then next, as a JWKS; refuses a private key |
 | `signer:map` | the long-running process behind Apache's `prg:` map (not for people) |
@@ -469,7 +509,7 @@ Run as `php bin/drawbridge <command>` (or `vendor/bin/drawbridge` when installed
 Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
 
 ```sh
-composer ci          # manifest, unit tests, Pint, PHPStan level 8, composer audit
+composer ci          # manifest, unit tests, Pint, agent-ready pages, PHPStan level 8, composer audit, docs build
 composer advisories  # needs the network: does the image's module floor admit a build Debian has patched?
 ```
 
@@ -480,7 +520,7 @@ own paths, PHP version range and excludes.
 In Docker, with no local PHP:
 
 ```powershell
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && composer ci"
 ```
 
 The accessibility gate runs Preflight's own checker (vendored from 0.4.0 and pinned by a test) against the front page and every docs page in a real Chromium browser inside Docker, so no host browser is needed: axe-core 4.14.0, light and dark at 320 and 1280 px, with the WCAG 1.4.10 reflow check, exactly what the a11y CI job checks. `sh scripts/a11y.sh` on Linux and macOS, `scripts\a11y.ps1` on Windows.
@@ -491,7 +531,7 @@ at a SESAME checkout that has been installed (`composer install` in it) and run 
 without it the suite skips, so `composer ci` stays green:
 
 ```powershell
-docker run --rm -v "${PWD}:/app" -v "C:\path\to\sesame:/sesame:ro" -e SESAME_PATH=/sesame -w /app composer:2.10.3 sh -c "composer install --no-interaction && vendor/bin/phpunit --filter RealSesame"
+docker run --rm -v "${PWD}:/app" -v "C:\path\to\sesame:/sesame:ro" -e SESAME_PATH=/sesame -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && vendor/bin/phpunit --filter RealSesame"
 ```
 
 The container rig runs the real gateway image with a mock OpenID Connect provider
@@ -570,6 +610,7 @@ The endpoint serves only what it can see truthfully:
 | `drawbridge_signing_requests_total` | counter | signing requests the assertion signer received |
 | `drawbridge_assertions_signed_total` | counter | assertions the signer signed successfully |
 | `drawbridge_assertion_errors_total{reason}` | counter | signing requests the signer refused or failed, by reason |
+| `drawbridge_oidc_client_secret_days_left` | gauge | whole days until the Entra client secret expires, negative once it has; only when `DRAWBRIDGE_OIDC_CLIENT_SECRET_EXPIRES` is set, and worked out on every scrape (never kept in the store) |
 
 The signing counters cross from the long-running signer to the per-request endpoint through a shared file-backed
 store: one JSON file per metric family in a directory (default `/tmp/drawbridge-metrics`, moved by
@@ -590,7 +631,7 @@ to expose those. Labels carry no identity, claim, or token, and the `reason` lab
 - `OPEN_QUESTIONS.md`: what is unanswered, what is missing, what is not built yet.
 - `ADR/`: decisions about Drawbridge itself, one file each (an ADR: signing key distribution and rotation).
 - `CHANGELOG.md`: what changed.
-- `site/`: the front page, a static sheet set for the gatehouse (`site/index.html`; see `site/README.md`).
+- `site/`: the front page, a static sheet set for the gatehouse (`site/index.html`; see `site/README.md`). It and the docs pages follow the reader's dark mode: the drafting office after hours.
 
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 

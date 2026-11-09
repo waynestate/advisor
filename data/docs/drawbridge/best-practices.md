@@ -273,7 +273,7 @@ How the stack holds it: `Enforced`. The rig walks every hop with a browser that 
 Offer a session store that outlives one process, and say which store loses sessions on a reload.
 Why: an operator who does not know a reload signs everyone out either stops reloading or surprises people.
 Sources: [OWASP Session Management](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html).
-How the stack holds it: `Enforced`. `session.store: redis` keeps sessions, still encrypted, across a reload; the default shared memory store starts empty, as the README says: `RenderTest::testRedisStoreRendersTheServerAndKeepsEncryption`, `RedisTest::testSessionSurvivesAGatewayReload`, `ConfigLoaderTest::testRedisPasswordCannotBeInTheConfigFile`.
+How the stack holds it: `Enforced`. `gateway.session_store: redis` keeps sessions, still encrypted, across a reload; the default shared memory store starts empty, as the README says: `RenderTest::testRedisStoreRendersTheServerAndKeepsEncryption`, `RedisTest::testSessionSurvivesAGatewayReload`, `ConfigLoaderTest::testRedisPasswordCannotBeInTheConfigFile`. Over that store a passphrase change with the previous value kept signs nobody out, and a session sealed under a dropped value is sent to sign in, not shown an error: `RedisRotationTest::testPhase2TheOldSessionSurvivesAndANewSignInWorksUnderTheNewPassphrase`, `RedisRotationTest::testPhase3TheOldSessionIsRefusedCleanlyOnceThePreviousPassphraseIsGone`, `RedisRotationTest::testRestartTheSessionSurvivesAGatewayRecreatedFromItsEnvironment`.
 
 ## 6. Operations
 
@@ -371,7 +371,7 @@ How the stack holds it: `Enforced`. `MetricsGateTest::testDisabledIs404`, `Metri
 Run as a non-root user on a port above 1024, keep state under `/tmp`, log to stdout and stderr, and keep no host paths in the image, so it runs the same on Citadel, OpenShift, Coolify or plain Docker. Bound every dependency and audit them.
 Why: a gateway that needs root or a host path is a gateway one platform can run and the next cannot, and an unbounded dependency is an untested one.
 Sources: [CIS Docker Benchmark](https://www.cisecurity.org/benchmark/docker), [Composer audit](https://getcomposer.org/doc/03-cli.md#audit).
-How the stack holds it: `Checked`. The image runs as `USER 1001:0` on port 8080; `composer ci` ends in `composer audit`; the CI image jobs run unprivileged and never mount the Docker socket (`GitlabCiTest::testNoJobRunsPrivileged`, `GitlabCiTest::testNoJobMountsTheDockerSocket`). `DockerfileFloorTest::testTheImageRunsNonRootOnAPortAbove1024` fails when the image's last `USER` is not `1001:0` or it stops exposing 8080.
+How the stack holds it: `Checked`. The image runs as `USER 1001:0` on port 8080; `composer ci` runs `composer audit`; the CI image jobs run unprivileged and never mount the Docker socket (`GitlabCiTest::testNoJobRunsPrivileged`, `GitlabCiTest::testNoJobMountsTheDockerSocket`). `DockerfileFloorTest::testTheImageRunsNonRootOnAPortAbove1024` fails when the image's last `USER` is not `1001:0` or it stops exposing 8080.
 
 ## Retired with SAML
 

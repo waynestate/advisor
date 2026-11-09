@@ -24,7 +24,7 @@ every tool needs: what state is this version in, on this date?
 
 The documentation site lives at [`site/docs/index.html`](site/docs/index.html) and deploys to [https://creed.apps.wayne.edu/docs/](https://creed.apps.wayne.edu/docs/). It is built from `docs/` by Squire's shared docs builder, and `composer ci` fails when the committed pages go stale. Creed Bratton keeps his records in a filing cabinet nobody can find; ours are in `docs/`, where anyone can.
 
-The docs pages are bound into the same code book as the front page: the running head and main menu, the cream stock and green cloth spine, Source Serif and IBM Plex Mono, stamped callouts and the green colophon. Dark mode is the same book read after hours (warm graphite, cream type, gold foil), never a green wallpaper. The cover's gold ribbon marks the page you are reading, and each callout's stamp is pressed as it scrolls in, for readers who allow motion. That look lives in two files, `docs/_header.html` and `docs/theme/creed.css`, named by the `theme` key in `docs/docs.json`; edit those, never the kit's `site/assets/docs.css`.
+The docs pages are bound into the same code book as the front page: the running head and main menu, the cream stock and green cloth spine, Source Serif and IBM Plex Mono, stamped callouts and the green colophon. Dark mode is the same book read after hours (warm graphite, cream type, gold foil), never a green wallpaper, and the front page and the handbook pages read it with the docs: the after hours section of `site/assets/creed.css` holds the same values as `docs/theme/creed.css`, so change one, change both. The cover's gold ribbon marks the page you are reading, and each callout's stamp is pressed as it scrolls in, for readers who allow motion. That look lives in two files, `docs/_header.html` and `docs/theme/creed.css`, named by the `theme` key in `docs/docs.json`; edit those, never the kit's `site/assets/docs.css`.
 
 ## Where the code lives
 
@@ -53,7 +53,7 @@ The same commands work in PowerShell and sh:
 With only Docker (the same line works in PowerShell and sh):
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && composer ci"
 docker run --rm -v "${PWD}:/app" -w /app php:8.5-cli vendor/bin/phpunit
 ```
 
@@ -239,7 +239,7 @@ PROCTOR, Booster and Rollcall each carry a generated copy of the reader
 under their own namespace, so two tools in one app never fight over a class
 name (the generator below keeps the copies in step). ADVISOR carries CREED's
 policy and handbook as a data bundle instead. The copies began
-because CREED was not on Packagist. It is now (`waynestate/creed`, 0.1.7 at this writing), so
+because CREED was not on Packagist. It is now (`waynestate/creed`, 0.1.8 at this writing), so
 each copy can become a real `require`, one consumer at a time; until a
 consumer switches, its copy stays. CREED owns the generator and the check:
 
@@ -259,7 +259,7 @@ Maintainers: how to build, test and release this project, and where its data com
 No PHP on the machine? Fine. Docker runs the suite:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 composer install --no-interaction
+docker run --rm -v "${PWD}:/app" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 composer install --no-interaction
 docker run --rm -v "${PWD}:/app" -w /app php:8.4-cli vendor/bin/phpunit
 docker run --rm -v "${PWD}:/app" -w /app php:8.3-cli vendor/bin/phpunit
 ```
@@ -267,7 +267,7 @@ docker run --rm -v "${PWD}:/app" -w /app php:8.3-cli vendor/bin/phpunit
 The policy validates against its schema:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 composer validate-policy
+docker run --rm -v "${PWD}:/app" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 composer validate-policy
 ```
 
 The site carries an accessibility gate: Preflight's own checker (vendored in `tools/a11y/check.mjs` at the same

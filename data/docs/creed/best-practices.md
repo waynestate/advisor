@@ -319,8 +319,10 @@ Why: without a lock, a build next week is a different build.
 
 Sources: [Composer basic usage](https://getcomposer.org/doc/01-basic-usage.md).
 
-How the stack holds it: `Checked`. PROCTOR `lock-committed` fails when `composer.lock` is missing. The deploy gate
-adds a check that the lock matches `composer.json` at deploy time, which is not built.
+How the stack holds it: `Checked`. PROCTOR `lock-committed` fails when `composer.lock` is missing, and (since PROCTOR
+0.4.0) compares the lock's content-hash with the one Composer computes from `composer.json`, warning when they are out
+of sync. `lock-committed` is one of `proctor gate`'s checks, but the Citadel deploy gate does not run `proctor gate`
+yet.
 
 ### 19. Ban open-ended constraints
 
@@ -445,12 +447,12 @@ Why: debug pages expose configuration values to users.
 
 Sources: [Laravel configuration docs](https://laravel.com/docs/13.x/configuration).
 
-How the stack holds it: `Checked`. PROCTOR main's `app-debug` warns when a committed production env template
+How the stack holds it: `Checked`. PROCTOR 0.10.0's `app-debug` warns when a committed production env template
 (`.env.production`, `.env.squire.example`), a file under `deploy/` or `deployments/`, or a CI pipeline sets
 `APP_DEBUG` to true. HELMET's Laravel adapter covers the running app: it warns at boot when debug is on in the
 production environment (`helmet.debug_enabled_in_production`). `handbook/runtime-and-headers.md` and
 `handbook/secrets.md` write the rule and name both. What neither sees: a server that sets `APP_DEBUG` outside the
-repository, in an app without HELMET. `app-debug` is on PROCTOR main and not in a release yet.
+repository, in an app without HELMET.
 
 ## 5. Overrides and rollout
 
@@ -564,10 +566,14 @@ Why: developers work on all three, and Citadel needs LF.
 Sources: none outside the stack; this is the stack's every-OS design.
 
 How the stack holds it: `Partially`. The stack's every-OS design and `every-os.md` state it, and CREED has the
-`.gitattributes`. PROCTOR main's `proctor/crlf-deploy-script` fails when a deploy script (`build.sh`, `release.sh`, or
+`.gitattributes`. PROCTOR 0.10.0's `proctor/crlf-deploy-script` fails when a deploy script (`build.sh`, `release.sh`, or
 a `.sh` file under `deploy/`, `deployments/`, `deploy_scripts/` or `scripts/`) has Windows line endings, and warns
 when the app has a deploy script and `.gitattributes` does not pin `*.sh` to LF. PROCTOR 0.9.0's `case-clash` fails
-when two paths differ only by letter case. No check reads the rest of `.gitattributes` or other server files yet.
+when two paths differ only by letter case. PROCTOR main's `gitattributes-eol`, which ships in PROCTOR's next release,
+reads `.gitattributes` the way Git applies it and warns when the app's `*.sh`, `*.conf`, `Dockerfile` or
+`*.Dockerfile` files are not pinned to `eol=lf` (`proctor/gitattributes-eol/not-pinned`), and when a Dockerfile or
+`.conf` under `deploy/` or `.squire/` has Windows line endings (`proctor/gitattributes-eol/crlf`). No check asks for
+the whole `* text=auto eol=lf` line or for the `.ps1` and `.sh` pair yet.
 
 ### 35. Run the test suite on every supported PHP version
 
@@ -655,7 +661,7 @@ Sources: [Packagist: Composer 2.9.6 Perforce fixes](https://blog.packagist.com/c
 
 How the stack holds it: `Checked`. PROCTOR's `composer-version` check fails a Composer below the higher of its CVE
 floors and CREED's policy minimum (`tools.composer.minimum`, 2.8.0), naming the policy in its message. CREED's own
-pipeline runs the pinned `composer:2.10.3` image.
+pipeline runs the `composer:2.11.1` image, pinned by digest.
 
 ### 40. Treat a brand-new package version as untrusted for a short time
 
@@ -681,7 +687,9 @@ Sources: [Packagist supply chain security update](https://blog.packagist.com/an-
 
 How the stack holds it: `Not yet`. No setting in `policy.json` or in CI delays new versions. Decided 2026-11-03: a 3 day
 cooldown once Composer 2.11 is stable and in the base images, with Sourdough apps setting it and PROCTOR warning when it
-is missing (PROCTOR plan 4.11); nothing sets it yet because Composer 2.11 is not in the base images. The lock file
+is missing (PROCTOR plan 4.11). Composer 2.11.0 shipped on 2026-10-29 (2.11.1 on 2026-10-30) with
+`policy.cooldown.period`, but nothing sets it yet: the stack's images and CI still pin Composer 2.10.3, and moving them
+to 2.11 is the next step. The lock file
 (practice 18) is necessary but, per Packagist, not enough.
 
 ### 41. Set the front-end install options, and map severity words
@@ -704,9 +712,12 @@ without a lock file (:462), and allows install scripts back by package name thro
 layer's `.npmrc` sets `min-release-age=1` (templates/vue/.npmrc:11), and `squire doctor` rule S57 reads the script's code
 and the file and passes or warns on both (src/Doctor/Check/ReleaseScriptCheck.php:53-59, BEST_PRACTICES.md:31). Sourdough
 ships the script unchanged into every generated app (sourdough BEST_PRACTICES.md:203,
-templates/squire/laravel/scripts/release.sh:419,436). The rest is written down only: the generated pipelines still run
-`npm install --no-audit --no-fund` (sourdough templates/laravel-inertia/.gitlab-ci.yml:82,
-templates/raw-vue/.gitlab-ci.yml:73), WELD's own CI runs `npm ci --no-audit --no-fund` (weld .gitlab-ci.yml:80),
+templates/squire/laravel/scripts/release.sh:419,436). The generated pipelines install the same way: Sourdough's Vue
+templates run `npm ci --ignore-scripts --no-audit --no-fund` and then `npm audit --audit-level=high --omit=dev`, which
+fails the job on a high or critical advisory in a runtime dependency (sourdough
+templates/laravel-blade-vue/.gitlab-ci.yml:112-114, templates/laravel-inertia/.gitlab-ci.yml:113-115,
+templates/raw-vue/.gitlab-ci.yml:104-106). The rest is written down only: WELD's own CI runs
+`npm ci --no-audit --no-fund` without `--ignore-scripts` and with no audit step (weld .gitlab-ci.yml:111),
 Preflight 0.4.0 has no component that audits `package-lock.json` (its thirteen templates are a11y, composer-audit,
 eslint, package-publish, php-test, phpstan, pint, portability, proctor, renovate, sbom, secret-detection and
 squire-kit), and the `audit_severity_threshold` rule is read by the Composer audit alone (proctor README.md:111), so the
@@ -719,7 +730,8 @@ GitLab's docs list dependency scanning and secret push protection as Ultimate. G
 merge request approval, pipeline execution, vulnerability management, dependency firewall) are Ultimate-only, so CREED does
 not depend on them. Pipeline secret detection is listed for
 Free, Premium and Ultimate, but its findings in merge request reports and the vulnerability report are Ultimate only. GitLab
-accessibility testing (Pa11y) is listed for Free, Premium and Ultimate. The tier of git.wayne.edu was not checked.
+accessibility testing (Pa11y) is listed for Free, Premium and Ultimate. Both of the stack's GitLab instances (nougat and
+git.wayne.edu) run GitLab 19.5.1 Community Edition, which is the Free tier.
 
 Why: a gate that needs a license the instance may not have is a gate that never runs.
 
@@ -730,7 +742,8 @@ Sources: [GitLab dependency scanning](https://docs.gitlab.com/user/application_s
 [secret push protection](https://docs.gitlab.com/user/application_security/secret_detection/secret_push_protection/).
 
 How the stack holds it: `Documented`. The rule is written in `handbook/code.md`: the stack's GitLab instances run the
-Free tier, so nothing relies on GitLab SAST. The tier of git.wayne.edu was not checked. The three components CREED
+Free tier, so nothing relies on GitLab SAST. Both instances, nougat and git.wayne.edu, are GitLab 19.5.1 Community
+Edition (the Free tier). The three components CREED
 uses run PHPUnit (`php-test`), `composer audit` (`composer-audit`) and PROCTOR (`proctor`), not a GitLab scanner
 (their Preflight 0.3.0 templates were read on 2026-11-08), so they fit it.
 
@@ -807,8 +820,8 @@ Sources: [Laravel 13 database docs](https://laravel.com/docs/13.x/database), [en
 
 How the stack holds it: `Partially`. `policy.json` records the minimum MySQL and MariaDB for each Laravel release
 (Laravel 10 to 13), and the reader exposes them through `requires()`; `tests/PolicyRequiresTest.php` pins the values.
-PROCTOR main's `mysql-minimum` warns when an app's declared MySQL or MariaDB image (in a compose file,
-`.env.squire.example` or `.env.example`) is below its locked Laravel line's minimum; it is not in a PROCTOR release yet. The platform's
+PROCTOR 0.10.0's `mysql-minimum` warns when an app's declared MySQL or MariaDB image (in a compose file,
+`.env.squire.example` or `.env.example`) is below its locked Laravel line's minimum; it warns only and is not in the deploy gate. The platform's
 MySQL timeline is still an open question.
 
 ### 47. Plan the MySQL move around authentication and LTS lines
@@ -974,8 +987,9 @@ door.
 
 Sources: the WSU developer standards, 2024 (an internal WSU document), [OWASP ASVS](https://asvs.owasp.org/).
 
-How the stack holds it: `Documented`. `handbook/code.md` writes the rule. The PHPStan ban on SQL built by joining
-strings is still planned.
+How the stack holds it: `Checked`. `handbook/code.md` writes the rule, and Pinstripe 0.3.0 bans SQL built by joining
+strings in every cut (`pinstripe.banned.joinedSql`): a variable concatenated, interpolated or `sprintf()`'d into the
+SQL given to PDO, mysqli, `oci_parse()` or Laravel's `DB` methods fails PHPStan.
 
 ### 57. Check authentication first on every request, fail closed, and time out idle sessions
 
@@ -1103,9 +1117,9 @@ These are places where a source disagrees with the repository or with an earlier
 10. Done: Preflight 0.2.0's `secret-detection` component runs Gitleaks and fails on a match (practice 24).
 11. Done: PROCTOR main's `env-outside-config` warns on `env()` outside `config/` (practice 25). Larastan's own rule in
     Pinstripe would catch it earlier, in the editor.
-12. Done: the runtime and headers chapter is written (practice 26), PROCTOR main's `app-debug` warns on a committed
+12. Done: the runtime and headers chapter is written (practice 26), PROCTOR's `app-debug` warns on a committed
     production template, deploy file or CI pipeline that sets `APP_DEBUG` to true, and HELMET warns at boot when it is
-    on in production; `app-debug` waits for a PROCTOR release.
+    on in production; `app-debug` shipped in PROCTOR 0.10.0.
 13. Partly done: every handbook rule that uses an RFC 2119 capital carries a tag (a PROCTOR check ID, "Held by:" or
     "No check exists yet"), and the handbook lint fails on an untagged one; rules phrased without a capital are still
     to walk (practices 29 and 32).
@@ -1114,32 +1128,37 @@ These are places where a source disagrees with the repository or with an earlier
 15. Done: the policy's `gate` block carries per-check stages (`report`, `warn`, `block`) with `from` dates, in the
     schema and the reader, and `proctor gate` (PROCTOR 0.9.0) applies them; no rule is staged yet (practice 28).
 16. Partly done: PROCTOR's `crlf-deploy-script` fails on CRLF in deploy scripts and warns when `.gitattributes` does
-    not pin them to LF, and PROCTOR 0.9.0's `case-clash` fails on file-name case collisions; checks for other server
-    files are still to add (practice 34).
-17. Partly done: PROCTOR main's `preflight-pinned` warns when a Preflight include is not pinned to a commit SHA; other
-    components are not checked (practice 23).
+    not pin them to LF, PROCTOR 0.9.0's `case-clash` fails on file-name case collisions, and PROCTOR main's
+    `gitattributes-eol` (in its next release) warns when shell scripts, `.conf` files and Dockerfiles are not pinned to
+    LF and on a CRLF Dockerfile or `.conf` under `deploy/` or `.squire/`; a check for the `.ps1` and `.sh` pair is still
+    to add (practice 34).
+17. Partly done: PROCTOR's `preflight-pinned` warns when a Preflight include is not pinned to a full release tag (such
+    as `@0.4.0`) or a 40-hex commit SHA; components from outside Preflight are not checked (practice 23).
 18. Partly done: the accessibility chapter is written, with the WCAG 2.2 AA target (practices 30 and 54); the Title
     II dates stay open (practice 52).
 
 Added in the second pass (2026-10-27):
 
-19. Add a minimum PHP patch version per branch to `policy.json`, fed by the freshness check, and a PROCTOR check that
-    compares it with the image or runtime (practice 37).
+19. Partly done: `policy.json` carries an optional `minimum_patch` per PHP line, read by `Policy::minimumPatch()` and
+    checked by `bin/validate-policy.php`; no values are set yet, and the PROCTOR check that compares the value with
+    the image or runtime waits (practice 37).
 20. Add a response window per severity to `rules` (for example "fix within N days"; the maintainers choose N), and a
     check that applies it to `composer audit` output (practice 38).
-21. Decide between the legacy `audit` keys and `config.policy` (the Composer version is pinned in CI and the README
-    commands; practices 21 and 39).
-22. Done: decided 2026-11-03: a 3 day cooldown once Composer 2.11 is stable and in the base images; Sourdough apps set it and PROCTOR warns when it is missing (PROCTOR plan 4.11). Not set anywhere yet, because Composer 2.11 is not in the base images (practice 40).
+21. Done: `config.policy` it is. Practice 21 is `Checked`, PROCTOR's `composer-audit` reads the `config.policy` block
+    (with the legacy `audit` keys as a fallback), and the Composer the stack pins, 2.10.3, supports it (practices 21
+    and 39).
+22. Done: decided 2026-11-03: a 3 day cooldown once Composer 2.11 is stable and in the base images; Sourdough apps set it and PROCTOR warns when it is missing (PROCTOR plan 4.11). Composer 2.11.0 shipped on 2026-10-29 (2.11.1 on 2026-10-30) with `policy.cooldown.period`; it is not set anywhere yet, because the stack's images and CI still pin 2.10.3, and moving them is the next step (practice 40).
 23. Add an npm check (`audit-level`, `ignore-scripts`, `min-release-age`) to Preflight, with a severity word map between
     Composer and npm (practice 41).
-24. Confirm the tier of git.wayne.edu (the rule is written in `handbook/code.md`; practice 42).
+24. Done: git.wayne.edu and nougat both run GitLab 19.5.1 Community Edition, the Free tier (the rule is written in
+    `handbook/code.md`; practice 42).
 25. Partly done: PROCTOR main's `app-key` warns on a committed `.env` or `APP_KEY` and the cookie session driver, on
     every OS (practice 43). The secrets chapter names the check; the general secret scan is item 10.
 26. Partly done: `images.docker` is filled for PHP 8.3 to 8.5 and the rebuild rule is in `handbook/versions.md`;
     `citadel` waits for Citadel's image names.
 27. Ask the owners of git.wayne.edu to publish its GitLab patch level and a patch routine (practice 45).
-28. Partly done: policy.json records each Laravel release's minimum database (practice 46), and PROCTOR main's
-    `mysql-minimum` warns when an app's declared database image is below it; it waits for a PROCTOR release.
+28. Done: policy.json records each Laravel release's minimum database (practice 46), and PROCTOR's `mysql-minimum`
+    warns when an app's declared database image is below it; it shipped in PROCTOR 0.10.0.
 29. Done: `handbook/databases.md` writes down the MySQL auth plugin step and the rule "list LTS lines only" (practice 47).
 30. State a target for adding a new PHP image, per target (Citadel and elsewhere), and a notice period for retiring
     one (practice 48).

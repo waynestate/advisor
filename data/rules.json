@@ -2260,7 +2260,7 @@
             "id": "every-os-4",
             "chapter": "every-os",
             "heading": "Every OS",
-            "text": "Every repo carries a `.gitattributes` with `* text=auto eol=lf`, and `.ps1`, `.bat` and `.cmd` set to CRLF. Anything that runs on a Linux host MUST be LF: on Citadel, and on OpenShift, Coolify or raw Docker elsewhere (the stack's every-OS design). PROCTOR check: `crlf-deploy-script`, for deploy scripts only: it fails on a CRLF deploy script and warns when `.gitattributes` does not pin `*.sh` to LF.",
+            "text": "Every repo carries a `.gitattributes` with `* text=auto eol=lf`, and `.ps1`, `.bat` and `.cmd` set to CRLF. Anything that runs on a Linux host MUST be LF: on Citadel, and on OpenShift, Coolify or raw Docker elsewhere (the stack's every-OS design). PROCTOR checks: `crlf-deploy-script`, for deploy scripts only: it fails on a CRLF deploy script and warns when `.gitattributes` does not pin `*.sh` to LF; and `gitattributes-eol` (on PROCTOR main, in its next release), which warns when `.gitattributes` does not pin the repo's `*.sh`, `*.conf`, `Dockerfile` and `*.Dockerfile` files to `eol=lf`, and on a CRLF Dockerfile or `.conf` under `deploy/` or `.squire/`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2282,7 +2282,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/every-os.md:17"
+            "source": "handbook/every-os.md:21"
         },
         {
             "id": "every-os-6",
@@ -2296,7 +2296,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/every-os.md:22"
+            "source": "handbook/every-os.md:26"
         },
         {
             "id": "overrides-1",
@@ -2498,7 +2498,7 @@
             "id": "production-8",
             "chapter": "production",
             "heading": "Running safely",
-            "text": "The web server MUST NOT list directory contents (WSU developer standards, 2024). No check exists yet.",
+            "text": "The web server MUST NOT list directory contents (WSU developer standards, 2024). PROCTOR check: `directory-listing` warns on committed server config that turns listing on (PROCTOR 0.10.0).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2596,7 +2596,7 @@
             "id": "production-15",
             "chapter": "production",
             "heading": "Who can reach it",
-            "text": "Every app MUST set `robots.txt` to keep spiders out unless crawling is wanted (WSU developer standards, 2024). No check exists yet.",
+            "text": "Every app MUST set `robots.txt` to keep spiders out unless crawling is wanted (WSU developer standards, 2024). An app that wants crawling says so in the file with `Allow: /` for `User-agent: *`; keeping spiders out is `Disallow: /`. PROCTOR check: `robots-txt` warns when a served app commits no `public/robots.txt`, or one that decides neither (PROCTOR 0.10.0).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2680,7 +2680,7 @@
             "id": "runtime-and-headers-4",
             "chapter": "runtime-and-headers",
             "heading": "Headers",
-            "text": "An app SHOULD NOT weaken the default Content-Security-Policy with `'unsafe-inline'` for scripts; it uses the nonce instead (the stack's runtime and headers design). No check exists yet.",
+            "text": "An app SHOULD NOT weaken the default Content-Security-Policy with `'unsafe-inline'` for scripts; it uses the nonce instead (the stack's runtime and headers design). PROCTOR check: `csp-unsafe-inline` warns on committed app config, server config or an example env file that does (PROCTOR 0.10.0).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2702,7 +2702,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:32"
+            "source": "handbook/runtime-and-headers.md:33"
         },
         {
             "id": "runtime-and-headers-6",
@@ -2716,7 +2716,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:34"
+            "source": "handbook/runtime-and-headers.md:35"
         },
         {
             "id": "runtime-and-headers-7",
@@ -2730,7 +2730,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:36"
+            "source": "handbook/runtime-and-headers.md:37"
         },
         {
             "id": "runtime-and-headers-8",
@@ -2744,7 +2744,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:41"
+            "source": "handbook/runtime-and-headers.md:42"
         },
         {
             "id": "runtime-and-headers-9",
@@ -2758,7 +2758,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:42"
+            "source": "handbook/runtime-and-headers.md:43"
         },
         {
             "id": "runtime-and-headers-10",
@@ -2772,7 +2772,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:47"
+            "source": "handbook/runtime-and-headers.md:48"
         },
         {
             "id": "runtime-and-headers-11",
@@ -2786,7 +2786,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:51"
+            "source": "handbook/runtime-and-headers.md:52"
         },
         {
             "id": "runtime-and-headers-12",
@@ -2800,7 +2800,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:55"
+            "source": "handbook/runtime-and-headers.md:56"
         },
         {
             "id": "runtime-and-headers-13",
@@ -2814,13 +2814,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:58"
+            "source": "handbook/runtime-and-headers.md:59"
         },
         {
             "id": "runtime-and-headers-14",
             "chapter": "runtime-and-headers",
             "heading": "Errors in production",
-            "text": "PHP `display_errors` MUST be `Off` and `log_errors` `On` in production (Squire's deploy kit ships that php.ini; HELMET neither sets nor checks it). No check exists yet.",
+            "text": "PHP `display_errors` MUST be `Off` and `log_errors` `On` in production (Squire's deploy kit ships that php.ini; HELMET neither sets nor checks it). PROCTOR check: `display-errors` warns on a committed php.ini, .user.ini or .htaccess that turns `display_errors` on or `log_errors` off (PROCTOR 0.10.0).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -2828,7 +2828,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:64"
+            "source": "handbook/runtime-and-headers.md:65"
         },
         {
             "id": "runtime-and-headers-15",
@@ -2840,7 +2840,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:66"
+            "source": "handbook/runtime-and-headers.md:68"
         },
         {
             "id": "runtime-and-headers-16",
@@ -2854,7 +2854,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:73"
+            "source": "handbook/runtime-and-headers.md:75"
         },
         {
             "id": "secrets-1",
@@ -2928,7 +2928,7 @@
             "id": "secrets-6",
             "chapter": "secrets",
             "heading": "Errors and debug output",
-            "text": "`APP_DEBUG` MUST be `false` in production (WSU developer standards, 2024). The Laravel adapter writes one warning `helmet.debug_enabled_in_production` when it is true in the production environment. PROCTOR check: `app-debug` (on PROCTOR main), which warns when a committed production env template, deploy file or CI pipeline sets it to true.",
+            "text": "`APP_DEBUG` MUST be `false` in production (WSU developer standards, 2024). The Laravel adapter writes one warning `helmet.debug_enabled_in_production` when it is true in the production environment. PROCTOR check: `app-debug` (since PROCTOR 0.10.0), which warns when a committed production env template, deploy file or CI pipeline sets it to true.",
             "applies_to": [
                 "laravel-blade",
                 "laravel-blade-vue",
@@ -2940,7 +2940,7 @@
             "id": "secrets-7",
             "chapter": "secrets",
             "heading": "Errors and debug output",
-            "text": "Public-facing code MUST NOT display default interpreter or framework error pages to the user; show a controlled message and log the detail (WSU developer standards, 2024). No check exists yet.",
+            "text": "Public-facing code MUST NOT display default interpreter or framework error pages to the user; show a controlled message and log the detail (WSU developer standards, 2024). Held by: HELMET, when the app turns it on. Raw PHP apps get a fixed 500 page with no exception text from the opt-in error handler (`helmet_boot()` with `error_handler` enabled) and a fixed 4xx page from `helmet_client_error()`; Laravel apps set `HELMET_ERROR_PAGES=true` for the same 4xx pages and leave 5xx to Laravel's handler, which shows no detail with `APP_DEBUG` false; JSON clients keep Laravel's JSON answer. The 4xx pages are on HELMET main and ship in its next release. Nothing checks that an app turned them on.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",

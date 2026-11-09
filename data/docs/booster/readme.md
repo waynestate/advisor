@@ -8,6 +8,21 @@
 
 **Boosts your versions.** One dose at a time, and every dose gets a stamp.
 
+## Run it today
+
+With PHP 8.3 or newer on the machine, from the folder of the app you want to upgrade:
+
+```
+curl -L -o ../booster.phar https://github.com/waynestate/booster/releases/latest/download/booster.phar
+php ../booster.phar detect
+php ../booster.phar plan
+php ../booster.phar run --dry-run
+```
+
+Those three change nothing. `run` makes the edits (it needs git, a clean working copy and Docker for the test gate)
+and never commits. The file sits one folder up so it stays out of the app's git; on Windows PowerShell, type
+`curl.exe` instead of `curl`. Keeping it on your PATH, a clone, and Docker only (no PHP) are under [Install](#install).
+
 **Not to be confused with:** Booster moves an app to a newer PHP or framework version; Pinstripe's Rector set only modernizes code within the PHP version the app already runs.
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
@@ -25,7 +40,7 @@ git.wayne.edu is the shot; the mirror is the bandage.
 Front page: [`site/index.html`](site/index.html), a static page you can open in a browser or serve from `site/`.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Docs: the same site serves the documentation at [`/docs/`](https://booster.apps.wayne.edu/docs/). It is built from [`docs/`](docs/) by `bin/docs-site.php` (`composer docs`), the built pages are committed, and `composer docs:check` (part of `composer ci`) fails when they drift from the sources. The docs wear the front page's look through the builder's `theme` key in `docs/docs.json`: [`docs/_header.html`](docs/_header.html) is the masthead every docs page gets (keep its links in step with the front page's), and [`docs/theme/booster.css`](docs/theme/booster.css) holds the palette, type, code blocks and the derived dark mode; the build copies it to `site/docs/theme/`. Edit those two files, never `site/assets/docs.css` or `docs.js` (Squire's kit), then run `composer docs`. Like a booster shot, it only works if you actually take it.
+Docs: the same site serves the documentation at [`/docs/`](https://booster.apps.wayne.edu/docs/). It is built from [`docs/`](docs/) by `bin/docs-site.php` (`composer docs`), the built pages are committed, and `composer docs:check` (part of `composer ci`) fails when they drift from the sources. The docs wear the front page's look through the builder's `theme` key in `docs/docs.json`: [`docs/_header.html`](docs/_header.html) is the masthead every docs page gets (keep its links in step with the front page's), and [`docs/theme/booster.css`](docs/theme/booster.css) holds the palette, type, code blocks and the dark mode it shares with the front page (section 12 of `site/assets/booster.css`; change one, change both); the build copies it to `site/docs/theme/`. Edit those two files, never `site/assets/docs.css` or `docs.js` (Squire's kit), then run `composer docs`. Like a booster shot, it only works if you actually take it.
 
 Booster is WELD's upgrade tool. It plans the hops that take a WSU PHP app from the PHP or Laravel version it runs now
 to one the version policy still supports, and it runs them one at a time: [Rector](https://getrector.com) rewrites the
@@ -78,6 +93,19 @@ booster run
 and changes nothing. `run` edits files and makes no commit. A real `run` also needs git, a clean git folder (commit
 or stash first) and a Docker daemon for its test gate.
 
+On Windows PowerShell, the same single file (`curl.exe` ships with Windows 10 and 11):
+
+```
+New-Item -ItemType Directory -Force "$HOME\bin" | Out-Null
+curl.exe -L -o "$HOME\bin\booster.phar" https://github.com/waynestate/booster/releases/latest/download/booster.phar
+function booster { php "$HOME\bin\booster.phar" @args }   # put this line in $PROFILE to keep it
+cd C:\path\to\your-app
+booster detect
+booster plan
+booster run --dry-run
+booster run
+```
+
 ### Linux, macOS and WSL (Ubuntu): clone it
 
 ```
@@ -119,7 +147,7 @@ php bin\booster plan --path=..\my-app
 ```
 git clone https://github.com/waynestate/booster.git
 cd booster
-docker run --rm -v "${PWD}:/booster" -w /booster composer:2.10.3 composer install --no-interaction
+docker run --rm -v "${PWD}:/booster" -w /booster composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 composer install --no-interaction
 docker run --rm -v "${PWD}:/booster" -v "/path/to/app:/app" -w /booster php:8.4-cli php bin/booster plan --path=/app
 ```
 
@@ -197,7 +225,7 @@ How many hops? One for every step on the way, never a jump:
 - one hop per Laravel major,
 - one hop per PHPUnit major.
 
-Booster interleaves them so the app sits on a PHP and Laravel pair that Laravel supports at every step: a Laravel step as soon as the current PHP allows it, a PHPUnit step when the PHP allows it, a PHP step otherwise. Two real examples: a Laravel 10 app on PHP 8.1 plans 11 hops, and a PHP 5.5 app with no framework plans 12 hops to PHP 8.5.
+Booster interleaves them so the app sits on a PHP and Laravel pair that Laravel supports at every step: a Laravel step as soon as the current PHP allows it, a PHPUnit step when the PHP allows it, a PHP step otherwise. Two real examples: a Laravel 10 app on PHP 8.1 with PHPUnit 10 plans 10 hops (more with front-end Node hops), and a PHP 5.5 app with no framework plans 12 hops to PHP 8.5.
 
 Some hops come along by default, and some only when you ask:
 
@@ -205,7 +233,7 @@ Some hops come along by default, and some only when you ask:
 - An app on PHPUnit 8 or older gets a manual PHPUnit 9 step before the first PHP 8 hop.
 - The SESAME move (`--sesame`), the WayneUI move (`--wayneui`), the move of hand-copied libraries to Composer (`--vendored`) and strict session IDs for a raw PHP app (`--strict-session`) are opt-in only.
 - `--skip <hop id>` drops a hop you do not want.
-- If a target is past security support, the plan stops at the policy limit and warns. If Rector has no ruleset for a step yet, the plan stops short and warns.
+- If you pass a target past security support, the plan still goes there as a stop on the way up and warns with the date its support ended. If Rector has no ruleset for a step yet, the plan stops short and warns.
 
 `run` handles each hop the same way: a Rector preview, then the edits (if a hop would change more than 200 files it asks first, or stops when it cannot ask; `--max-changes` sets a hard limit), then the Composer constraints, then your tests in the target PHP image. That last part is the gate. The first hop that fails stops the run, and the hops after it are reported as "not run". Booster never commits; the changes sit in your working copy for you to review. Progress prints one line per hop, like `hop 3/11 <hop id>: <status>, 12 files, 41 s`, and ends with `run finished: 11 of 11 hops run, 0 stopped, ...`.
 
@@ -228,7 +256,8 @@ When the app carries a `composer.lock`, `detect` also reads the PHP range the lo
 `require.php` floor and the lowest ceiling across `packages` and `packages-dev`, raised by a `platform-overrides.php`
 or `config.platform.php` pin in `composer.json` when one is set. If that floor sits above the floor `composer.json`
 claims, Booster plans from the lock's floor and prints a warning saying so; if the first PHP hop lands at or above
-the lock's ceiling, a second warning notes that hop will need a `composer update` to keep the lock installable.
+the lock's ceiling, a second warning says that hop's gate updates the locked packages that stop it (item 5 of
+[What a hop does](#what-a-hop-does)).
 Without a lock, `composer.json` stays the sole source.
 
 A plan for the bundled Laravel 10 example app on PHP 8.2 looks like this (the order keeps the app on a PHP and
@@ -242,7 +271,7 @@ BOOSTER plan for examples/laravel-blade
   PHP: 8.2 -> 8.5
   Laravel: 10 -> 13
   PHPUnit: 10 -> 13
-  policy: waynestate/creed 0.1.7 (today 2026-10-29)
+  policy: waynestate/creed 0.1.8 (today 2026-10-29)
 
 1. phpunit-10-to-11
    Move PHPUnit 10 tests to PHPUnit 11.
@@ -267,6 +296,13 @@ BOOSTER plan for examples/laravel-blade
 6. laravel-12-to-13
    Move a Laravel 12 app to Laravel 13.
    After this step your tests run in Docker.
+   Behavior changes to check:
+   When the app does not set its session cookie name, Laravel 13 derives the fallback name from APP_NAME differently, so the name can change and every signed-in user is signed out once after the deploy (config/session.php)
+     keep old: set SESSION_COOKIE in .env to the cookie name the app sends today
+     check: Compare the session cookie name in the browser before and after the hop
+   When the app does not set a cache prefix, Laravel 13's fallback changes from app_name_cache_ to app-name-cache- (and the Redis prefix from _database_ to -database-), so every cached value misses once after the deploy and keys shared with other code stop matching (config/cache.php)
+     keep old: set CACHE_PREFIX (and REDIS_PREFIX when the app uses Redis) in .env to the values the app uses today
+     check: Compare a cache key in the store before and after the hop
 7. php-83-to-84
    Move PHP 8.3 code to PHP 8.4.
    After this step your tests run in Docker.
@@ -520,6 +556,11 @@ with the exit code and the last 20 lines of output).
 - A red baseline stops the run before the first hop, with a non-zero exit. `--allow-failing-baseline` lets it go on;
   each later gate failure is then labeled "the baseline was already failing" in the text and JSON output.
 - `--skip-gate` and `--dry-run` skip the baseline (reported as `skipped`), so a dry run never starts Docker.
+- When the baseline's `composer install` fails on the PHP version, the report says which of two causes it was and
+  what to run, instead of the general advice: `composer.json` already requires a newer `php` than `--from-php` (where
+  a run stands after it stopped at a PHP hop; run again without `--from-php`), or a locked package's own
+  `require.php` leaves that PHP out (the report names the `composer update -W` to run). The JSON baseline carries the
+  same text as `advice`.
 - A Mix app's `public/mix-manifest.json` is a build artifact, not committed source: a fresh clone has no manifest, so
   the suite can be red before any hop. Build the assets before the baseline (the app's usual `npm ci && npm run
   build`), or pass `--allow-failing-baseline` knowing why.
@@ -647,10 +688,17 @@ under `Pre-pass fixes:`.
     Oracle Instant Client for oci8, so it takes a few minutes; later hops reuse the image. Pass `--image` to run the
     gate in your own image instead (below). A red gate stops the run and leaves the changes in place so you can read
     them (`git checkout .` undoes them). To check the image itself,
-    `scripts/check-target-image.sh` (or its Windows twin `check-target-image.ps1`) builds it for each PHP version and
-    verifies its extension list; it needs Docker and a few minutes per version, so it is not part of `composer ci`.
+    `scripts/check-target-image.sh` (or its Windows twin `check-target-image.ps1`, PowerShell 7.3 or later) builds it for each PHP version and
+    verifies its extension list, that Composer runs and, on the archived Debian releases, that apt can verify the
+    archive; it needs Docker and a few minutes per version, so it is not part of `composer ci` (a unit test reads
+    the recipe instead).
 5. On Laravel and PHPUnit hops the gate refreshes the lock before the tests: `composer update -W` for the package
-   the hop moved, so `composer.lock` lands on the new major version next to `composer.json`. A PHP hop on an app
+   the hop moved, so `composer.lock` lands on the new major version next to `composer.json`. A PHP hop reads the
+   lock first: a locked package whose own `require.php` leaves out the hop's PHP makes a plain `composer install`
+   refuse the whole lock, so the gate runs `composer update -W` for just those packages, inside `composer.json`'s
+   constraints, and the report names each one (`the lock held symfony/service-contracts v1.1.2, which needs php
+   ^7.1.3, not PHP 8.0`). The lock follows the app up one PHP at a time, and each hop's diff moves only what had to
+   move. Otherwise, a PHP hop on an app
    that pins `config.platform.php` (every Sourdough app does) runs `composer update --lock`: no package moves, but
    the lock's `platform-overrides` catch up with the new pin, which a plain `composer install` would otherwise check
    the raised `php` constraint against and refuse. Every other hop, and the baseline, run a plain
@@ -687,9 +735,13 @@ The `--image` value names the image the baseline and every gate run in, and it t
 Booster never builds a `--image` image: it must exist locally or be pullable, and each resolved image is pulled at
 most once per run. On an arm64 Mac, Citadel's published images such as `citadel/php-apache:8.5r3` are amd64 only:
 pass an arm64 build via `--image`, or set `DOCKER_DEFAULT_PLATFORM=linux/amd64` and let Docker emulate.
-`booster-target` itself builds natively on arm64. And the old-PHP images (5.5 through 8.0) point apt at
-archive.debian.org, so they get no security updates: they exist to run the app's tests on the way up, not to serve
-traffic.
+`booster-target` itself builds natively on arm64 for PHP 5.6 and up; the official `php:5.5-cli` image is amd64
+only, so a PHP 5.5 gate on arm64 runs under Docker's emulation (slow) or needs an amd64 machine. And the old-PHP
+images (5.5 through 8.0) point apt at archive.debian.org, so they get no security updates: they exist to run the
+app's tests on the way up, not to serve traffic. apt still checks the archive's signatures there, against Debian's
+current archive keys, which the recipe copies in from pinned Debian images because the keys those old images ship
+with have expired. Jessie (PHP 5.5) is the one exception: its archive is signed only by expired keys, so its image
+installs packages unsigned while it builds, and that setting is removed before the image is done.
 
 `run` refuses to start on a working copy that is not under git or has uncommitted changes, so the upgrade diff stands
 alone. `--dry-run` has no such limit.
@@ -802,8 +854,10 @@ Booster reads the policy straight from the `waynestate/creed` package in its own
 drift: `composer update waynestate/creed` is the whole refresh. `--policy` and `BOOSTER_POLICY` still override it for
 one run.
 
-`.env.example` holds the placeholder. Booster reads no secrets, makes no network calls of its own and talks to no
-Citadel host. Everything it prints from an app (file names, diffs) has control characters stripped.
+`.env.example` holds the placeholder. Booster reads no secrets and talks to no Citadel host. Its own network calls
+only read: the dependency check asks Packagist (and any composer-type repository the app declares) about the app's
+direct dependencies, which `--no-package-check` turns off, and a plan for an app on `wayne-cas` with no `vendor/`
+checks the VCS repository `composer.json` names for that package with `git ls-remote`. Everything it prints from an app (file names, diffs) has control characters stripped.
 
 When Rector runs, Booster passes it a few `BOOSTER_*` variables of its own (the app path, the sets, the PHP target).
 They are internal; do not set them.
@@ -874,14 +928,15 @@ composer ci
 ```
 
 runs `composer validate --strict`, PHPUnit, Pint, PHPStan (Pinstripe's raw preset, inlined; `waynestate/pinstripe`
-ships with Booster and supplies the preset the advisory scan uses), `composer audit`, the hop data check and the
-agent-ready check. Nothing needs PHP on the host:
+ships with Booster and supplies the preset the advisory scan uses), `composer audit`, the hop data check, the
+agent-ready check, the Real output page check (`bin/build-proof.php --check`) and the docs site check
+(`composer docs:check`). Nothing needs PHP on the host:
 
 ```
-docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && composer ci"
 ```
 
-The site's accessibility gate is Preflight's own checker, vendored into `tools/a11y/check.mjs` from Preflight 0.4.0
+The site's accessibility gate is Preflight's own checker, vendored into `tools/a11y/check.mjs` from Preflight 0.5.0
 and pinned by `tests/A11yCheckerPinTest.php`, so a local run checks exactly what CI checks: axe-core 4.14.0 in a
 real Chromium, every page under `site/` in light and dark at 320 and 1280 px, plus the WCAG 1.4.10 reflow check,
 all at WCAG 2.2 AA. It runs in Docker, with no host browser: `sh scripts/a11y.sh` on Linux, macOS and Git Bash, or
@@ -906,7 +961,7 @@ browser. The private proof site has the hop-by-hop table.
 
 ## Status
 
-Version 1.12. See [CHANGELOG.md](CHANGELOG.md) for what changed, [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) for what stays
+Version 1.14. See [CHANGELOG.md](CHANGELOG.md) for what changed, [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) for what stays
 open, and [BEST_PRACTICES.md](BEST_PRACTICES.md) for the rules Booster follows.
 
 ## License

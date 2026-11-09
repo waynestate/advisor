@@ -11,9 +11,13 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 - Every repo carries a `.gitattributes` with `* text=auto eol=lf`, and
   `.ps1`, `.bat` and `.cmd` set to CRLF. Anything that runs on a Linux host
   MUST be LF: on Citadel, and on OpenShift, Coolify or raw Docker elsewhere
-  (the stack's every-OS design). PROCTOR check: `crlf-deploy-script`, for
+  (the stack's every-OS design). PROCTOR checks: `crlf-deploy-script`, for
   deploy scripts only: it fails on a CRLF deploy script and warns when
-  `.gitattributes` does not pin `*.sh` to LF.
+  `.gitattributes` does not pin `*.sh` to LF; and `gitattributes-eol` (on
+  PROCTOR main, in its next release), which warns when `.gitattributes` does
+  not pin the repo's `*.sh`, `*.conf`, `Dockerfile` and `*.Dockerfile` files
+  to `eol=lf`, and on a CRLF Dockerfile or `.conf` under `deploy/` or
+  `.squire/`.
 - Two paths in a repo MUST NOT differ only by letter case (`Docs/Guide.md`
   and `docs/guide.md`): Windows and macOS ignore case, so one checkout
   silently overwrites the other, and a Linux host then loads a file nobody

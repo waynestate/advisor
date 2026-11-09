@@ -44,8 +44,8 @@ npm ci
 ```
 
 `create-project` installs the newest tagged release, and `main` can be ahead of it (the [CHANGELOG](CHANGELOG.md)
-lists what is unreleased). 0.1.3 (2026-11-06) is the first tag where WayneUI draws the app; clone when you want
-`main`.
+lists what is unreleased). The newest tag is 0.1.5; 0.1.3 (2026-11-06) was the first where WayneUI draws the app.
+Clone when you want `main`.
 
 Or clone it, if you want the history too, and it is yours to rename:
 
@@ -114,11 +114,13 @@ Want a smaller starting point than a full Laravel app? Sourdough is the starter 
 |---|---|
 | WayneUI | The interface: Wayne State's design system, 2.0.8 from npm, pinned exactly. Its app bar, sidebar drawer, cards, forms and dialog draw every page, in light and dark, and ESLint keeps any other component kit out |
 | CREED | The written standards and `policy.json`: supported PHP, Laravel and Node versions |
-| Pinstripe | The coding standard: Pint, PHPStan level 8, ESLint and Prettier |
-| Preflight | The CI pipeline, from GitLab CI/CD components |
+| Pinstripe | The coding standard: Pint, PHPStan level 8, ESLint and Prettier, from a copy of its 0.1 Laravel presets |
+| Preflight | The CI pipeline, from GitLab CI/CD components pinned at 0.4.0: tests on PHP 8.3, 8.4 and 8.5, audit, PROCTOR, accessibility, SBOM, secret detection and portability |
 | PROCTOR | The checks, run in CI and as the deploy gate |
 | SESAME | Sign-in: CAS, Entra ID (OpenID Connect) and the auth gateway driver, and app-native sessions |
-| HELMET | The baseline runtime: security headers and CSP, sessions, trusted proxies, `/up` |
+| HELMET | The baseline runtime: security headers and CSP, sessions, trusted proxies, `/up` and the `/ready` readiness route |
+| ADVISOR | Dev only: the stack's read-only MCP server, so your coding agent knows the stack's rules and versions |
+| Squire | The deploy kit in `deploy/`, at 0.9.0: the Citadel image, an idempotent release script and one portable image for other hosts |
 | Laravel Boost | Dev only: the MCP server, guidelines and skills that teach your coding agent Laravel, with WELD's conventions in `.ai/` |
 | Ziggy | Route names as URLs: the route list ships inside the Vite bundle, so `route()` works in Vue templates and scripts without an inline script |
 
@@ -133,20 +135,21 @@ Want a smaller starting point than a full Laravel app? Sourdough is the starter 
 
 ## Status
 
-HELMET, SESAME and PROCTOR are welded in from Packagist; the rest of the cast is on Packagist too and gets welded on
-in turn.
+Every part is welded in except one: HELMET and SESAME are in `require`; CREED, PROCTOR and ADVISOR are in
+`require-dev`; WayneUI 2.0.8 comes from npm; CI pins Preflight 0.4.0; the deploy layer runs Squire's kit 0.9.0.
+Pinstripe's presets are still copied rather than installed. The bead is nearly closed.
 What is on the bench today:
 
 - `composer.json` is `waynestate/weld`, requires PHP `^8.3`, and the lock file resolves for 8.3.0
 - `.env.example` sets `APP_NAME=WELD`, `LOG_CHANNEL=stderr` and `SESSION_DRIVER=database`
 - `Schema::defaultStringLength(191)` keeps index keys under Citadel's MySQL 5.6 767-byte cap
 - `.gitattributes` sets `* text=auto eol=lf`
-- `composer ci` is the CI contract: it runs validate, the tests with Pest, Pint, PHPStan level 8, the agent-ready check and audit, the
-  same command on GitLab and GitHub
-- `pint.json` and `phpstan.neon` still copy Pinstripe's 0.1 Laravel presets; Pinstripe 0.1.4 is on Packagist
-  (tagged), and they switch to `includes: vendor/waynestate/pinstripe/...` when WELD requires it
+- `composer ci` is the CI contract: it runs validate, the tests with Pest, Pint, PHPStan level 8, the agent-ready check, the
+  practices sync check, the docs check and audit, the same command on GitLab and GitHub
+- `pint.json` and `phpstan.neon` still copy Pinstripe's 0.1 Laravel presets; Pinstripe 0.3.0 is on npm
+  (Packagist still lists 0.1.4), and they switch to `includes: vendor/waynestate/pinstripe/...` when WELD requires it
 - HELMET runs its security headers and CSP middleware in the global chain, so every response carries the baseline;
-  the Vite build takes the per-request nonce; trusted proxies are a literal list in `bootstrap/app.php`; `/up` stays
+  the Vite build takes the per-request nonce; trusted proxies come from `TRUSTED_PROXIES` (`bootstrap/app.php`); `/up` stays
   Laravel's built-in health route, and `/ready` (HELMET's readiness route, outside the web group, so no session
   or cookie) answers 503 while the database, the cache or the scheduler heartbeat fails
 - Every queued job under `app/Jobs` declares `#[Tries]` and a `#[Timeout]` below the queue's `retry_after`
@@ -179,7 +182,13 @@ from the Inertia shape. The `a11y-pages` job boots WELD with SESAME's fake drive
 page you build to `A11Y_PATHS` and to the `a11y-app` include's `pages`. Automated checks find only part of the
 problems, so try each page with a keyboard and a screen reader too. Preflight's `sbom` job keeps `sbom.cdx.json`
 (Composer) and the `frontend` job keeps `sbom-npm.cdx.json` (npm), each for 30 days. Preflight's `secret-detection`
-job runs Gitleaks over the repository. WELD deploys by Quick Update, so its pipeline holds no deploy credential. A
+job runs Gitleaks over the repository. Preflight's `portability` job builds the portable image
+(`deploy/.squire/portable.Dockerfile`) with Buildah, on the kit's fallback base built in the same job, and boots it
+twice as a uid with no name in group 0, the way OpenShift would: `/up` must answer an IP `Host`, nothing may be baked
+in from `.env` or a config cache, forged forwarded headers must change nothing, logs must reach stderr, writes must
+stay in `storage/` and `bootstrap/cache/`, and `SIGTERM` must stop it cleanly (BEST_PRACTICES W10, W13, W14, W16).
+It runs on `main` and on tags and is manual on a merge request, and it does not block the pipeline yet.
+WELD deploys by Quick Update, so its pipeline holds no deploy credential. A
 deploy job added later extends `.deploy`, which never runs for a merge request and runs only on a protected branch
 or tag. The project settings a file cannot hold (protected `main` and tags, protected and masked variables, the job
 token allowlist) are listed under "Pipeline" in the README Sourdough bakes.
@@ -320,4 +329,4 @@ locally, point it at your own generation:
 ## The cast
 
 <div align="center"><sub>Fourteen parts, one bead. The README art is cut from the front page by
-<a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>; no sparks were drawn in its making.</sub></p>
+<a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>; no sparks were drawn in its making.</sub></div>

@@ -5,17 +5,19 @@ fixture, so a preset that stops working fails `composer ci` here instead of fail
 without a test is a suit without a mirror: you cannot tell when it has gone wrinkled.
 
 A preset is **Enforced** when a test asserts both directions: a clean fixture passes, and a deliberately broken
-one is caught. The PHP presets run under `composer ci` (PHPUnit); the JavaScript presets run under `npm test`.
+one is caught. It is **Checked** when a test runs the real tool in one direction only: the clean side passes, or the
+broken side is caught, but not both yet. The PHP presets run under `composer ci` (PHPUnit); the JavaScript presets
+run under `npm test`.
 Both run in CI on GitLab and GitHub, so a preset that stops working fails the pipeline before it reaches an app.
 
 | Preset | Tool | Status | Enforced by |
 | --- | --- | --- | --- |
 | `pint/per.json` | Pint | Enforced | `PresetsTest::testPintPerPresetAcceptsTheCleanFixture`, `PresetsTest::testPintPerPresetRejectsTheMessyFixture` |
 | `Pint GitLab output` | Pint | Enforced | `PresetsTest::testPintGitlabFormatReportsTheMessyFixtureAsCodeQualityJson`, `PresetsTest::testPintGitlabFormatIsAnEmptyArrayForTheCleanFixture` |
-| `ESLint GitLab output` | ESLint | Enforced | `tests/js/gitlab-formatter.test.mjs` |
-| `pint/laravel.json` | Pint | Enforced | `PresetsTest::testPintLaravelPresetAcceptsTheLaravelAppFixture` |
+| `ESLint GitLab output` | ESLint | Enforced | `tests/js/gitlab-formatter.test.mjs` (`npm test`: the bad fixture gives findings, the clean one an empty report) |
+| `pint/laravel.json` | Pint | Enforced | `PresetsTest::testPintLaravelPresetAcceptsTheLaravelAppFixture`, `PresetsTest::testPintLaravelPresetRejectsTheMessyFixture` |
 | `pint/per-strict.json` | Pint | Enforced | `PresetsTest::testPintPerStrictPresetAcceptsTheStrictTypesCleanFixture`, `PresetsTest::testPintPerStrictPresetRejectsTheStrictTypesMissingFixture` |
-| `pint/laravel-strict.json` | Pint | Enforced | `PresetsTest::testPintLaravelStrictPresetRejectsTheStrictTypesMissingFixture` |
+| `pint/laravel-strict.json` | Pint | Enforced | `PresetsTest::testPintLaravelStrictPresetAcceptsTheStrictTypesLaravelCleanFixture`, `PresetsTest::testPintLaravelStrictPresetRejectsTheStrictTypesMissingFixture` |
 | `phpstan/raw.neon` | PHPStan | Enforced | `PresetsTest::testPhpStanRawConfigAcceptsTheCleanFixture`, `PresetsTest::testPhpStanRawConfigReportsTheNullBug` |
 | `phpstan/strict.neon` | PHPStan + strict-rules | Enforced | `PresetsTest::testPhpStanStrictConfigAcceptsTheCleanFixture`, `PresetsTest::testPhpStanStrictConfigReportsTheLooseComparison` |
 | `phpstan/disallowed.neon` (banned calls) | PHPStan + disallowed-calls | Enforced | `PresetsTest::testPhpStanReportsEveryBannedCall`, `PresetsTest::testPhpStanAcceptsMethodsThatShareTheBannedNames`, `PresetsTest::testPhpStanRawConfigAcceptsABannedCallKeptWithAReason`, `PresetsTest::testLaravelPresetReportsTlsVerificationTurnedOff` |

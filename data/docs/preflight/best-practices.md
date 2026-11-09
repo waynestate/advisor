@@ -7,7 +7,7 @@ Status: draft, checked against sources on 2026-10-27, with a second research pas
 ## What this covers
 
 Preflight is a set of GitLab CI/CD components that every stack project and WSU app includes with
-`include: component:`. Today it has thirteen: `php-test` (PHP versions through `parallel:matrix`), `composer-audit`,
+`include: component:`. Today it has fourteen: `php-test` (PHP versions through `parallel:matrix`), `composer-audit`, `npm-audit`,
 `proctor`, `sbom`, `pint`, `phpstan`, `eslint`, `secret-detection`, `a11y` (the accessibility suite, 6.5),
 `portability`, `package-publish`, `renovate` and `squire-kit` (a deploy kit still matches its Squire release). A contract suite comes later.
 
@@ -192,7 +192,7 @@ the run.
 Sources: [GitLab: CI/CD inputs](https://docs.gitlab.com/ci/inputs/);
 [GitLab: component examples](https://docs.gitlab.com/ci/components/examples/).
 
-**How the stack holds it: Enforced.** All thirteen templates use `spec:inputs` with types, descriptions and defaults.
+**How the stack holds it: Enforced.** All fourteen templates use `spec:inputs` with types, descriptions and defaults.
 GitLab rejects a wrong type or an unknown input at pipeline creation. The first pipeline, back when Preflight had
 three components, passed all six jobs with the array input.
 
@@ -236,7 +236,7 @@ Why: global keys leak into the consuming pipeline.
 
 Sources: [GitLab: component examples](https://docs.gitlab.com/ci/components/examples/).
 
-**How the stack holds it: Enforced.** All thirteen templates follow it. `tests/check-contract.sh` fails on any top-level
+**How the stack holds it: Enforced.** All fourteen templates follow it. `tests/check-contract.sh` fails on any top-level
 key that is not a job named in `contract/inputs.json`, so a template cannot add a global key. The README's "Which jobs
 may be allowed to fail" explains why only `proctor`, `secret-detection` and `a11y` take `allow_failure`.
 
@@ -291,7 +291,8 @@ Sources: [GitLab: Code Quality](https://docs.gitlab.com/ci/testing/code_quality/
 [GitLab: CI/CD YAML, `artifacts:when`](https://docs.gitlab.com/ci/yaml/).
 
 **How the stack holds it: Enforced.** The `proctor` template sets `artifacts: when: always` and
-`reports: codequality: gl-code-quality-report.json`. Code Quality is shown in the merge request Reports tab on every
+`reports: codequality: gl-code-quality-report.json`, and keeps PROCTOR's JSON report as `proctor.json` (`paths:`,
+30 days) for Rollcall when the app's PROCTOR has `check --record` (0.11.0 and later). Code Quality is shown in the merge request Reports tab on every
 tier; the pipeline tab needs Premium and the diff view needs Ultimate.
 
 Second pass: tiers re-checked and correct. One addition: GitLab deprecated its built-in CodeClimate-based Code Quality
@@ -309,8 +310,8 @@ A job timeout cannot exceed the runner's timeout.
 
 Sources: [GitLab: CI/CD YAML, `timeout` and `interruptible`](https://docs.gitlab.com/ci/yaml/).
 
-**How the stack holds it: Documented.** All thirteen templates set `interruptible: true` and a `timeout` of their own:
-`10m` for pint and phpstan, `10 minutes` for squire-kit, `15m` for eslint, `30 minutes` for composer-audit, package-publish, php-test, proctor,
+**How the stack holds it: Documented.** All fourteen templates set `interruptible: true` and a `timeout` of their own:
+`10m` for pint and phpstan, `10 minutes` for squire-kit and npm-audit, `15m` for eslint, `30 minutes` for composer-audit, package-publish, php-test, proctor,
 sbom, secret-detection, a11y and portability, and `1 hour` for renovate. What stays open is the cancellation half: whether a superseded pipeline is actually
 canceled still needs `workflow:auto_cancel` in the app's own file, which a component cannot force (see 3.1).
 
@@ -364,7 +365,8 @@ Sources: [GitLab: includes, merge behavior](https://docs.gitlab.com/ci/yaml/incl
 [GitLab: pipeline execution policies (Ultimate)](https://docs.gitlab.com/user/application_security/policies/pipeline_execution_policies/).
 
 **How the stack holds it: Documented.** The stack's enforcement-points decision names the CI gate as point (c) and Fleet as point (e), which shows
-who skips CI. Rollcall does not read pipelines yet, so nothing reports skipped or weakened pipelines today.
+who skips CI. Rollcall reads each app's newest `proctor.json` from the proctor job's artifact
+(`ROLLCALL_PROCTOR_SOURCE=gitlab`), but it does not report skipped or weakened pipelines yet.
 
 Prior art (second pass): Drupal's shared GitLab templates, used by more than 2,000 contributed projects at the time of
 a December 2025 post, do not force anything. Most jobs are turned off by setting a variable to 0, and projects keep
@@ -445,7 +447,7 @@ by a hostile `composer.json`, which is exactly what a contributed branch can car
 Sources: [GitLab: merge request pipelines](https://docs.gitlab.com/ci/pipelines/merge_request_pipelines/);
 [GitLab: CI/CD variables](https://docs.gitlab.com/ci/variables/).
 
-**How the stack holds it: Documented.** All thirteen templates use no secrets, which limits the harm, and the README
+**How the stack holds it: Documented.** All fourteen templates use no secrets, which limits the harm, and the README
 documents the rule: review a fork's `.gitlab-ci.yml` before running its pipeline, and never give it protected variables.
 
 ---
@@ -462,7 +464,7 @@ Sources: [GitLab: pipeline security, Docker images](https://docs.gitlab.com/ci/p
 [OpenSSF Scorecard: Pinned-Dependencies](https://github.com/ossf/scorecard/blob/main/docs/checks.md).
 
 **How the stack holds it: Enforced.** The `proctor` and `composer-audit` image defaults carry a digest
-(`php:8.4-cli-trixie@sha256:...` and `composer:2@sha256:...`), and the README's "Updating image pins" says how to move them.
+(`php:8.4-cli-trixie@sha256:...` and `composer:2.11.1@sha256:...`), and the README's "Updating image pins" says how to move them.
 The exception is `php-test`: its matrix image `php:${PHP_VERSION}-cli-trixie` is still a tag, because each version would need its own digest.
 The template lint (`bin/lint-templates`, run by `composer ci`) fails on `latest` or tag-less images and warns on tag-only images, so a new template cannot drift back to an unpinned image without a reviewed `lint-allow.yml` entry.
 
@@ -527,6 +529,10 @@ metadata served by a malicious repository. Fixed versions are 2.9.6 and 2.2.27. 
 (2026-06-04), 2.10.2 (2026-07-01) and 2.10.3 (2026-08-27), including a Perforce URL injection (CVE-2026-84361) and a
 bin path symlink traversal (CVE-2026-59944). The mitigation advice in the news report is to run Composer only on projects
 from trusted sources.
+Composer 2.11.0 (2026-10-29) fixed two more: package names in `installed.json` that could escape the vendor directory
+(GHSA-c968-33g3-wh7p) and inline repository HTTP headers, such as API tokens, written into `composer.lock`
+(GHSA-fm2w-xgf2-f9fh). 2.11.1 (2026-10-30) fixed regressions only. Composer's maintenance table no longer lists 2.10.x,
+so the stack pins 2.11.1.
 Composer 2.10.0 also began enforcing `allow-plugins` for old lock files. The 2.10.3 and 2.11.0-RC1 details come from the
 Composer GitHub releases page, which was read in this pass. The CVE records on NVD were not read.
 
@@ -553,11 +559,21 @@ Sources: [Composer CLI: audit](https://getcomposer.org/doc/03-cli.md);
 
 **How the stack holds it: Checked.** The `composer-audit` job fails on Composer's exit code. Composer also fails on
 malware and, by its configured default, on abandoned packages, and PROCTOR's own audit check reads only advisories.
-The two can disagree. The job's image is digest-pinned (`composer:2@sha256:...`, see the README's "Updating image
+The two can disagree. The job's image is digest-pinned (`composer:2.11.1@sha256:...`, see the README's "Updating image
 pins"), so the rules depend on the pinned digest, not on where the `composer:2` tag points. Tested on that digest
-(Composer 2.10.3): `tests/check-composer-audit-fails` (run in CI by `must-fail-composer-audit`) runs the template's
+(Composer 2.11.1, and before it 2.10.3): `tests/check-composer-audit-fails` (run in CI by `must-fail-composer-audit`) runs the template's
 own lines and proves an advisory and a malware-flagged version exit 1 in every `abandoned` mode, an abandoned package
 exits 1 only in `fail` mode, and the clean fixture app exits 0.
+
+The front-end half is the `npm-audit` job: `npm audit --omit=dev --audit-level=high` (both inputs) on the app's
+`package-lock.json`, failing on npm's exit code with no `allow_failure`, then a full report with dev dependencies that
+never fails. It passes `--audit=true --offline=false`, because an `.npmrc` with `audit=false` or `offline=true` makes npm
+skip the request and print "found 0 vulnerabilities" (tested on npm 10.9.2). An unreachable registry fails the job; an
+app with no lock file passes with a "nothing to audit" line. `audit_level` takes CREED's `medium` and runs it as npm's
+`moderate`. `tests/check-npm-audit-fails` (run in CI by `must-fail-npm-audit`) runs the template's own script and proves
+a high advisory (lodash 4.17.20, GHSA-35jh-r3h4-6jhm) fails at `high` and `medium` and passes at `critical`, the
+`.npmrc` trap still fails, a dev-only finding fails only with `omit_dev: false`, and an unreachable registry fails a
+clean lock.
 
 Second pass, corrections and detail from Composer's current docs:
 
@@ -571,7 +587,7 @@ Second pass, corrections and detail from Composer's current docs:
   version already in a lock file fails the install. Packagist takes the data from Aikido (since March 2026).
 - Resolved by test: Composer's config page lists `policy.abandoned.audit` with default `fail` (and the older
   `audit.abandoned` defaulting to `fail` since Composer 2.7), while the Packagist 2.10 post says audit "only reports"
-  abandoned packages. The config page is right: on Composer 2.10.3, `composer audit --locked` exits 1 on
+  abandoned packages. The config page is right: on Composer 2.10.3 and 2.11.1, `composer audit --locked` exits 1 on
   `tests/audit-fixtures/abandoned` with no flag or `--abandoned=fail`, and 0 with `report` or `ignore` (see 7.2).
 - Malware, by test: `composer audit --locked` also reads Packagist's `malware` filter list (Composer's
   `policy.malware.audit`, default `fail`), and the `--abandoned` flag does not relax it: the malware fixture exits 1 in
@@ -601,7 +617,7 @@ Why: pipelines run faster, and an unreviewed branch cannot poison the cache that
 
 Sources: [GitLab: caching](https://docs.gitlab.com/ci/caching/).
 
-**How the stack holds it: Checked.** `php-test`, `proctor`, `pint`, `phpstan`, `sbom` and `squire-kit` cache Composer downloads in `.composer-cache/`, and `eslint` and `a11y` cache npm downloads in `.npm-cache/`, each under a fixed key: `preflight-php-${PHP_VERSION}` for `php-test`, one key per PHP version, and `preflight-proctor`, `preflight-pint`, `preflight-phpstan`, `preflight-sbom`, `preflight-squire-kit`, `preflight-eslint` and `preflight-a11y` for the rest. `tests/check-php-test-cache` (and its `.ps1` twin) fail if the key turns back into a lock-file hash or drops the PHP version, and `tests/check-proctor-cache` (and its `.ps1` twin) fail if the proctor key turns back into a lock-file hash. `composer-audit` still defines no cache. Every component cache also saves with `when: always`, so a retry after a dropped download fetches only what is missing, and `tests/check-dependency-cache` fails on a block without it.
+**How the stack holds it: Checked.** `php-test`, `proctor`, `pint`, `phpstan`, `sbom` and `squire-kit` cache Composer downloads in `.composer-cache/`, and `eslint` and `a11y` cache npm downloads in `.npm-cache/`, each under a fixed key: `preflight-php-${PHP_VERSION}` for `php-test`, one key per PHP version, and `preflight-proctor`, `preflight-pint`, `preflight-phpstan`, `preflight-sbom`, `preflight-squire-kit`, `preflight-eslint` and `preflight-a11y` for the rest. `tests/check-php-test-cache` (and its `.ps1` twin) fail if the key turns back into a lock-file hash or drops the PHP version, and `tests/check-proctor-cache` (and its `.ps1` twin) fail if the proctor key turns back into a lock-file hash. `composer-audit` still defines no cache. `npm-audit` installs nothing; it reads the app's own npm cache under the fixed key `npm` and path `.cache/npm/` (the ones Sourdough's generated pipelines use) with `policy: pull`, so it never overwrites what the install job downloaded. Every component cache also saves with `when: always`, so a retry after a dropped download fetches only what is missing, and `tests/check-dependency-cache` fails on a block without it.
 
 Second pass: GitLab appends `-protected` or `-non_protected` to every cache key. Pipelines on protected branches or tags,
 and pipelines started by a Maintainer or Owner, get `-protected`. The separation is on by default and GitLab calls it
@@ -620,12 +636,12 @@ Sources: [GitLab: pipeline security, shell tools](https://docs.gitlab.com/ci/pip
 [Composer: download, versioned releases with checksums](https://getcomposer.org/download/).
 
 **How the stack holds it: Enforced.** `proctor` and `php-test` install the Composer release named by the
-`composer_version` input (default `2.10.3`, which must match `^2\.\d+\.\d+$`), after checking the installer's SHA-384.
-`composer-audit` uses a digest-pinned `composer:2` image.
+`composer_version` input (default `2.11.1`, which must match `^2\.\d+\.\d+$`), after checking the installer's SHA-384.
+`composer-audit` uses a digest-pinned `composer:2.11.1` image.
 
 Second pass: this practice pulls two ways, and the guide should say so. A pinned Composer is repeatable, but Composer
-shipped security releases on 2026-04 (2.9.6), 2026-06-04 (2.10.1), 2026-07-01 (2.10.2) and 2026-08-27 (2.10.3), and
-2.11.0-RC1 (2026-10-22) lists more. Composer 2.2 is a long-term release that gets critical security fixes only, with a
+shipped security releases on 2026-04 (2.9.6), 2026-06-04 (2.10.1), 2026-07-01 (2.10.2), 2026-08-27 (2.10.3) and
+2026-10-29 (2.11.0), and 2.10.x is no longer maintained. Composer 2.2 is a long-term release that gets critical security fixes only, with a
 stated minimum maintenance date of 2026-12-31. So pin a version, and move the pin through a reviewed change (see 1.7). Do
 not pin and forget. Composer's download page publishes a SHA-256 file and a PGP signature for each versioned `composer.phar`.
 The page's own installer example now shows a fixed SHA-384 value and points to `composer.github.io/pubkeys.html` for
@@ -661,15 +677,17 @@ Why: 2026 had real Composer supply chain incidents. The Packagist team names the
 tokens used to move or add tags. Packagist now imports Aikido malware results (since March 2026) and is making stable
 versions immutable. The same post says `composer install` from an existing lock reproduces the locked commit hashes,
 while `update` and `require` can rewrite lock entries. It also says a minimum release age (cooldown) policy is designed
-but not available yet. Composer 2.10 deprecates falling back from a failed dist download to a source download, because
-that could install a version a repository had blocked, and 2.11.0-RC1 removes the `source-fallback` option. The runner
-images need `git` today (see the apt line in the templates), so check whether any app depends on the fallback.
+but not available yet; Composer 2.11.0 shipped it as `policy.cooldown`. 2.11 is now Preflight's default image, and the
+setting stays off: no component sets it, and whether apps should is CREED's call. Composer 2.10 deprecates falling back
+from a failed dist download to a source download, because that could install a version a repository had blocked, and
+2.11.0 removed the `source-fallback` option. No Preflight component sets it. The runner images need `git` today (see
+the apt line in the templates), so check whether any app depends on the fallback.
 
 Sources: [Packagist: supply chain security update](https://blog.packagist.com/an-update-on-composer-packagist-supply-chain-security);
 [Packagist: Composer 2.10 release](https://blog.packagist.com/composer-2-10-release/).
 
 **How the stack holds it: Checked.** `php-test` and `proctor` install the Composer release named by the `composer_version`
-input (default `2.10.3`), and `composer-audit` runs on a digest-pinned `composer:2` image, so the 2.10 behavior is chosen,
+input (default `2.11.1`), and `composer-audit` runs on a digest-pinned `composer:2.11.1` image, so the 2.11 behavior is chosen,
 not picked up by accident. The `contract` job keeps the defaults matched to `contract/inputs.json`, and
 `must-fail-composer-audit` proves the audit still fails a lock holding a malware-flagged version
 (`tests/audit-fixtures/malware`); reviewing lock changes after an `update` or `require` stays a human step.
@@ -687,7 +705,7 @@ Sources: [Semgrep: Shai-Hulud second wave](https://semgrep.dev/blog/2025/digging
 [Better Stack: Shai-Hulud](https://betterstack.com/community/guides/scaling-nodejs/shai-hulud-attack/). These were read as
 search summaries only, so details are unverified.
 
-**How the stack holds it: Documented.** README.md "Shared conventions" records the rule. The `eslint` component runs `npm ci --ignore-scripts`.
+**How the stack holds it: Documented.** README.md "Shared conventions" records the rule. The `eslint` component runs `npm ci --ignore-scripts`. The `npm-audit` component reads only the lock and runs no package code at all.
 
 ### 4.13 Generate a CycloneDX SBOM and validate it
 Produce a software bill of materials for every release, and fail the build on an invalid one.
@@ -777,7 +795,7 @@ Sources: [GitLab: CI/CD variables](https://docs.gitlab.com/ci/variables/);
 [GitLab: pipeline security, secrets](https://docs.gitlab.com/ci/pipeline_security/);
 [OWASP CICD-SEC-6 Insufficient Credential Hygiene](https://owasp.org/www-project-top-10-ci-cd-security-risks/).
 
-**How the stack holds it: Documented.** The thirteen templates use no secrets, which is good. Nothing fails if a later
+**How the stack holds it: Documented.** The fourteen templates use no secrets, which is good. Nothing fails if a later
 template adds one. The repository's own pipeline now runs GitLab's pipeline secret detection as an advisory job
 (`secret_detection` with `allow_failure: true`, kept in place by `tests/check-secret-detection.sh` and its `.ps1`
 twin); the plan is to make it blocking after a week of green pipelines. Whether it runs on the git.wayne.edu
@@ -981,8 +999,10 @@ Why: a component that never fails looks the same as one that works.
 Sources: [GitLab: components, testing](https://docs.gitlab.com/ci/components/).
 
 **How the stack holds it: Partly.** Ten components carry a fixture that must fail them, each kept in place by a
-check: `proctor` runs `tests/proctor-fails`, a fake proctor that prints one blocker finding and exits 1, against the
-clean stub in `tests/fixture-app` (`tests/check-proctor-fails`); `composer-audit` runs the template's own script
+check: `proctor` runs the template's own `--record` guard and command line on `tests/proctor-fails`, a fake proctor
+that prints one blocker finding and exits 1, against the clean stubs in `tests/fixture-app` (no `--record`, like
+PROCTOR 0.10.0) and `tests/proctor-record` (with it), and proves `proctor.json` is kept only when PROCTOR can write
+it (`tests/check-proctor-fails`); `composer-audit` runs the template's own script
 lines on `tests/audit-fixtures/advisory` (laravel/framework v9.0.0, which must fail naming CVE-2024-52301) and
 `tests/audit-fixtures/malware` (aikido/endpoint-test 0.0.1, Aikido's harmless package flagged on Packagist's malware
 list on purpose, which must fail naming it), both in every `abandoned` mode, and on `tests/audit-fixtures/abandoned`,
@@ -1044,7 +1064,9 @@ fixture, not an app's own checks.
 
 Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 
-1. 6.1: Make the `proctor` default command work (bundled policy), then add it to PROCTOR's and CREED's pipelines.
+1. Done: 6.1: The `proctor` default command works without `--policy` since PROCTOR 0.2.1 (`PROCTOR_POLICY`, then the
+   app's installed CREED policy, then the copy bundled with PROCTOR), and both PROCTOR's and CREED's pipelines include
+   `preflight/proctor@0.4.0`. 6.1 stays `Documented`, because no test in this repo runs the component.
 2. 7.2: Add a failing fixture for `package-publish`'s moved-version path (it needs a live registry). The other
    components have theirs, and Preflight's pipeline runs the real PROCTOR.
 3. Done: 3.3: PROCTOR's `preflight-pinned` and `preflight-gates` checks flag apps that skip, unpin or weaken
@@ -1094,7 +1116,7 @@ Added in the second pass (2026-10-27):
     request. A critical CI-related GitLab patch shipped on 2026-10-12.
 26. 6.2 (updated): Derive the PHP matrix from the policy, and add 8.6 to the policy path when it is released. The
     default list has already dropped 8.2.
-27. 4.9 and 4.6 (updated): Pin Composer to a named release with a reviewed bump path, and require 2.9.6 or later (2.10.3 is
+27. 4.9 and 4.6 (updated): Pin Composer to a named release with a reviewed bump path, and require 2.9.6 or later (2.11.1 is
     current), because of the April to August 2026 Composer security fixes.
 28. Done: 4.6 and 7.2 (updated): fixtures for an advisory, an abandoned package and a malware-flagged version run in
     `must-fail-composer-audit` (`tests/check-composer-audit-fails`), and 4.6 records the real exit codes; the conflict
