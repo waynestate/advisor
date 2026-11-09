@@ -56,70 +56,70 @@
 <tbody>
 <tr>
 <td><code>composer validate --strict</code></td>
-<td>2026-11-07</td>
-<td>aca9f6e</td>
+<td>2026-11-09</td>
+<td>7818dae</td>
 <td>pass: <code>./composer.json is valid</code></td>
 <td>1 s</td>
 </tr>
 <tr>
 <td><code>content:verify</code></td>
-<td>2026-11-07</td>
-<td>aca9f6e</td>
+<td>2026-11-09</td>
+<td>7818dae</td>
 <td>pass: <code>data/ is sound.</code></td>
-<td>5 s</td>
+<td>under 1 s</td>
 </tr>
 <tr>
 <td><code>stack-parts --check=README.md</code></td>
-<td>2026-11-07</td>
-<td>aca9f6e</td>
+<td>2026-11-09</td>
+<td>7818dae</td>
 <td>pass: the stack-parts block is up to date in 1 file</td>
-<td>1 s</td>
+<td>under 1 s</td>
 </tr>
 <tr>
 <td><code>phpunit</code></td>
-<td>2026-11-07</td>
-<td>aca9f6e</td>
-<td>pass: 249 tests, 1415 assertions, 1 skipped</td>
-<td>2:41</td>
+<td>2026-11-09</td>
+<td>7818dae</td>
+<td>pass: 282 tests, 1535 assertions, 1 skipped</td>
+<td>56 s</td>
 </tr>
 <tr>
 <td><code>pint --test</code></td>
-<td>2026-11-07</td>
-<td>aca9f6e</td>
-<td>pass: 109 files</td>
-<td>6 s</td>
-</tr>
-<tr>
-<td><code>site:agent-ready-check</code></td>
-<td>2026-11-07</td>
-<td>aca9f6e</td>
-<td>pass: 27 file(s) current</td>
+<td>2026-11-09</td>
+<td>7818dae</td>
+<td>pass: 111 files</td>
 <td>1 s</td>
 </tr>
 <tr>
+<td><code>site:agent-ready-check</code></td>
+<td>2026-11-09</td>
+<td>7818dae</td>
+<td>pass: 31 file(s) current</td>
+<td>under 1 s</td>
+</tr>
+<tr>
 <td><code>phpstan analyse</code></td>
-<td>2026-11-07</td>
-<td>aca9f6e</td>
+<td>2026-11-09</td>
+<td>7818dae</td>
 <td>pass: no errors</td>
-<td>57 s</td>
+<td>2 s</td>
 </tr>
 <tr>
 <td><code>composer audit</code></td>
-<td>2026-11-07</td>
-<td>aca9f6e</td>
+<td>2026-11-09</td>
+<td>7818dae</td>
 <td>pass: no security advisories</td>
 <td>1 s</td>
 </tr>
 <tr>
 <td><code>docs:check</code></td>
-<td>2026-11-07</td>
-<td>aca9f6e</td>
-<td>pass: 22 page(s) current</td>
-<td>6 s</td>
+<td>2026-11-09</td>
+<td>7818dae</td>
+<td>pass: 26 page(s) current</td>
+<td>under 1 s</td>
 </tr>
 </tbody>
 </table></div>
-<p>To refresh this table, re-run <code>composer ci</code> (or each command above) on the commit you want to record and rewrite the date, commit, results and durations. Every check this page names was run in Docker on 2026-11-07; none was skipped.</p>
+<p>Commit 7818dae is the 0.2.0 release. The skipped test is the private half of <code>PublicPostureTest</code>, which runs only when <code>ADVISOR_PRIVATE_DENYLIST</code> is set. To refresh this table, re-run <code>composer ci</code> (or each command above) on the commit you want to record and rewrite the date, commit, results and durations. Every check this page names was run on 2026-11-09 in Docker (<code>composer:2.11.1</code>, PHP 8.5) on a copy of the tracked files; none was skipped. The proof run (<code>bin/proof.php</code>, see the README) is dev tooling outside <code>composer ci</code> and was not run: it needs a corpus of app folders and the PROCTOR and Booster binaries.</p>
 <h2 id="the-command">The command<a class="docs-heading-link" aria-label="Link to this section" href="#the-command">#</a></h2>
 <pre tabindex="0"><code>composer ci
 </code></pre>

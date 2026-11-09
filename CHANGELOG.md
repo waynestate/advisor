@@ -4,6 +4,10 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Changed
+
+- Docs: the Proof page's "Last run" table records `composer ci` on the 0.2.0 release commit on 2026-11-09 (282 tests, 1535 assertions; the 2026-11-07 run had 249).
+
 ## [0.2.0] - 2026-11-09
 
 ### Added

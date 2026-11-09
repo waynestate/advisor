@@ -16,17 +16,17 @@ The same command runs on GitLab and GitHub.
 
 | Check | Date | Commit | Result | Duration |
 | --- | --- | --- | --- | --- |
-| `composer validate --strict` | 2026-11-07 | aca9f6e | pass: `./composer.json is valid` | 1 s |
-| `content:verify` | 2026-11-07 | aca9f6e | pass: `data/ is sound.` | 5 s |
-| `stack-parts --check=README.md` | 2026-11-07 | aca9f6e | pass: the stack-parts block is up to date in 1 file | 1 s |
-| `phpunit` | 2026-11-07 | aca9f6e | pass: 249 tests, 1415 assertions, 1 skipped | 2:41 |
-| `pint --test` | 2026-11-07 | aca9f6e | pass: 109 files | 6 s |
-| `site:agent-ready-check` | 2026-11-07 | aca9f6e | pass: 27 file(s) current | 1 s |
-| `phpstan analyse` | 2026-11-07 | aca9f6e | pass: no errors | 57 s |
-| `composer audit` | 2026-11-07 | aca9f6e | pass: no security advisories | 1 s |
-| `docs:check` | 2026-11-07 | aca9f6e | pass: 22 page(s) current | 6 s |
+| `composer validate --strict` | 2026-11-09 | 7818dae | pass: `./composer.json is valid` | 1 s |
+| `content:verify` | 2026-11-09 | 7818dae | pass: `data/ is sound.` | under 1 s |
+| `stack-parts --check=README.md` | 2026-11-09 | 7818dae | pass: the stack-parts block is up to date in 1 file | under 1 s |
+| `phpunit` | 2026-11-09 | 7818dae | pass: 282 tests, 1535 assertions, 1 skipped | 56 s |
+| `pint --test` | 2026-11-09 | 7818dae | pass: 111 files | 1 s |
+| `site:agent-ready-check` | 2026-11-09 | 7818dae | pass: 31 file(s) current | under 1 s |
+| `phpstan analyse` | 2026-11-09 | 7818dae | pass: no errors | 2 s |
+| `composer audit` | 2026-11-09 | 7818dae | pass: no security advisories | 1 s |
+| `docs:check` | 2026-11-09 | 7818dae | pass: 26 page(s) current | under 1 s |
 
-To refresh this table, re-run `composer ci` (or each command above) on the commit you want to record and rewrite the date, commit, results and durations. Every check this page names was run in Docker on 2026-11-07; none was skipped.
+Commit 7818dae is the 0.2.0 release. The skipped test is the private half of `PublicPostureTest`, which runs only when `ADVISOR_PRIVATE_DENYLIST` is set. To refresh this table, re-run `composer ci` (or each command above) on the commit you want to record and rewrite the date, commit, results and durations. Every check this page names was run on 2026-11-09 in Docker (`composer:2.11.1`, PHP 8.5) on a copy of the tracked files; none was skipped. The proof run (`bin/proof.php`, see the README) is dev tooling outside `composer ci` and was not run: it needs a corpus of app folders and the PROCTOR and Booster binaries.
 
 ## The command[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#the-command)
 
