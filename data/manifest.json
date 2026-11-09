@@ -59,11 +59,11 @@
             "source": "preflight/README.md"
         },
         "docs/proctor/best-practices.md": {
-            "sha256": "cd96db576cf3963305352057351c2231c27ad8a9e577c6a80751673299e6e6fb",
+            "sha256": "33d3d53bc885662275d2cf8d1a2601507aec55861b061452b9eef2b273f46a51",
             "source": "proctor/BEST_PRACTICES.md"
         },
         "docs/proctor/readme.md": {
-            "sha256": "11b6afcfca5e3228939cb69c7a7a3672f8cb5cc2c61d6a656d52500b6ddf9a03",
+            "sha256": "bb5fc0e4b367ef81fc160ddcc53077253964fba18ee7b348a2e10f5d561c883c",
             "source": "proctor/README.md"
         },
         "docs/rollcall/best-practices.md": {
