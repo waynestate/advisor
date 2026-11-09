@@ -30,7 +30,8 @@ HELMET main and Rollcall main, and five tags moved (practices 8, 17, 23, 34 and 
 Preflight 0.3.0, and the practices that name it (23 and 42) were re-read against 0.3.0. PROCTOR v0.1 is specified in
 `first-repos.md` and its checks are named below as specified. CREED's own pipeline includes the `php-test`,
 `composer-audit` and `proctor` components, pinned to Preflight 0.4.0; the `proctor` job checks `deploy/` and is
-allowed to fail while its current findings are fixed.
+allowed to fail while its current findings are fixed. Later on 2026-11-08, after a re-read of PROCTOR main and HELMET
+main, two more tags moved: practice 26 to `Checked` and practice 28 to `Partially`.
 
 ## 1. The version policy as data
 
@@ -444,11 +445,12 @@ Why: debug pages expose configuration values to users.
 
 Sources: [Laravel configuration docs](https://laravel.com/docs/13.x/configuration).
 
-How the stack holds it: `Documented`. `handbook/runtime-and-headers.md` and `handbook/secrets.md` write the rule.
-HELMET warns when the Laravel app boots with debug on in production (`helmet.debug_enabled_in_production`), and
-PROCTOR main's `app-debug` warns when a committed production env template (`.env.production`,
-`.env.squire.example`), a deploy file or a CI pipeline sets `APP_DEBUG` to true. It reads committed files only, never
-the deployed environment, and it is not in a PROCTOR release yet.
+How the stack holds it: `Checked`. PROCTOR main's `app-debug` warns when a committed production env template
+(`.env.production`, `.env.squire.example`), a file under `deploy/` or `deployments/`, or a CI pipeline sets
+`APP_DEBUG` to true. HELMET's Laravel adapter covers the running app: it warns at boot when debug is on in the
+production environment (`helmet.debug_enabled_in_production`). `handbook/runtime-and-headers.md` and
+`handbook/secrets.md` write the rule and name both. What neither sees: a server that sets `APP_DEBUG` outside the
+repository, in an app without HELMET. `app-debug` is on PROCTOR main and not in a release yet.
 
 ## 5. Overrides and rollout
 
@@ -481,11 +483,12 @@ Sources: none outside the stack. Second pass: the first pass also cited the GOV.
 security patches take priority and that teams should upgrade before EOL, but as read it does not describe `report`,
 `warn` and `block` stages, so the citation was removed and the staging is the stack's own design.
 
-How the stack holds it: `Documented`. The policy now has the field: its `gate` block holds a `default_stage` and
-per-check `stages` entries, each with a `from` date (it ships empty), `Policy::gateStage()` reads them
-(`tests/PolicyGateStageTest.php`), and `proctor gate` (PROCTOR 0.9.0) reports, warns or blocks each check by its
-stage. No rule has been staged yet, and the Citadel deploy gate that would run it on every release still needs the
-Citadel team.
+How the stack holds it: `Partially`. The policy's `gate` block holds a `default_stage` and per-check `stages` entries,
+each with a `from` date (it ships empty), and `Policy::gateStage()` reads them (`tests/PolicyGateStageTest.php`).
+`proctor gate` (PROCTOR 0.9.0) reports, warns or blocks each check by its stage, and it ratchets against the running
+deployment's baseline: a failure the baseline already had is held, not blocked, so a deploy that does not make things
+worse passes. What remains: no rule has been staged yet, and the Citadel deploy gate that would run `proctor gate` on
+every release still needs the Citadel team.
 
 ### 29. Name where each rule is enforced
 
@@ -1100,9 +1103,9 @@ These are places where a source disagrees with the repository or with an earlier
 10. Done: Preflight 0.2.0's `secret-detection` component runs Gitleaks and fails on a match (practice 24).
 11. Done: PROCTOR main's `env-outside-config` warns on `env()` outside `config/` (practice 25). Larastan's own rule in
     Pinstripe would catch it earlier, in the editor.
-12. Partly done: the runtime and headers chapter is written (practice 26), and PROCTOR main's `app-debug` warns on a
-    committed production template, deploy file or CI pipeline that sets `APP_DEBUG` to true; it waits for a PROCTOR
-    release, and nothing reads the deployed environment.
+12. Done: the runtime and headers chapter is written (practice 26), PROCTOR main's `app-debug` warns on a committed
+    production template, deploy file or CI pipeline that sets `APP_DEBUG` to true, and HELMET warns at boot when it is
+    on in production; `app-debug` waits for a PROCTOR release.
 13. Partly done: every handbook rule that uses an RFC 2119 capital carries a tag (a PROCTOR check ID, "Held by:" or
     "No check exists yet"), and the handbook lint fails on an untagged one; rules phrased without a capital are still
     to walk (practices 29 and 32).

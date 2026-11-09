@@ -147,7 +147,11 @@ What is on the bench today:
   (tagged), and they switch to `includes: vendor/waynestate/pinstripe/...` when WELD requires it
 - HELMET runs its security headers and CSP middleware in the global chain, so every response carries the baseline;
   the Vite build takes the per-request nonce; trusted proxies are a literal list in `bootstrap/app.php`; `/up` stays
-  Laravel's built-in health route
+  Laravel's built-in health route, and `/ready` (HELMET's readiness route, outside the web group, so no session
+  or cookie) answers 503 while the database, the cache or the scheduler heartbeat fails
+- Every queued job under `app/Jobs` declares `#[Tries]` and a `#[Timeout]` below the queue's `retry_after`
+  (`tests/Feature/JobLimitsTest.php` fails the suite otherwise), and `php artisan make:job` writes both
+  (`stubs/`: three tries, 45 seconds each)
 - SESAME owns sign-in at `/login` and `/logout`; the fake driver stands in for the identity provider locally, and
   CAS is an env change away
 - PROCTOR measures WELD against CREED's `policy.json` as a CI job (`composer proctor`): warnings pass, failures
@@ -161,6 +165,9 @@ PHPUnit class tests keep working and are converted only when you touch them. `co
 Feature tests to the Laravel app and a fresh database. The suite reads `.env` when it exists, otherwise `.env.example`
 (`tests/Support/SkipEnvFile.php`, the same file Sourdough ships), and runs on a fixed dummy `APP_KEY` set in `phpunit.xml`, so it boots
 with no `.env`; the app refuses that key in production, so a copied test config cannot ship. CI's `php-test` matrix runs `vendor/bin/pest`.
+A deprecation your code raises or causes fails the suite (`failOnDeprecation` in `phpunit.xml`), so the matrix's newest PHP finds it
+before an upgrade does; `tests/TestCase.php` hands deprecations to PHPUnit (`tests/Support/ReportsDeprecationsToPhpUnit.php`, from
+Sourdough), because Laravel's own handler drops them while testing.
 The accessibility gate runs Preflight's own checker (vendored in `tools/a11y/check.mjs`, pinned to the CI tag
 0.4.0 by `tests/Unit/A11yCheckerPinTest.php`) over every page under `site/` with axe-core 4.14.0 (WCAG 2.2 AA,
 light and dark, at 320 and 1280 px, plus the WCAG 1.4.10 reflow check), so a page that passes locally passes
