@@ -136,7 +136,7 @@ If PHP is not on your PATH, point the client at Docker instead. Run it from the 
         "ADVISOR_GROUPS=stack",
         "-e",
         "ADVISOR_READ_ONLY=1",
-        "composer:2.10.3",
+        "composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0",
         "php",
         "vendor/bin/advisor",
         "mcp"
@@ -317,7 +317,7 @@ from `vendor/waynestate/pinstripe`), `composer audit` and the docs site check (`
 resolves). No PHP on your machine? Use Docker:
 
 ```
-docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && composer ci"
 ```
 
 Tests drive the real SDK server in-process with a small MCP client, snapshot `tools/list`, and start
@@ -650,6 +650,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 #### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
+- Changed: the `wayneui-copies`, `composer-ci` and `content-drift` CI jobs and the documented Docker commands (README, MAINTAINING, Contributing, Docker, Proof) use `composer:2.11.1` pinned by its multi-arch list digest (`sha256:8de2184c...`; was `composer:2.10.3`). 2.10 is no longer maintained, and 2.11.1 fixes GHSA-c968-33g3-wh7p and GHSA-fm2w-xgf2-f9fh.
 - Docs: the Proof page's "Last run" table records `composer ci` on the 0.2.0 release commit on 2026-11-09 (282 tests, 1535 assertions; the 2026-11-07 run had 249).
 
 ### \[0.2.0\] - 2026-11-09[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-2-0-2026-11-09)
@@ -851,7 +852,7 @@ Development happens on git.wayne.edu, the canonical repository: [enterprise-apps
 With only Docker:
 
 ```
-docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && composer ci"
 ```
 
 Snapshot tests are updated with `ADVISOR_UPDATE_SNAPSHOTS=1` (`$env:ADVISOR_UPDATE_SNAPSHOTS = "1"` in PowerShell) before `vendor/bin/phpunit`.
@@ -1114,7 +1115,7 @@ If PHP is not on your PATH, point the client at Docker instead. Run it from the 
         "ADVISOR_GROUPS=stack",
         "-e",
         "ADVISOR_READ_ONLY=1",
-        "composer:2.10.3",
+        "composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0",
         "php",
         "vendor/bin/advisor",
         "mcp"
@@ -1951,7 +1952,7 @@ composer ci
 No PHP on your machine? Use Docker:
 
 ```
-docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
+docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && composer ci"
 ```
 
 ### composer validate --strict[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#composer-validate-strict)
