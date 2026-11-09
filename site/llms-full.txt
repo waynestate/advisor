@@ -648,6 +648,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 #### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
+- Added: docs/threats/ explains four threats (prompt injection, path traversal, command injection, data exfiltration), where each applies, the code and tests that stop it, and what risk is left (backlog row 16).
 - Changed: CI pins the Preflight components to 0.4.0 (the proctor job clones the full history, so the override-approver check can read git blame).
 - Changed: the deploy layer runs Squire's kit 0.7.1 (was 0.6.0): `.squire/php.ini` no longer sets the deprecated `session.sid_*` lines, web requests get a `disable_functions` list and Apache hardening (`.squire/php-web.ini`, `.squire/apache-hardening.conf`), and opcache gets production settings with `SQUIRE_OPCACHE_VALIDATE` as the one switch.
 - Changed: the front page deploy layer requires HELMET ^1.0 (lock at 1.0.1, was 0.4.0), like the rest of the stack; its shared front controller already runs on HELMET 1.0 in Squire, Sourdough and Pinstripe.
@@ -1304,6 +1305,8 @@ Source: https://advisor.apps.wayne.edu/docs/guides/safety.html
 ## Safety[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety)
 
 This page collects the safety rules ADVISOR enforces and the settings behind them, so you know what it will and will not do.
+
+Each control is also written up as a threat page: [prompt injection](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html), [path traversal](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html), [command injection](https://advisor.apps.wayne.edu/docs/threats/command-injection.html) and [data exfiltration](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html).
 
 ### Safety, in short[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety-in-short)
 
@@ -1979,6 +1982,169 @@ Fails when `site/docs/` is stale or a docs page has a broken link, block or nav 
 - [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
 - [Releasing](https://advisor.apps.wayne.edu/docs/deploying/releasing.html)
 - [Changelog](https://advisor.apps.wayne.edu/docs/changelog.html)
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/threats/command-injection.html
+
+## Command injection[#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#command-injection)
+
+An attacker who controls a tool argument wants ADVISOR to start a program or run a command the developer never approved, using the server's privileges on the developer's machine.
+
+### Where it applies in ADVISOR[#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#where-it-applies-in-advisor)
+
+Only two tools start a child process, and both do it on purpose:
+
+- `run_proctor_check` starts the app's own `vendor/bin/proctor` (`src/Security/ProctorRunner.php:58-63`).
+- `upgrade_path` starts Booster's `plan`, preferring the app's own `vendor/bin/booster` and falling back to the operator's configured path (`src/Security/BoosterRunner.php:96-118`).
+
+Everything the model sends for those tools flows into the argument list of one of those two commands, so the argument list is the attack surface. No other tool starts a process; the reference tools answer from bundled files only.
+
+The server usually runs on the developer's own machine, next to the credentials it protects, which is why no-shell matters here more than in a container.
+
+Both tools take a few extra arguments, but each is validated against a closed set before it reaches the command: the check ids against a fixed list (`src/Security/ProctorRunner.php:46-50`), and the version targets against strict patterns (`src/Security/BoosterRunner.php:37-45`).
+
+### What stops it[#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#what-stops-it)
+
+- **The program is fixed, not chosen.** The binary is located only in the project's own `vendor/bin` or the operator's configured setting; nothing a model sends picks which program runs (`src/Security/ProctorRunner.php:58-63`, `src/Security/BoosterRunner.php:96-118`). The fallback path must look like a PHP script or phar before it is accepted (`src/Security/BoosterRunner.php:107-113`, `src/Security/BoosterRunner.php:121-127`).
+- **The subcommand is part of the allowlist.** PROCTOR may only run `check` and Booster only `plan`; a third slot holding anything else is refused (`src/Security/CommandAllowlist.php:53`, `src/Security/CommandAllowlist.php:81`).
+- **Argument array, no shell.** The process runner hands Symfony Process an argv array with no stdin, so there is no shell to interpret spaces, semicolons or quotes (`src/Security/SymfonyProcessRunner.php:29-30`).
+- **The whole command shape is allowlisted.** Before anything runs, `CommandAllowlist` checks the exact shape `[php, script, subcommand, --option=value ...]`: only known options, each at most once, each value matched against a regex, and the required options present (`src/Security/CommandAllowlist.php:51-70` for PROCTOR, `src/Security/CommandAllowlist.php:79-98` for Booster; option tables at `src/Security/CommandAllowlist.php:20-26` and `src/Security/CommandAllowlist.php:35-42`). Booster's `run`, the subcommand that edits files, is deliberately absent (`src/Security/CommandAllowlist.php:28-31`).
+- **The run is capped.** A timeout stops a runaway child, and its output is truncated to 2 MB before it is read (`src/Security/SymfonyProcessRunner.php:16`, `src/Security/SymfonyProcessRunner.php:34-42`).
+
+The tests prove the refusals: another program, another script, another subcommand, an extra flag, a flag in the path slot, a bare argument, a changed format, a duplicate option, a timeout of `1;rm -rf /`, a missing policy and a single-dash option are all refused for PROCTOR (`tests/Security/CommandAllowlistTest.php:35-62`); Booster's `run` subcommand and a `--from-php=7.4;rm` value are refused the same way (`tests/Security/CommandAllowlistTest.php:83-103`). The contract test adds that no tool may be named like a shell or take a free-form command, code, sql or url argument (`tests/Contract/ServerContractTest.php:59-68`).
+
+A reviewer can check this by reading the two bad-command providers in `tests/Security/CommandAllowlistTest.php` and running `composer test`.
+
+### What is left[#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#what-is-left)
+
+The allowlist pins the shape of the command; it does not audit what the child program does. PROCTOR and BOOSTER run with full access to the project folder and their own logic, so a vulnerability in either one is outside this control.
+
+The environment handed to the child is scrubbed (see [Data exfiltration](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html)), and the timeout caps how long it runs, but neither limit stops a well-behaved-looking program from reading files inside the project, which is what it was started to do.
+
+A misconfigured machine can point `ADVISOR_BOOSTER_BIN` at a different PHP script; the allowlist still pins what it may be told to do, but the choice of program is then the operator's. And the allowlist is enforced inside ADVISOR, on the machine that runs it: a compromised ADVISOR install could simply stop calling it.
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html
+
+## Data exfiltration[#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#data-exfiltration)
+
+An attacker wants a secret (an environment variable, a token, a key, a file's contents) to leave the machine and land somewhere the model, a log, or a report can carry it out.
+
+### Where it applies in ADVISOR[#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#where-it-applies-in-advisor)
+
+Three channels could carry a secret out:
+
+- The child processes behind `run_proctor_check` and `upgrade_path` inherit the server's environment, and whatever they print becomes a tool result (`src/Security/SymfonyProcessRunner.php:18-29`).
+- Finding messages and plan warnings quote the project's own files (`src/Security/ProctorRunner.php:116`, `src/Security/BoosterRunner.php:209`).
+- The optional audit log records every tool call (`src/Server/AuditLog.php:19-34`).
+
+ADVISOR itself makes no network calls, so "out" means into the model's context or onto disk in a log; the client then decides what happens to that text (`docs/guides/safety.md:17`). A fourth, quieter channel is the tool descriptions and prompts the client reads before any call; they ship in the repo and are scanned for hidden characters (`tests/Contract/ServerContractTest.php:70-83`).
+
+### What stops it[#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#what-stops-it)
+
+- **Child processes get an allowlisted environment.** Only the names in `EnvAllowlist::NAMES` survive; everything else, including the app's `.env` values, tokens and cloud keys, is removed before the process starts (`src/Security/EnvAllowlist.php:18-24`, applied at `src/Security/SymfonyProcessRunner.php:29`).
+- **Secret-shaped text is redacted.** Every string that came from a child process or a project file passes through the redactor, which blanks credential-shaped `key=value` pairs, Bearer tokens, PEM private-key blocks and well-known token shapes (`src/Security/Redactor.php:15-25`, `src/Security/Redactor.php:27-40`; applied at `src/Security/ProctorRunner.php:82`, `src/Security/ProctorRunner.php:116`, `src/Security/ProctorRunner.php:142` and `src/Security/BoosterRunner.php:80`, `src/Security/BoosterRunner.php:209`).
+- **Paths in results are project-relative**, so a report does not reveal where the project lives on the host (`src/Security/ProctorRunner.php:127`, `src/Security/BoosterRunner.php:140`), and the policy file is described rather than located (`src/Security/BoosterRunner.php:172-174`).
+- **The audit log stores a hash of the arguments, never the arguments** (`src/Server/AuditLog.php:27`).
+- **`playbook_lookup` refuses secret-looking keys.** A key ending in SECRET, PASSWORD, TOKEN or KEY is refused before any source is consulted (`src/Playbook/Settings.php:17`, `src/Playbook/Settings.php:51-55`).
+- **Output is capped.** Child output beyond 2 MB is dropped before it is read, so a chatty process cannot flood the context with data (`src/Security/SymfonyProcessRunner.php:16`, `src/Security/SymfonyProcessRunner.php:38-42`).
+- **The server holds no secrets of its own.** ADVISOR needs no API keys; when the optional Playbook package is present it is the only holder of shared values, and the lookup tool is the only door to it.
+
+The tests prove the first two: `APP_KEY`, `DB_PASSWORD`, `AWS_SECRET_ACCESS_KEY` and `COMPOSER_AUTH` do not survive into a child environment while `PATH` does (`tests/Security/EnvAndRedactionTest.php:12-29`), and credential shapes plus a private-key block are blanked while plain words stay (`tests/Security/EnvAndRedactionTest.php:31-51`). The contract test keeps private-key blocks and token-shaped strings out of the repository text itself (`tests/Contract/ServerContractTest.php:101-110`).
+
+A reviewer can check the channels by reading `tests/Security/EnvAndRedactionTest.php` and the audit-log writer, and by running `composer test`.
+
+### What is left[#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#what-is-left)
+
+The redactor is pattern-based and blunt on purpose: a false positive costs a word, a miss costs a key (`src/Security/Redactor.php:7-9`). The patterns cover the shapes developers actually leak; they are not a general-purpose secret scanner. A secret that matches no known shape, such as an unusual variable name or a quoted value with no key, passes through.
+
+Files inside the project root remain readable by the child programs and quotable in their output; confinement decides where, not what. The environment allowlist is a whitelist of names, not values: an allowed name such as `PATH` is passed through untouched.
+
+Once a value reaches the model's context, the client's own logging, retention and network behavior decide the rest, which is outside ADVISOR's control. The audit log helps a developer spot an odd call after the fact, but it hashes the arguments rather than hiding them from the model, which already saw them.
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/threats/path-traversal.html
+
+## Path traversal[#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#path-traversal)
+
+An attacker who controls a tool's path argument wants to read files outside the project: private keys, credentials, neighboring projects, or enough of the disk layout to plan a next step.
+
+### Where it applies in ADVISOR[#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#where-it-applies-in-advisor)
+
+Two tools take a `path` argument, and both hand the resolved folder to a child program:
+
+- `run_proctor_check` runs the app's own PROCTOR on the given folder; the schema says the path must be inside the project root (`src/Tools/RunProctorCheck.php:30`).
+- `upgrade_path` runs Booster's read-only `plan` on the given folder, with the same constraint (`src/Tools/UpgradePath.php:31`).
+
+Both default to the project root itself, so even a call with no arguments goes through the guard. The guard's root comes from `ADVISOR_PROJECT_ROOT` and is fixed once when the server starts (`src/Server/Runtime.php:44`); nothing a model sends can move it.
+
+The schema caps the argument at 1024 characters, the same limit the guard enforces (`src/Tools/RunProctorCheck.php:30`, `src/Tools/UpgradePath.php:31`).
+
+PROCTOR and BOOSTER read whatever sits under the folder they are given, so that folder is the only boundary between their file access and the rest of the machine. The other tools take no path at all: `read_project_docs` takes a project id and a document name from closed lists (`src/Tools/ReadProjectDocs.php:27-28`), and the rest take no file input.
+
+### What stops it[#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#what-stops-it)
+
+- **Odd input is refused before resolution.** Empty paths, paths over 1024 characters and null bytes are rejected (`src/Security/PathGuard.php:39-41`), as are paths that start with `~` (`src/Security/PathGuard.php:42-44`).
+- **Parent segments are refused outright.** Any segment equal to `..`, under forward or back slashes, ends the call (`src/Security/PathGuard.php:45-49`).
+- **Resolution follows symlinks, then checks containment.** The path is resolved to its real location and must sit inside the resolved root (`src/Security/PathGuard.php:51-56`), so a symlink inside the project that points out of it fails the same way `../../` does.
+- **Missing and outside get the same error**, so a refusal does not map the disk for the attacker (`src/Security/PathGuard.php:53-55`).
+- **Prefix tricks fail.** Containment compares against the root plus a separator, so a sibling folder whose name merely starts with the root's is refused (`src/Security/PathGuard.php:69`), and on Windows the comparison is case-insensitive (`src/Security/PathGuard.php:64-67`).
+- **Drive-letter roots are handled.** Absolute-path detection covers `/`, `\` and `C:` style roots, so a Windows absolute path cannot slip past the prefix check (`src/Security/PathGuard.php:82-85`).
+- **The root itself is validated.** The constructor refuses a root that is not a directory, so the guard cannot be pointed at a file (`src/Security/PathGuard.php:20-27`).
+- **Output never shows the host layout.** Paths in results are rendered relative to the project root (`src/Security/PathGuard.php:73-80`, used at `src/Security/ProctorRunner.php:127` and `src/Security/BoosterRunner.php:140`).
+
+The tests prove each refusal: hostile paths covering `..` segments, nested and backslash parents, `~`, null bytes, absolute paths elsewhere, missing files and overlong strings (`tests/Security/PathGuardTest.php:43-63`); a same-prefix sibling folder (`tests/Security/PathGuardTest.php:65-72`); a symlink that leaves the project (`tests/Security/PathGuardTest.php:74-82`); and errors that never show the host layout (`tests/Security/PathGuardTest.php:84-92`). The contract test adds that no tool may be named like a shell command or take a free-form command, cmd, script, code, sql or url argument at all (`tests/Contract/ServerContractTest.php:59-68`).
+
+The same two tools are the only ones that start a process; see [Command injection](https://advisor.apps.wayne.edu/docs/threats/command-injection.html) for how their argument lists are pinned.
+
+### What is left[#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#what-is-left)
+
+Confinement is to the configured project root, and everything inside that root is readable by these tools by design, since they exist to inspect the app. The guard checks the path once per call; a symlink swapped in after the check, before PROCTOR or BOOSTER reads the file, is not caught, and a path that moves out later (a bind mount, a moved volume) is outside the guard's view.
+
+The guard also trusts the root it is given (`src/Security/PathGuard.php:20-27`): pointing `ADVISOR_PROJECT_ROOT` at a wide folder is an operator decision, and the guard will faithfully confine to it. Because the child programs run with normal file access inside the root, the guard decides where they may look, not what they may do with what they find.
+
+---
+
+Source: https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html
+
+## Prompt injection[#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#prompt-injection)
+
+An attacker who controls some of the text ADVISOR serves wants the model reading that text to follow hidden instructions, leak data, or trust a false answer.
+
+### Where it applies in ADVISOR[#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#where-it-applies-in-advisor)
+
+Every tool result is plain text that lands in the client model's context, so anything ADVISOR serves is a possible carrier for instructions aimed at the model:
+
+- `read_project_docs` serves bundled READMEs, best-practices guides and migration notes from the stack repositories (`src/Tools/ReadProjectDocs.php:23`).
+- `list_stack_rules` serves CREED handbook text, rule by rule (`src/Tools/ListStackRules.php:71`).
+- `run_proctor_check` returns finding messages that quote the project's own files (`src/Security/ProctorRunner.php:116`).
+- `upgrade_path` returns plan steps and warnings that come from the app's manifests (`src/Security/BoosterRunner.php:209`).
+- Tool descriptions, resources and prompts are also text the client reads before any call is made.
+
+The interesting cases are the ones the developer never typed: a document shipped in a stack repository, or a file inside the project that PROCTOR quotes back. Both reach the model inside an answer that looks like a trusted reference, which is exactly what makes them persuasive. The resources (the policy feed, the CREED chapter feeds and the guide feeds) serve the same hash-pinned content as the tools (`src/Module/CoreModule.php:52-83`).
+
+### What stops it[#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#what-stops-it)
+
+- **Answers are labeled as data.** Every result carries its `source` and a `generated_on` date, and the docs tool says outright that the text is reference material, not instructions (`src/Tools/ReadProjectDocs.php:63-64`, `src/Tools/ReadProjectDocs.php:68`). The rules tool repeats the point (`src/Tools/ListStackRules.php:76`).
+- **Decisions stay with PROCTOR.** PROCTOR reports say PROCTOR in CI decides pass or fail (`src/Security/ProctorRunner.php:131`), and Booster plans say they change nothing (`src/Security/BoosterRunner.php:180`), so a served answer cannot claim authority it does not have.
+- **Invisible characters are stripped and rejected.** Zero-width, bidirectional and TAG-block controls can hide instructions from a human reviewer. They are removed from child-process output before it is served (`src/Security/ProctorRunner.php:82`, `src/Security/BoosterRunner.php:209`) and refused in bundled content at start-up (`src/Content/ContentBundle.php:97-100`).
+- **The published surface is scanned.** Tools, resources and prompts are checked for hidden characters on every test run (`tests/Contract/ServerContractTest.php:70-79`), as are the shipped prompt files themselves (`tests/Contract/ServerContractTest.php:80-82`).
+- **Bundled content is hash-pinned.** Every file under `data/` must match its SHA-256 manifest hash or the server throws at start-up (`src/Content/ContentBundle.php:50-57`, `src/Content/ContentBundle.php:94-96`), so a served document cannot change between release and use.
+- **Tool metadata is snapshotted.** A quiet change to a tool name or description (tool poisoning) fails the snapshot test instead of shipping unnoticed (`tests/Server/McpServerTest.php:121-138`).
+- **ADVISOR talks to no one.** It makes no network calls and no model calls of its own (`docs/guides/safety.md:17`), so there is no second channel for served text to act through.
+
+The layers are deliberate: labeling tells the model what the text is, pinning keeps it stable, stripping removes the hidden channels, and the snapshot test makes quiet changes loud.
+
+A reviewer can check these controls without trusting this page: read the `notice` fields above, run `composer ci` (the contract and snapshot tests are part of it), and diff `tools/list` against the committed snapshot.
+
+### What is left[#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#what-is-left)
+
+Labels reduce the risk, but they do not make injected instructions inert. A client model can still be fooled by text it reads, especially text that quotes the project's own files in the middle of a plausible report, and ADVISOR's job is to make sure that text is labeled, pinned and clean, not to guarantee the model will ignore it.
+
+Hash pinning guarantees the text is what was released, not that it is harmless: a compromised upstream repository could ship a malicious document, and the manifest would bless it. Stripping invisible characters catches the sneaky encodings, not the plain-language ones. Nothing in ADVISOR can tell a well-written instruction from a well-written report. The client's own defenses, and the developer's review of what the model does with the text, are the last line.
 
 ---
 

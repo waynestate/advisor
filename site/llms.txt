@@ -35,6 +35,10 @@ Every page below is Markdown. The HTML pages send the same Markdown to a client 
 - [Commands | ADVISOR docs](https://advisor.apps.wayne.edu/docs/reference/commands.md): Every advisor command and what it does.
 - [Configuration | ADVISOR docs](https://advisor.apps.wayne.edu/docs/reference/configuration.md): Every ADVISOR environment variable, its default and its meaning.
 - [Proof | ADVISOR docs](https://advisor.apps.wayne.edu/docs/reference/proof.md): How ADVISOR is checked: composer ci and what each check proves.
+- [Command injection | ADVISOR docs](https://advisor.apps.wayne.edu/docs/threats/command-injection.md): A tool argument running a program nobody approved, and the allowlist that prevents it.
+- [Data exfiltration | ADVISOR docs](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.md): Secrets leaving the machine through tool answers, and the controls that block the channels.
+- [Path traversal | ADVISOR docs](https://advisor.apps.wayne.edu/docs/threats/path-traversal.md): A path argument reaching files outside the project, and the guard that confines it.
+- [Prompt injection | ADVISOR docs](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.md): Served text steering the AI client, and the controls that limit it.
 - [Troubleshooting | ADVISOR docs](https://advisor.apps.wayne.edu/docs/troubleshooting.md): Symptoms, causes and fixes for ADVISOR.
 - [Upgrading | ADVISOR docs](https://advisor.apps.wayne.edu/docs/upgrading.md): How to upgrade ADVISOR, version by version.
 

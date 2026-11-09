@@ -22,6 +22,10 @@
   <url><loc>https://advisor.apps.wayne.edu/docs/reference/commands.html</loc></url>
   <url><loc>https://advisor.apps.wayne.edu/docs/reference/configuration.html</loc></url>
   <url><loc>https://advisor.apps.wayne.edu/docs/reference/proof.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/threats/command-injection.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/threats/path-traversal.html</loc></url>
+  <url><loc>https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html</loc></url>
   <url><loc>https://advisor.apps.wayne.edu/docs/troubleshooting.html</loc></url>
   <url><loc>https://advisor.apps.wayne.edu/docs/upgrading.html</loc></url>
 </urlset>

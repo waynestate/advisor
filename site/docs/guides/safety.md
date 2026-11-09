@@ -10,6 +10,8 @@ generator: Squire agent-ready
 
 This page collects the safety rules ADVISOR enforces and the settings behind them, so you know what it will and will not do.
 
+Each control is also written up as a threat page: [prompt injection](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html), [path traversal](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html), [command injection](https://advisor.apps.wayne.edu/docs/threats/command-injection.html) and [data exfiltration](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html).
+
 ## Safety, in short[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety-in-short)
 
 - Off unless enabled; refuses production; refuses to start on a bad setting or a content file that fails its hash.
