@@ -29,7 +29,7 @@ Tags describe the repository and design documents as they stand on 2026-10-29. P
 HELMET main and Rollcall main, and five tags moved (practices 8, 17, 23, 34 and 53). Later that day the pin moved to
 Preflight 0.3.0, and the practices that name it (23 and 42) were re-read against 0.3.0. PROCTOR v0.1 is specified in
 `first-repos.md` and its checks are named below as specified. CREED's own pipeline includes the `php-test`,
-`composer-audit` and `proctor` components, pinned to Preflight 0.3.1; the `proctor` job checks `deploy/` and is
+`composer-audit` and `proctor` components, pinned to Preflight 0.4.0; the `proctor` job checks `deploy/` and is
 allowed to fail while its current findings are fixed.
 
 ## 1. The version policy as data
@@ -400,7 +400,7 @@ commit SHA, which it calls preferred, or to a release tag; it says to avoid `~la
 stack's own, from the first-repos design.
 
 How the stack holds it: `Partially`. `ci.md` states it, and CREED's `.gitlab-ci.yml` pins its three Preflight
-components (`php-test`, `composer-audit` and `proctor`) to the 0.3.1 tag. PROCTOR main's `proctor/preflight-pinned`
+components (`php-test`, `composer-audit` and `proctor`) to the 0.4.0 tag. PROCTOR main's `proctor/preflight-pinned`
 warns when an app includes a Preflight component at a branch, `~latest`, a partial version such as `0.3` or no ref; a
 full release tag (such as `@0.3.0`) or a full commit SHA passes. Components from anywhere else are not checked.
 
@@ -418,7 +418,7 @@ Sources: [OWASP Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.o
 
 How the stack holds it: `Partially`. `handbook/secrets.md` writes the rules. PROCTOR main warns on two kinds of committed
 secret: a real `.env` file or a real `APP_KEY` (`proctor/app-key/committed-env` and `committed-key`, practice 43) and a
-token written into a package source URL or `.npmrc` (`proctor/repo-url-credentials`). Preflight 0.3.1's
+token written into a package source URL or `.npmrc` (`proctor/repo-url-credentials`). Preflight 0.4.0's
 `secret-detection` component runs Gitleaks over the checked-out tree and fails the pipeline on a match, so an API key
 pasted into code is caught in an app that includes it. CREED's own pipeline does not include it yet, and rotation
 stays a process.
@@ -698,7 +698,7 @@ ships the script unchanged into every generated app (sourdough BEST_PRACTICES.md
 templates/squire/laravel/scripts/release.sh:419,436). The rest is written down only: the generated pipelines still run
 `npm install --no-audit --no-fund` (sourdough templates/laravel-inertia/.gitlab-ci.yml:82,
 templates/raw-vue/.gitlab-ci.yml:73), WELD's own CI runs `npm ci --no-audit --no-fund` (weld .gitlab-ci.yml:80),
-Preflight 0.3.1 has no component that audits `package-lock.json` (its thirteen templates are a11y, composer-audit,
+Preflight 0.4.0 has no component that audits `package-lock.json` (its thirteen templates are a11y, composer-audit,
 eslint, package-publish, php-test, phpstan, pint, portability, proctor, renovate, sbom, secret-detection and
 squire-kit), and the `audit_severity_threshold` rule is read by the Composer audit alone (proctor README.md:111), so the
 mapping between npm's `moderate` and Composer's `medium` is unwritten. (Sourdough grades the same release install
@@ -909,7 +909,7 @@ WayneUI's own gate is outside CREED and was not reviewed in this pass.
 
 Sources: [GitLab accessibility testing](https://docs.gitlab.com/ci/testing/accessibility_testing/).
 
-How the stack holds it: `Checked`. Preflight 0.3.1's `a11y` component opens the app's pages in Chromium (Playwright),
+How the stack holds it: `Checked`. Preflight 0.4.0's `a11y` component opens the app's pages in Chromium (Playwright),
 in light and dark at 320 and 1280 px, runs axe-core and fails the pipeline on any violation; CREED's pipeline pins
 the component to that tag and asks it for WCAG 2.2 AA (practice 54). It is axe-core, not GitLab's Pa11y job. CREED
 runs that same checker on its own site: `scripts/a11y.sh` and `scripts/a11y.ps1` drive the copy vendored in
@@ -947,7 +947,7 @@ Sources: the WSU developer standards, 2024 (an internal WSU document), [OWASP AS
 
 How the stack holds it: `Partially`. `handbook/secrets.md` writes the rule. PROCTOR main warns on committed env files and
 APP_KEYs (`proctor/app-key`, practice 43), on tokens in package source URLs (`proctor/repo-url-credentials`), and on
-dumps, backups, logs and env files in the served folder (`proctor/served-folder`, practice 59), and Preflight 0.3.1's
+dumps, backups, logs and env files in the served folder (`proctor/served-folder`, practice 59), and Preflight 0.4.0's
 `secret-detection` component fails a pipeline on a committed secret Gitleaks recognizes. What a log or an
 exception carries at runtime is not something a static check can see.
 

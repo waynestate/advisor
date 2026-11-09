@@ -475,7 +475,7 @@ In Docker, with no local PHP:
 docker run --rm -v "${PWD}:/app" -w /app composer:2.10.3 sh -c "composer install --no-interaction && composer ci"
 ```
 
-The accessibility gate runs Preflight's own checker (vendored from 0.3.1 and pinned by a test) against the front page and every docs page in a real Chromium browser inside Docker, so no host browser is needed: axe-core 4.14.0, light and dark at 320 and 1280 px, with the WCAG 1.4.10 reflow check, exactly what the a11y CI job checks. `sh scripts/a11y.sh` on Linux and macOS, `scripts\a11y.ps1` on Windows.
+The accessibility gate runs Preflight's own checker (vendored from 0.4.0 and pinned by a test) against the front page and every docs page in a real Chromium browser inside Docker, so no host browser is needed: axe-core 4.14.0, light and dark at 320 and 1280 px, with the WCAG 1.4.10 reflow check, exactly what the a11y CI job checks. `sh scripts/a11y.sh` on Linux and macOS, `scripts\a11y.ps1` on Windows.
 
 The unit suite checks the assertion against a mirror of SESAME's `gateway` driver rules
 (`tests/Support/SesameContract.php`). To check it against the real driver instead, point `SESAME_PATH`

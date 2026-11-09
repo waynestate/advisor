@@ -229,7 +229,7 @@ The tags describe the repo as it stands on 2026-11-02. Since 2026-10-28 the Squi
 - **Practice:** Preflight components are referenced by commit SHA or a fixed tag, not a moving branch.
 - **Why:** A moved branch changes your pipeline without a review.
 - **Sources:** [GitLab CI/CD include](https://docs.gitlab.com/ci/yaml/include/).
-- **Stack:** `Checked`. `.gitlab-ci.yml` pins every Preflight component to the 0.3.1 release tag (`@0.3.1` at `.gitlab-ci.yml:7`, `:14`, `:19`, `:28`, `:37`, `:47`, `:51`), and `.github/workflows/ci.yml:16` pins the reusable workflow to Preflight 0.1.4's commit SHA until that mirror carries a release tag.
+- **Stack:** `Checked`. `.gitlab-ci.yml` pins every Preflight component to the 0.4.0 release tag (`@0.4.0` at `.gitlab-ci.yml:7`, `:14`, `:19`, `:28`, `:37`, `:47`, `:51`), and `.github/workflows/ci.yml:16` pins the reusable workflow to Preflight 0.1.4's commit SHA until that mirror carries a release tag.
 
 ## Gaps for the backlog
 
