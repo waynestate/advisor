@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Waynestate\Advisor\Tools;
 
-use Waynestate\Advisor\Content\State;
 use Waynestate\Advisor\Exception\ToolInputError;
 use Waynestate\Advisor\Module\ModuleContext;
 use Waynestate\Advisor\Module\ToolDefinition;
+use Waynestate\Creed\State;
 
 /** Support dates from CREED's policy.json, with the state worked out for today. */
 final class PolicyLookup
@@ -52,14 +52,15 @@ final class PolicyLookup
                 }
 
                 $rows = [];
-                foreach ($policy->versions($component) as $key => $dates) {
+                foreach ($policy->versions($component) as $key) {
+                    $dates = $policy->line($component, $key) ?? [];
                     $rows[] = [
                         'version' => $key,
                         'active_until' => $dates['active_until'] ?? null,
                         'security_until' => $dates['security_until'] ?? null,
                         'latest_patch' => $dates['latest_patch'] ?? null,
                         'latest_patch_checked' => $dates['latest_patch_checked'] ?? null,
-                        'state' => $policy->stateOf($component, $key, $today)?->value,
+                        'state' => $policy->tryStateOf($component, $key, $today)?->value,
                     ];
                 }
 
@@ -73,14 +74,11 @@ final class PolicyLookup
                 if ($version !== null) {
                     $key = $policy->resolveVersion($component, $version);
                     if ($key === null) {
-                        $listed = $policy->versions($component);
-                        $listedKeys = array_map('strval', array_keys($listed));
-                        usort($listedKeys, static fn(string $a, string $b): int => version_compare($a, $b));
-                        $oldest = $listedKeys[0] ?? null;
+                        $oldest = $policy->versions($component)[0] ?? null; // CREED lists them oldest first
                         $askedMajorMinor = implode('.', array_slice(explode('.', $version), 0, 2));
                         if ($oldest !== null && version_compare($askedMajorMinor, $oldest, '<')) {
-                            $oldestState = $policy->stateOf($component, $oldest, $today);
-                            $oldestSecurityUntil = $listed[$oldest]['security_until'] ?? null;
+                            $oldestState = $policy->tryStateOf($component, $oldest, $today);
+                            $oldestSecurityUntil = $policy->line($component, $oldest)['security_until'] ?? null;
                             $note = "Older than every {$component} version the policy lists (oldest: {$oldest}"
                                 . ($oldestSecurityUntil !== null ? ", security support ended {$oldestSecurityUntil}" : '')
                                 . '), so it is past its end of life.';
@@ -99,8 +97,8 @@ final class PolicyLookup
 
                         throw new ToolInputError("The policy has no entry for {$component} {$version}. Call policy_lookup without a version to see the versions it covers.");
                     }
-                    $state = $policy->stateOf($component, $key, $today);
-                    $matched = $policy->versions($component)[$key] ?? [];
+                    $state = $policy->tryStateOf($component, $key, $today);
+                    $matched = $policy->line($component, $key) ?? [];
                     $answer['answer'] = [
                         'asked' => $version,
                         'matched' => $key,

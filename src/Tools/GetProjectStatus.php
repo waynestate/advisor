@@ -39,7 +39,7 @@ final class GetProjectStatus
                 $constraint = is_string($project['php'] ?? null) ? $project['php'] : null;
                 $floor = $constraint === null ? null : self::floor($constraint);
                 $floorKey = $floor === null ? null : $policy->resolveVersion('php', $floor);
-                $floorState = $floorKey === null ? null : $policy->stateOf('php', $floorKey, $today);
+                $floorState = $floorKey === null ? null : $policy->tryStateOf('php', $floorKey, $today);
 
                 return [
                     'project' => $project['id'],

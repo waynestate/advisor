@@ -7,6 +7,7 @@ namespace Waynestate\Advisor\Content;
 use Waynestate\Advisor\Exception\ContentException;
 use Waynestate\Advisor\Support\Invisible;
 use Waynestate\Advisor\Support\Json;
+use Waynestate\Creed\Policy;
 
 /**
  * The content ADVISOR serves, read from the bundled `data/` folder.
@@ -267,11 +268,11 @@ final class ContentBundle
         return $this->dir . '/policy.json';
     }
 
-    public function policy(): PolicyReader
+    public function policy(): Policy
     {
         $this->ensureVerified();
         $cached = $this->cache['policy'] ?? null;
-        if (!$cached instanceof PolicyReader) {
+        if (!$cached instanceof Policy) {
             $cached = PolicyReader::fromArray(Json::decodeFile($this->dir . '/policy.json'));
             $this->cache['policy'] = $cached;
         }

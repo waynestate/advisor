@@ -8,17 +8,19 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Waynestate\Advisor\Content\PolicyReader;
-use Waynestate\Advisor\Content\State;
+use Waynestate\Creed\Policy;
+use Waynestate\Creed\State;
 
 /**
- * Pins the boundary days of CREED's reader (waynestate/creed Policy::stateOf):
- * a version is Active through active_until, Security through security_until,
- * Eol for eol_grace_days after that, then EolGraceExpired. If CREED changes
- * those rules this test is where ADVISOR notices.
+ * Pins the boundary days of CREED's reader (waynestate/creed Policy::stateOf),
+ * which ADVISOR reads through PolicyReader: a version is Active through
+ * active_until, Security through security_until, Eol for eol_grace_days after
+ * that, then EolGraceExpired. If CREED changes those rules this test is where
+ * ADVISOR notices.
  */
 final class PolicyReaderTest extends TestCase
 {
-    private function reader(): PolicyReader
+    private function reader(): Policy
     {
         return PolicyReader::fromArray([
             'schema_version' => 1,
@@ -27,7 +29,6 @@ final class PolicyReaderTest extends TestCase
                     '8.1' => ['security_until' => '2025-12-31'],
                     '8.2' => ['active_until' => '2024-12-31', 'security_until' => '2026-12-31'],
                     '8.3' => ['active_until' => '2025-12-31', 'security_until' => '2027-12-31'],
-                    '9.0' => ['active_until' => '2030-01-01'],
                 ]],
                 'laravel' => ['versions' => ['13' => ['active_until' => '2027-09-17', 'security_until' => '2028-03-17']]],
             ],
@@ -60,8 +61,37 @@ final class PolicyReaderTest extends TestCase
 
     public function testDoesNotGuessWhenSecurityUntilIsMissing(): void
     {
-        $this->assertNull($this->reader()->stateOf('php', '9.0', $this->on('2026-01-01')));
-        $this->assertNull($this->reader()->stateOf('php', '1.0', $this->on('2026-01-01')));
+        // The line with no security_until lives in its own policy: CREED's
+        // oldestSupported() throws on a policy that holds one.
+        $r = PolicyReader::fromArray([
+            'schema_version' => 1,
+            'components' => ['php' => ['versions' => [
+                '8.1' => ['security_until' => '2025-12-31'],
+                '9.0' => ['active_until' => '2030-01-01'],
+            ]]],
+            'rules' => ['eol_grace_days' => 90],
+        ]);
+
+        $this->assertNull($r->tryStateOf('php', '9.0', $this->on('2026-01-01')));
+        $this->assertNull($r->tryStateOf('php', '8.5', $this->on('2026-01-01')), 'between listed lines is unknown');
+    }
+
+    public function testAVersionOlderThanEveryListedLineIsEol(): void
+    {
+        // CREED's rule; ADVISOR's old mirror answered null here.
+        $this->assertSame(State::Eol, $this->reader()->tryStateOf('php', '1.0', $this->on('2026-01-01')));
+    }
+
+    public function testAMarkedCurrentLineIsActive(): void
+    {
+        $r = PolicyReader::fromArray([
+            'schema_version' => 1,
+            'components' => ['vue' => ['versions' => ['3' => ['current' => true]]]],
+            'rules' => ['eol_grace_days' => 90],
+        ]);
+
+        $this->assertSame(State::Active, $r->tryStateOf('vue', '3', $this->on('2031-01-01')));
+        $this->assertSame('3', $r->oldestSupported('vue', $this->on('2031-01-01')));
     }
 
     public function testOldestSupportedSkipsEolVersions(): void

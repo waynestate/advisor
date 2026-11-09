@@ -173,6 +173,16 @@ final class ToolsTest extends TestCase
         $this->assertStringContainsString('The policy has no entry for php 9.9', $outcome->text);
     }
 
+    public function testPolicyLookupAnswersAMarkedCurrentLineAsActiveAsCreedDoes(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'policy_lookup', ['component' => 'vue', 'version' => '3']));
+
+        $this->assertSame('3', $data['answer']['matched']);
+        $this->assertSame('active', $data['answer']['state']);
+        $this->assertTrue($data['answer']['supported']);
+        $this->assertSame('3', $data['oldest_supported']);
+    }
+
     public function testListStackRulesFiltersAndCites(): void
     {
         $data = $this->data($this->call(Boot::core(), 'list_stack_rules', ['permutation' => 'laravel-inertia-vue']));
