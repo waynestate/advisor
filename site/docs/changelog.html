@@ -27,7 +27,7 @@
       <a href="../index.html#directions">Directions</a>
       <a href="../index.html#briefings">Briefings</a>
       <a href="../index.html#neighbors">Neighbors</a>
-      <a href="../docs/index.html" aria-current="page">Docs</a>
+      <a class="sheet-nav__docs" href="../docs/index.html" aria-current="page">Docs</a>
     </nav>
     <p class="sheet-head__meta"><span class="sheet-head__label">Sheet</span> 0.1.7</p>
   </div>
@@ -45,6 +45,7 @@
 <h2 id="unreleased">[Unreleased]<a class="docs-heading-link" aria-label="Link to this section" href="#unreleased">#</a></h2>
 <h3 id="changed">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></h3>
 <ul>
+<li>Fixed: the docs and the front page keep their Docs link in the header on a phone (it used to vanish below 900px with the section links), the docs sidebar opens scrolled to the page you are on with a thin scrollbar, Troubleshooting's symptoms are h2 headings under the h1 (they skipped to h3), and the Overview's tagline sits under its title.</li>
 <li>Added: docs/threats/ explains four threats (prompt injection, path traversal, command injection, data exfiltration), where each applies, the code and tests that stop it, and what risk is left (backlog row 16).</li>
 <li>Changed: CI pins the Preflight components to 0.4.0 (the proctor job clones the full history, so the override-approver check can read git blame).</li>
 <li>Changed: the deploy layer runs Squire's kit 0.7.1 (was 0.6.0): <code>.squire/php.ini</code> no longer sets the deprecated <code>session.sid_*</code> lines, web requests get a <code>disable_functions</code> list and Apache hardening (<code>.squire/php-web.ini</code>, <code>.squire/apache-hardening.conf</code>), and opcache gets production settings with <code>SQUIRE_OPCACHE_VALIDATE</code> as the one switch.</li>
@@ -132,7 +133,7 @@
 <p><code>owner_of</code> answers from an ownership table rebuilt from the stack's decisions, the one-owner-per-rule table first (version policy, lock file, <code>composer audit</code>, MySQL 5.6, <code>/up</code>, deploy files, CI contents, the parts list), then app wiring, sign-in and the coding standard. Every match carries <code>decision</code>, the decision it comes from, named by title and date. Rows gain <code>aliases</code> (&quot;composer.lock&quot;, &quot;.gitlab-ci.yml&quot;, &quot;/up&quot;), question words are ignored (&quot;who owns composer audit&quot; works), words match at word starts, and exact topic or alias matches come first. <code>content:verify</code> requires the decision and refuses an alias that names two rows.</p>
 </li>
 <li>
-<p><code>read_project_docs</code> trims image boilerplate again at read time, so docs bundled before a trim rule existed are served clean without editing <code>data/docs</code>. The trim (now <code>Content\ImageTrim</code>, shared with the generator) also drops linked hero images (<code>[![...](https://github.com/waynestate/advisor/-/blob/main/...)](...)</code>) and rows of nothing but badges, which the generator used to let through (Sourdough's README hero and badge row).</p>
+<p><code>read_project_docs</code> trims image boilerplate again at read time, so docs bundled before a trim rule existed are served clean without editing <code>data/docs</code>. The trim (now <code>Content\ImageTrim</code>, shared with the generator) also drops linked hero images (an image Markdown wrapped in a link) and rows of nothing but badges, which the generator used to let through (Sourdough's README hero and badge row).</p>
 </li>
 <li>
 <p>The Proof page records its last run.</p>

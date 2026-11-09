@@ -781,8 +781,10 @@ code, pre { font-family: var(--wsu-font-family-mono); }
   .bounds { grid-template-columns: minmax(0, 1fr); }
   .dir-extras, .dir-grid { grid-template-columns: minmax(0, 1fr); }
   .signpost { max-width: 26rem; }
-  .sheet-nav { display: none; }
-  .sheet-head__meta { margin-left: auto; }
+  /* The section links step aside on a narrow sheet; Docs stays, or a phone
+     would have no way into the docs at all. */
+  .sheet-nav a:not(.sheet-nav__docs) { display: none; }
+  .sheet-nav__docs { padding-block: 0.35rem; }
 }
 @media (max-width: 640px) {
   .grid-ref { display: none; }
@@ -810,6 +812,11 @@ code, pre { font-family: var(--wsu-font-family-mono); }
   .turn:not(:last-child)::before { left: 21px; top: 52px; }
   .hood { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .card { padding: var(--wsu-space-5); }
+}
+@media (max-width: 370px) {
+  /* Brand, Docs and the sheet number on one row at 320px. */
+  .sheet-head__row { gap: var(--wsu-space-3); }
+  .sheet-head__label { display: none; }
 }
 @media (max-width: 360px) {
   .hero__title { font-size: 3rem; }

@@ -7,7 +7,7 @@ description: Symptoms, causes and fixes for ADVISOR.
 
 This page lists the failure symptoms ADVISOR's own docs describe, with the cause, the fix and the command that checks it.
 
-### The advisor server is not in the list
+## The advisor server is not in the list
 
 You added the config, opened the project, and the `advisor` server is not in the list.
 
@@ -26,7 +26,7 @@ php vendor/bin/advisor doctor
 ```
 The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
 
-### The server refuses to start because it is not enabled
+## The server refuses to start because it is not enabled
 
 **Cause.** `ADVISOR_ENABLED` defaults to off. It must be `1` or `true`, or the server refuses to start.
 
@@ -37,7 +37,7 @@ The exit code is `0` when nothing failed and `1` when something did; `--json` pr
 php vendor/bin/advisor doctor
 ```
 
-### The server refuses to start in production
+## The server refuses to start in production
 
 **Cause.** `ADVISOR_ENV` reads `APP_ENV`, then `local`. `production` or `prod` always refuses to start.
 
@@ -48,7 +48,7 @@ php vendor/bin/advisor doctor
 php vendor/bin/advisor doctor
 ```
 
-### A bad setting stops the server
+## A bad setting stops the server
 
 **Cause.** A bad value stops the server with a message on stderr. It does not guess.
 
@@ -59,7 +59,7 @@ php vendor/bin/advisor doctor
 php vendor/bin/advisor doctor
 ```
 
-### The server refuses to start because a content file fails its hash
+## The server refuses to start because a content file fails its hash
 
 **Cause.** The bundled `data/` is verified at start-up against `data/manifest.json` (a SHA-256 for every file). If a file does not match, the server refuses to start rather than serve it.
 

@@ -978,7 +978,8 @@ body {
 /* --------------------------------------------------------- 11. responsive */
 
 @media (min-width: 760px) {
-  /* The sidebar stays in reach while the page scrolls. */
+  /* The sidebar stays in reach while the page scrolls. Its scrollbar is a
+     thin contour line, not a grey slab beside the legend. */
   .docs-nav--sidebar {
     position: sticky;
     top: 1.25rem;
@@ -986,18 +987,46 @@ body {
     max-block-size: calc(100vh - 2.5rem);
     overflow-y: auto;
     padding-inline-end: 0.25rem;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--a-muted) 45%, transparent) transparent;
+  }
+
+  /* The sidebar is taller than most screens, so on Troubleshooting or the
+     Changelog the current page used to sit below the fold of its own box.
+     It now opens scrolled to you-are-here. No script: a browser without
+     scroll-initial-target keeps the old start-at-the-top behavior. Only the
+     sidebar's own box scrolls; the page stays where it loaded. */
+  .docs-nav--sidebar a[aria-current="page"] {
+    scroll-initial-target: nearest;
+    scroll-snap-align: center;
   }
 }
 
-/* As on the front page: below 900px the section links step aside and the
-   sheet number moves to the edge. The docs menu below carries the pages. */
+/* As on the front page: below 900px the section links step aside, but Docs
+   stays, so a phone can still reach (and leave) the docs from the header. */
 @media (max-width: 900px) {
-  .sheet-nav {
+  .sheet-nav a:not(.sheet-nav__docs) {
     display: none;
   }
+}
 
-  .sheet-head__meta {
-    margin-left: auto;
+/* A small phone: the long titles ("Troubleshooting") fit whole instead of
+   breaking mid-word; hyphens are the backstop for a longer one. */
+@media (max-width: 400px) {
+  .docs-article h1 {
+    font-size: 2rem;
+    hyphens: auto;
+  }
+}
+
+/* A 320px sheet: brand, Docs and the version chip still fit on one row. */
+@media (max-width: 370px) {
+  .sheet-head__row {
+    gap: 0.75rem;
+  }
+
+  .sheet-head__label {
+    display: none;
   }
 }
 
@@ -1012,6 +1041,12 @@ body {
 
   .docs-article pre {
     font-size: 0.8125rem;
+  }
+
+  /* The title's hover-only "#" is the page's own address, and on a phone it
+     wrapped to a blank line of its own under a long title. */
+  .docs-article h1 .docs-heading-link {
+    display: none;
   }
 
   /* No room for a gutter: the Copy button drops under the code, full width,

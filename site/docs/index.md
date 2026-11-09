@@ -8,9 +8,9 @@ generator: Squire agent-ready
 
 # Overview[#](https://advisor.apps.wayne.edu/docs/#overview)
 
-This page tells you what ADVISOR is, how to run it, and where to go next.
-
 **What applies, and what's next.**
+
+This page tells you what ADVISOR is, how to run it, and where to go next.
 
 ADVISOR is an MCP server for the Wayne State application stack, a bit like Laravel Boost but for WSU. It orients a developer who is new to the stack and gives their coding agent nine read-only tools into it: the CREED standards and policy, PROCTOR results, the upgrade path, the WayneUI markup contract and migration guide, SESAME and HELMET guidance, and the parts list. Ask it "which PHP can I build on?" and it answers from the policy file, with the date and the source, instead of from whatever the model remembers.
 

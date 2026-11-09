@@ -5,9 +5,9 @@ description: ADVISOR in one page: what it is, who it is for, and where to go nex
 
 # Overview
 
-This page tells you what ADVISOR is, how to run it, and where to go next.
-
 <div align="center"><b>What applies, and what's next.</b></div>
+
+This page tells you what ADVISOR is, how to run it, and where to go next.
 
 ADVISOR is an MCP server for the Wayne State application stack, a bit like Laravel Boost but for WSU. It orients a developer who is new to the stack and gives their coding agent nine read-only tools into it: the CREED standards and policy, PROCTOR results, the upgrade path, the WayneUI markup contract and migration guide, SESAME and HELMET guidance, and the parts list. Ask it "which PHP can I build on?" and it answers from the policy file, with the date and the source, instead of from whatever the model remembers.
 
