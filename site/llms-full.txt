@@ -180,7 +180,7 @@ Nine tools, all read-only. Each one says where its answer came from:
 | `get_project_status` | One project: state, package, version, PHP constraint, its floor under today's policy, next step. |
 | `read_project_docs` | A project's README, best practices, or (WayneUI only) markup contract and 1.x to 2.x migration guide, paged. |
 | `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today, worked out by CREED's own reader (`waynestate/creed`), the one PROCTOR carries a copy of. A version older than every one the policy lists is answered as end of life, with a note. |
-| `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
+| `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation, chapter and a word query (`query: "session cookie"`). |
 | `owner_of` | Answers "which project owns X?" from the bundled ownership table, built from the stack's one-owner-per-rule decision first: the owner, its role, the projects around it, and the decision each answer comes from. Pass a topic or the whole question ("who owns composer audit"). |
 | `playbook_lookup` | A shared value by key, or every key: an environment variable of the same name wins, then Playbook; secret-looking keys are refused. |
 | `run_proctor_check` | Runs the app's own `vendor/bin/proctor check` against the bundled policy and returns the findings. |
@@ -440,7 +440,7 @@ ADVISOR has nine tools. These six are the ones you'll use most; the others are `
 - **`get_project_status`**: One project: its state, package, PHP constraint, its floor under today's policy, and its next step.
 - **`read_project_docs`**: A project's README or best practices, paged. For WayneUI, its markup contract too.
 - **`policy_lookup`**: Whether a PHP, Laravel, Node, MySQL, Vue or Inertia version is supported today, from CREED. For Composer, the minimum version.
-- **`list_stack_rules`**: CREED handbook rules with their file and line, filtered by your app's shape and by chapter.
+- **`list_stack_rules`**: CREED handbook rules with their file and line, filtered by your app's shape, by chapter, or by a few words such as `session cookie`.
 - **`run_proctor_check`**: Runs your app's own `vendor/bin/proctor check` against the bundled policy and returns the findings.
 
 #### Prompts
@@ -672,6 +672,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 - Added: `advisor doctor` has a `stdio` check: it starts `php bin/advisor mcp` as a child process, the way a client does, asks it to initialize, list its tools and answer one `policy_lookup` call, and passes only when every stdout line is JSON-RPC and the child exits 0. The pass line names the OS and PHP version, so one run on a Windows PHP answers open question 1. A `php-path` check says which `php` on the PATH a client will start, and warns when there is none or it is not the PHP running doctor (open question 10). Doctor still changes nothing and runs nothing from a config file.
 - Added: a `native-os` GitHub workflow runs `advisor doctor` (with its new stdio check) and the stdio and doctor tests on Windows and macOS, PHP 8.3 and 8.5, on every push to main and every tag, and writes doctor's output to the run summary. It is separate from `ci.yml`, so the CI badge still means `composer ci`; the full suite stays Linux only.
+- Added: `list_stack_rules` takes an optional `query` ("session cookie", or the whole question "what does the stack say about sessions?"): only the rules whose heading or text holds every word come back, matched case-insensitively at word starts, with question words and a plural s ignored. It combines with `permutation` and `chapter`, keeps the handbook order and paging, and says so when nothing matches. Still nine tools.
 - Site: Directions gains a fourth turn, "Get a check-up": `php vendor/bin/advisor doctor` and a healthy readout (doctor's own wording, abridged) whose lines ink in one by one, the stdio stamp landing last; with reduced motion the readout is simply there. The intro says "Three steps and a check-up".
 
 #### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
@@ -1515,7 +1516,7 @@ Nine tools, all read-only. Each one says where its answer came from:
 | `get_project_status` | One project: state, package, version, PHP constraint, its floor under today's policy, next step. |
 | `read_project_docs` | A project's README, best practices, or (WayneUI only) markup contract and 1.x to 2.x migration guide, paged. |
 | `policy_lookup` | Support state for a runtime or tool (and an optional version) from CREED, as of today, worked out by CREED's own reader (`waynestate/creed`), the one PROCTOR carries a copy of. A version older than every one the policy lists is answered as end of life, with a note. |
-| `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation and chapter. |
+| `list_stack_rules` | CREED handbook rules, each with its file and line, filtered by app permutation, chapter and a word query (`query: "session cookie"`). |
 | `owner_of` | Answers "which project owns X?" from the bundled ownership table, built from the stack's one-owner-per-rule decision first: the owner, its role, the projects around it, and the decision each answer comes from. Pass a topic or the whole question ("who owns composer audit"). |
 | `playbook_lookup` | A shared value by key, or every key: an environment variable of the same name wins, then Playbook; secret-looking keys are refused. |
 | `run_proctor_check` | Runs the app's own `vendor/bin/proctor check` against the bundled policy and returns the findings. |
@@ -2216,7 +2217,7 @@ An attacker who controls some of the text ADVISOR serves wants the model reading
 Every tool result is plain text that lands in the client model's context, so anything ADVISOR serves is a possible carrier for instructions aimed at the model:
 
 - `read_project_docs` serves bundled READMEs, best-practices guides and migration notes from the stack repositories (`src/Tools/ReadProjectDocs.php:23`).
-- `list_stack_rules` serves CREED handbook text, rule by rule (`src/Tools/ListStackRules.php:70-78`).
+- `list_stack_rules` serves CREED handbook text, rule by rule (`src/Tools/ListStackRules.php:90-99`).
 - `run_proctor_check` returns finding messages that quote the project's own files (`src/Security/ProctorRunner.php:116`).
 - `upgrade_path` returns plan steps and warnings that come from the app's manifests (`src/Security/BoosterRunner.php:209`).
 - Tool descriptions, resources and prompts are also text the client reads before any call is made.
@@ -2225,7 +2226,7 @@ The interesting cases are the ones the developer never typed: a document shipped
 
 ### What stops it [#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#what-stops-it)
 
-- **Answers are labeled as data.** Every result carries its `source` and a `generated_on` date, and the docs tool says outright that the text is reference material, not instructions (`src/Tools/ReadProjectDocs.php:63-64`, `src/Tools/ReadProjectDocs.php:68`). The rules tool repeats the point (`src/Tools/ListStackRules.php:76`).
+- **Answers are labeled as data.** Every result carries its `source` and a `generated_on` date, and the docs tool says outright that the text is reference material, not instructions (`src/Tools/ReadProjectDocs.php:63-64`, `src/Tools/ReadProjectDocs.php:68`). The rules tool repeats the point (`src/Tools/ListStackRules.php:97`).
 - **Decisions stay with PROCTOR.** PROCTOR reports say PROCTOR in CI decides pass or fail (`src/Security/ProctorRunner.php:131`), and Booster plans say they change nothing (`src/Security/BoosterRunner.php:180`), so a served answer cannot claim authority it does not have.
 - **Invisible characters are stripped and rejected.** Zero-width, bidirectional and TAG-block controls can hide instructions from a human reviewer. They are removed from child-process output before it is served (`src/Security/ProctorRunner.php:82`, `src/Security/BoosterRunner.php:209`) and refused in bundled content at start-up (`src/Content/ContentBundle.php:98-101`).
 - **The published surface is scanned.** Tools, resources and prompts are checked for hidden characters on every test run (`tests/Contract/ServerContractTest.php:70-79`), as are the shipped prompt files themselves (`tests/Contract/ServerContractTest.php:80-82`).

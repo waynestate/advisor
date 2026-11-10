@@ -100,6 +100,13 @@
                     ],
                     "description": "A CREED handbook chapter, or policy for the policy.json rules."
                 },
+                "query": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 80,
+                    "pattern": "^[A-Za-z0-9 ._/+#?-]+$",
+                    "description": "Words every returned rule must hold in its heading or text, for example \"session cookie\". Default: no filter."
+                },
                 "offset": {
                     "type": "integer",
                     "minimum": 0,
@@ -109,7 +116,7 @@
             },
             "additionalProperties": false
         },
-        "description": "Lists CREED handbook rules, each with the handbook file and line it comes from. Pass permutation (raw-php, raw-php-vue, laravel-blade, laravel-blade-vue, laravel-inertia-vue) to see only the rules that apply, and chapter to narrow further. Which permutation a rule applies to is worked out from its wording, so check the cited line before relying on it. Read-only; paged with next_offset.",
+        "description": "Lists CREED handbook rules, each with the handbook file and line it comes from. Pass permutation (raw-php, raw-php-vue, laravel-blade, laravel-blade-vue, laravel-inertia-vue) to see only the rules that apply, chapter to narrow further, and query (for example \"session cookie\") to keep only the rules whose heading or text holds every word of it (case-insensitive, matched at word starts; question words and a plural s are ignored). Which permutation a rule applies to is worked out from its wording, so check the cited line before relying on it. Read-only; paged with next_offset.",
         "annotations": {
             "title": "List the CREED rules for my app",
             "readOnlyHint": true,

@@ -245,6 +245,70 @@ final class ToolsTest extends TestCase
         }
     }
 
+    public function testListStackRulesQueryKeepsOnlyTheRulesThatHoldEveryWord(): void
+    {
+        $booted = Boot::core();
+        $all = $this->data($this->call($booted, 'list_stack_rules'));
+        $data = $this->data($this->call($booted, 'list_stack_rules', ['query' => 'session']));
+
+        $this->assertSame('session', $data['query']);
+        $this->assertGreaterThan(0, $data['total']);
+        $this->assertLessThan($all['total'], $data['total']);
+        $this->assertNull($all['query']);
+        foreach ($data['rules'] as $rule) {
+            $this->assertMatchesRegularExpression('/(?<![a-z0-9])session/', strtolower($rule['heading'] . ' ' . $rule['rule']), $rule['id']);
+            $this->assertStringStartsWith('creed/', $rule['cite']);
+        }
+    }
+
+    public function testListStackRulesQueryIgnoresQuestionWordsAndAPluralS(): void
+    {
+        $booted = Boot::core();
+        $plain = $this->data($this->call($booted, 'list_stack_rules', ['query' => 'session']));
+        $asked = $this->data($this->call($booted, 'list_stack_rules', ['query' => 'What does the stack say about sessions?']));
+
+        $this->assertSame(array_column($plain['rules'], 'id'), array_column($asked['rules'], 'id'));
+    }
+
+    public function testListStackRulesQueryNeedsEveryWordAndCombinesWithPermutation(): void
+    {
+        $booted = Boot::core();
+        $one = $this->data($this->call($booted, 'list_stack_rules', ['query' => 'session']));
+        $two = $this->data($this->call($booted, 'list_stack_rules', ['query' => 'session cookie']));
+        $this->assertLessThanOrEqual($one['total'], $two['total']);
+        foreach ($two['rules'] as $rule) {
+            $text = strtolower($rule['heading'] . ' ' . $rule['rule']);
+            $this->assertStringContainsString('session', $text);
+            $this->assertStringContainsString('cookie', $text);
+        }
+
+        $laravel = $this->data($this->call($booted, 'list_stack_rules', ['query' => 'session', 'permutation' => 'laravel-inertia-vue']));
+        $this->assertSame('laravel-inertia-vue', $laravel['permutation']);
+        $this->assertLessThanOrEqual($one['total'], $laravel['total']);
+        $this->assertSame(
+            array_values(array_intersect(array_column($one['rules'], 'id'), array_column($laravel['rules'], 'id'))),
+            array_column($laravel['rules'], 'id'),
+        );
+    }
+
+    public function testListStackRulesQueryWithNoMatchSaysSo(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'list_stack_rules', ['query' => 'zzyzx quokka']));
+
+        $this->assertSame(0, $data['total']);
+        $this->assertSame([], $data['rules']);
+        $this->assertNull($data['next_offset']);
+        $this->assertStringContainsString('fewer words', $data['note']);
+    }
+
+    public function testListStackRulesRejectsAQueryWithNothingToMatch(): void
+    {
+        $booted = Boot::core();
+        $this->assertTrue($this->call($booted, 'list_stack_rules', ['query' => 'what is the'])->isError);
+        $this->assertTrue($this->call($booted, 'list_stack_rules', ['query' => 'x'])->isError);
+        $this->assertTrue($this->call($booted, 'list_stack_rules', ['query' => 'session; rm -rf'])->isError);
+    }
+
     public function testOwnerOfFindsTheProjectThatOwnsATopic(): void
     {
         $data = $this->data($this->call(Boot::core(), 'owner_of', ['topic' => 'composer audit']));

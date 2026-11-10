@@ -65,7 +65,7 @@ ADVISOR has nine tools. These six are the ones you'll use most; the others are `
 - **`get_project_status`**: One project: its state, package, PHP constraint, its floor under today's policy, and its next step.
 - **`read_project_docs`**: A project's README or best practices, paged. For WayneUI, its markup contract too.
 - **`policy_lookup`**: Whether a PHP, Laravel, Node, MySQL, Vue or Inertia version is supported today, from CREED. For Composer, the minimum version.
-- **`list_stack_rules`**: CREED handbook rules with their file and line, filtered by your app's shape and by chapter.
+- **`list_stack_rules`**: CREED handbook rules with their file and line, filtered by your app's shape, by chapter, or by a few words such as `session cookie`.
 - **`run_proctor_check`**: Runs your app's own `vendor/bin/proctor check` against the bundled policy and returns the findings.
 
 ### Prompts

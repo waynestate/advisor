@@ -45,7 +45,7 @@
 <p>Every tool result is plain text that lands in the client model's context, so anything ADVISOR serves is a possible carrier for instructions aimed at the model:</p>
 <ul>
 <li><code>read_project_docs</code> serves bundled READMEs, best-practices guides and migration notes from the stack repositories (<code>src/Tools/ReadProjectDocs.php:23</code>).</li>
-<li><code>list_stack_rules</code> serves CREED handbook text, rule by rule (<code>src/Tools/ListStackRules.php:70-78</code>).</li>
+<li><code>list_stack_rules</code> serves CREED handbook text, rule by rule (<code>src/Tools/ListStackRules.php:90-99</code>).</li>
 <li><code>run_proctor_check</code> returns finding messages that quote the project's own files (<code>src/Security/ProctorRunner.php:116</code>).</li>
 <li><code>upgrade_path</code> returns plan steps and warnings that come from the app's manifests (<code>src/Security/BoosterRunner.php:209</code>).</li>
 <li>Tool descriptions, resources and prompts are also text the client reads before any call is made.</li>
@@ -53,7 +53,7 @@
 <p>The interesting cases are the ones the developer never typed: a document shipped in a stack repository, or a file inside the project that PROCTOR quotes back. Both reach the model inside an answer that looks like a trusted reference, which is exactly what makes them persuasive. The resources (the policy feed, the CREED chapter feeds and the guide feeds) serve the same hash-pinned content as the tools (<code>src/Module/CoreModule.php:52-83</code>).</p>
 <h2 id="what-stops-it">What stops <span class="docs-heading-tail"><span>it</span><a class="docs-heading-link" aria-label="Link to this section" href="#what-stops-it">#</a></span></h2>
 <ul>
-<li><strong>Answers are labeled as data.</strong> Every result carries its <code>source</code> and a <code>generated_on</code> date, and the docs tool says outright that the text is reference material, not instructions (<code>src/Tools/ReadProjectDocs.php:63-64</code>, <code>src/Tools/ReadProjectDocs.php:68</code>). The rules tool repeats the point (<code>src/Tools/ListStackRules.php:76</code>).</li>
+<li><strong>Answers are labeled as data.</strong> Every result carries its <code>source</code> and a <code>generated_on</code> date, and the docs tool says outright that the text is reference material, not instructions (<code>src/Tools/ReadProjectDocs.php:63-64</code>, <code>src/Tools/ReadProjectDocs.php:68</code>). The rules tool repeats the point (<code>src/Tools/ListStackRules.php:97</code>).</li>
 <li><strong>Decisions stay with PROCTOR.</strong> PROCTOR reports say PROCTOR in CI decides pass or fail (<code>src/Security/ProctorRunner.php:131</code>), and Booster plans say they change nothing (<code>src/Security/BoosterRunner.php:180</code>), so a served answer cannot claim authority it does not have.</li>
 <li><strong>Invisible characters are stripped and rejected.</strong> Zero-width, bidirectional and TAG-block controls can hide instructions from a human reviewer. They are removed from child-process output before it is served (<code>src/Security/ProctorRunner.php:82</code>, <code>src/Security/BoosterRunner.php:209</code>) and refused in bundled content at start-up (<code>src/Content/ContentBundle.php:98-101</code>).</li>
 <li><strong>The published surface is scanned.</strong> Tools, resources and prompts are checked for hidden characters on every test run (<code>tests/Contract/ServerContractTest.php:70-79</code>), as are the shipped prompt files themselves (<code>tests/Contract/ServerContractTest.php:80-82</code>).</li>

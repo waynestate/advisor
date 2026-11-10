@@ -15,7 +15,7 @@ An attacker who controls some of the text ADVISOR serves wants the model reading
 Every tool result is plain text that lands in the client model's context, so anything ADVISOR serves is a possible carrier for instructions aimed at the model:
 
 - `read_project_docs` serves bundled READMEs, best-practices guides and migration notes from the stack repositories (`src/Tools/ReadProjectDocs.php:23`).
-- `list_stack_rules` serves CREED handbook text, rule by rule (`src/Tools/ListStackRules.php:70-78`).
+- `list_stack_rules` serves CREED handbook text, rule by rule (`src/Tools/ListStackRules.php:90-99`).
 - `run_proctor_check` returns finding messages that quote the project's own files (`src/Security/ProctorRunner.php:116`).
 - `upgrade_path` returns plan steps and warnings that come from the app's manifests (`src/Security/BoosterRunner.php:209`).
 - Tool descriptions, resources and prompts are also text the client reads before any call is made.
@@ -24,7 +24,7 @@ The interesting cases are the ones the developer never typed: a document shipped
 
 ## What stops it [#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#what-stops-it)
 
-- **Answers are labeled as data.** Every result carries its `source` and a `generated_on` date, and the docs tool says outright that the text is reference material, not instructions (`src/Tools/ReadProjectDocs.php:63-64`, `src/Tools/ReadProjectDocs.php:68`). The rules tool repeats the point (`src/Tools/ListStackRules.php:76`).
+- **Answers are labeled as data.** Every result carries its `source` and a `generated_on` date, and the docs tool says outright that the text is reference material, not instructions (`src/Tools/ReadProjectDocs.php:63-64`, `src/Tools/ReadProjectDocs.php:68`). The rules tool repeats the point (`src/Tools/ListStackRules.php:97`).
 - **Decisions stay with PROCTOR.** PROCTOR reports say PROCTOR in CI decides pass or fail (`src/Security/ProctorRunner.php:131`), and Booster plans say they change nothing (`src/Security/BoosterRunner.php:180`), so a served answer cannot claim authority it does not have.
 - **Invisible characters are stripped and rejected.** Zero-width, bidirectional and TAG-block controls can hide instructions from a human reviewer. They are removed from child-process output before it is served (`src/Security/ProctorRunner.php:82`, `src/Security/BoosterRunner.php:209`) and refused in bundled content at start-up (`src/Content/ContentBundle.php:98-101`).
 - **The published surface is scanned.** Tools, resources and prompts are checked for hidden characters on every test run (`tests/Contract/ServerContractTest.php:70-79`), as are the shipped prompt files themselves (`tests/Contract/ServerContractTest.php:80-82`).
