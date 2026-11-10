@@ -958,5 +958,5 @@ pwsh -File tests/check-npm-audit-fails.ps1
 
 ## The cast
 
-<div align="center"><sub>Fourteen on the manifest, every one checked in. The README art is cut from the front page by
+<div align="center"><sub>Fifteen on the manifest, every one checked in. The README art is cut from the front page by
 <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>; no runways were painted in its making.</sub></div>

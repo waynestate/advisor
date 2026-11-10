@@ -44,7 +44,7 @@ npm ci
 ```
 
 `create-project` installs the newest tagged release, and `main` can be ahead of it (the [CHANGELOG](CHANGELOG.md)
-lists what is unreleased). The newest tag is 0.1.5; 0.1.3 (2026-11-06) was the first where WayneUI draws the app.
+lists what is unreleased). The newest tag is 0.2.0; 0.1.3 (2026-11-06) was the first where WayneUI draws the app.
 Clone when you want `main`.
 
 Or clone it, if you want the history too, and it is yours to rename:
@@ -232,6 +232,40 @@ a signed-in WayneUI dashboard in about four and a half minutes and to every CI g
 accessibility violations in 16 page checks, and one small Wayne State app was ported onto it. The run found a blank
 first page and a Windows `up` that emptied the local database; both are fixed, and the open findings are listed there.
 
+## Run it like Citadel
+
+`bin/weld.ps1 up` and `bin/weld.sh up` stay the everyday bench: the stock PHP image, SQLite and Vite reloading as you
+type. Sail and plain Docker Compose work too, and Parity does not replace them. When "it works here" has to mean "it works on Citadel", run the same
+folder on Citadel's own machinery with [Parity](https://git.wayne.edu/enterprise-apps/parity): Citadel's PHP image
+with its `php.ini` and `vhost.conf`, Citadel's proxy in front adding `X-Forwarded-For` and `X-Forwarded-Proto`, and
+MySQL 5.6, the version of Citadel's shared database server. Parity is one program for Windows, macOS and Linux on
+Podman (recommended) or Docker. It needs no PHP on your computer and adds one file to the app, `parity.json`.
+
+Stop the Compose stack first (`down`), so Vite's dev server is not in the way, and build the front end once, because
+Citadel serves built assets. Then, the same on every OS:
+
+```
+docker compose run --rm vite npm run build
+parity check
+parity init --mysql
+parity up
+parity shell --user citadel php artisan migrate
+parity test
+```
+
+`parity check` says what to fix on this computer, one finding per line. `parity init` writes `parity.json`, your
+app's Citadel settings (`--mysql` is Citadel's "MySQL: yes"). `parity up` builds and starts the app behind the proxy and
+prints its address, http://localhost:8080 unless you pick a port. Your folder is mounted where Citadel mounts it, so an
+edit shows on the next request, and the app gets Laravel's `DB_*` settings for the local MySQL, so `.env` keeps
+SQLite for the everyday bench. The migration runs as the `citadel` user, the way Citadel runs a release.
+`parity test` asks the running app what Citadel's users would, and `parity down` stops it with the data kept.
+
+No Citadel image on this computer yet? `parity image get` downloads it with your own git.wayne.edu access and checks
+it byte for byte, and `parity up --fallback` builds a labeled stand-in from the official PHP image meanwhile. Parity
+is at 0.1.0-rc.2 with 0.1.0 close, and its site is not up yet, so install it from the repository's releases. It
+takes over local runs from the parity kit in Squire. Same app, same folder, now in Citadel's own image: the
+bead looks identical under the hood, because it is the same hood.
+
 ## Oracle
 
 WELD speaks Oracle through `yajra/laravel-oci8`, and the wiring is already in: an `oracle` connection in
@@ -265,6 +299,9 @@ bound to `127.0.0.1`. It fails closed when `WELD_ORACLE_IMAGE` is unset.
 
 `squire/oracle-parity:8.3` is the name Squire documents for its parity image; build it once with Squire's
 `scripts/oracle-image-build.sh --flavour parity --php 8.3` (the name is a placeholder until a registry is chosen).
+
+Or skip the overlay: Citadel's own PHP image carries `oci8`, so [Run it like Citadel](#run-it-like-citadel) with
+Parity reaches Oracle the way the deployed app will (Parity's `--fallback` stand-in leaves `oci8` out).
 
 ## Check your setup
 
@@ -334,5 +371,5 @@ locally, point it at your own generation:
 
 ## The cast
 
-<div align="center"><sub>Fourteen parts, one bead. The README art is cut from the front page by
+<div align="center"><sub>Fifteen parts, one bead. The README art is cut from the front page by
 <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>; no sparks were drawn in its making.</sub></div>

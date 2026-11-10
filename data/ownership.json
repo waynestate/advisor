@@ -106,16 +106,19 @@
             "aliases": [
                 "deployments folder",
                 "health.php",
-                "parity kit",
                 "release scripts",
                 "Citadel deploy kit"
             ],
             "owner": "Squire",
-            "role": "the deploy kit: deployments/, health.php, the parity kit, the raw up.php and the release scripts, recorded in .squire.json and updated by squire update",
+            "role": "the deploy kit: build.sh, deployments/, health.php, the raw up.php and the release scripts, recorded in .squire.json and updated by squire update (its old local parity group is deprecated in favor of Parity)",
             "also": [
                 {
                     "project": "Sourdough",
                     "role": "composes Squire's templates and never writes a path .squire.json lists"
+                },
+                {
+                    "project": "Parity",
+                    "role": "runs build.sh, deployments/ and the health check on your computer the way Citadel does, and never writes them"
                 }
             ],
             "decision": "One owner per rule, copies are generated (stack decision, 2026-10-28)"
@@ -193,6 +196,30 @@
                 }
             ],
             "decision": "Sourdough owns an app's wiring to the stack, for the app's whole life (stack decision, 2026-10-27)"
+        },
+        {
+            "topic": "local development",
+            "aliases": [
+                "Parity",
+                "run Citadel locally",
+                "local Citadel",
+                "parity kit",
+                "Citadel images",
+                "Podman"
+            ],
+            "owner": "Parity",
+            "role": "the stack's local-development answer: runs Citadel on your own computer (Citadel's PHP image, Citadel's proxy and MySQL 5.6) for any app, with or without Squire, on Docker or Podman (Podman recommended); it replaces Squire's parity group, and `parity init --from-squire` carries the old kit's settings over",
+            "also": [
+                {
+                    "project": "Squire",
+                    "role": "keeps what goes onto Citadel (build.sh, deployments/, the release scripts); its parity group is deprecated and points at Parity"
+                },
+                {
+                    "project": "SESAME",
+                    "role": "its fake driver is how a local copy signs in without CAS"
+                }
+            ],
+            "decision": "Parity is its own stack project, a Go command line with an optional desktop app (stack decision, 2026-11-09)"
         },
         {
             "topic": "fleet census",

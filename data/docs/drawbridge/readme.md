@@ -44,6 +44,7 @@ as a gate, and decisions written down. WELD is the Laravel starter app with the 
 | HELMET | security headers and CSP reporting |
 | Sourdough | the starter that keeps the stack fed |
 | Squire | the Citadel deploy kit; the layer that serves this repo's front page is one |
+| Parity | Citadel on your computer: its PHP image, its proxy and MySQL 5.6, so an app that works here works on Citadel (0.1.0 coming) |
 | Preflight | the shared CI components |
 | Pinstripe | the coding standard presets (Pint, PHPStan, ESLint, Rector) |
 | Booster | upgrades an app's PHP, Laravel and front end, one hop at a time |

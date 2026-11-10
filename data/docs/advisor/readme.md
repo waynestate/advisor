@@ -56,6 +56,7 @@ that talks to your coding agent.
 | **Rollcall** | fleet census |
 | **Drawbridge** | sign-in gateway |
 | **Squire** | deploy kit |
+| **Parity** | Citadel on your computer |
 | **ADVISOR** | MCP server |
 | **WELD** | the Laravel starter app |
 
@@ -75,7 +76,7 @@ composer require --dev waynestate/advisor
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP
 command and not a shell script.
 
-ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.2`. No extra repository needed.
+ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.3`. No extra repository needed.
 
 ## Quick start
 

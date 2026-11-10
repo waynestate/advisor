@@ -572,5 +572,5 @@ Nothing on the cutting table right now: the banned calls link to their CREED rul
 
 ## The cast
 
-<div align="center"><sub>Fourteen parts, one fitting room. The README art is cut from the front page by
+<div align="center"><sub>Fifteen parts, one fitting room. The README art is cut from the front page by
 <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>; no suit was harmed, and every hem was pinned first.</sub></div>
