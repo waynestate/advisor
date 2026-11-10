@@ -11,7 +11,7 @@ Checks: `composer ci` (the same command runs in the GitLab pipeline and in the G
 Drawbridge is the sign-in gateway for the apps on Citadel, Wayne State's container platform. It is Apache with
 mod_auth_openidc, set up as one OpenID Connect client for Microsoft Entra ID. It is not live yet: its home will be
 `auth.apps.wayne.edu`, in front of every app on the platform, once the Citadel routing for it exists.
-The latest release, 0.6.0, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
+The latest release, 0.6.1, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
 checks that the visitor has a session, drops any identity header the visitor sent, and passes the app a
 short-lived signed assertion that SESAME's `gateway` driver verifies. Which paths need a login, and which need an
 Entra authentication context on top, is declared per app in a config file. Nothing else decides it.
@@ -272,6 +272,22 @@ rig\run.ps1 redis-rotation      # Windows
 sh rig/run.sh redis-rotation    # Linux, macOS
 ```
 
+The `multi` argument runs two gateway instances that share one Redis service and serve the same hosts, and rolls the
+redis-rotation steps across them one instance at a time (`MultiInstanceRotationTest`). On A, a session signed in
+through the first opens the app on the second. Mid-roll (the first on B current and A previous, the second still on A),
+that session opens both, and a session the second issues opens the first; but a session the first issues under B is
+sent to sign in by the second, which does not know B yet. Once both hold B and A, a session either one issues opens
+the app on the other. Last, A retires on both: both send the session from A back to sign in (a redirect, not an error
+page), and the sessions from B keep working on both.
+
+```powershell
+rig\run.ps1 multi      # Windows
+```
+
+```sh
+sh rig/run.sh multi    # Linux, macOS
+```
+
 When the rig is green, the next step is the first real sign-in: [ENTRA_TEST.md](ENTRA_TEST.md).
 
 ### Register Drawbridge in Entra ID
@@ -306,17 +322,17 @@ each open question E-1 to E-8.
 
 ## Getting the image
 
-The pipeline builds the gateway image on every merge request and on the default branch, and publishes it to the stack's image registry (the group's `images` project) when a tag is pushed. The image is at `<registry>/enterprise-apps/images/drawbridge-gateway:<tag>` (for example `<registry>/enterprise-apps/images/drawbridge-gateway:0.6.0`).
+The pipeline builds the gateway image on every merge request and on the default branch, and publishes it to the stack's image registry (the group's `images` project) when a tag is pushed. The image is at `<registry>/enterprise-apps/images/drawbridge-gateway:<tag>` (for example `<registry>/enterprise-apps/images/drawbridge-gateway:0.6.1`).
 `<registry>` is the stack's container registry; Enterprise Applications has its address. There is no `latest` tag: pin a release.
 
 ```sh
-docker pull <registry>/enterprise-apps/images/drawbridge-gateway:0.6.0
+docker pull <registry>/enterprise-apps/images/drawbridge-gateway:0.6.1
 ```
 
 The publish job prints the digest it pushed. Verify the image you pulled against it:
 
 ```sh
-docker inspect --format='{{index .RepoDigests 0}}' <registry>/enterprise-apps/images/drawbridge-gateway:0.6.0
+docker inspect --format='{{index .RepoDigests 0}}' <registry>/enterprise-apps/images/drawbridge-gateway:0.6.1
 ```
 
 The image carries OCI labels (`org.opencontainers.image.source`, `.revision`, `.version`, `.licenses`) set from the
@@ -451,12 +467,14 @@ The `gateway` block decides where the gateway sessions are kept:
   then survive a restart and a graceful reload (the rig's `redis` run proves the reload:
   `RedisTest::testSessionSurvivesAGatewayReload`; the last step of `redis-rotation` proves the restart:
   `RedisRotationTest::testRestartTheSessionSurvivesAGatewayRecreatedFromItsEnvironment`), and more than one gateway instance can serve the same
-  hosts when every instance points at the same Redis and uses the same passphrase. A passphrase change kept graceful
+  hosts when every instance points at the same Redis and uses the same passphrase (two instances in the rig:
+  `MultiInstanceRotationTest`). A passphrase change kept graceful
   by `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS` needs this store, and is proven by `rig/run.sh redis-rotation`
   (`RedisRotationTest`). The password never goes in the config file: it comes from `DRAWBRIDGE_REDIS_PASSWORD`.
 
-Changing the passphrase with the `redis` store, without signing anyone out (one instance in the rig; with several,
-change them all together):
+Changing the passphrase with the `redis` store, without signing anyone out (with several instances, take each step on
+all of them before the next; `rig/run.sh multi` proves it with two instances on one Redis, and shows that mid-step an
+instance still on the old value sends sessions sealed under the new one to sign in again, so roll them quickly):
 
 1. Set `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE_PREVIOUS` to the value in use now and `DRAWBRIDGE_OIDC_CRYPTO_PASSPHRASE`
    to a new one, then restart the gateway. Old sessions keep working; new sign-ins use the new value.

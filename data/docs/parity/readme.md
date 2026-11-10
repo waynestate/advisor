@@ -4,9 +4,10 @@
 that works here works on Citadel. "Works on my machine" finally means something, because your machine is now Citadel's
 twin.
 
-Parity is one program, `parity`, for Windows, macOS and Linux (x64 and arm64). It needs a container engine (Docker
-Desktop, Rancher Desktop, Podman, OrbStack, Colima or Docker Engine) and nothing else: no PHP, no Composer, no files in
-your app beyond one `parity.json`.
+Parity is one program, `parity`, for Windows, macOS and Linux (x64 and arm64). It needs a container engine, Podman
+Desktop (recommended, free) or Docker Desktop if you already have it, and nothing else: no PHP, no Composer, no files
+in your app beyond one `parity.json`. `parity check` also knows the other engines people already run (see
+[Docker or Podman](#docker-or-podman)).
 
 > Parity is a mirror, not a portrait: it shows Citadel as Citadel is, including the parts you would rather it did not.
 
@@ -23,8 +24,13 @@ parity test         smoke tests the running app through the proxy
 parity down         stops it (your data stays)
 ```
 
-No Citadel image yet? `parity up --fallback` builds an approximation from the official PHP image, so you can start
-today. It is labeled as an approximation everywhere it shows up: run the real image before you trust a release.
+Parity runs Citadel's own image and nothing else, because the whole point is to match Citadel. If Citadel has not
+published a download for your app's image yet, Parity says so and tells you what to do next. It will not hand you a
+look-alike and call it a twin; Citadel would never fall for that, and neither should you.
+
+Rather click than type? A desktop app comes in 0.2.0. It is not released yet: it is one window over the same Go code
+these commands run, and the [front page](https://parity.apps.wayne.edu/#commands) shows its screens next to each
+command's printout ([the desktop app guide](https://parity.apps.wayne.edu/docs/guides/desktop-app.html) has more).
 
 ## Install
 
@@ -62,12 +68,55 @@ curl -fsSL https://parity.apps.wayne.edu/install.sh | PARITY_NO_PATH=1 sh
 ```
 
 The files are `parity_<version>_<os>_<arch>.tar.gz` (`.zip` on Windows) for `windows`, `darwin` and `linux`, each
-`amd64` and `arm64`. The site goes live with Parity's Citadel app; until then, build it from this repository (below)
-or take a binary from a pipeline's `build` job.
+`amd64` and `arm64`, on Parity's site under `downloads/<version>/` (and `downloads/latest/` for the newest). Or build
+it from this repository (below), or take a binary from a pipeline's `build` job.
 
 0.1.0 ships unsigned, with checksums. Signed binaries come before the desktop app (0.2.0). Until then, a zip
 downloaded in a browser may meet SmartScreen ("More info", then "Run anyway", or `Unblock-File parity.exe`), and on a
 Mac an archive downloaded in a browser needs `xattr -d com.apple.quarantine parity`. The installers avoid both.
+
+## Docker or Podman
+
+Parity drives either, and recommends **Podman**: it is free (Docker Desktop needs a paid subscription at a university
+this size), it runs rootless by default, and Podman Desktop gives Windows and macOS a window to run it from. Docker
+Desktop works as well as ever, and so does any engine that answers the `docker` command (Rancher Desktop, OrbStack,
+Colima, Docker Engine); Parity just stops suggesting them. Either way the bubble sits in the middle.
+
+| OS | Install Podman |
+|---|---|
+| Windows | `winget install --id RedHat.Podman-Desktop -e`, then open Podman Desktop and let it set up Podman and its machine (WSL 2) |
+| macOS | `brew install --cask podman-desktop`, then the same |
+| Linux | your distribution's packages: `sudo dnf install podman docker-compose` (Fedora, RHEL) or `sudo apt-get install podman docker-compose-v2` (Ubuntu), then `systemctl --user enable --now podman.socket` |
+
+- **Which one Parity uses:** the engine that is running. With both running it takes Docker, so an existing Docker
+  setup keeps its databases, and `parity check` names the other. `parity engine podman` (or `docker`) saves a
+  choice for every app and the desktop app; `PARITY_ENGINE` overrides it for one terminal; `auto` is the default.
+- **Compose:** Parity drives Docker Compose v2 on both engines; on Podman, `podman compose` runs it. podman-compose
+  (the Python program) is a different tool, and Parity refuses it rather than half-work with it: `parity check` says
+  how to get Docker Compose. On Linux, Compose reaches Podman through Podman's API socket, which the `systemctl` line
+  above starts. Builds on Podman use the classic builder, because BuildKit's builder container cannot see the images
+  Podman holds; Parity sets that for you.
+- **Rootless Podman and your files (mount mode):** rootless means the container's root is you, not the computer's
+  root. Parity runs the app with `userns_mode: keep-id`, mapped to the image's `citadel` user, so inside the container
+  your files belong to `citadel`, as the source owner on Citadel, and the container still starts as root, as on
+  Citadel. As it starts, Parity gives the writable paths to Apache's group, group-writable, as Citadel's deploy does,
+  so Apache (`prisoner`), the deployments (`citadel`) and the cron entries (`prisoner`) can all write them. Files
+  Apache writes show on your side with a high user id from your subuid range; you can still delete them. Parity does
+  not use Podman's `:U` mount option, which would hand your folder on your own disk to the container's ids.
+- **Health checks:** Docker checks a starting container every 3 seconds (`start_interval`); Podman has no such
+  setting and, after a failed first check, waits the full 5 minutes. So on Podman `parity up` asks for a check while
+  it waits.
+- **Windows:** Podman runs in its own WSL 2 machine. Your folders are mounted into it, so a Windows path works as it
+  is, ports on `localhost` reach your browser, and edits show on the next request. Inside the container, files on
+  the Windows disk show as one owner with every permission (WSL's drvfs), so ownership questions do not come up. If
+  `parity check` says the machine is running but Podman in it is not answering, it says what to do: on a PC that
+  also runs Ubuntu with systemd in WSL, the two distros' user 1000 can collide (WSL distros share one cgroup tree).
+- **Apple Silicon:** Citadel's images are amd64 only. Podman's machine runs them with Rosetta when Rosetta is on (Podman
+  5.6 shipped with it off), else on slower QEMU emulation, which works. `parity check` gives the steps to turn Rosetta
+  on (macOS 26 or later).
+
+The Podman path is proven end to end on Linux: rootful and rootless, through `podman compose` and through `docker
+compose` on Podman's socket. Windows and macOS runs are on the release checklist ([MAINTAINING.md](MAINTAINING.md)).
 
 ## What Parity runs
 
@@ -90,10 +139,10 @@ no config). `--json` on the read commands is the stable contract.
 
 | Command | Status |
 |---|---|
-| `parity check [--json]` | works: engine (Docker Desktop, Rancher Desktop, Podman, OrbStack, Colima, Docker Engine), Compose v2, Linux containers mode, WSL 2, arm64 emulation (Rosetta, QEMU), Windows line endings in the files Citadel runs |
+| `parity check [--json]` | works: engine (Podman, machine or native, rootless or rootful; Docker Desktop; anything that answers the `docker` command) and any other engine that is here, `PARITY_ENGINE`, Docker Compose v2 (and Podman's API socket on Linux), Linux containers mode, WSL 2, arm64 emulation (Rosetta, QEMU), Windows line endings in the files Citadel runs; with a `parity.json` and a running engine it ends with the same side-by-side as `parity status` |
 | `parity init [--from-squire] [--print]` | works: writes `parity.json` from what is in the folder (with Laravel's scheduler as a cron entry when the app schedules anything); flags `--image`, `--public-dir`, `--mode`, `--mysql`, `--no-mysql`, `--sign-in`, `--no-cron`, `--port`, `--name`, `--force` |
-| `parity up [--fallback] [--verbose] [--wait 5m]` | works: Citadel's image (checked against the catalog), the build, MySQL 5.6.51, the app's deployments and health check, the proxy, then the address. Exit 1 when the app's own build, deployments or health check failed, 2 when Parity could not run it (no engine, no image, a port taken) |
-| `parity status [--json]` | works: each piece and its health. Exit 0 when all run and are healthy, 1 when not |
+| `parity up [--verbose] [--wait 5m]` | works: Citadel's image (checked against the catalog), the build, MySQL 5.6.51, the app's deployments and health check, the proxy, then the address. Exit 1 when the app's own build, deployments or health check failed, 2 when Parity could not run it (no engine, no image, a port taken) |
+| `parity status [--json]` | works: each piece and its health, then your machine and Citadel side by side (image, image id, PHP, platform, php.ini, MySQL, Node, PHP extensions). Exit 0 when all run and are healthy, 1 when not |
 | `parity logs [app\|mysql\|proxy\|cron:<name>] [-f] [--tail 100] [--apache]` | works; `--apache` shows Apache's own logs from `/citadel/logs/apache`, where Citadel keeps them; `cron:<name>` shows a cron entry's stdout and stderr files from `/citadel/logs/cron-jobs` |
 | `parity shell [--user citadel] [command...]` | works: a shell (or one command) in the app container, in `/citadel/src` |
 | `parity down [--volumes]` | works: stops the app; the database stays unless `--volumes` |
@@ -101,6 +150,7 @@ no config). `--json` on the read commands is the stable contract.
 | `parity image get [tag] [--file x.tar] [--git] [--https] [--keep] [--force]` | works: downloads Citadel's image with your own git.wayne.edu access, checks its sha256 and image id, loads it |
 | `parity image verify [tag] [--file x.tar]` | works: the image here (or a tar) against Citadel's. Exit 1 when it differs |
 | `parity test [--json]` | works: the front page through the proxy, the app's health check, the requests in `parity.json`, and no PHP fatal error in Apache's log while it ran. Exit 1 when any fails |
+| `parity engine [podman\|docker\|auto] [--json]` | works: says which engine Parity uses and why, or saves the choice for this computer (the desktop app reads the same setting); `PARITY_ENGINE` still wins where it is set |
 | `parity version [--json]` | works |
 
 `parity check` prints one line per finding and, under each one that needs it, the one fix Parity recommends for your
@@ -115,6 +165,27 @@ OS. It changes nothing. On this Windows PC with Docker Desktop:
   ✓ This machine runs Citadel's amd64 images natively.
 
   Ready. This computer can be Citadel's twin.
+```
+
+With a `parity.json`, `parity check` and `parity status` end with your machine and Citadel side by side, row for row
+what the desktop app shows. Node and the PHP extensions come from `php -m` and `node -v` in the running app container
+(or else the app image), compared with the catalog: Node is Close when only the minor differs, an extension that is
+missing Differs and one Citadel lacks is Close. The `--json` output does not change.
+
+```text
+  Your machine and Citadel  citadel/php-apache:8.5r3
+                     YOUR MACHINE                 CITADEL
+  ✓ Image            citadel/php-apache:8.5r3     citadel/php-apache:8.5r3     match
+  ✓ Image id         sha256:950dcf67937a          sha256:950dcf67937a          match
+  ✓ PHP              8.5.12                       8.5.12                       match
+  ✓ Platform         linux/amd64                  linux/amd64                  match
+  ✓ php.ini          Citadel's php8.ini           Citadel's php8.ini           match
+  ✓ MySQL            5.6.51                       5.6.51                       match
+  ✓ Node             22.23.4                      22.23.4                      match
+  ✓ PHP extensions   50 loaded                    50 loaded                    match
+    Node and PHP extensions read from the app image.
+
+  Matches Citadel.
 ```
 
 `parity up` brings each piece to life in turn and says what it did. On the same PC, `testdata/hello` with Citadel's
@@ -137,9 +208,9 @@ own image (a terminal shows a spinner on the step in progress; times show for st
   Stop    parity down
 ```
 
-With `--fallback` the Image line is a warning that names what the stand-in leaves out (oci8, imagick, ssmtp), and
-the last lines say to try Citadel's own image before a release. The first stand-in build takes a minute or two;
-after that it is cached.
+When the image is not on this computer, `parity up` stops at the Image line with exit 2. The hint is
+`parity image get`, or, when Citadel has not published a download for that tag yet, a line that says so: pick an
+image Parity can get, or ask the Citadel team to publish it.
 
 ### Getting Citadel's image
 
@@ -218,7 +289,7 @@ the dashboard. `parity init` writes it from what is in the folder; everything ha
 | `deployments` | deployments folder | `deployments/` when there is one |
 | `health_check` | health check command, run from the app folder | `php health.php` or `./health-check` when there is one |
 | `cron` | cron entries: `name` (short name), `schedule` (five fields), `command` (see [Cron entries](#cron-entries)) | Laravel's scheduler when the app schedules anything, else none |
-| `writable` | writable paths (bake mode) | Laravel's `storage` and `bootstrap/cache` |
+| `writable` | writable paths: Apache's group, group-writable, as Citadel's deploy leaves them (baked into the image in bake mode; set as the container starts in mount mode) | Laravel's `storage` and `bootstrap/cache` |
 | `config_files` | configuration files: `path` and `required_keys` (ini `section.key`, env `NAME`, json `a.b`) | none |
 | `environment`, `server_name`, `time_zone` | environment, host name, time zone | `local`, `<name>.apps.wayne.test`, `America/Detroit` |
 | `http_port` | (Parity's) the proxy's port on 127.0.0.1 | `8080` |
@@ -379,6 +450,9 @@ docker run --rm -v "${PWD}:/src" -w /src -v stack-go-cache:/go -e GOCACHE=/go/bu
 The canonical repository is [enterprise-apps/parity](https://git.wayne.edu/enterprise-apps/parity) on git.wayne.edu:
 issues, merge requests and tags happen there. A private GitHub repository receives a push mirror for Windows and
 macOS CI only; nobody pushes to it.
+
+The website and docs, https://parity.apps.wayne.edu/, are built from `site/` and `docs/` in this repository
+(MAINTAINING.md, "The site").
 
 Maintaining, releasing and the release checklist: [MAINTAINING.md](MAINTAINING.md). Changes: [CHANGELOG.md](CHANGELOG.md).
 License: MIT.

@@ -56,7 +56,7 @@ composer require --dev waynestate/pinstripe:^0.3
 Pinstripe loads its PHPStan rules through `phpstan/extension-installer`, and Composer will not ask when it cannot prompt.
 If Composer stops because a package your app already locks (often an older PHPStan) does not fit, run the same `composer require` again with `-W`, as Composer suggests, so it may update that package too.
 
-`^0.3` gets you 0.3.0, the current release, with every [banned call](#banned-calls) below. Packagist reads the GitHub
+`^0.3` gets you 0.3.1, the current release, with every [banned call](#banned-calls) below. Packagist reads the GitHub
 mirror, which can trail a release by a while. If Composer says it cannot find a 0.3 version, point it at the
 canonical repository first (it asks for your git.wayne.edu sign-in), then run the `composer require` again:
 
@@ -103,15 +103,39 @@ Add a second script that writes the report to a file:
 }
 ```
 
-Point GitLab at the artifact:
+Point GitLab at the artifact, and keep it when the job fails, which is exactly when it has something to show:
 
 ```yaml
 artifacts:
+    when: always
     reports:
         codequality: pint-codequality.json
 ```
 
 `--format=gitlab` writes GitLab's Code Quality JSON and `[]` when the code is clean, and Pinstripe tests both. Chalk marks wash out; these findings stay pinned to the merge request.
+
+### Show PHPStan findings in the merge request
+
+PHPStan writes the same report with its own `gitlab` error format:
+
+```json
+{
+    "scripts": {
+        "analyse:gitlab": "phpstan analyse --no-progress --error-format=gitlab > phpstan-codequality.json"
+    }
+}
+```
+
+```yaml
+artifacts:
+    when: always
+    reports:
+        codequality: phpstan-codequality.json
+```
+
+Each finding carries its identifier (`pinstripe.banned.joinedSql`, `argument.type`) as the check name. Pinstripe tests
+both sides: the raw preset turns the null bug fixture into a non-empty report and the clean fixture into `[]`. A
+fitting note, pinned where the reviewer is already looking.
 
 `composer lint` fails on style. `composer fix` fixes it. Pint's `per` preset is the PER Coding Style, and `tests/fixtures/per` keeps a clean and a messy proof.
 `composer analyse` runs PHPStan at level 8, with deprecation checks too.
@@ -232,10 +256,11 @@ Add a second script that uses the gitlab formatter:
 }
 ```
 
-Point GitLab at the artifact:
+Point GitLab at the artifact, and keep it when the job fails:
 
 ```yaml
 artifacts:
+    when: always
     reports:
         codequality: gl-codequality.json
 ```
@@ -349,8 +374,12 @@ with a variable in it does not (an `int` too: bind it). Laravel already types `D
 query builder's `whereRaw()`, `selectRaw()`, `orderByRaw()` and other raw methods as `literal-string`, so PHPStan
 reports a joined string there by itself (`argument.type`); Pinstripe covers the connection calls Laravel leaves as
 plain `string`. SQL that is safe but not literal (read from a `.sql` file, or a helper's return value) can say so: type
-the helper `@return literal-string`, or keep the call with a reasoned ignore. Postgres's `pg_query()` is not covered,
-since its connection argument is optional and the SQL has no fixed position.
+the helper `@return literal-string`, or keep the call with a reasoned ignore. Apps that keep their queries in `.sql`
+files clear every report with one typed reader; the
+[Banned calls](https://pinstripe.apps.wayne.edu/docs/reference/banned-calls.html#sql-kept-in-sql-files) page has it.
+A wrapper that takes the whole SQL as a plain `string` is reported once, inside, and never at its callers, so type its
+parameter `literal-string` and PHPStan checks each caller; never baseline a wrapper. Postgres's `pg_query()` is not
+covered, since its connection argument is optional and the SQL has no fixed position.
 
 Only the off switch is banned. Setting `CURLOPT_SSL_VERIFYPEER` to true, `verify` to a CA bundle, or `false` on an
 option that has nothing to do with TLS passes. The `curl_setopt()` ban is the one Pinstripe writes itself
@@ -391,7 +420,9 @@ and `dump()` methods in and must be reported for each, while its twin `SchemaDum
 streams, eight ways) and `VerifyFalse.php` (Laravel and Guzzle, five ways) must be reported for each, while their
 twins `SecureTransport.php` and `VerifiedHttp.php` stay green; `JoinedSql.php` (PDO, mysqli and oci8, nine ways)
 and `JoinedQueries.php` (Laravel, six of Pinstripe's and three of Laravel's own) must be reported for each, while
-`BoundSql.php` and `BoundQueries.php` bind their values and stay green; and the
+`BoundSql.php` and `BoundQueries.php` bind their values and stay green; `SqlFiles.php` reads its SQL from `.sql`
+files through a typed reader and wrapper and stays green, while `JoinedThroughAWrapper.php` must be reported at each
+joined caller; and the
 Laravel app fixture installs Pinstripe through Composer and must fail on a leftover `dd()` and on curl told to skip
 the certificate check, which proves the curl rule loads from `vendor/`. A suit with a `dd()` in
 the pocket does not leave the shop.

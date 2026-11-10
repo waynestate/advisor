@@ -44,7 +44,7 @@ npm ci
 ```
 
 `create-project` installs the newest tagged release, and `main` can be ahead of it (the [CHANGELOG](CHANGELOG.md)
-lists what is unreleased). The newest tag is 0.2.0; 0.1.3 (2026-11-06) was the first where WayneUI draws the app.
+lists what is unreleased). The newest tag is 0.2.1; 0.1.3 (2026-11-06) was the first where WayneUI draws the app.
 Clone when you want `main`.
 
 Or clone it, if you want the history too, and it is yours to rename:
@@ -120,7 +120,7 @@ Want a smaller starting point than a full Laravel app? Sourdough is the starter 
 | SESAME | Sign-in: CAS, Entra ID (OpenID Connect) and the auth gateway driver, and app-native sessions |
 | HELMET | The baseline runtime: security headers and CSP, sessions, trusted proxies, `/up` and the `/ready` readiness route |
 | ADVISOR | Dev only: the stack's read-only MCP server, so your coding agent knows the stack's rules and versions |
-| Squire | The deploy kit in `deploy/`, at 0.10.3: the Citadel image, an idempotent release script and one portable image for other hosts |
+| Squire | The deploy kit in `deploy/`, at 0.10.5: the Citadel image, an idempotent release script and one portable image for other hosts |
 | Laravel Boost | Dev only: the MCP server, guidelines and skills that teach your coding agent Laravel, with WELD's conventions in `.ai/` |
 | Ziggy | Route names as URLs: the route list ships inside the Vite bundle, so `route()` works in Vue templates and scripts without an inline script |
 
@@ -136,7 +136,7 @@ Want a smaller starting point than a full Laravel app? Sourdough is the starter 
 ## Status
 
 Every part is welded in: HELMET and SESAME are in `require`; CREED, Pinstripe, PROCTOR and ADVISOR are in
-`require-dev`; WayneUI 2.0.8 comes from npm; CI pins Preflight 0.5.0; the deploy layer runs Squire's kit 0.10.3.
+`require-dev`; WayneUI 2.0.8 comes from npm; CI pins Preflight 0.5.0; the deploy layer runs Squire's kit 0.10.5.
 Pinstripe's PHP presets are installed; its ESLint and Prettier presets move in once `@waynestate/pinstripe` 0.3.0 is
 on npm (the [status page](docs/reference/status.md#pinstripe-s-npm-half) has the steps). The bead is closed on the PHP side.
 What is on the bench today:
@@ -217,7 +217,7 @@ The same subcommands work on every OS:
 | Command | What it does |
 |---|---|
 | `up` | Bring the whole stack up, as above |
-| `down` | Stop and remove the containers |
+| `down` | Stop and remove the containers, and clear Vite's `public/hot` |
 | `test` | Run `composer ci` in the app container |
 | `doctor` | Run `php artisan weld:doctor` in the app container |
 | `logs` | Follow the container logs |
@@ -236,18 +236,44 @@ first page and a Windows `up` that emptied the local database; both are fixed, a
 
 `bin/weld.ps1 up` and `bin/weld.sh up` stay the everyday bench: the stock PHP image, SQLite and Vite reloading as you
 type. Sail and plain Docker Compose work too, and Parity does not replace them. When "it works here" has to mean "it works on Citadel", run the same
-folder on Citadel's own machinery with [Parity](https://git.wayne.edu/enterprise-apps/parity): Citadel's PHP image
+folder on Citadel's own machinery with [Parity](https://parity.apps.wayne.edu/): Citadel's PHP image
 with its `php.ini` and `vhost.conf`, Citadel's proxy in front adding `X-Forwarded-For` and `X-Forwarded-Proto`, and
 MySQL 5.6, the version of Citadel's shared database server. Parity is one program for Windows, macOS and Linux on
 Podman (recommended) or Docker. It needs no PHP on your computer and adds one file to the app, `parity.json`.
+Install it once from [its site](https://parity.apps.wayne.edu/), with no administrator needed. On Windows, in
+PowerShell:
 
-Stop the Compose stack first (`down`), so Vite's dev server is not in the way, and build the front end once, because
-Citadel serves built assets. Then, the same on every OS:
+```powershell
+irm https://parity.apps.wayne.edu/install.ps1 | iex
+```
+
+On macOS and Linux:
+
+```sh
+curl -fsSL https://parity.apps.wayne.edu/install.sh | sh
+```
+
+Stop the Compose stack first with `down`, which also clears `public/hot`, the note Vite's dev server leaves so pages
+load from it; left behind, it gives you a blank page under Parity. Build the front end once, because Citadel serves
+built assets. Then check this computer and write the app's Citadel settings, the same on every OS:
 
 ```
 docker compose run --rm vite npm run build
 parity check
 parity init --mysql
+```
+
+Add one line to `parity.json`, under `"mode"`, so the health check asks Laravel's `/up`, as Squire's `health.php`
+does on Citadel. Parity's default asks the front page, which needs the sessions table, and that table arrives with
+the migration below:
+
+```json
+"health_check": "curl -fsS -o /dev/null http://127.0.0.1/up",
+```
+
+Then bring it up, migrate as Citadel would, and test it:
+
+```
 parity up
 parity shell --user citadel php artisan migrate
 parity test
@@ -260,11 +286,17 @@ edit shows on the next request, and the app gets Laravel's `DB_*` settings for t
 SQLite for the everyday bench. The migration runs as the `citadel` user, the way Citadel runs a release.
 `parity test` asks the running app what Citadel's users would, and `parity down` stops it with the data kept.
 
+On a fresh database the front page answers 500 until the migration runs, so the first `parity up` ends on a warning
+that says so; on Windows its proxy step can time out on that page instead. Carry on with the migration: `parity
+test` is the word that counts. A folder on the Windows disk is slow inside the container: in the 2026-11-09 proof run
+a page took about 10 seconds, and `php artisan --version` 9 seconds against a quarter of a second from the
+container's own disk. Slow, but it holds.
+
 No Citadel image on this computer yet? `parity image get` downloads it with your own git.wayne.edu access and checks
 it byte for byte, and `parity up --fallback` builds a labeled stand-in from the official PHP image meanwhile. Parity
-is at 0.1.0-rc.2 with 0.1.0 close, and its site is not up yet, so install it from the repository's releases. It
-takes over local runs from the parity kit in Squire. Same app, same folder, now in Citadel's own image: the
-bead looks identical under the hood, because it is the same hood.
+0.1.0 is live, and [its docs](https://parity.apps.wayne.edu/docs/) have the rest. It takes over local runs from the
+parity kit in Squire. Same app, same folder, now in Citadel's own image: the bead looks identical under the hood,
+because it is the same hood.
 
 ## Oracle
 
@@ -328,7 +360,7 @@ Several stack commands sound alike (`weld:doctor`, `squire doctor`, `proctor che
 |---|---|---|---|
 | `composer ci` | **Will my pipeline pass?** The repo's own CI contract, the same command the pipeline runs: validation, the tests, Pint, PHPStan, `composer audit` and whatever checks the repo adds. | Before every push. | App repo, CI |
 | `bin/weld.sh doctor` or `.\bin\weld.ps1 doctor` (both run `php artisan weld:doctor`) | **Does my WELD app hold together?** The app key, writable `storage` and `bootstrap/cache`, the database connection and pending migrations. One PASS, WARN or FAIL line each; exit 1 on a FAIL. Standards are PROCTOR's. | After `up`, when the app will not start, and after every deploy off Citadel. | App repo (in the app container), deploy host (in the app container) |
-| `vendor/bin/squire doctor` | **Is my Citadel release setup right?** `build.sh`, the release scripts, the health check, script hygiene, line endings, secrets kept out of git and the local parity setup, against Squire's rules. Exit 1 on a failed rule. The lock file, audit and MySQL 5.6 checks are handed to PROCTOR. | After `squire init` or `squire update`, and before the first deploy. | App repo, CI |
+| `vendor/bin/squire doctor` | **Is my Citadel release setup right?** `build.sh`, the release scripts, the health check, script hygiene, line endings and secrets kept out of git, against Squire's rules; for the deprecated parity kit it says one thing: local runs are [Parity](https://parity.apps.wayne.edu/)'s job now (`parity check`). Exit 1 on a failed rule. The lock file, audit and MySQL 5.6 checks are handed to PROCTOR. | After `squire init` or `squire update`, and before the first deploy. | App repo, CI |
 | `vendor/bin/squire init --check` | **Have the files Squire wrote drifted from its templates?** Missing, outdated or edited copies. Writes nothing; exit 1 on drift. | After you upgrade Squire (then run `squire update`), and in CI. | App repo, CI |
 | `vendor/bin/squire doctor oracle`, or `php artisan oracle:check` in WELD and Sourdough's Laravel apps | **Can my app reach Oracle?** The `ORACLE_*` settings, the host, the port, the `oci8` driver and the login, in plain language, printing setting names and never values. Silent when the app has no Oracle settings. | After you fill in the `ORACLE_*` settings, or when a connection fails. Squire's `release.sh` runs the same check on every release, as a report. | App repo, deploy host |
 | `vendor/bin/proctor check` (`composer proctor` in WELD and Sourdough's apps) | **Does my app meet CREED's policy?** The PHP floor, Laravel, Node and MySQL end of life, the committed lock, `composer audit`, open-ended constraints, portability, MySQL 5.6 safety, overrides and the rest of its checks. Exit 1 on a FAIL. | Before you merge; the pipeline runs it too. | App repo, CI |

@@ -2858,7 +2858,7 @@
             "id": "secrets-1",
             "chapter": "secrets",
             "heading": "Credentials",
-            "text": "Credentials (database and service passwords, API keys, tokens) MUST NOT be committed to version control, because history keeps them forever. Commit `.env.example` with placeholders instead. A credential that was ever committed is treated as exposed and rotated (WSU developer standards, 2024). PROCTOR checks: `app-key` (a committed `.env` or `APP_KEY`) and `repo-url-credentials` (a token in a package source URL). The general secret scan is Preflight's `secret-detection` component (0.4.0), which runs Gitleaks over the tree and fails the pipeline on a match.",
+            "text": "Credentials (database and service passwords, API keys, tokens) MUST NOT be committed to version control, because history keeps them forever. Commit `.env.example` with placeholders instead. A credential that was ever committed is treated as exposed and rotated (WSU developer standards, 2024). PROCTOR checks: `app-key` (a committed `.env` or `APP_KEY`) and `repo-url-credentials` (a token in a package source URL). The general secret scan is Preflight's `secret-detection` component (Preflight 0.5.0), which runs Gitleaks over the tree and fails the pipeline on a match.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",

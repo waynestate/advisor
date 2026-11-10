@@ -743,9 +743,9 @@ Sources: [GitLab dependency scanning](https://docs.gitlab.com/user/application_s
 
 How the stack holds it: `Documented`. The rule is written in `handbook/code.md`: the stack's GitLab instances run the
 Free tier, so nothing relies on GitLab SAST. Both instances, nougat and git.wayne.edu, are GitLab 19.5.1 Community
-Edition (the Free tier). The three components CREED
-uses run PHPUnit (`php-test`), `composer audit` (`composer-audit`) and PROCTOR (`proctor`), not a GitLab scanner
-(their Preflight 0.3.0 templates were read on 2026-11-08), so they fit it.
+Edition (the Free tier). The four components CREED uses run PHPUnit (`php-test`), `composer audit`
+(`composer-audit`), PROCTOR (`proctor`) and axe-core in Playwright (`a11y`), not a GitLab scanner (Preflight 0.5.0,
+the pin in `.gitlab-ci.yml`), so they fit it.
 
 ### 43. Treat `APP_KEY` as a code-execution key
 

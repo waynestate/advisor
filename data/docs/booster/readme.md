@@ -19,8 +19,9 @@ php ../booster.phar plan
 php ../booster.phar run --dry-run
 ```
 
-Those three change nothing. `run` makes the edits (it needs git, a clean working copy and Docker for the test gate)
-and never commits. The file sits one folder up so it stays out of the app's git; on Windows PowerShell, type
+Those three change nothing. Run `composer install` in the app first: without `vendor/`, Rector and PHPStan cannot
+see the classes your packages provide, so `plan` and the dry run preview less and open with a warning saying so.
+`run` makes the edits (it needs git, a clean working copy and Docker for the test gate) and never commits. The file sits one folder up so it stays out of the app's git; on Windows PowerShell, type
 `curl.exe` instead of `curl`. Keeping it on your PATH, a clone, and Docker only (no PHP) are under [Install](#install).
 
 **Not to be confused with:** Booster moves an app to a newer PHP or framework version; Pinstripe's Rector set only modernizes code within the PHP version the app already runs.
@@ -60,12 +61,18 @@ WELD is the Wayne State application stack. Booster is its upgrade layer.
 | WayneUI (project 0) | The interface layer every other part builds on |
 | CREED | The version policy (`policy.json`) Booster reads |
 | PROCTOR | Measures an app against that policy; the gate runs it before the first hop and after the last |
-| Preflight | The CI templates |
 | SESAME | Auth; Booster can swap `wayne-cas` for it |
 | HELMET | The baseline runtime |
-| Pinstripe | The coding standard |
 | Sourdough | The starters |
+| Squire | The Citadel deploy kit; the layer that serves this repo's front page is one |
+| Parity | Citadel on your computer: its PHP image, its proxy and MySQL 5.6, so an app that works here works on Citadel (0.1.0 coming) |
+| Preflight | The CI templates |
+| Pinstripe | The coding standard |
 | Booster | This project: moves apps forward |
+| Rollcall | The fleet census: which apps run what, and how close each is to end of life |
+| Drawbridge | The one OpenID Connect front door for the Citadel |
+| ADVISOR | The read-only MCP server that answers a coding agent's stack questions |
+| WELD | The Laravel starter app with the rest of the stack already set up |
 
 It works for all five permutations of the stack: raw PHP, raw PHP with a Vue SPA, Laravel with Blade, Laravel with
 Blade and Vue islands, and Laravel with Inertia and Vue.
@@ -156,7 +163,7 @@ Run these from inside the booster folder.
 This route can run `detect`, `plan`, `scan` and `run --dry-run`. A real `run` starts Docker and uses git from inside
 Booster, which the `php:8.4-cli` image lacks, so for a real run use the single-file or clone route (in WSL on Windows). When
 Booster itself runs in a container, pass `--skip-gate` to `run` and run the tests yourself. Node hops run `npm` in a
-`node:26` container, so they need the same daemon but no Node installed on the machine.
+`node:<major>` container (26 unless the plan pins another Node), so they need the same daemon but no Node installed on the machine.
 
 Booster prints its progress lines on standard error. In Windows PowerShell they print in red, as if they were errors. They are not errors; the exit code tells you whether the run worked.
 
@@ -235,7 +242,7 @@ Some hops come along by default, and some only when you ask:
 - `--skip <hop id>` drops a hop you do not want.
 - If you pass a target past security support, the plan still goes there as a stop on the way up and warns with the date its support ended. If Rector has no ruleset for a step yet, the plan stops short and warns.
 
-`run` handles each hop the same way: a Rector preview, then the edits (if a hop would change more than 200 files it asks first, or stops when it cannot ask; `--max-changes` sets a hard limit), then the Composer constraints, then your tests in the target PHP image. That last part is the gate. The first hop that fails stops the run, and the hops after it are reported as "not run". Booster never commits; the changes sit in your working copy for you to review. Progress prints one line per hop, like `hop 3/11 <hop id>: <status>, 12 files, 41 s`, and ends with `run finished: 11 of 11 hops run, 0 stopped, ...`.
+`run` handles each hop the same way: a Rector preview, then the edits (if a hop would change more than 200 files it asks first, or stops when it cannot ask; `--max-changes` sets a hard limit), then the Composer constraints, then your tests in the target PHP image. That last part is the gate. The first hop that fails stops the run, and the hops after it are reported as "not run". Fix the cause, commit (with the `booster-hop.json` the run wrote) and run again: the stopped hop's gate runs again before the run carries on, so it is neither redone nor skipped ([After a stop](docs/recipes.md#14-after-a-stop)). Booster never commits; the changes sit in your working copy for you to review. Progress prints a line as the baseline starts and ends (`baseline: passed, 150 s`; the first run on a machine builds the gate image, so it takes a few minutes), one line per hop, like `hop 3/11 <hop id>: <status>, 12 files, 41 s`, and ends with `run finished: 11 of 11 hops run, 0 stopped, total ...`, a total that counts the baseline.
 
 Looking for a specific situation (only PHP, one hop at a time, backend only, a big app, no tests)? See [How do I...](docs/recipes.md).
 
@@ -371,6 +378,7 @@ Options shared by `plan` and `run`:
 | `--until` | Cut the plan after this hop id: that step and everything before it stay, and the plan's targets move to where it lands |
 | `--only` | Plan and run just this one hop id. The app must sit on the hop's starting versions, and `--until` and `--only` are never combined |
 | `--with-node` | include the Node front-end hops (Node pin, Mix to Vite, Vite major, Tailwind, TypeScript, Vue) even when you passed a target version. Without it, any of `--goal`, `--to-php`, `--to-laravel`, `--to-phpunit`, `--from-php` or `--from-laravel` leaves those hops out, and the plan prints: "Node front-end hops were left out because you passed a target version: <hop ids>. Add --with-node to include them." |
+| `--node` | the Node major `node-pin-24` floors the app at (22, 24 or 26 today; the policy must still support it). Without it, Booster takes the Node the app's Citadel image ships, read from `NODE_IMAGE` in the Squire kit's `.squire/base-fallback.Dockerfile`, and otherwise the newest Node the policy supports. The plan says which one and why. Implies `--with-node` |
 
 Example: an app moving from Laravel 8 to 13 takes the climb in parts. `booster plan --path=../my-app --until=laravel-8-to-9` keeps every hop up to and including the move to Laravel 9, and `booster run` with the same flag applies exactly those hops.
 
@@ -538,7 +546,7 @@ prints when nothing matches. In JSON output the entries land under `behaviour_ch
 
 The list lives in `data/behaviour-changes.json`, bundled with the phar. An entry names the hop it applies to
 (`php-80-to-81`, `laravel-10-to-11`, or `package:vendor/name@2` for a floor a package raises), how to find it
-(`detect`: a `function`, `method`, `class`, `property`, string `token`, blade snippet, config `file` and `key`,
+(`detect`: a `function`, `method`, `class`, a class instantiated with `new` (or its `::connect()` factory), `property`, string `token`, blade snippet, config `file` and `key`,
 composer `package`, or `always`), and a `source` link that confirms the change:
 
 ```json
@@ -765,6 +773,15 @@ under `Pre-pass fixes:`.
    raised `php` constraint against and refuse. Every other hop, and the baseline, run a plain `composer install`. The two phases report separately: a Composer failure names the Composer phase and Composer's
    own output, because the tests never ran.
 
+When the run raised the app's PHP floor, its report ends with a list of the other places that still name an older
+PHP, each with its file and line: PHP versions in the CI matrix (Preflight's `php_versions`, a GitHub workflow's
+`php:` matrix, a `PHP_VERSIONS` list) and PHP images (`php:8.3-cli` in a CI job, `citadel/php-apache:8.4r5` in the
+Squire kit's `.env.squire.example` or `docker-compose.squire.yml`). Booster never edits CI or deploy files, so it
+lists them instead: a matrix entry below the floor fails on the first push, because Composer refuses to install
+below it, and an image below it can no longer run the app. A Citadel tag also carries a build revision (`8.5r3`)
+that Booster cannot know. A dry run lists them too, from the floor its last PHP step would set. The JSON report
+carries them as `floor_follow_ups`.
+
 Composer 2.10 refuses to load tagged releases Packagist has flagged with a security advisory, and hops that move
 onto Laravel 9 or 10 most often meet that block. The refusal has two faces. The loud one fails the install phase
 and names the advisories. The quiet one happens when the app allows dev stability: Composer does not fail at all,
@@ -813,11 +830,23 @@ first.
 
 A run prints one line per hop to standard error while it works: the hop's position in the plan, its id, its status,
 the number of files it changed and the seconds it took, and a final line totals the hops run, the stops and the whole
-run. They go to standard error so the report on standard output is untouched and `--format json` stays valid JSON.
+run, baseline included. The baseline gets a line as it starts and one as it ends, since its first run on a machine
+builds the gate image and can take minutes before the first hop line. They go to standard error so the report on standard output is untouched and `--format json` stays valid JSON.
+
+`node-pin-24` floors Node at the Node the app deploys on, not just the newest one. A floor above the server's Node
+makes every `npm ci` there warn (`EBADENGINE`), and the hop's gate never builds on the server's Node either. So the
+major comes from, in order: `--node=<major>` (22, 24 or 26 today; the policy must still support it); the Node the
+app's Citadel image ships, which the Squire kit mirrors as `NODE_IMAGE` in `.squire/base-fallback.Dockerfile`; and
+otherwise the hop data's target, the newest Node the policy supports (26 today). The plan's step line says
+`node-pin-24 (pins Node 22)`, and its summary says where the 22 came from. `--node` also puts the Node hops back in a
+plan that passed a target version, as `--with-node` does. The later front-end hops run in the same `node:<major>`
+container. A Node floor is like a shelf: put it higher than the server can reach and nothing lands on it.
 
 Four hops edit manifests instead of code. `node-pin-24` sets `engines.node` in `package.json` and writes `.nvmrc`,
-then the app's usual gate applies. `mix-to-vite` converts a simple `webpack.mix.js` to Vite (below) and asks for a
-build gate, which runs `npm ci` and `npm run build` in the `node:26` container before the app's tests.
+then proves the front end still builds on the pinned Node: when `package.json` has a `build` script and a
+`package-lock.json`, it runs `npm ci` and `npm run build` in the `node:<major>` container before the app's usual
+gate, and a red build stops the run there. With no build script it says so plainly and runs the usual gate. `mix-to-vite` converts a simple `webpack.mix.js` to Vite (below) and asks for a
+build gate, which runs `npm ci` and `npm run build` in the `node:<major>` container (the plan's Node pin, 26 by default) before the app's tests.
 `vite-major` moves a Vite front end onto the Vite major in the hop data: it pins `vite` wherever it sits in
 `package.json`, pins `laravel-vite-plugin` and `@vitejs/plugin-vue` to the hop data's versions when they are already
 listed, runs `npm install` in the Node container and asks for a build gate. `tailwind-3-to-4` runs the official
@@ -865,8 +894,9 @@ blocks and CSS, the `Breadcrumbs` calls and the `config/wayne-ui.php` keys) and 
 leaves forked views under `resources/views/vendor/wayne-ui` and `public/vendor/wayne-ui` in place for a person to
 delete, and it cannot rotate a deploy token a repository URL may carry); `node-pin-24` (planned for any app with a
 `package.json` that does
-not already floor Node at the hop data's target, 26 today: sets `engines.node` to `>=26` and writes `.nvmrc`, ahead
-of the front-end hops); `mix-to-vite` (planned when the app has a `webpack.mix.js` and the plan lands on Laravel 9 or
+not already floor Node at the plan's Node: sets `engines.node` to `>=<major>` and writes `.nvmrc`, ahead of the
+front-end hops, and builds the front end on that Node when there is a `build` script. The major is `--node`, else the Node the app's Citadel image ships (`NODE_IMAGE` in the Squire kit's
+`.squire/base-fallback.Dockerfile`), else the hop data's target, 26 today); `mix-to-vite` (planned when the app has a `webpack.mix.js` and the plan lands on Laravel 9 or
 newer, after `node-pin-24`: writes `vite.config.js`, swaps `laravel-mix` for `vite` and `laravel-vite-plugin` in
 `package.json`, renames `MIX_` keys to `VITE_` in `.env.example`, rewrites Blade `mix()` script and link tags into one
 `@vite([...])` line per layout when every referenced asset maps to a Mix entry, and deletes `webpack.mix.js`; the
@@ -909,12 +939,30 @@ refused by name.
 | Variable | Meaning | Default |
 |---|---|---|
 | `BOOSTER_POLICY` | Path to CREED's `policy.json` | the copy in the `waynestate/creed` package |
+| `BOOSTER_COMPOSER_CACHE` | Opt-in Composer download cache for the baseline and every gate: a Docker volume name or a host folder | none: each gate container downloads every package |
+| `BOOSTER_NPM_CACHE` | Opt-in npm download cache for every Node container, mounted at `/root/.npm`: a Docker volume name or a host folder | none: each `npm ci` downloads every package |
 
 Booster reads the policy straight from the `waynestate/creed` package in its own `vendor/`, so there is no copy to
 drift: `composer update waynestate/creed` is the whole refresh. `--policy` and `BOOSTER_POLICY` still override it for
 one run.
 
-`.env.example` holds the placeholder. Booster reads no secrets and talks to no Citadel host. Its own network calls
+The gate containers start with an empty Composer cache, so a run with five gates downloads every package five times.
+Set `BOOSTER_COMPOSER_CACHE` and the baseline fills a cache that every later gate reads from:
+
+```
+export BOOSTER_COMPOSER_CACHE=stack-composer-cache   # a Docker volume, the one the WSU stack already uses
+export BOOSTER_COMPOSER_CACHE=~/.cache/booster-composer   # or a folder on your machine
+```
+
+A plain name is a Docker volume (created on first use); anything with a slash, a leading `.` or a leading `~` is a
+folder, created when it is missing. Booster mounts it at `/tmp/composer-cache` and sets `COMPOSER_CACHE_DIR`. The gate
+runs as your own user on Linux and macOS, and a volume belongs to root, so there Booster makes a folder of its own
+inside the volume (`booster-uid-<your uid>`) once per run and leaves the rest of the volume alone. Unset, nothing is
+mounted and the gate behaves exactly as before. `BOOSTER_NPM_CACHE` does the same for the Node containers (`npm ci`,
+`npm run build` and the front-end hops), mounted at `/root/.npm`; the stack's volume is `stack-npm-cache`. Those
+containers run as root, so a volume suits them better than a folder on your machine.
+
+`.env.example` holds the placeholders. Booster reads no secrets and talks to no Citadel host. Its own network calls
 only read: the dependency check asks Packagist (and any composer-type repository the app declares) about the app's
 direct dependencies, which `--no-package-check` turns off, and a plan for an app on `wayne-cas` with no `vendor/`
 checks the VCS repository `composer.json` names for that package with `git ls-remote`. Everything it prints from an app (file names, diffs) has control characters stripped.
@@ -962,22 +1010,34 @@ the token the robot needs.
 
 ## Deploying on Citadel
 
-When a real (not dry) run changes `composer.lock` and the app has a `deployments/` directory, Booster writes one
-deployment script, `deployments/0000_composer_install_<YYYYMMDDHHMM>`:
+When a real (not dry) run moves the app's **production** packages in `composer.lock`, Booster works out what the next
+deploy needs and says so at the end of the report, in a `Deploy:` line or an `Added deployments/...` line:
+
+| The app | What Booster does |
+|---|---|
+| Only dev packages moved (a PHPUnit major, say) | Nothing to write: `composer install --no-dev` gets the same `vendor/`. The report says so. |
+| Has `scripts/release.sh` that runs `composer install` (Squire's deploy kit) | Nothing to write: the release script installs on every release. The report says so. |
+| Has a `deployments/` folder and no such release script | Writes `deployments/0000_composer_install_<YYYYMMDDHHMM>` (below). |
+| Has neither | Writes nothing, and the report says what every server must run on its next release. |
+
+The script it writes installs and does nothing else:
 
 ```sh
 #!/bin/sh
-# Added by Booster: this upgrade changed composer.lock. Citadel runs each deployment script once, in name order,
-# so a new name makes existing deployments install the new vendor/ before anything else runs.
+# Added by Booster: this upgrade changed the production packages in composer.lock. Citadel runs each deployment
+# script once, in name order, so a new name makes existing deployments install the new vendor/ first.
+# It only installs: migrations and other release steps stay with the app's own deploy scripts.
 set -e
 composer install --no-dev --no-interaction --optimize-autoloader
-php artisan migrate --force
 ```
 
 Citadel runs every `deployments/` script exactly once, in name order, and the leading `0000` puts this one first. So
-when the app next deploys, every existing deployment installs the upgraded `vendor/` before any other script runs. The
-`php artisan migrate --force` line appears only for apps that have an `artisan` file; raw PHP apps get the `composer
-install` alone. Commit the script with the rest of the upgrade. To drop it again, delete the named file.
+when the app next deploys, every existing deployment installs the upgraded `vendor/` before any other script runs.
+That is also why it never migrates: it runs ahead of the app's own hooks, and an app whose first release must do
+something before it migrates (a Laravel app whose first release parks old tables, say) would break if anything
+migrated first. Migrations stay with your own deploy scripts; for a Laravel app the report adds a line saying to run
+`php artisan migrate --force` after the deploy if none of them does. Commit the script with the rest of the upgrade.
+To drop it again, delete the named file. The stamp is local time.
 
 ## Checks
 
@@ -1021,7 +1081,7 @@ browser. The private proof site has the hop-by-hop table.
 
 ## Status
 
-Version 1.15. See [CHANGELOG.md](CHANGELOG.md) for what changed, [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) for what stays
+Version 1.17. See [CHANGELOG.md](CHANGELOG.md) for what changed, [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) for what stays
 open, and [BEST_PRACTICES.md](BEST_PRACTICES.md) for the rules Booster follows.
 
 ## License
