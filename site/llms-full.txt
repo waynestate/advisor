@@ -468,7 +468,7 @@ Turn-by-turn
 
 ### Directions
 
-Three steps, and they're the same on Windows, macOS and Linux, because ADVISOR is one PHP command rather than a shell script.
+Three steps and a check-up, the same on Windows, macOS and Linux, because ADVISOR is one PHP command rather than a shell script.
 
 1. ### Add it to your app
    Add it as a dev dependency. It won't start in production anyway.
@@ -487,6 +487,20 @@ Three steps, and they're the same on Windows, macOS and Linux, because ADVISOR i
    Then open the project in your client and approve the `advisor` server when it asks. Don't commit the file it writes. It starts a program for anyone who opens the project, so `install` warns you if it isn't in `.gitignore`.
    ```
    php vendor/bin/advisor install --client=claude --write
+   ```
+4. ### Get a check-up
+   Doctor starts the server the way your client will, as a child process over stdio, and says in plain words what passed. A `warn` you may not care about; a `fail` is something to fix. On Windows, its `stdio` line is the proof that the one command works there too.
+   ```
+   php vendor/bin/advisor doctor
+   ```
+   ```
+   pass php: PHP 8.4.14 satisfies ^8.3
+   pass php-path: Clients will start /usr/bin/php, the PHP running this check.
+   pass content: data/ matches its manifest.
+   pass client:claude: claude is configured to start ADVISOR.
+   warn client:cursor: .cursor/mcp.json is not present, so cursor will not start ADVISOR.
+   pass mcp: The server starts and offers 9 tools.
+   pass stdio: `php bin/advisor mcp` runs as a child process on Linux (PHP 8.4.14): clean stdout, 9 tools, policy_lookup answered, exit 0 (412 ms).
    ```
 
 Where `install --write` puts it
@@ -658,6 +672,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 - Added: `advisor doctor` has a `stdio` check: it starts `php bin/advisor mcp` as a child process, the way a client does, asks it to initialize, list its tools and answer one `policy_lookup` call, and passes only when every stdout line is JSON-RPC and the child exits 0. The pass line names the OS and PHP version, so one run on a Windows PHP answers open question 1. A `php-path` check says which `php` on the PATH a client will start, and warns when there is none or it is not the PHP running doctor (open question 10). Doctor still changes nothing and runs nothing from a config file.
 - Added: a `native-os` GitHub workflow runs `advisor doctor` (with its new stdio check) and the stdio and doctor tests on Windows and macOS, PHP 8.3 and 8.5, on every push to main and every tag, and writes doctor's output to the run summary. It is separate from `ci.yml`, so the CI badge still means `composer ci`; the full suite stays Linux only.
+- Site: Directions gains a fourth turn, "Get a check-up": `php vendor/bin/advisor doctor` and a healthy readout (doctor's own wording, abridged) whose lines ink in one by one, the stdio stamp landing last; with reduced motion the readout is simply there. The intro says "Three steps and a check-up".
 
 #### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 

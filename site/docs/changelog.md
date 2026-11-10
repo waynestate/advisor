@@ -16,6 +16,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 - Added: `advisor doctor` has a `stdio` check: it starts `php bin/advisor mcp` as a child process, the way a client does, asks it to initialize, list its tools and answer one `policy_lookup` call, and passes only when every stdout line is JSON-RPC and the child exits 0. The pass line names the OS and PHP version, so one run on a Windows PHP answers open question 1. A `php-path` check says which `php` on the PATH a client will start, and warns when there is none or it is not the PHP running doctor (open question 10). Doctor still changes nothing and runs nothing from a config file.
 - Added: a `native-os` GitHub workflow runs `advisor doctor` (with its new stdio check) and the stdio and doctor tests on Windows and macOS, PHP 8.3 and 8.5, on every push to main and every tag, and writes doctor's output to the run summary. It is separate from `ci.yml`, so the CI badge still means `composer ci`; the full suite stays Linux only.
+- Site: Directions gains a fourth turn, "Get a check-up": `php vendor/bin/advisor doctor` and a healthy readout (doctor's own wording, abridged) whose lines ink in one by one, the stdio stamp landing last; with reduced motion the readout is simply there. The intro says "Three steps and a check-up".
 
 ### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 

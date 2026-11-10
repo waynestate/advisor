@@ -655,6 +655,29 @@ code, pre { font-family: var(--wsu-font-family-mono); }
 }
 .cmd--out { background: rgba(16, 32, 29, 0.55); color: var(--adv-code-dim); font-size: 0.8125rem; }
 .cmd--multi { white-space: pre-wrap; }
+
+/* The check-up (turn 4): doctor's readout, one finding per line with a hanging
+   indent, so a long line wraps under its words and not under its tag. The tags are
+   small stamps: pass in a mint that reads 9:1 on the code ground, warn in the gold.
+   The stdio line, the one that proves the path, wears a gold rule down its edge. */
+.checkup { padding-block: 0.7rem; font-size: 0.8125rem; line-height: 1.55; color: var(--adv-code-text); }
+.checkup code { display: grid; gap: 0.2rem; }
+.ck { display: block; padding-left: 3.6em; text-indent: -3.6em; }
+.ck__tag {
+  display: inline-block;
+  width: 3.26em;          /* 3.26 x 0.92 + 0.65 x 0.92 = 3.6em of the line: the hanging indent */
+  margin-right: 0.65em;
+  border-radius: 3px;
+  font-weight: 700;
+  text-align: center;
+  text-indent: 0;
+  font-size: 0.92em;
+}
+.ck__tag--pass { color: #9be8bd; background: rgba(155, 232, 189, 0.1); }
+.ck__tag--warn { color: var(--adv-gold); background: rgba(255, 204, 51, 0.1); }
+.ck--stdio { margin-top: 0.25rem; padding-top: 0.35rem; border-top: 1px dashed rgba(255, 204, 51, 0.35); }
+.ck--stdio .ck__tag--pass { color: var(--adv-green-deep); background: var(--adv-gold); }
+
 .dir-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
 .signpost { position: relative; margin: 0; padding-top: var(--wsu-space-2); }
 .signpost__cap { margin-bottom: var(--wsu-space-4); font-family: var(--adv-display); font-style: italic; font-size: 1.125rem; color: var(--adv-gold); }
@@ -897,6 +920,18 @@ code, pre { font-family: var(--wsu-font-family-mono); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; animation: none !important; }
 }
+
+/* The check-up types itself out: when turn 4 inks in, doctor's findings follow one
+   per beat, and the stdio stamp lands last with a small spring, the way a nurse
+   stamps the form. Hidden only under html.motion and only until the turn is in view;
+   with reduced motion the readout is simply there. */
+@media (prefers-reduced-motion: no-preference) {
+  .motion .turn--checkup .ck { opacity: 0; translate: -8px 0; }
+  .motion .turn--checkup.is-in .ck { animation: adv-ck-in 0.4s var(--adv-ease-out) both; animation-delay: calc(0.45s + var(--i, 0) * 0.22s); }
+  .motion .turn--checkup.is-in .ck--stdio .ck__tag { animation: adv-ck-stamp 0.5s var(--adv-ease-spring) both; animation-delay: calc(0.6s + var(--i, 0) * 0.22s); }
+}
+@keyframes adv-ck-in { from { opacity: 0; translate: -8px 0; } to { opacity: 1; translate: 0 0; } }
+@keyframes adv-ck-stamp { 0% { scale: 1.8; rotate: -8deg; opacity: 0; } 60% { opacity: 1; } 100% { scale: 1; rotate: 0deg; opacity: 1; } }
 
 /* Card legs light up with their waypoints (all lit when motion is off). */
 .leg .leg__sym:not(.leg__sym--start) { transition: background-color 0.3s, color 0.3s; }

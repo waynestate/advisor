@@ -312,8 +312,8 @@
       <div class="section__head section__head--left">
         <p class="eyebrow">Turn-by-turn</p>
         <h2 id="dir-title">Directions</h2>
-        <p>Three steps, and they're the same on Windows, macOS and Linux, because ADVISOR is one PHP command rather than a
-          shell script.</p>
+        <p>Three steps and a check-up, the same on Windows, macOS and Linux, because ADVISOR is one PHP command rather
+          than a shell script.</p>
       </div>
 
       <div class="dir-grid">
@@ -344,6 +344,28 @@
               file it writes. It starts a program for anyone who opens the project, so <code>install</code> warns you if
               it isn't in <code>.gitignore</code>.</p>
             <pre class="cmd"><code>php vendor/bin/advisor install --client=claude --write</code></pre>
+          </div>
+        </li>
+        <!-- The check-up: doctor's real wording (src/Command/DoctorCommand.php), abridged to
+             two of the four clients. The sample is a Linux run because that is what CI proves
+             today; the Windows answer comes from a developer's own run or the native-os
+             workflow. With motion allowed the lines ink in one by one and the stdio line gets
+             its stamp last; without it they simply sit there, already healthy. -->
+        <li class="turn turn--checkup">
+          <span class="turn__num" aria-hidden="true">4</span>
+          <div class="turn__body">
+            <h3>Get a check-up</h3>
+            <p>Doctor starts the server the way your client will, as a child process over stdio, and says in plain words
+              what passed. A <code>warn</code> you may not care about; a <code>fail</code> is something to fix. On Windows,
+              its <code>stdio</code> line is the proof that the one command works there too.</p>
+            <pre class="cmd"><code>php vendor/bin/advisor doctor</code></pre>
+            <pre class="cmd cmd--out checkup" aria-label="What a healthy check-up prints, abridged"><code><span class="ck" style="--i:0"><b class="ck__tag ck__tag--pass">pass</b> php: PHP 8.4.14 satisfies ^8.3</span>
+<span class="ck" style="--i:1"><b class="ck__tag ck__tag--pass">pass</b> php-path: Clients will start /usr/bin/php, the PHP running this check.</span>
+<span class="ck" style="--i:2"><b class="ck__tag ck__tag--pass">pass</b> content: data/ matches its manifest.</span>
+<span class="ck" style="--i:3"><b class="ck__tag ck__tag--pass">pass</b> client:claude: claude is configured to start ADVISOR.</span>
+<span class="ck" style="--i:4"><b class="ck__tag ck__tag--warn">warn</b> client:cursor: .cursor/mcp.json is not present, so cursor will not start ADVISOR.</span>
+<span class="ck" style="--i:5"><b class="ck__tag ck__tag--pass">pass</b> mcp: The server starts and offers 9 tools.</span>
+<span class="ck ck--stdio" style="--i:6"><b class="ck__tag ck__tag--pass">pass</b> stdio: `php bin/advisor mcp` runs as a child process on Linux (PHP 8.4.14): clean stdout, 9 tools, policy_lookup answered, exit 0 (412 ms).</span></code></pre>
           </div>
         </li>
       </ol>

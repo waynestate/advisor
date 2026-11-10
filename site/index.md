@@ -93,7 +93,7 @@ Turn-by-turn
 
 ## Directions
 
-Three steps, and they're the same on Windows, macOS and Linux, because ADVISOR is one PHP command rather than a shell script.
+Three steps and a check-up, the same on Windows, macOS and Linux, because ADVISOR is one PHP command rather than a shell script.
 
 1. ### Add it to your app
    Add it as a dev dependency. It won't start in production anyway.
@@ -112,6 +112,20 @@ Three steps, and they're the same on Windows, macOS and Linux, because ADVISOR i
    Then open the project in your client and approve the `advisor` server when it asks. Don't commit the file it writes. It starts a program for anyone who opens the project, so `install` warns you if it isn't in `.gitignore`.
    ```
    php vendor/bin/advisor install --client=claude --write
+   ```
+4. ### Get a check-up
+   Doctor starts the server the way your client will, as a child process over stdio, and says in plain words what passed. A `warn` you may not care about; a `fail` is something to fix. On Windows, its `stdio` line is the proof that the one command works there too.
+   ```
+   php vendor/bin/advisor doctor
+   ```
+   ```
+   pass php: PHP 8.4.14 satisfies ^8.3
+   pass php-path: Clients will start /usr/bin/php, the PHP running this check.
+   pass content: data/ matches its manifest.
+   pass client:claude: claude is configured to start ADVISOR.
+   warn client:cursor: .cursor/mcp.json is not present, so cursor will not start ADVISOR.
+   pass mcp: The server starts and offers 9 tools.
+   pass stdio: `php bin/advisor mcp` runs as a child process on Linux (PHP 8.4.14): clean stdout, 9 tools, policy_lookup answered, exit 0 (412 ms).
    ```
 
 Where `install --write` puts it
