@@ -41,7 +41,7 @@ rules live in one place, and every consumer path agrees.
 composer require waynestate/helmet
 ```
 
-Composer picks the latest release, 1.3.1, and writes `^1.3` into `composer.json`. From 1.0 HELMET
+Composer picks the latest release, 1.4.0, and writes `^1.4` into `composer.json`. From 1.0 HELMET
 follows semantic versioning; [Upgrading](docs/upgrading.md) has what changed since 0.4, starting with the one that
 bites: an unknown quoted CSP source now throws at boot.
 
@@ -209,7 +209,7 @@ $helmet = helmet_boot([
 
 Every other `helmet_boot()` option is covered in its own section below:
 `csp` and `style_src_attr` (Customizing the CSP), `csp_report_uri` and `csp_report_only`
-(CSP reports), `coop`, `corp` and `permissions_policy` (Cross-origin
+(CSP reports), `coop`, `corp`, `coep` and `permissions_policy` (Cross-origin
 isolation and feature policy), `hsts_max_age`, `hsts_include_subdomains`
 and `hsts_preload` (Configuring HSTS), `no_store` (the no-store rows of
 [Raw PHP and Laravel agree](#raw-php-and-laravel-agree)), `csrf`
@@ -745,6 +745,7 @@ like this:
 | CSP report-only | `csp_report_only` | `HELMET_CSP_REPORT_ONLY` / `helmet.csp_report_only`, default `false` |
 | COOP | `coop` | `HELMET_COOP` / `helmet.coop`, default `same-origin`, `null` sends no header |
 | CORP | `corp` | `HELMET_CORP` / `helmet.corp`, default `null` (no header) |
+| COEP | `coep` | `HELMET_COEP` / `helmet.coep`, default `null` (no header) |
 | Permissions-Policy | `permissions_policy` | `HELMET_PERMISSIONS_POLICY` / `helmet.permissions_policy`, default deny list, `[]` sends no header |
 | Nonce | `$helmet['nonce']` | `request()->attributes->get('helmet.csp_nonce')` |
 | Health check | `health_path`, answered by `helmet_boot()` | Laravel's `health: '/up'` |
@@ -769,6 +770,7 @@ Every response gets the same set, built by one shared function:
 | `Permissions-Policy` | `camera=(), geolocation=(), microphone=(), payment=(), usb=()` by default, configurable |
 | `Cross-Origin-Opener-Policy` | `same-origin` by default, configurable, `null` sends no header |
 | `Cross-Origin-Resource-Policy` | not sent by default, opt-in |
+| `Cross-Origin-Embedder-Policy` | not sent by default, opt-in |
 | `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` by default, HTTPS only, configurable |
 
 The default CSP is the union of the WayneUI recipes, with `frame-ancestors
@@ -904,6 +906,14 @@ default, because a blanket `same-site` can break an app whose assets are read
 cross-origin. Set `corp` (raw PHP) or `HELMET_CORP` (Laravel) to `same-site`,
 `same-origin` or `cross-origin` to send it.
 
+`Cross-Origin-Embedder-Policy` is opt-in too, and stricter: with
+`require-corp` the browser blocks every cross-origin resource that does not
+opt in with CORP or CORS, which can break CDN fonts, images and embeds, so
+test before turning it on. Set `coep` (raw PHP) or `HELMET_COEP` (Laravel) to
+`require-corp`, `credentialless` (loads them without cookies instead) or
+`unsafe-none` to send it. With COOP `same-origin` it makes the page
+cross-origin isolated.
+
 `Permissions-Policy` defaults to a deny list: `camera`, `geolocation`,
 `microphone`, `payment` and `usb` are all denied, so an injected script cannot
 use a feature the page has switched off. Set `permissions_policy` (raw PHP) or
@@ -923,7 +933,7 @@ $helmet = helmet_boot([
 ]);
 ```
 
-An invalid COOP or CORP value, or a Permissions-Policy feature name or
+An invalid COOP, CORP or COEP value, or a Permissions-Policy feature name or
 allowlist entry that is not `self` or an https origin, throws, so a typo fails
 loudly instead of sending a header the browser will ignore.
 

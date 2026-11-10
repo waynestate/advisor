@@ -11,13 +11,14 @@ The stack's version policy states:
 | EOL | ribbon error in non-production; daily log line | fail | Citadel retires the image on its own schedule; elsewhere the owner retires it, and the gate fails either way |
 | EOL + 90 days | as above | fail; no override | |
 
-- The dates live in `policy/policy.json`. Every tool derives a version's state
-  from the date, through the CREED reader. No other code decides state
-  (the stack's version policy).
+- The dates live in `policy/policy.json`. Every tool MUST derive a version's
+  state from the date, through the CREED reader; no other code decides state
+  (the stack's version policy). No check exists yet.
 - The PHP floor is `^8.2`, the oldest non-EOL version today (the stack's version policy). It
   moves to `^8.3` on 2027-01-01. PROCTOR check: `php-floor`.
-- Stack packages raise their own `php` floor in a new major when a PHP version
-  reaches EOL, so security fixes require the upgrade (the stack's version policy).
+- Stack packages MUST raise their own `php` floor in a new major when a PHP
+  version reaches EOL, so security fixes require the upgrade (the stack's
+  version policy). No check exists yet.
 - `policy.json` is a contract, versioned like WayneUI's `/v2/`. Older Check
   versions MUST still read newer policy files (the stack's version policy).
   Held by: CREED's own CI, where `tests/OlderReaderContractTest.php` reads a

@@ -2,7 +2,7 @@
 
 Status: draft, checked against sources on 2026-10-27, with a second research pass the same day (see "Second pass
 (2026-10-27)" near the end). Applies to the Preflight components at the state of the repo today: the latest tag is
-0.5.0, and the six components added after 0.1.0 shipped in 0.1.1.
+0.5.0, and CHANGELOG.md names the release that added each component.
 
 ## What this covers
 
@@ -116,8 +116,10 @@ Sources: [GitLab: components, partial semver](https://docs.gitlab.com/ci/compone
 **How the stack holds it: Checked.** `contract/inputs.json` lists each component's inputs (name, type, default) and
 job names. `tests/ComponentsContractTest.php` (PHPUnit, run by `composer test` inside `composer ci`) parses every
 template and fails on any drift, naming the component and the added, removed or changed key; `tests/check-contract.sh`
-and `tests/check-contract.ps1` make the same comparison in the `contract` job. A rename or a changed default is a
-breaking change: bump the major version and say so in `CHANGELOG.md`. When the change was made on purpose,
+and `tests/check-contract.ps1` make the same comparison in the `contract` job. `tests/check-contract-fails.sh` (and
+its `.ps1` twin) and `testTheComparisonCatchesAChangedDefaultAndARename` prove both comparisons fail on a changed
+default and a renamed input. A rename or a changed default is a breaking change: bump the major version and say so in
+`CHANGELOG.md`. When the change was made on purpose,
 `composer contract:update` rewrites the contract from the templates.
 
 ### 1.5 Know that components work only inside one GitLab instance
@@ -334,7 +336,8 @@ Sources: [GitLab: component examples, inputs for image versions](https://docs.gi
 `$[[ inputs.image ]]`. `php-test`'s default is `php:${PHP_VERSION}-cli-trixie`: the literal `${PHP_VERSION}`
 survives input interpolation, and GitLab expands it in the image at job time, so the matrix keeps working.
 `tests/check-image-inputs.sh` (and its `.ps1` twin) fail if a job's `image:` stops being an input or a default
-`php:` tag loses its Debian release name.
+`php:` tag loses its Debian release name. `tests/check-image-inputs-fails.sh` (and its `.ps1` twin) proves it: a
+hard-coded php-test image and a default tag without the Debian release both make the guard fail.
 
 There are no exemptions: `portability` builds and runs the app image inside its own job, so its `image` input is the
 Buildah image the job runs in, like every other component's.
@@ -412,8 +415,9 @@ runs at all).
 the pipeline switches Composer's audit off or runs `composer update`. PROCTOR's `preflight-pinned` check warns on an
 include not pinned to a version or SHA, and its `preflight-gates` check (2026-11-09) warns on no Preflight include
 (`proctor/preflight-gates/no-include`), `allow_failure` on a gate (`proctor/preflight-gates/allow-failure`) and no
-proctor job (`proctor/preflight-gates/no-proctor-job`). Both warn and never fail. Rollcall's "apps with CI" number is a
-plan.
+proctor job (`proctor/preflight-gates/no-proctor-job`). Both warn and never fail. `tests/check-preflight-gates-warns.sh`
+(and its `.ps1` twin) proves the no-include, no-proctor-job, allow-failure and unpinned warnings with the real PROCTOR,
+and that none of them fails the run. Rollcall's "apps with CI" number is a plan.
 
 ### 3.4 Control when pipelines run, once, in the app
 Set `workflow:rules` so a branch with an open merge request does not run twice, and so merge request pipelines exist.
@@ -558,6 +562,11 @@ Sources: [Composer basic usage: the lock file](https://getcomposer.org/doc/01-ba
 
 **How the stack holds it: Checked.** PROCTOR's `lock-committed` fails when the lock is missing. It runs only if the app
 includes the `proctor` component, whose default command now runs on a fresh app (see 6.1).
+`tests/check-proctor-lock-fails.sh` (and its `.ps1` twin) proves the check itself with the real PROCTOR on a copy of
+the fixture app whose lock is removed after the install. Gap: the `proctor` component runs `composer install` first, and
+Composer writes a new lock when none is committed, so inside the component an app that never committed its lock still
+passes `lock-committed`. Closing it needs `lock-committed` to ask whether git tracks `composer.lock`, not whether the
+file is on disk.
 
 ### 4.6 Audit the lock and fail the job
 Run `composer audit --locked`. A non-zero exit fails the job. Give the audit no `allow_failure`.
@@ -627,7 +636,7 @@ Why: pipelines run faster, and an unreviewed branch cannot poison the cache that
 
 Sources: [GitLab: caching](https://docs.gitlab.com/ci/caching/).
 
-**How the stack holds it: Checked.** `php-test`, `proctor`, `pint`, `phpstan`, `sbom` and `squire-kit` cache Composer downloads in `.composer-cache/`, and `eslint` and `a11y` cache npm downloads in `.npm-cache/`, each under a fixed key: `preflight-php-${PHP_VERSION}` for `php-test`, one key per PHP version, and `preflight-proctor`, `preflight-pint`, `preflight-phpstan`, `preflight-sbom`, `preflight-squire-kit`, `preflight-eslint` and `preflight-a11y` for the rest. `tests/check-php-test-cache` (and its `.ps1` twin) fail if the key turns back into a lock-file hash or drops the PHP version, and `tests/check-proctor-cache` (and its `.ps1` twin) fail if the proctor key turns back into a lock-file hash. `composer-audit` still defines no cache. `npm-audit` installs nothing; it reads the app's own npm cache under the fixed key `npm` and path `.cache/npm/` (the ones Sourdough's generated pipelines use) with `policy: pull`, so it never overwrites what the install job downloaded. Every component cache also saves with `when: always`, so a retry after a dropped download fetches only what is missing, and `tests/check-dependency-cache` fails on a block without it.
+**How the stack holds it: Checked.** `php-test`, `proctor`, `pint`, `phpstan`, `sbom` and `squire-kit` cache Composer downloads in `.composer-cache/`, and `eslint` and `a11y` cache npm downloads in `.npm-cache/`, each under a fixed key: `preflight-php-${PHP_VERSION}` for `php-test`, one key per PHP version, and `preflight-proctor`, `preflight-pint`, `preflight-phpstan`, `preflight-sbom`, `preflight-squire-kit`, `preflight-eslint` and `preflight-a11y` for the rest. `tests/check-php-test-cache` (and its `.ps1` twin) fail if the key turns back into a lock-file hash or drops the PHP version, and `tests/check-proctor-cache` (and its `.ps1` twin) fail if the proctor key turns back into a lock-file hash. `composer-audit` still defines no cache. `npm-audit` installs nothing; it reads the app's own npm cache under the fixed key `npm` and path `.cache/npm/` (the ones Sourdough's generated pipelines use) with `policy: pull`, so it never overwrites what the install job downloaded. Every component cache also saves with `when: always`, so a retry after a dropped download fetches only what is missing, and `tests/check-dependency-cache` fails on a block without it. `tests/check-cache-fails.sh` (and its `.ps1` twin) proves all three guards fail on five broken copies (lock-hash keys, a key without the PHP version, a renamed proctor key, a block without `when: always`).
 
 Second pass: GitLab appends `-protected` or `-non_protected` to every cache key. Pipelines on protected branches or tags,
 and pipelines started by a Maintainer or Owner, get `-protected`. The separation is on by default and GitLab calls it
@@ -677,7 +686,8 @@ Sources: [Docker Official Image: php](https://github.com/docker-library/docs/blo
 **How the stack holds it: Checked.** The `php:` defaults name the Debian release: `php-test` defaults to
 `php:${PHP_VERSION}-cli-trixie` and `proctor` to `php:8.4-cli-trixie@sha256:...` (Debian 13, the release the
 bare `cli` tags point at as of 2026-10-28). `tests/check-image-inputs.sh` (and its `.ps1` twin) fail if a
-default `php:` tag loses its Debian release name. For the `citadel` target, the jobs should run on Citadel's
+default `php:` tag loses its Debian release name. `tests/check-image-inputs-fails.sh` proves the release-name
+half on a php-test default stripped of `-trixie`. For the `citadel` target, the jobs should run on Citadel's
 own images; which Debian release those use is not stated in the documents read for this guide.
 
 ### 4.11 Use Composer's malware and advisory blocking, and review lock changes
@@ -956,7 +966,9 @@ Why: a constraint of `^8.2` is a promise about 8.2, 8.3, 8.4 and 8.5.
 Sources: [GitLab: CI/CD YAML, `parallel:matrix`](https://docs.gitlab.com/ci/yaml/).
 
 **How the stack holds it: Checked.** `php-test` creates one job per entry through `parallel:matrix`. The first
-pipeline ran it on 8.2, 8.3, 8.4 and 8.5.
+pipeline ran it on 8.2, 8.3, 8.4 and 8.5. `tests/check-php-matrix.sh` (and its `.ps1` twin) fails if the
+`parallel: matrix:` block or the array-typed `php_versions` input goes away, and `tests/check-php-matrix-fails.sh`
+proves it on broken copies; GitLab itself expands the matrix, so only a pipeline shows the jobs.
 
 The matrix limit of 200 permutations was re-checked in the GitLab YAML reference and is correct.
 
@@ -1020,7 +1032,8 @@ Why: a component that never fails looks the same as one that works.
 Sources: [GitLab: components, testing](https://docs.gitlab.com/ci/components/).
 
 **How the stack holds it: Partly.** Eleven components carry a must-fail fixture that a `must-fail-` job in `.gitlab-ci.yml`
-runs, and `proctor`'s runs in the `contract` job: `proctor` runs the template's own `--record` guard and command line
+runs, and `proctor`'s main fixture runs in the `contract` job (its lock fixture, `tests/check-proctor-lock-fails`, runs in
+`must-fail-proctor-lock`): `proctor` runs the template's own `--record` guard and command line
 on `tests/proctor-fails`, a fake proctor that prints one blocker finding and exits 1, against the clean stubs in
 `tests/fixture-app` (no `--record`, like PROCTOR 0.10.0) and `tests/proctor-record` (with it), and proves `proctor.json`
 is kept only when PROCTOR can write it (`tests/check-proctor-fails`, run in CI by the `contract` job); `composer-audit`
@@ -1034,7 +1047,7 @@ fails rather than passes); `npm-audit` runs the template's own script on fixed l
 an `.npmrc` that turns the audit off still fails, a dev-only finding fails only with `omit_dev` false, and a clean
 lock, an app with no lock and an unreachable registry behave as the docs say (`tests/check-npm-audit-fails`, run in CI
 by `must-fail-npm-audit`); `a11y` checks the bad site in `tests/a11y-fixtures/bad`, which fails with each flaw named
-(`tests/check-a11y`; no CI job runs it yet); `portability` builds `tests/portability/app` once clean and once per flaw
+(`tests/check-a11y`, run in CI by `must-fail-a11y`); `portability` builds `tests/portability/app` once clean and once per flaw
 (needs root, writes outside its paths, fixed port, host-bound health, a baked `.env`, trusts any proxy, file logs, file
 sessions, no SIGTERM handler) and passes only when the clean build passes and each flaw fails the check it targets
 (`tests/check-portability`, run in CI by `must-fail-portability`); `php-test` runs PHPUnit on `tests/php-test-fails`,
@@ -1055,8 +1068,7 @@ CI by `must-fail-sbom`); `squire-kit` runs the template's own script against the
 naming the file, and a copy with no `.squire.json`, which must stop with exit 2 (`tests/check-squire-kit-fails`, run
 in CI by `must-fail-squire-kit`); and `package-publish`'s offline guards stop a non-semantic-version tag and a missing
 `composer.json` before any registry contact (`tests/check-package-publish-fails.sh`, run in CI by
-`must-fail-package-publish`). Still missing: `a11y`'s fixture runs only by hand, since no CI job runs
-`tests/check-a11y` yet; `package-publish`'s moved-version path needs a live registry and stays untested; `renovate` is
+`must-fail-package-publish`). Still missing: `package-publish`'s moved-version path needs a live registry and stays untested; `renovate` is
 a config, not a job, so it has nothing to fail.
 
 ### 7.3 Use the stack's own projects as the first users

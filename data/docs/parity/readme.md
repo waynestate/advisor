@@ -28,7 +28,7 @@ Parity runs Citadel's own image and nothing else, because the whole point is to 
 published a download for your app's image yet, Parity says so and tells you what to do next. It will not hand you a
 look-alike and call it a twin; Citadel would never fall for that, and neither should you.
 
-Rather click than type? A desktop app comes in 0.2.0. It is not released yet: it is one window over the same Go code
+Rather click than type? The desktop app comes after 1.0. It is not released yet: it is one window over the same Go code
 these commands run, and the [front page](https://parity.apps.wayne.edu/#commands) shows its screens next to each
 command's printout ([the desktop app guide](https://parity.apps.wayne.edu/docs/guides/desktop-app.html) has more).
 
@@ -43,7 +43,7 @@ command's printout ([the desktop app guide](https://parity.apps.wayne.edu/docs/g
 The installers fetch the newest release, check its sha256 against the release's `checksums.txt` before installing
 anything, and need no administrator. That check catches a corrupted or partial download. It does not prove the
 download is genuine: `checksums.txt` comes from the same site as the archive, so a site serving a bad archive could
-serve a matching sum too. Signing comes before the 0.2.0 desktop app.
+serve a matching sum too. Signing comes before the desktop app, which follows 1.0.
 
 - **Windows** puts `parity.exe` in `%LOCALAPPDATA%\Programs\parity` and adds that folder to your own (user) PATH,
   once: a second run updates `parity.exe` and says it is already on your PATH.
@@ -71,7 +71,7 @@ The files are `parity_<version>_<os>_<arch>.tar.gz` (`.zip` on Windows) for `win
 `amd64` and `arm64`, on Parity's site under `downloads/<version>/` (and `downloads/latest/` for the newest). Or build
 it from this repository (below), or take a binary from a pipeline's `build` job.
 
-0.1.0 ships unsigned, with checksums. Signed binaries come before the desktop app (0.2.0). Until then, a zip
+0.1.0 ships unsigned, with checksums. Signed binaries come before the desktop app, which follows 1.0. Until then, a zip
 downloaded in a browser may meet SmartScreen ("More info", then "Run anyway", or `Unblock-File parity.exe`), and on a
 Mac an archive downloaded in a browser needs `xattr -d com.apple.quarantine parity`. The installers avoid both.
 
@@ -107,7 +107,9 @@ Colima, Docker Engine); Parity just stops suggesting them. Either way the bubble
   setting and, after a failed first check, waits the full 5 minutes. So on Podman `parity up` asks for a check while
   it waits.
 - **Windows:** Podman runs in its own WSL 2 machine. Your folders are mounted into it, so a Windows path works as it
-  is, ports on `localhost` reach your browser, and edits show on the next request. Inside the container, files on
+  is, ports on `localhost` reach your browser, and edits show on the next request. A folder on the Windows disk is
+  slow in mount mode, because every file read crosses into WSL 2; `parity check` warns about it (`mount-speed`).
+  Use bake mode for `parity test`, or keep the app in the WSL filesystem. Inside the container, files on
   the Windows disk show as one owner with every permission (WSL's drvfs), so ownership questions do not come up. If
   `parity check` says the machine is running but Podman in it is not answering, it says what to do: on a PC that
   also runs Ubuntu with systemd in WSL, the two distros' user 1000 can collide (WSL distros share one cgroup tree).
@@ -287,7 +289,7 @@ the dashboard. `parity init` writes it from what is in the folder; everything ha
 | `mode` | (Parity's) `mount` or `bake` | `mount` |
 | `build_script` | build script | `build.sh` when there is one |
 | `deployments` | deployments folder | `deployments/` when there is one |
-| `health_check` | health check command, run from the app folder | `php health.php` or `./health-check` when there is one |
+| `health_check` | health check command, run from the app folder | `php health.php` or `./health-check` when there is one; for Laravel, the `health:` route in `bootstrap/app.php` (`/up`); else Apache must answer `/` |
 | `cron` | cron entries: `name` (short name), `schedule` (five fields), `command` (see [Cron entries](#cron-entries)) | Laravel's scheduler when the app schedules anything, else none |
 | `writable` | writable paths: Apache's group, group-writable, as Citadel's deploy leaves them (baked into the image in bake mode; set as the container starts in mount mode) | Laravel's `storage` and `bootstrap/cache` |
 | `config_files` | configuration files: `path` and `required_keys` (ini `section.key`, env `NAME`, json `a.b`) | none |
@@ -314,8 +316,8 @@ never writes to it.
 | `cas` | `SESAME_DRIVER=cas`, `SESAME_CAS_SERVICE_URL=https://<server_name>/login` (SESAME's Laravel `/login` route) | `server_name` on wayne.edu, pointed at 127.0.0.1 in your hosts file, and HTTPS in front of Parity's port: CAS sends its ticket back only to an https address on a name it knows |
 
 `SESAME_CAS_BASE_URL` is left to the app's settings or the playbook, which carry the university's CAS server. Parity
-0.1.0 serves plain HTTP; its own HTTPS (a local, name-constrained certificate authority) comes in a later release, so
-`cas` today needs a TLS proxy of your own in front of `http_port`. `fake` is the everyday local choice.
+serves plain HTTP; its own HTTPS (a local, name-constrained certificate authority) comes after 1.0, so `cas` today
+needs a TLS proxy of your own in front of `http_port`. `fake` is the everyday local choice.
 
 ### Cron entries
 
@@ -371,11 +373,27 @@ parity shell --user citadel sh -c 'npm ci && npm run build'
 The built files land in your folder (mount mode) and Apache serves them on the next request. Vite's dev server and hot
 reload are not part of Citadel, so run `npm run dev` on your own computer if you want them.
 
-### Not in 0.1.0
+### Road to 1.0
 
-- **A second database.** Parity runs one MySQL 5.6, as Citadel gives one database per app. An app that reads a second
-  database (a one-time import from an older app, say) points that connection at a test copy its data owner approves,
-  in its own settings.
+The 1.0 command set: `check`, `init` (with `--from-squire`), `up`, `down`, `status`, `logs`, `shell`, `test`,
+`image list|get|verify`, `engine` and `version`.
+
+Before the tag:
+
+- One real `parity up` and `parity test` on a Windows PC and on an Apple Silicon Mac, each with Podman and Docker.
+- 1.0 ships unsigned, with checksums, like 0.1.0.
+- Citadel's 8.4r5 image is the one outside dependency: until its tar exists, 1.0 offers 8.5r3 only.
+
+### After 1.0
+
+- **Commands:** `reset`, `eject`, `image pin` and `image build`.
+- **Local HTTPS:** a local, name-constrained certificate authority in front of the app.
+- **The desktop app**, one window over the same Go code. Signing (Authenticode, Apple Developer ID) comes before it.
+- **Packages:** winget, Homebrew and deb/rpm.
+
+A second database is not on the list: Parity runs one MySQL 5.6, as Citadel gives one database per app. An app that
+reads a second database (a one-time import from an older app, say) points that connection at a test copy its data
+owner approves, in its own settings.
 
 ### Coming from Squire's parity kit
 

@@ -4,15 +4,20 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 
 - One protocol-neutral library, named for what it does, not how. It returns a
   verified identity and leaves the session to the app (the stack's auth design).
-- The app always owns its session. Every driver ends in the app's
+- The app MUST own its session. Every driver ends in the app's
   `findOrImportUser(identity)`, and the protocol never holds the session
-  (the stack's auth design).
-- The `gateway` driver accepts only a signed assertion, never a bare header:
-  user, attributes, issued-at, audience, an expiry of 60 seconds or less, and
-  a signature the gateway and app share (the stack's auth design).
+  (the stack's auth design). Held by: SESAME, whose drivers end in the app's
+  `findOrImportUser` and hold no session of their own.
+- The `gateway` driver MUST accept only a signed assertion, never a bare header:
+  user, attributes, issued-at, audience, an expiry, and a signature the
+  gateway and app share (the stack's auth design). Drawbridge issues a
+  60 second assertion by default (`assertion_ttl_seconds`, 5 to 300), and
+  SESAME refuses any assertion that lives longer than `gateway.max_lifetime`
+  (300 seconds unless the app sets it). Held by: SESAME, which refuses a bare
+  header and an assertion past `gateway.max_lifetime`.
 - Drivers: `cas` (the default today), `gateway`, `oidc`, `oauth2`, `saml`
   (opt-in), and `fake` for local development and tests (the stack's auth design).
-- Non-EOL PHP only, with no exceptions (the stack's auth design).
+- Apps MUST use non-EOL PHP only, with no exceptions (the stack's auth design).
   PROCTOR check: `php-floor`.
 - The gateway's public keys reach apps as one key set file (JWKS) that holds
   the current key and the next one. Drawbridge writes it (`keys:jwks`),
@@ -32,9 +37,9 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 - The `saml` driver is built on `onelogin/php-saml`, is opt-in, sets no
   default WSU identity provider, and requires the provider to sign its
   assertions (the stack's SAML decision). SESAME config: the `saml` block.
-- API and other stateless requests are authenticated with signed, short-lived bearer tokens in an `Authorization` header, verified on every request. A token is signed, not merely encrypted; JSON Web Tokens are a good fit (WSU developer standards, 2024).
-- Authentication is checked before any content is shown or any script function runs, on every request. Deny by default: routes are protected unless listed as public, and an unauthenticated person is sent to sign in (WSU developer standards, 2024).
-- When authentication or an authorization lookup fails, the result is fail closed: access is withheld (WSU developer standards, 2024).
+- API and other stateless requests MUST be authenticated with signed, short-lived bearer tokens in an `Authorization` header, verified on every request. A token is signed, not merely encrypted; JSON Web Tokens are a good fit (WSU developer standards, 2024). No check exists yet.
+- Authentication MUST be checked before any content is shown or any script function runs, on every request. Deny by default: routes are protected unless listed as public, and an unauthenticated person is sent to sign in (WSU developer standards, 2024). No check exists yet.
+- When authentication or an authorization lookup fails, the app MUST fail closed: access is withheld (WSU developer standards, 2024). No check exists yet.
 - Administrative access MUST be limited to named users or roles, and access that is due to end is revoked on a regular schedule (WSU developer standards, 2024). No check exists yet.
 - Access that is due to end when a person's status changes (for example an ended employment) MUST be removed by an automated process, not by memory (WSU developer standards, 2024). No check exists yet.
 - Idle sessions MUST time out after a configurable period of inactivity (WSU developer standards, 2024). The stack's numbers are in `policy/policy.json`, under `sessions`, which is the source for them: SESAME signs a user out after 120 minutes idle and 720 minutes in all (`sessions.sesame`), and Drawbridge after 3600 seconds idle and 28800 seconds in all (`sessions.gateway`). Held by: SESAME config, `session.idle_minutes` (`SESAME_SESSION_IDLE_MINUTES`) and `session.absolute_minutes` (`SESAME_SESSION_ABSOLUTE_MINUTES`), with those defaults. An app that does not use SESAME sets its own idle limit; that is documented only.

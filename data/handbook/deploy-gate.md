@@ -19,8 +19,9 @@ released, and refuses EOL PHP (the stack's deploy-gate decision).
 
 ## On Citadel
 
-- Citadel runs the gate in its release hook: `proctor gate` in `runGitPull()`,
-  against the fetched commit, before it is checked out (the stack's deploy-gate decision).
+- When the Citadel team adopts it, the gate runs in the release hook: `proctor
+  gate` in `runGitPull()`, against the fetched commit, before it is checked out
+  (the stack's deploy-gate decision).
 - The gate is pending the Citadel team, which is still an open question.
   Until it is adopted, enforcement is CI on the test GitLab instance (the
   stack's deploy-gate decision).

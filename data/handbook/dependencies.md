@@ -2,28 +2,40 @@
 
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to be interpreted as described in RFC 2119.
 
-- No `dev-master`, `dev-*` or `*` constraints on runtime dependencies
-  (the stack's version policy). PROCTOR check: `unbounded-constraints`.
+- Runtime dependencies MUST NOT use `dev-master`, `dev-*` or `*`
+  constraints (the stack's version policy). PROCTOR check:
+  `unbounded-constraints`.
 - A lock file is required and MUST be committed (the stack's version
-  policy). PROCTOR check: `lock-committed`.
+  policy). PROCTOR checks: `lock-committed` (the lock is on disk and in sync)
+  and `lock-tracked` (git tracks it; a warning).
 - `composer audit` MUST report no advisories at or above the policy's severity
   threshold (the stack's version policy). PROCTOR check: `composer-audit`.
+- The policy's `audit_severity_threshold` uses Composer's words. npm's
+  `audit-level` reads them as: `low` is `low`, `medium` is `moderate`, `high`
+  is `high`, `critical` is `critical` (npm's `info` has no Composer word).
+  A tool that reads the threshold for npm MUST apply this map (the stack's
+  version policy). Held by: Preflight's `npm-audit` component (`medium`
+  means `moderate`).
 
 CREED's `abandoned_packages` rule is `fail`, matching Composer's default since
 2.7, so `composer audit` fails on an abandoned package. An app that has to keep
-one replaces it or records an override with a reason; PROCTOR's
-`composer-audit` check applies the same setting.
+one MUST replace it or record an override with a reason; PROCTOR's
+`composer-audit` check applies the same setting. PROCTOR checks:
+`composer-audit` (fails on the abandoned package) and `overrides` (validates
+the recorded one).
 
 - `composer.json` `require.php` MUST NOT allow an EOL version as its lowest
   bound (the stack's version policy). PROCTOR check: `php-floor`.
-- Apps SHOULD set a Composer cooldown of 3 days, once Composer 2.11 is stable
-  and in the base images; until then no cooldown is set (the stack's dependency
-  decision, 2026-11-03). No check exists yet: a PROCTOR check for a missing
-  cooldown is planned.
-- Every project is a framework-free core plus thin adapters. `composer.json`
-  requires only `php` and PSR packages; Laravel, Inertia and Vue are
-  `suggest` (the stack's core-plus-adapters design).
-- Adapters call the core and never re-implement it (the stack's core-plus-adapters design).
+- Apps SHOULD set a Composer cooldown of 3 days (`config.policy.cooldown.period`,
+  Composer 2.11; the stack's dependency decision, 2026-11-03) and exempt the
+  stack's own packages (`"ignore": ["waynestate/*"]`), which the stack's CI tests
+  before tagging. Sourdough's shapes set both. PROCTOR check:
+  `composer-cooldown` (a warning, never a failure).
+- Every project MUST be a framework-free core plus thin adapters, and its
+  `composer.json` MUST require only `php` and PSR packages; Laravel, Inertia
+  and Vue are `suggest` (the stack's core-plus-adapters design). No check
+  exists yet.
+- Adapters MUST call the core and MUST NOT re-implement it (the stack's core-plus-adapters design). No check exists yet.
 - Before adding a third-party package, check it comes from a trusted source, and where the source is open, read enough of it to judge it sound and fit (SHOULD). The audit and abandoned-package rules in this chapter apply after that choice (WSU developer standards, 2024). No check exists yet.
 
 ## Private packages

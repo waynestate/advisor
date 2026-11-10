@@ -9,7 +9,7 @@ The policy lists the MySQL versions in `policy/policy.json`, under `mysql`:
 dates. The shared server runs 5.6, which is past security support; its
 `security_until` is 2021-02-28. Laravel 13 documents MySQL 5.7 or later, and
 each Laravel line in the policy records the oldest MySQL and MariaDB it needs
-(`requires.mysql` and `requires.mariadb`); PROCTOR main's `mysql-minimum`
+(`requires.mysql` and `requires.mariadb`); PROCTOR 0.10.0's `mysql-minimum`
 warns when an app's declared database image is below that minimum. The
 conventions below keep an app working on the shared server until it is
 upgraded. They are a bridge, not the fix: the fix is the upgrade. Code that
@@ -43,33 +43,40 @@ second support window: the fix is still the upgrade. PROCTOR check:
 
 ## Names, comments and connections
 
-- Table and column names are descriptive. Add table and column comments (Laravel's `->comment()`) where the database supports them, to say what an element is for (SHOULD) (WSU developer standards, 2024). No check exists yet.
+- Table and column names SHOULD be descriptive. Add table and column comments (Laravel's `->comment()`) where the database supports them, to say what an element is for (SHOULD) (WSU developer standards, 2024). No check exists yet.
 - The connection between the app and the database MUST be encrypted. The database account MUST have only the privileges the app needs, never an administrator account (WSU developer standards, 2024). No check exists yet.
 
 ## Conventions that keep 5.6 working
 
-- Set `Schema::defaultStringLength(191)` in `AppServiceProvider::boot()`,
-  before any migration runs. 5.6 caps an indexed `utf8mb4` column at 767
-  bytes, which is 191 characters. PROCTOR check: `mysql56`.
-- Keep `utf8mb4` and `utf8mb4_unicode_ci`, the defaults. Never use an
-  8.0-only collation such as `utf8mb4_0900_ai_ci` (not yet confirmed on a
-  5.6 server).
-- Store JSON as `text` or `longText`, with Eloquent `array` or `json` casts,
-  and filter in PHP. 5.6 has no JSON column type. PROCTOR check: `mysql56`.
-- Leave `use_upsert_alias` unset, so `upsert()` uses `VALUES()`. The row
-  alias that setting switches to needs MySQL 8.0.19.
-- Rename a column with raw `DB::statement('ALTER TABLE ... CHANGE ...')`.
-  Avoid `renameColumn` and `renameIndex`, which emit 5.7 syntax.
-  PROCTOR check: `mysql56`.
-- Use `Schema::hasTable` only. Column introspection is not reliable on 5.6
-  (not yet confirmed on a 5.6 server).
-- Skip `db:show` and `db:monitor`, and run one database-queue worker (or
-  another driver if the platform offers one). 5.6 has no `SKIP LOCKED`, so a
-  single worker avoids double-processing.
-- Use `timestamp`, not `date`, for `useCurrent()`. A `date` column cannot
-  take a current-timestamp default on 5.6.
-- Run migrations in CI against a real 5.6 container. SQLite-only tests pass
-  code that 5.6 rejects.
+- An app MUST set `Schema::defaultStringLength(191)` in
+  `AppServiceProvider::boot()`, before any migration runs. 5.6 caps an indexed
+  `utf8mb4` column at 767 bytes, which is 191 characters. PROCTOR check:
+  `mysql56`.
+- An app MUST keep `utf8mb4` and `utf8mb4_unicode_ci`, the defaults, and MUST
+  NOT use an 8.0-only collation such as `utf8mb4_0900_ai_ci` (not yet
+  confirmed on a 5.6 server). No check exists yet.
+- An app MUST store JSON as `text` or `longText`, with Eloquent `array` or
+  `json` casts, and MUST filter in PHP. 5.6 has no JSON column type. PROCTOR
+  check: `mysql56`.
+- An app MUST leave `use_upsert_alias` unset, so `upsert()` uses `VALUES()`.
+  The row alias that setting switches to needs MySQL 8.0.19. PROCTOR check:
+  `mysql56`.
+- An app MUST rename a column with raw
+  `DB::statement('ALTER TABLE ... CHANGE ...')`, and MUST NOT use
+  `renameColumn` or `renameIndex`, which emit 5.7 syntax. PROCTOR check:
+  `mysql56`.
+- An app MUST use `Schema::hasTable` only. Column introspection is not
+  reliable on 5.6 (not yet confirmed on a 5.6 server). PROCTOR check:
+  `mysql56`.
+- An app MUST skip `db:show` and `db:monitor`. PROCTOR check: `mysql56`.
+- An app SHOULD run one database-queue worker (or another driver if the
+  platform offers one). 5.6 has no `SKIP LOCKED`, so a single worker avoids
+  double-processing. No check exists yet.
+- An app MUST use `timestamp`, not `date`, for `useCurrent()`. A `date`
+  column cannot take a current-timestamp default on 5.6. PROCTOR check:
+  `mysql56`.
+- An app MUST run migrations in CI against a real 5.6 container.
+  SQLite-only tests pass code that 5.6 rejects. No check exists yet.
 
 ## Avoid until the server is upgraded
 
@@ -112,10 +119,14 @@ rather than wait for it.
 
 ## How the stack checks it
 
-PROCTOR's `mysql56` check flags the patterns in the avoid list above that
-fail on 5.6: JSON columns, generated columns, `renameColumn`, long indexed
-strings and a missing `Schema::defaultStringLength(191)`. The rest of the
-list is not checked yet.
+PROCTOR's `mysql56` check warns on the patterns the shared 5.6 server
+rejects: JSON columns and queries, generated columns, `renameColumn` and
+`renameIndex`, vector, invisible and spatial columns, column introspection,
+the raw-SQL syntax, the upsert row alias, indexed strings over 191
+characters, a missing `Schema::defaultStringLength(191)`, `date` columns
+defaulting to the current time, and the `db:show` and `db:monitor` commands.
+It warns rather than fails: an app on its own newer database is not
+affected.
 
 ## Sources
 

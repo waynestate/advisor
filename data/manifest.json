@@ -7,7 +7,7 @@
             "source": "advisor/BEST_PRACTICES.md"
         },
         "docs/advisor/readme.md": {
-            "sha256": "a7386753a9eb85a77434500780ca52cd0afe4f4ec3259a91ec1f9f0d91a26013",
+            "sha256": "f28cb90b3df56708671670fc155c8699e84405d92ae93997d9562594cb309f7b",
             "source": "advisor/README.md"
         },
         "docs/booster/best-practices.md": {
@@ -19,11 +19,11 @@
             "source": "booster/README.md"
         },
         "docs/creed/best-practices.md": {
-            "sha256": "e24d3c2c452d1e5417bbffafd0c73dc1dded6c20038ddf859358e5ee82545f8e",
+            "sha256": "50c949b61a162b05c1b323b3f248cb5ab60d57e4a11bafd4be0ce0ede7875e7e",
             "source": "creed/BEST_PRACTICES.md"
         },
         "docs/creed/readme.md": {
-            "sha256": "b40b52bbbe81c879c97a7dfa067d9a01649b47bedf799b3a750146c30fcb80c9",
+            "sha256": "fe5903271ec2b00af132e1a0d1a2154042274c79c6e2551a46cbd4e222d9322d",
             "source": "creed/README.md"
         },
         "docs/drawbridge/best-practices.md": {
@@ -31,19 +31,19 @@
             "source": "drawbridge/BEST_PRACTICES.md"
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "109ace1f84dbcd0420fb7fbd0ebd2681cf3e8aa03f139997f7d5b522159b1276",
+            "sha256": "12a659723c3a5c3e7431b98387d99adadf181848b6dee442b7bd512bd46ace91",
             "source": "drawbridge/README.md"
         },
         "docs/helmet/best-practices.md": {
-            "sha256": "87811ba972df36ebb78693ce331324ebaec573a87be1326a40d200c217835e23",
+            "sha256": "1bdc8c2087ecb2d68018dd3956f0cd925b9e72b42e1fdd688767d40b8d1fd82a",
             "source": "helmet/BEST_PRACTICES.md"
         },
         "docs/helmet/readme.md": {
-            "sha256": "6517722854b6a944eff0f16fd6c657270d8c353ae05c0d14f07d1f975f863dbc",
+            "sha256": "a2a86a1c698780e76398b0cac7c13a579c2ab119900cfda08d644957561a60e4",
             "source": "helmet/README.md"
         },
         "docs/parity/readme.md": {
-            "sha256": "e9e79308576c873050f25f419f56c5d6e7ce389269c701056526e0e7f0771daa",
+            "sha256": "62933628251f700459857ddfc4f27266432325f73d4d5bb81743a6acd1fcd9d9",
             "source": "parity/README.md"
         },
         "docs/pinstripe/best-practices.md": {
@@ -51,11 +51,11 @@
             "source": "pinstripe/BEST_PRACTICES.md"
         },
         "docs/pinstripe/readme.md": {
-            "sha256": "d08ad4811ea5db6f2c5083f59a671206bf138a4c9d4e29e2b34dbd32bcc45859",
+            "sha256": "709284ed6898030158abfd19a8cf78ba77e41a22a08bfb9764cc86255e2c2ac8",
             "source": "pinstripe/README.md"
         },
         "docs/preflight/best-practices.md": {
-            "sha256": "5dae8419528fca3266fc4972e5420c20782702799744dd6ba09ee15f2b552aa2",
+            "sha256": "fbfe05480c8d613490e531287910d7b76902456023ee95e924f42b299eaa4694",
             "source": "preflight/BEST_PRACTICES.md"
         },
         "docs/preflight/readme.md": {
@@ -63,11 +63,11 @@
             "source": "preflight/README.md"
         },
         "docs/proctor/best-practices.md": {
-            "sha256": "99a2de64297a84f505fa27678cf80cb2696fed490bcb9e79dbd5574a6298478d",
+            "sha256": "2465bcae0a1ba150dd38ecc5b6e09ee54cfbc6219bb7a457df1fb400a5a626c4",
             "source": "proctor/BEST_PRACTICES.md"
         },
         "docs/proctor/readme.md": {
-            "sha256": "2c3bae5e302f5b289a0a5374082addd58a36ffc33f6102ff1a089261b141b0df",
+            "sha256": "dbccab1565a51fdfc21b78587eb80c8c5ab3f0314813cf4e90b264b6cbccf32d",
             "source": "proctor/README.md"
         },
         "docs/rollcall/best-practices.md": {
@@ -79,19 +79,19 @@
             "source": "rollcall/README.md"
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "ac3bfd0f5049c1a78cd0038f7e7e2c49cf2dff8ea08652da9448a465472dff5f",
+            "sha256": "7a0dc9830206d969e2fd3411fa666fd97fbc709d96d7b809702b9cc0c09b2268",
             "source": "sesame/BEST_PRACTICES.md"
         },
         "docs/sesame/readme.md": {
-            "sha256": "207d8d2dc149f16042f4d81195c27a3a79cbc3aa186d0a14c492726c9d7a7ab9",
+            "sha256": "081f076898dc6b6c750287f09e6ef30d19887b716fa93d3ca009518dab4b8f23",
             "source": "sesame/README.md"
         },
         "docs/sourdough/best-practices.md": {
-            "sha256": "2789bee697a42408f977d7b448d61a3a99938611a23442101439a9e033ce51c0",
+            "sha256": "9d4bc7f5657463a35d6e7f9148bf2bce0af911984e9ea0cd6359114e56de4759",
             "source": "sourdough/BEST_PRACTICES.md"
         },
         "docs/sourdough/readme.md": {
-            "sha256": "fe2e5418d4435116803686e177ee6eeba765a37d088c1df016ab9b72d8bd016c",
+            "sha256": "922e7c052e0bf921a9af4330f207bc2b7defd0222fee84d229f6870b1aad8ff8",
             "source": "sourdough/README.md"
         },
         "docs/squire/best-practices.md": {
@@ -99,7 +99,7 @@
             "source": "squire/BEST_PRACTICES.md"
         },
         "docs/squire/readme.md": {
-            "sha256": "c5bb44f62a39a5ffdb9f1b93d95713cfa68cec92614c0d2d8bd5f31e09e133cd",
+            "sha256": "d02be21ec053c1076c7363653a4ebf65a365a85e093adee9ffb1a6fe7fc257aa",
             "source": "squire/README.md"
         },
         "docs/wayne-ui/contract.json": {
@@ -115,11 +115,11 @@
             "source": "wayne-ui/README.md"
         },
         "docs/weld/best-practices.md": {
-            "sha256": "86fd5ead94664ce272d52749e141f015ea18711634afd5ad64e3030ee6d166ad",
+            "sha256": "09f1f8fa44d5cd50d70df0bb42fde34fd61b0a26f348d63b466082e7efb5c187",
             "source": "weld/BEST_PRACTICES.md"
         },
         "docs/weld/readme.md": {
-            "sha256": "dd23530896485394d9d474b1509016fda736c05f8bacf1e588a6d3cb8f30d34b",
+            "sha256": "27dc11007e822f4f83adaa3a538fc631cee49232c9f8ee505aee28ccb52c971b",
             "source": "weld/README.md"
         },
         "guides/connect-to-oracle-on-citadel.md": {
@@ -131,55 +131,55 @@
             "source": "creed/handbook/README.md"
         },
         "handbook/accessibility.md": {
-            "sha256": "8b9cd868e211759cd800b29ea02fbf9367ccae9fc43ef268f5953a5b24d966a7",
+            "sha256": "6c7749294ebcb723ae53f5b5d14bb842f40183df33564fa1ccf7dd7c9f1aa3d6",
             "source": "creed/handbook/accessibility.md"
         },
         "handbook/auth.md": {
-            "sha256": "32f5e852ccc5e4247e67f9915d2e38db92a0a14c17b760b8fd287ead74388e50",
+            "sha256": "31b87e5c3d3cc363af190ad8f3f502eef970201e61c07081e0ff0623c2f9c543",
             "source": "creed/handbook/auth.md"
         },
         "handbook/ci.md": {
-            "sha256": "b89d1671045304580bcbc1dc82482430457d80f2a8df2d96000aa3b808ff1b93",
+            "sha256": "f64b9a65190628b48df5cdd3daa7e7b65c616890202628603c5d54fe03d6d1b1",
             "source": "creed/handbook/ci.md"
         },
         "handbook/code.md": {
-            "sha256": "bb6b472463d45a22add5cfe1fed07dbc1cd24419c22df7b9dd1aca4eeb84c119",
+            "sha256": "bdbb4b4e506dfd471682b14ca4caf3cdc255a265bb25f42a58938ba0528721bf",
             "source": "creed/handbook/code.md"
         },
         "handbook/databases.md": {
-            "sha256": "76a165fda217d7f2d3184b29889ddef3c235d42f14681453e28b0fa52228801d",
+            "sha256": "17340ecf79e27b282ced66e379c54f98297a6f1fce50e7562ccd960a59cc8497",
             "source": "creed/handbook/databases.md"
         },
         "handbook/dependencies.md": {
-            "sha256": "78b5b1984015aa3dc6ce6205e8e9dfbd975e2974ba8b9533fa57efad0660a927",
+            "sha256": "409d93c2641f4fd31f617b8c228143aef03223da94b0210c9bb3d80b5b5b3719",
             "source": "creed/handbook/dependencies.md"
         },
         "handbook/deploy-gate.md": {
-            "sha256": "06be735cae3fe27974deaf29eb339dd66e68b16b8f24f7ee1089715e63515fec",
+            "sha256": "2578c642c91d8a84232bd13c2a28915c5904d11f44bb5525df42d1158377f4fa",
             "source": "creed/handbook/deploy-gate.md"
         },
         "handbook/every-os.md": {
-            "sha256": "ad16b9562f8bf7c7f3d0d6deb1dc29be3854c4e4830d26f53afa29541add72d1",
+            "sha256": "5c222077ba624e9fa769cf7fff911155526ff5d6163bf6c92ea37e55f6b21e6d",
             "source": "creed/handbook/every-os.md"
         },
         "handbook/overrides.md": {
-            "sha256": "2df7e0322b2f6f43f884f9ff737a7150386e78450900648d0d2abd07d36c29c7",
+            "sha256": "2ec47414a27d5a9e350b5a3fb44c30d8eb6eecd1936eb1b193213340e5b04556",
             "source": "creed/handbook/overrides.md"
         },
         "handbook/production.md": {
-            "sha256": "5c75d994a82e4ee9d4d619f1e257321b87f6fbf8ac325353285ce5492549a7fa",
+            "sha256": "ba45e6025a4230b7f49c56bc6a3ab24eb38cec8d1935c160bae671d11c734340",
             "source": "creed/handbook/production.md"
         },
         "handbook/runtime-and-headers.md": {
-            "sha256": "596925feda22672e333343b2103f271875667573a392296590986415f1f2beb1",
+            "sha256": "975949c9c6ed283275489b66332f7cce3996fc36b11a8db108b8e0d3af2a67aa",
             "source": "creed/handbook/runtime-and-headers.md"
         },
         "handbook/secrets.md": {
-            "sha256": "a3f085abaa1dd4abe98024a2e1bb974d862572917177913c70b0e055a20e3360",
+            "sha256": "e787b6ebe50048e3dbf8f10e2050ff8ad5d6c3fc479cdba7bae8988a3efbdb0d",
             "source": "creed/handbook/secrets.md"
         },
         "handbook/versions.md": {
-            "sha256": "228dd005f0dd7e101c182f876eac7cd8b49620146ce984f7f2a165d9c6502177",
+            "sha256": "e0de232ecea4a01489faeeb4987a100b4fd676dfc80bd3e34b9a81f64ca4ff8c",
             "source": "creed/handbook/versions.md"
         },
         "ownership.json": {
@@ -187,15 +187,15 @@
             "source": "generator/ownership.json"
         },
         "policy.json": {
-            "sha256": "7cfc9b6d973b4dd6cc4ff3284c5b84ac4206b50be27be3a2f8610970a5aaa6ab",
+            "sha256": "069e1012eb601dc11649fc3c7a486efd3f84ad2dac7a99e390828d02a06c7990",
             "source": "creed/policy/policy.json"
         },
         "projects.json": {
-            "sha256": "f8fe8c29542e386c75a8c98d9db30971cd561657975db5ef668c2d5475600024",
+            "sha256": "9e8230620831a8d37094fac11b55587b6880a52ac2a21bd9619b7c7ca60ae8a5",
             "source": "generator/projects.seed.json plus each project repository"
         },
         "rules.json": {
-            "sha256": "81ea37de6458fdd7b5a80c8f2fd70d4bd4e7d360ec80666096022c9bdbe259da",
+            "sha256": "b4e5cf33b9726aa3b60875626b4e9c1da6c5a24a16b0480be049283c99630b98",
             "source": "creed/handbook, creed/policy/policy.json"
         }
     }

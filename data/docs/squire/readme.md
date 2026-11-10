@@ -17,7 +17,7 @@ Squire is the Citadel kit: build.sh, the release script, the health check, and l
 Front page: [`site/index.html`](site/index.html), a static page you can serve from anywhere.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Status: 0.10.6, tagged and on Packagist.
+Status: 0.10.7, tagged and on Packagist.
 
 ## Where the code lives
 
@@ -510,8 +510,8 @@ image has no Node.
 
 Squire ships an [ADVISOR](https://github.com/waynestate/advisor) module, so a coding agent that runs ADVISOR can run
 Squire's checks without leaving its sandbox. In the app, install ADVISOR as a dev dependency (`composer require
---dev waynestate/advisor`) and add one line to the app's `modules.json` (or point `ADVISOR_MODULES_FILE` at a file
-that holds it):
+--dev waynestate/advisor`), put the module in a manifest of your own (for example `advisor-modules.json`), and point
+`ADVISOR_MODULES_FILE` at it. ADVISOR reads its own `modules.json` and that one extra file, nothing else:
 
 ```json
 {
@@ -657,10 +657,10 @@ The names above are the local names of scripts/oracle-image-build.sh. The publis
 (`<registry>` is the registry address of the images project shown on its Container Registry page), plus
 `:8.4-<squire version>` for a fixed one; a Sail app swaps `build:` for `image:` with that path.
 
-**The published images are linux/arm64 only, for now.** From Squire 0.10.5, a tag publishes both flavors for PHP
-8.3, 8.4 and 8.5 for linux/arm64 (Apple silicon, arm64 Linux hosts). The CI runner cannot build linux/amd64 yet, so
-on an amd64 computer, Citadel-shaped hosts included, build them locally with scripts/oracle-image-build.sh until it
-can. One switch turns amd64 back on: the CI variable `SQUIRE_BUILD_AMD64=1`, once the runner host can emulate amd64
+**Every tag so far published linux/arm64 only.** From Squire 0.10.5, a tag publishes both flavors for PHP 8.3,
+8.4 and 8.5 for linux/arm64 (Apple silicon, arm64 Linux hosts). The pipeline now builds linux/amd64 natively on an
+amd64 runner as well, so the next tag publishes both architectures in one list; until a tag has, on an amd64
+computer, Citadel-shaped hosts included, build the images locally with scripts/oracle-image-build.sh
 (MAINTAINING.md, Publishing the Oracle images). The 0.10.5 tag published all six; the
 [Oracle guide](https://squire.apps.wayne.edu/docs/guides/oracle.html) lists their digests for pinning.
 

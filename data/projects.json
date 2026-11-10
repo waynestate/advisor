@@ -25,7 +25,7 @@
             "role": "The handbook and policy.json (support dates per runtime). Every other project reads its policy; it is the one place that decides what state a version is in.",
             "state": "built",
             "package": "waynestate/creed",
-            "version": "0.1.9",
+            "version": "0.1.10",
             "php": "^8.3",
             "next_step": "Read the handbook chapter for the area you are changing; use policy_lookup for dates.",
             "docs": [
@@ -41,7 +41,7 @@
             "role": "One command that measures a PHP app against policy.json and prints a JSON, text or Code Quality report. It reports; CI decides.",
             "state": "built",
             "package": "waynestate/proctor",
-            "version": "0.11.2",
+            "version": "0.14.1",
             "php": "^8.3",
             "next_step": "Run run_proctor_check on the app, fix the failing checks, and keep `proctor check` in CI.",
             "docs": [
@@ -73,7 +73,7 @@
             "role": "The runtime baseline: security headers, CSP, session hardening, trusted proxies, a health check and a version warning.",
             "state": "built",
             "package": "waynestate/helmet",
-            "version": "1.3.1",
+            "version": "1.4.0",
             "php": "^8.3",
             "next_step": "Add it as a dependency and start from its presets; it reads the same policy as PROCTOR.",
             "docs": [
@@ -185,7 +185,7 @@
             "role": "The Citadel kit: build.sh, deployments/, the app-side release script, the health check, the portable image and upstream merge requests. Platform-specific deploy code lives here and nowhere else. Its old local parity kit gives way to Parity.",
             "state": "built",
             "package": "waynestate/squire",
-            "version": "0.10.6",
+            "version": "0.10.7",
             "php": "^8.3",
             "next_step": "Use its release script for Citadel deploys; other platforms use their own targets. To run the app like Citadel on your own computer, use Parity.",
             "docs": [
