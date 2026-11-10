@@ -249,7 +249,7 @@ ADVISOR answers from a bundled copy of what these projects publish. Here is who 
 - [Rollcall](https://rollcall.apps.wayne.edu/)the fleet census
 - [Drawbridge](https://drawbridge.apps.wayne.edu/)the sign-in gateway
 - [Squire](https://squire.apps.wayne.edu/)the deploy kit
-- [Parity](https://git.wayne.edu/enterprise-apps/parity)Citadel on your computer
+- [Parity](https://parity.apps.wayne.edu/)Citadel on your computer
 
 Here be roadmaps
 
