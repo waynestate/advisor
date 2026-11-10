@@ -317,8 +317,11 @@ The file is never committed. The bundle is regenerated with the file present bef
 
 ## Modules
 
-Each stack project can later ship its own ADVISOR tools. Modules load only from a manifest (`modules.json`), only from
+Each stack project can ship its own ADVISOR tools. Modules load only from a manifest (`modules.json`), only from
 the `Waynestate\` namespace, and only if they implement the `Module` interface. Nothing scans a folder.
+
+Squire ships the first one: list `Waynestate\Squire\Advisor\SquireModule` in a manifest of your own, point
+`ADVISOR_MODULES_FILE` at it, and your agent gains `squire_doctor` and `squire_drift`, both read-only.
 
 ## Running the checks
 

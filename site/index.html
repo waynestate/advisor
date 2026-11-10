@@ -298,6 +298,10 @@
 
         <p class="legend__boost"><strong>Run it next to Laravel Boost.</strong> Boost knows Laravel and ADVISOR knows Wayne State,
           so they don't overlap. In a Laravel app the same server also runs as <code>php artisan mcp:start advisor</code>.</p>
+        <p class="legend__boost"><strong>Add a project's own tools.</strong> Squire ships an ADVISOR module. List
+          <code>Waynestate\<wbr>Squire\<wbr>Advisor\<wbr>SquireModule</code> in a <code>modules.json</code> manifest, point
+          <code>ADVISOR_MODULES_FILE</code> at it, and your agent gains <code>squire_doctor</code> and <code>squire_drift</code>,
+          both read-only. The loader takes only what a manifest lists, so nothing sneaks onto the map.</p>
       </div>
     </div>
   </section>
@@ -533,7 +537,6 @@ Output: the client config with both servers in it, the commands you ran, the rul
         <ul class="unch">
           <li><span class="chip chip--soon">Coming soon</span><h3>Ask ADVISOR on the web</h3><p>A chat page. First we need to pick a model and decide what data it may see, and it will need its own accessibility review.</p></li>
           <li><span class="chip chip--soon">Coming soon</span><h3>Tools that write</h3><p>Things like starting an app with Sourdough or applying a Booster hop. When they come, they stay off until you set <code>ADVISOR_READ_ONLY=0</code>.</p></li>
-          <li><span class="chip chip--soon">Coming soon</span><h3>Modules from each project</h3><p>The loader is built and tested. It only loads what <code>modules.json</code> lists, and no project ships a module yet.</p></li>
           <li><span class="chip chip--soon">Coming soon</span><h3>HTTP transport</h3><p>stdio first. Remote needs a threat model before it needs a port.</p></li>
         </ul>
       </div>

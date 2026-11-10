@@ -22,7 +22,7 @@ A new minor line, so a `^0.1` constraint does not pick it up: move to `composer 
 
 - `policy_lookup` and `get_project_status` answer through CREED's own reader, so they say exactly what PROCTOR decides. A line the policy marks current (Vue 3, Inertia 2 and 3) now reads `active` instead of having no state, and a version older than every line the policy lists is answered as end of life with a note instead of being refused.
 - `upgrade_path` takes `from_php`, for a project whose `composer.json` names no PHP constraint (Booster's `--from-php`).
-- Only for module authors: `ContentBundle::policy()` returns CREED's `Waynestate\Creed\Policy`, `Content\PolicyReader` only checks the schema version, and `Content\State` is gone (use `Waynestate\Creed\State`). No stack project ships a module yet.
+- Only for module authors: `ContentBundle::policy()` returns CREED's `Waynestate\Creed\Policy`, `Content\PolicyReader` only checks the schema version, and `Content\State` is gone (use `Waynestate\Creed\State`). Squire's module (`Waynestate\Squire\Advisor\SquireModule`) uses none of these.
 - The bundled data is resynced with the stack's 2026-11-09 main branches, the docs gain four threat pages, and the front page deploy layer runs Squire's kit 0.10.1 with HELMET ^1.0 and PROCTOR ^0.11.
 
 ## [0.1.7] - 2026-11-07
