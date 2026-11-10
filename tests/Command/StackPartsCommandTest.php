@@ -29,7 +29,8 @@ final class StackPartsCommandTest extends TestCase
         $this->assertStringStartsWith("| Part | What it is |\n|---|---|\n", $display);
         $this->assertStringContainsString("| **WayneUI** | interface (project 0) |", $display);
         $this->assertStringContainsString("| **WELD** | the Laravel starter app |", $display);
-        $this->assertSame(16, substr_count($display, "\n"), 'The table is a header, a separator and fourteen rows.');
+        $this->assertStringContainsString("| **Parity** | Citadel on your computer |", $display);
+        $this->assertSame(17, substr_count($display, "\n"), 'The table is a header, a separator and fifteen rows.');
     }
 
     public function testWriteUpdatesTheBlockAndCheckPassesAfter(): void

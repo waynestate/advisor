@@ -96,6 +96,7 @@ const CAST = [
   "helmet",
   "sourdough",
   "squire",
+  "parity",
   "preflight",
   "pinstripe",
   "booster",
@@ -191,7 +192,7 @@ function readRoutes() {
   for (const m of js.matchAll(placeRe)) {
     places[m[1]] = { name: m[2], alias: m[3], x: +m[4], y: +m[5], label: m[6] };
   }
-  if (Object.keys(places).length !== 13) fail(`expected 13 places in advisor.js, read ${Object.keys(places).length}`);
+  if (Object.keys(places).length !== 14) fail(`expected 14 places in advisor.js, read ${Object.keys(places).length}`);
   const start = js.match(/var START = \{ x: (\d+), y: (\d+) \}/);
   const hub = js.match(/var HUB = \{ x: (\d+), y: (\d+) \}/);
   if (!start || !hub) fail("advisor.js: cannot read START or HUB");

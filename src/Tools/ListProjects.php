@@ -15,7 +15,7 @@ final class ListProjects
         return new ToolDefinition(
             name: 'list_projects',
             title: 'List the stack projects',
-            description: 'Lists every project of the Wayne State app stack (WayneUI, CREED, PROCTOR, SESAME, HELMET, Sourdough, PREFLIGHT, Pinstripe, BOOSTER, ROLLCALL, DRAWBRIDGE, SQUIRE, ADVISOR, WELD) with its role, whether it is built or only proposed, its Composer package and its version when it publishes one. Read-only. Use it first to learn what exists, then read_project_docs for detail.',
+            description: 'Lists every project of the Wayne State app stack (WayneUI, CREED, PROCTOR, SESAME, HELMET, Sourdough, PREFLIGHT, Pinstripe, BOOSTER, ROLLCALL, DRAWBRIDGE, SQUIRE, Parity, ADVISOR, WELD) with its role, whether it is built or only proposed, its Composer package and its version when it publishes one. Read-only. Use it first to learn what exists, then read_project_docs for detail.',
             inputSchema: ['type' => 'object', 'additionalProperties' => false],
             handler: static function () use ($context): array {
                 $projects = [];

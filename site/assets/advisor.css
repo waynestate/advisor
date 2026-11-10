@@ -712,9 +712,11 @@ code, pre { font-family: var(--wsu-font-family-mono); }
   background: linear-gradient(-45deg, transparent 45%, var(--adv-maroon) 45% 58%, transparent 58%);
 }
 
+/* Fifteen neighbors: five across, three across on a tablet, two on a phone with the odd one out
+   centered, so no row ends with a lone house. */
 .hood {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--wsu-space-4);
   margin: 0; padding: 0; list-style: none;
 }
@@ -785,6 +787,7 @@ code, pre { font-family: var(--wsu-font-family-mono); }
   .bounds { grid-template-columns: minmax(0, 1fr); }
   .dir-extras, .dir-grid { grid-template-columns: minmax(0, 1fr); }
   .signpost { max-width: 26rem; }
+  .hood { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   /* The section links step aside on a narrow sheet; Docs stays, or a phone
      would have no way into the docs at all. */
   .sheet-nav a:not(.sheet-nav__docs) { display: none; }
@@ -815,6 +818,7 @@ code, pre { font-family: var(--wsu-font-family-mono); }
   .turn__num { width: 44px; height: 44px; font-size: 1.2rem; }
   .turn:not(:last-child)::before { left: 21px; top: 52px; }
   .hood { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hood__item:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - var(--wsu-space-4) / 2); }
   .card { padding: var(--wsu-space-5); }
 }
 @media (max-width: 370px) {

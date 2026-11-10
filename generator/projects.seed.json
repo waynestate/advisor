@@ -98,8 +98,16 @@
             "name": "Squire",
             "kind": "deploy kit",
             "tagline": "deploy kit",
-            "role": "The Citadel kit: the app-side release script, local parity with the platform, and upstream merge requests. Platform-specific deploy code lives here and nowhere else.",
-            "next_step": "Use its release script for Citadel deploys; other platforms use their own targets."
+            "role": "The Citadel kit: build.sh, deployments/, the app-side release script, the health check, the portable image and upstream merge requests. Platform-specific deploy code lives here and nowhere else. Its old local parity kit gives way to Parity.",
+            "next_step": "Use its release script for Citadel deploys; other platforms use their own targets. To run the app like Citadel on your own computer, use Parity."
+        },
+        {
+            "id": "parity",
+            "name": "Parity",
+            "kind": "local Citadel",
+            "tagline": "Citadel on your computer",
+            "role": "Runs Citadel on your own computer: Citadel's own PHP image, Citadel's proxy and MySQL 5.6, for any app, with or without Squire. One Go command line for Windows, macOS and Linux (an optional desktop app follows), on Docker or Podman, with Podman recommended. Commands: check, init, up, down, status, logs, shell, image and test. It is the stack's local-development answer and replaces Squire's parity group.",
+            "next_step": "Install a release from its repository on git.wayne.edu (enterprise-apps/parity; 0.1.0 release candidates so far, with Windows, macOS and Linux archives), then run `parity check`, `parity init` and `parity up` in the app's folder. Coming from Squire's parity kit: `parity init --from-squire`."
         },
         {
             "id": "advisor",

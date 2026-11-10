@@ -286,6 +286,37 @@ final class GeneratorTest extends TestCase
         $this->assertNull((new ContentBundle($this->out))->project('proctor')['version']);
     }
 
+    public function testAChangelogHeadingMarkedUnreleasedIsNotAVersion(): void
+    {
+        $this->put($this->sources . '/proctor/CHANGELOG.md', "## 0.3.0 (unreleased)\n\n- Planned.\n\n## [0.2.0] - 2026-11-01\n\n- Shipped.\n");
+
+        $this->generator()->generate();
+
+        $this->assertSame('0.2.0', (new ContentBundle($this->out))->project('proctor')['version']);
+    }
+
+    public function testOnlyUnreleasedChangelogHeadingsMeanNoVersion(): void
+    {
+        $this->put($this->sources . '/later/go.mod', "module example.test/later\n\ngo 1.26\n");
+        $this->put($this->sources . '/later/CHANGELOG.md', "## [0.1.0] (Unreleased)\n\n- The first release, still on the bench.\n");
+
+        $this->generator()->generate();
+
+        $this->assertNull((new ContentBundle($this->out))->project('later')['version']);
+    }
+
+    public function testAGoModuleCountsAsBuilt(): void
+    {
+        $this->put($this->sources . '/later/go.mod', "module example.test/later\n\ngo 1.26\n");
+
+        $this->generator()->generate();
+        $later = (new ContentBundle($this->out))->project('later');
+
+        $this->assertSame('built', $later['state'] ?? null);
+        $this->assertNull($later['package'] ?? null, 'A Go module is not a Composer package.');
+        $this->assertNull($later['php'] ?? null);
+    }
+
     public function testMissingSourcesAreAnErrorNotAnEmptyBundle(): void
     {
         $this->expectException(RuntimeException::class);

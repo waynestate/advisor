@@ -45,6 +45,57 @@ final class ToolsTest extends TestCase
         $this->assertContains('advisor', $ids);
     }
 
+    public function testListProjectsIncludesParityAsBuilt(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'list_projects'));
+        $projects = array_column($data['projects'], null, 'id');
+
+        $this->assertArrayHasKey('parity', $projects);
+        $this->assertSame('Parity', $projects['parity']['name']);
+        $this->assertSame('built', $projects['parity']['state'], 'Parity is a Go module, and a Go module is code.');
+        $this->assertNull($projects['parity']['package'], 'Parity is a Go program, not a Composer package.');
+        $this->assertStringContainsString('Citadel on your own computer', $projects['parity']['role']);
+        $this->assertStringContainsString('Podman recommended', $projects['parity']['role']);
+        $this->assertContains('readme', $projects['parity']['docs']);
+    }
+
+    public function testParityComesAfterSquireAndWayneUiStaysFirst(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'list_projects'));
+        $ids = array_column($data['projects'], 'id');
+
+        $this->assertSame('wayne-ui', $ids[0]);
+        $this->assertSame(array_search('squire', $ids, true) + 1, array_search('parity', $ids, true));
+    }
+
+    public function testGetProjectStatusKnowsParity(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'get_project_status', ['project' => 'parity']));
+
+        $this->assertSame('parity', $data['project']);
+        $this->assertSame('built', $data['state']);
+        $this->assertNull($data['php_constraint'], 'Parity needs no PHP on the computer it runs on.');
+        $this->assertStringContainsString('parity up', $data['next_step']);
+    }
+
+    public function testReadProjectDocsServesParitysReadme(): void
+    {
+        $data = $this->data($this->call(Boot::core(), 'read_project_docs', ['project' => 'parity', 'doc' => 'readme']));
+
+        $this->assertStringStartsWith('# Parity', $data['text']);
+        $this->assertSame('parity/README.md', $data['source']);
+    }
+
+    public function testOwnerOfLocalDevelopmentIsParity(): void
+    {
+        foreach (['who owns local development?', 'Parity', 'run Citadel locally', 'parity kit', 'Podman'] as $question) {
+            $data = $this->data($this->call(Boot::core(), 'owner_of', ['topic' => $question]));
+
+            $this->assertNotEmpty($data['matches'], $question);
+            $this->assertSame('Parity', $data['matches'][0]['owner'], $question);
+        }
+    }
+
     public function testReadProjectDocsPagesLongDocuments(): void
     {
         $booted = Boot::core(['ADVISOR_MAX_CHARS' => '1000']);
@@ -240,6 +291,7 @@ final class ToolsTest extends TestCase
             '/up' => ['who owns /up?', 'HELMET'],
             'deploy files' => ['deploy files', 'Squire'],
             'release scripts' => ['release scripts', 'Squire'],
+            'local development' => ['local development', 'Parity'],
             '.gitlab-ci.yml' => ['.gitlab-ci.yml', 'Preflight'],
             'parts list' => ['the parts list', 'ADVISOR'],
             'app wiring' => ['who owns app wiring', 'Sourdough'],

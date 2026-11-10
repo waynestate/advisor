@@ -247,7 +247,8 @@ final class Generator
             $require = is_array($data['require'] ?? null) ? $data['require'] : [];
             $php = is_string($require['php'] ?? null) ? $require['php'] : null;
         }
-        $built = is_file($composer) || is_file($dir . '/package.json') || is_dir($dir . '/templates');
+        // Code is code in any language: a Go module (Parity) is as built as a Composer package.
+        $built = is_file($composer) || is_file($dir . '/package.json') || is_file($dir . '/go.mod') || is_dir($dir . '/templates');
 
         $readme = $dir . '/README.md';
         if (is_file($readme)) {
@@ -298,8 +299,9 @@ final class Generator
     /**
      * The project's own version, or null when none is published: the
      * composer.json version key if present, else the package.json version,
-     * else the newest "## [x.y.z]" or "## x.y.z" heading in CHANGELOG.md.
-     * It never guesses.
+     * else the newest "## [x.y.z]" or "## x.y.z" heading in CHANGELOG.md
+     * that is not marked unreleased ("## 0.1.0 (unreleased)" is a plan, not a
+     * release). It never guesses.
      */
     private static function version(string $dir): ?string
     {
@@ -327,9 +329,12 @@ final class Generator
         }
         $changelog = $dir . '/CHANGELOG.md';
         if (is_file($changelog)) {
-            preg_match_all('/^## \[?(\d+\.\d+\.\d+)\]?/m', (string) file_get_contents($changelog), $matches);
+            preg_match_all('/^## \[?(\d+\.\d+\.\d+)\]?(.*)$/m', (string) file_get_contents($changelog), $matches, PREG_SET_ORDER);
             $newest = null;
-            foreach ($matches[1] as $candidate) {
+            foreach ($matches as [, $candidate, $rest]) {
+                if (stripos($rest, 'unreleased') !== false) {
+                    continue;
+                }
                 if ($newest === null || version_compare($candidate, $newest, '>')) {
                     $newest = $candidate;
                 }

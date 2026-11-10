@@ -124,9 +124,9 @@ final class PartsTableTest extends TestCase
         $seed = Json::decodeFile(dirname(__DIR__, 2) . '/generator/projects.seed.json');
         $projects = $seed['projects'] ?? [];
 
-        $this->assertCount(14, $projects, 'The seed should list the fourteen stack parts.');
+        $this->assertCount(15, $projects, 'The seed should list the fifteen stack parts.');
         $this->assertSame(
-            ['wayne-ui', 'creed', 'proctor', 'sesame', 'helmet', 'sourdough', 'preflight', 'pinstripe', 'booster', 'rollcall', 'drawbridge', 'squire', 'advisor', 'weld'],
+            ['wayne-ui', 'creed', 'proctor', 'sesame', 'helmet', 'sourdough', 'preflight', 'pinstripe', 'booster', 'rollcall', 'drawbridge', 'squire', 'parity', 'advisor', 'weld'],
             array_column($projects, 'id'),
         );
         foreach ($projects as $project) {

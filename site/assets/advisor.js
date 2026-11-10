@@ -77,8 +77,8 @@
   /* ---------------------------------------------------- 3. the map's places */
 
   // Positions are in the map's own units (viewBox 1200 x 700). Every place is
-  // a stack project from ADVISOR's data/projects.json, and all fourteen are
-  // built.
+  // a stack project from ADVISOR's data/projects.json, and all fifteen are
+  // built (ADVISOR is the hub, not a place).
   var START = { x: 110, y: 612 };
   var HUB = { x: 560, y: 360 };
   var PLACES = {
@@ -94,7 +94,8 @@
     booster:     { name: "BOOSTER",    alias: "Launch Pad",       x: 1120, y: 110, label: "b", mark: "assets/marks/booster.png" },
     rollcall:    { name: "ROLLCALL",   alias: "The Registrar",    x: 290,  y: 388, label: "l", mark: "assets/marks/rollcall.png" },
     drawbridge:  { name: "DRAWBRIDGE", alias: "Castle Gate",      x: 120,  y: 470, label: "r", mark: "assets/marks/drawbridge.png" },
-    squire:      { name: "SQUIRE",     alias: "The Stables",      x: 1120, y: 580, label: "b", mark: "assets/marks/squire.png" }
+    squire:      { name: "SQUIRE",     alias: "The Stables",      x: 1120, y: 580, label: "b", mark: "assets/marks/squire.png" },
+    parity:      { name: "Parity",     alias: "Reflecting Pool",  x: 120,  y: 150, label: "r", mark: "assets/marks/parity.png" }
   };
 
   var map = document.getElementById("map");
@@ -282,7 +283,13 @@
       keys: ["deploy", "deploying", "release", "ship", "hosting", "server"],
       steps: function () { return [{ tool: "get_project_status", args: "project: squire" }, { tool: "read_project_docs", args: "project: squire" }]; },
       dest: "squire", detail: "the deploy kit",
-      answer: function () { return { text: "Squire, the deploy kit: the build script, the release script, the health check, and local parity on the real images. A knight never suits up alone.", src: "Source: Squire's README, as bundled." }; }
+      answer: function () { return { text: "Squire, the deploy kit: the build script, the deployments folder, the release script and the health check, everything that goes onto Citadel. A knight never suits up alone. To run the app like Citadel before it ships, ask about running it locally.", src: "Source: Squire's README, as bundled." }; }
+    },
+    local: {
+      keys: ["locally", "local", "laptop", "my computer", "my machine", "podman", "docker", "parity", "run my app", "run it", "twin"],
+      steps: function () { return [{ tool: "get_project_status", args: "project: parity" }, { tool: "read_project_docs", args: "project: parity" }]; },
+      dest: "parity", detail: "Citadel on your computer",
+      answer: function () { return { text: "Parity runs Citadel on your own computer: Citadel's own PHP image, its proxy and MySQL 5.6, for any app, with or without Squire. One command line on every OS, on Docker or Podman (Podman recommended): parity check, parity init, parity up. Coming from Squire's parity kit, parity init --from-squire carries it over. Works on your machine now means works on Citadel.", src: "Source: Parity's README, as bundled." }; }
     },
     census: {
       keys: ["fleet", "census", "inventory", "rollcall", "which apps"],
@@ -300,7 +307,7 @@
       keys: ["projects", "stack", "parts", "list", "what's in", "what is in", "starter", "sourdough"],
       steps: function () { return [{ tool: "list_projects" }]; },
       dest: "wayne-ui", detail: "first on the list, always",
-      answer: function () { return { text: "Fourteen projects, WayneUI first, each with its role, its package and its state. All fourteen are built, ADVISOR included; it no longer lists itself as proposed.", src: "Source: ADVISOR's data/projects.json." }; }
+      answer: function () { return { text: "Fifteen projects, WayneUI first, each with its role, its package and its state. All fifteen are built, Parity, the newest, included.", src: "Source: ADVISOR's data/projects.json." }; }
     },
     start: {
       keys: ["new", "start", "begin", "orient", "where", "help", "first", "onboard", "onboarding", "hello"],

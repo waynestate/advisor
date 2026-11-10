@@ -27,6 +27,7 @@ The stack is the Wayne State application stack. WELD, Wired, Everything, Linked,
 | **Rollcall** | fleet census |
 | **Drawbridge** | sign-in gateway |
 | **Squire** | deploy kit |
+| **Parity** | Citadel on your computer |
 | **ADVISOR** | MCP server |
 | **WELD** | the Laravel starter app |
 
@@ -46,6 +47,7 @@ ADVISOR serves a bundled copy of what these projects publish, so it works offlin
 - **Rollcall** is the fleet census.
 - **Drawbridge** is the sign-in gateway.
 - **Squire** is the deploy kit; the front page's deploy layer is generated with it.
+- **Parity** runs Citadel on your own computer: Citadel's PHP image, its proxy and MySQL 5.6, for any app, with or without Squire. It is a Go command line for every OS, on Docker or Podman (Podman recommended), and it replaces Squire's parity group. Its repository is [enterprise-apps/parity](https://git.wayne.edu/enterprise-apps/parity) on git.wayne.edu.
 - **ADVISOR** is the MCP server, the part of the stack that talks to your coding agent.
 - **WELD** is the Laravel starter app: Wired, Everything, Linked, Deployed.
 
