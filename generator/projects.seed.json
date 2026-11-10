@@ -107,7 +107,7 @@
             "kind": "local Citadel",
             "tagline": "Citadel on your computer",
             "role": "Runs Citadel on your own computer: Citadel's own PHP image, Citadel's proxy and MySQL 5.6, for any app, with or without Squire. One Go command line for Windows, macOS and Linux (an optional desktop app follows), on Docker or Podman, with Podman recommended. Commands: check, init, up, down, status, logs, shell, image and test. It is the stack's local-development answer and replaces Squire's parity group.",
-            "next_step": "Install a release from its repository on git.wayne.edu (enterprise-apps/parity; 0.1.0 release candidates so far, with Windows, macOS and Linux archives), then run `parity check`, `parity init` and `parity up` in the app's folder. Coming from Squire's parity kit: `parity init --from-squire`."
+            "next_step": "Install the 0.1.0 release (Windows, macOS and Linux archives) from https://parity.apps.wayne.edu/, then run `parity check`, `parity init` and `parity up` in the app's folder. Coming from Squire's parity kit: `parity init --from-squire`."
         },
         {
             "id": "advisor",

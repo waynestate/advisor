@@ -10,7 +10,8 @@ keeping its bundled content fresh.
 - `waynestate/advisor` on Packagist, with the CLI `bin/advisor` (the MCP server over stdio, `doctor`,
   `content:generate`, `content:verify`, `stack-parts`) and a Laravel provider.
 - Runtime dependencies: `mcp/sdk` (pinned), `opis/json-schema`, `symfony/console`, `symfony/process`,
-  `composer/semver`, `psr/log`. No other stack package at runtime: the stack's content is bundled in `data/`.
+  `composer/semver`, `psr/log`, and one stack package, `waynestate/creed` (its policy reader). The rest of the
+  stack's content is bundled in `data/`.
 - **`data/` is generated, never hand-edited:** `policy.json` and `handbook/` from CREED, `projects.json` from each
   project repo and `generator/projects.seed.json` (state, package, version, PHP floor), plus each project's README,
   best practices and any extra docs its seed names: WayneUI's markup contract and its 1.x to 2.x migration guide.
