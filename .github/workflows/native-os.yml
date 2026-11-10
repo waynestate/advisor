@@ -1,0 +1,66 @@
+# Native Windows and macOS: does `php vendor/bin/advisor mcp` really work over stdio there?
+#
+# git.wayne.edu is the home, and its pipeline runs the full `composer ci` on Linux (PHP 8.3, 8.4, 8.5). The SDK
+# has no Windows CI of its own, so this workflow, on the public GitHub mirror (filled by a git.wayne.edu push
+# mirror; nobody pushes here), answers ADVISOR's open question 1 on every push to main and every tag:
+#
+# - `advisor doctor` starts the server as a child process over pipes, the way a client does, and its stdio line
+#   names the OS and PHP that passed. The doctor output lands in the run's summary as the evidence.
+# - The stdio subprocess tests and the doctor tests run with PHPUnit on the same runner.
+#
+# It is its own workflow, not a job in ci.yml, so the CI badge keeps meaning "composer ci passed".
+# Nothing here publishes; the token stays read-only. Actions are pinned by commit SHA (the tag in the comment is
+# what the SHA was when pinned), the same pins as Booster's and Drawbridge's workflows.
+name: native-os
+
+on:
+  push:
+    branches: [main]
+    tags: ['*.*.*']
+  workflow_dispatch:
+
+concurrency:
+  group: native-os-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  stdio:
+    name: ${{ matrix.os }}, PHP ${{ matrix.php }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+        php: ['8.3', '8.5']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: fileinfo, json, mbstring
+          coverage: none
+          tools: composer:v2
+      - name: composer install
+        shell: bash
+        run: composer install --no-interaction --no-progress
+      - name: advisor doctor (the stdio line is the evidence)
+        shell: bash
+        run: |
+          set +e
+          php bin/advisor doctor > doctor.txt 2>&1
+          rc=$?
+          cat doctor.txt
+          {
+            echo "### ${{ matrix.os }}, PHP ${{ matrix.php }}: doctor exit $rc"
+            echo '```'
+            cat doctor.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $rc
+      - name: stdio and doctor tests
+        shell: bash
+        run: php vendor/bin/phpunit --filter '(StdioProcessTest|DoctorTest)'

@@ -82,7 +82,7 @@ ADVISOR is public, so its bundle must not carry internal names. The public-postu
 
 The following items are open questions or not yet built:
 
-- Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.
+- A recorded green run on a native Windows PHP. The GitHub `native-os` workflow runs `advisor doctor` and the stdio tests on Windows and macOS on every push to main; this line goes when its first green run is recorded. The MCP Inspector in CI is not added (open question 7).
 - Signing of any state handed back to a client (no tool needs it yet).
 - A full-capture audit mode (the threat model mapped to OWASP and NIST is done: see `BEST_PRACTICES.md` and the threat pages).
 - "Ask ADVISOR" web chat: needs a model, an open stack question and an accessibility pass of its own.
@@ -92,7 +92,7 @@ The following items are open questions or not yet built:
 - WarriorGPT-backed features: no model calls until an open stack question is settled.
 - Plan handles, `requestState` signing and elicitation: no tool needs state or a question to the user yet.
 - Full-capture audit mode: hashes only by default; an opt-in needs a retention decision.
-- MCP Inspector in CI, native Windows and macOS CI.
+- MCP Inspector in CI, and the full suite on Windows and macOS (the `native-os` workflow runs doctor and the stdio tests there).
 
 ## Related
 

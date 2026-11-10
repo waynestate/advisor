@@ -18,7 +18,7 @@ could continue.
 | 9 | `applies_to` on each handbook rule (which of the five app permutations it covers) is worked out from keywords. Should CREED tag rules itself? | CREED owner | Trusting the permutation filter | Keyword heuristic, stated in the tool description ("check the cited line before relying on it"). |
 | 10 | Will WarriorGPT find `php` on the PATH on Windows when it starts the server? | WarriorGPT owner | The `warriorgpt` client config | Same `php` command as the other clients; `install` prints it, so a different path can be edited by hand. `advisor doctor`'s `php-path` check says which `php` the PATH gives a client, and warns when there is none. |
 | 11 | An open stack question: which data classes may ever go to a model from ADVISOR? | Lead / security | Any future WarriorGPT feature | None. ADVISOR makes no model call and no network call. |
-| 12 | Should CI also run on Windows and macOS runners? | Lead / platform | Question 1 | GitLab and GitHub files run the Linux matrix (8.3, 8.4, 8.5) only. |
+| 12 | Should CI also run on Windows and macOS runners? | Lead / platform | Question 1 | The full `composer ci` runs on Linux (8.3, 8.4, 8.5) on GitLab and in GitHub's `ci.yml`. GitHub's `native-os.yml` runs `advisor doctor` and the stdio and doctor tests on Windows and macOS (PHP 8.3 and 8.5) on every push to main and every tag. |
 | 13 | Should `ADVISOR_ENABLED=1` live in the committed-or-ignored client config, or only in the developer's shell? | Lead / security | `install` output | `install` puts it in the client config's `env` block and warns when the file is not git-ignored. |
 | 14 | Is there a `.ps1` smoke test wanted for Windows, per the one-path-per-OS rule? | Lead | Nothing | Not provided: the single PHP command is the cross-OS path the rule prefers. |
 
@@ -51,4 +51,4 @@ See `.env.example`.
 | WarriorGPT-backed features | No model calls until an open stack question is settled. |
 | Plan handles, `requestState` signing and elicitation | No tool needs state or a question to the user yet. |
 | Full-capture audit mode | Hashes only by default; an opt-in needs a retention decision. |
-| MCP Inspector in CI, native Windows and macOS CI | See questions 7 and 12. |
+| MCP Inspector in CI, and the full suite on Windows and macOS | See questions 7 and 12. The `native-os` workflow covers the stdio path there. |

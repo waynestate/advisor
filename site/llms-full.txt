@@ -657,6 +657,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 #### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
 
 - Added: `advisor doctor` has a `stdio` check: it starts `php bin/advisor mcp` as a child process, the way a client does, asks it to initialize, list its tools and answer one `policy_lookup` call, and passes only when every stdout line is JSON-RPC and the child exits 0. The pass line names the OS and PHP version, so one run on a Windows PHP answers open question 1. A `php-path` check says which `php` on the PATH a client will start, and warns when there is none or it is not the PHP running doctor (open question 10). Doctor still changes nothing and runs nothing from a config file.
+- Added: a `native-os` GitHub workflow runs `advisor doctor` (with its new stdio check) and the stdio and doctor tests on Windows and macOS, PHP 8.3 and 8.5, on every push to main and every tag, and writes doctor's output to the run summary. It is separate from `ci.yml`, so the CI badge still means `composer ci`; the full suite stays Linux only.
 
 #### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
@@ -947,7 +948,7 @@ The denylist file is never committed. The bundle is regenerated with the file pr
 
 The following items are open questions or not yet built:
 
-- Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.
+- A recorded green run on a native Windows PHP. The GitHub `native-os` workflow runs `advisor doctor` and the stdio tests on Windows and macOS on every push to main; this line goes when its first green run is recorded. The MCP Inspector in CI is not added (open question 7).
 - Signing of any state handed back to a client (no tool needs it yet).
 - A full-capture audit mode (the threat model mapped to OWASP and NIST is done: see `BEST_PRACTICES.md` and the threat pages).
 - "Ask ADVISOR" web chat: needs a model, an open stack question and an accessibility pass of its own.
@@ -957,7 +958,7 @@ The following items are open questions or not yet built:
 - WarriorGPT-backed features: no model calls until an open stack question is settled.
 - Plan handles, `requestState` signing and elicitation: no tool needs state or a question to the user yet.
 - Full-capture audit mode: hashes only by default; an opt-in needs a retention decision.
-- MCP Inspector in CI, native Windows and macOS CI.
+- MCP Inspector in CI, and the full suite on Windows and macOS (the `native-os` workflow runs doctor and the stdio tests there).
 
 ### Related [#](https://advisor.apps.wayne.edu/docs/contributing.html#related)
 
@@ -1789,7 +1790,7 @@ Policy answers carry the day they were worked out for and the file they came fro
 
 ### Not yet [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#not-yet)
 
-- Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.
+- A recorded green run on a native Windows PHP. The GitHub `native-os` workflow runs `advisor doctor` and the stdio tests on Windows and macOS on every push to main; this line goes when its first green run is recorded. The MCP Inspector in CI is not added (open question 7).
 - Signing of any state handed back to a client (no tool needs it yet).
 - A full-capture audit mode.
 

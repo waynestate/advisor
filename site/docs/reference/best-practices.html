@@ -74,7 +74,7 @@
 <p><code>BEST_PRACTICES.md</code> carries the threat model: eleven threats, each mapped to the rules above and to OWASP Top 10:2025, OWASP ASVS 5.0 or NIST SSDF, plus what is out of scope. Four of them have a page of their own: <a href="../threats/prompt-injection.html">prompt injection</a>, <a href="../threats/path-traversal.html">path traversal</a>, <a href="../threats/command-injection.html">command injection</a> and <a href="../threats/data-exfiltration.html">data exfiltration</a>.</p>
 <h2 id="not-yet">Not <span class="docs-heading-tail"><span>yet</span><a class="docs-heading-link" aria-label="Link to this section" href="#not-yet">#</a></span></h2>
 <ul>
-<li>Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.</li>
+<li>A recorded green run on a native Windows PHP. The GitHub <code>native-os</code> workflow runs <code>advisor doctor</code> and the stdio tests on Windows and macOS on every push to main; this line goes when its first green run is recorded. The MCP Inspector in CI is not added (open question 7).</li>
 <li>Signing of any state handed back to a client (no tool needs it yet).</li>
 <li>A full-capture audit mode.</li>
 </ul>

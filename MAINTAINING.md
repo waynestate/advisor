@@ -51,6 +51,7 @@ step.
 
 - **GitLab:** Preflight's `php-test` (PHP 8.3, 8.4, 8.5) and `composer-audit` components, plus a `composer-ci` job.
 - **GitHub:** `.github/workflows/ci.yml` calls Preflight's reusable workflow with `composer ci`.
+- **GitHub, native OS:** `.github/workflows/native-os.yml` runs `advisor doctor` and the stdio and doctor tests on Windows and macOS (PHP 8.3 and 8.5) on each push to main and each tag, and puts doctor's output in the run summary. It is a workflow of its own so the CI badge keeps meaning `composer ci`. Start it by hand from the Actions tab (`workflow_dispatch`) when you want a fresh run.
 - Green means `composer ci` passed on all three PHP versions on both.
 
 ## Keeping the content fresh
@@ -102,7 +103,7 @@ CI, a masked file-type variable). See "Releasing" in the README.
 
 ## Things that trip people up
 
-- Native Windows PHP with the MCP SDK over stdio is not verified yet; CI runs on Linux.
+- Native Windows and macOS are covered by the GitHub `native-os` workflow (doctor's stdio check and the stdio tests); the full `composer ci` runs on Linux only. Until that workflow's first green run on main is recorded, native Windows stays unproven.
 - A client's `.mcp.json` starts a program on the developer's machine, so it is never committed.
 
 ## The front page

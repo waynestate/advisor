@@ -69,6 +69,6 @@ Rule 5 (run Boost beside it) is a usage note and answers no threat.
 
 ## Not yet
 
-- Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.
+- A recorded green run on a native Windows PHP. The GitHub `native-os` workflow runs `advisor doctor` and the stdio tests on Windows and macOS on every push to main; this line goes when its first green run is recorded. The MCP Inspector in CI is not added (open question 7).
 - Signing of any state handed back to a client (no tool needs it yet).
 - A full-capture audit mode.

@@ -123,7 +123,7 @@
 <h2 id="open-work">Open <span class="docs-heading-tail"><span>work</span><a class="docs-heading-link" aria-label="Link to this section" href="#open-work">#</a></span></h2>
 <p>The following items are open questions or not yet built:</p>
 <ul>
-<li>Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.</li>
+<li>A recorded green run on a native Windows PHP. The GitHub <code>native-os</code> workflow runs <code>advisor doctor</code> and the stdio tests on Windows and macOS on every push to main; this line goes when its first green run is recorded. The MCP Inspector in CI is not added (open question 7).</li>
 <li>Signing of any state handed back to a client (no tool needs it yet).</li>
 <li>A full-capture audit mode (the threat model mapped to OWASP and NIST is done: see <code>BEST_PRACTICES.md</code> and the threat pages).</li>
 <li>&quot;Ask ADVISOR&quot; web chat: needs a model, an open stack question and an accessibility pass of its own.</li>
@@ -133,7 +133,7 @@
 <li>WarriorGPT-backed features: no model calls until an open stack question is settled.</li>
 <li>Plan handles, <code>requestState</code> signing and elicitation: no tool needs state or a question to the user yet.</li>
 <li>Full-capture audit mode: hashes only by default; an opt-in needs a retention decision.</li>
-<li>MCP Inspector in CI, native Windows and macOS CI.</li>
+<li>MCP Inspector in CI, and the full suite on Windows and macOS (the <code>native-os</code> workflow runs doctor and the stdio tests there).</li>
 </ul>
 <h2 id="related"><span class="docs-heading-tail"><span>Related</span><a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></span></h2>
 <ul>

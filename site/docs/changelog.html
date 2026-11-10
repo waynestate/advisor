@@ -45,7 +45,12 @@
 <h2 id="unreleased"><span class="docs-heading-tail"><span>[Unreleased]</span><a class="docs-heading-link" aria-label="Link to this section" href="#unreleased">#</a></span></h2>
 <h3 id="added"><span class="docs-heading-tail"><span>Added</span><a class="docs-heading-link" aria-label="Link to this section" href="#added">#</a></span></h3>
 <ul>
-<li>Added: <code>advisor doctor</code> has a <code>stdio</code> check: it starts <code>php bin/advisor mcp</code> as a child process, the way a client does, asks it to initialize, list its tools and answer one <code>policy_lookup</code> call, and passes only when every stdout line is JSON-RPC and the child exits 0. The pass line names the OS and PHP version, so one run on a Windows PHP answers open question 1. A <code>php-path</code> check says which <code>php</code> on the PATH a client will start, and warns when there is none or it is not the PHP running doctor (open question 10). Doctor still changes nothing and runs nothing from a config file.</li>
+<li>
+<p>Added: <code>advisor doctor</code> has a <code>stdio</code> check: it starts <code>php bin/advisor mcp</code> as a child process, the way a client does, asks it to initialize, list its tools and answer one <code>policy_lookup</code> call, and passes only when every stdout line is JSON-RPC and the child exits 0. The pass line names the OS and PHP version, so one run on a Windows PHP answers open question 1. A <code>php-path</code> check says which <code>php</code> on the PATH a client will start, and warns when there is none or it is not the PHP running doctor (open question 10). Doctor still changes nothing and runs nothing from a config file.</p>
+</li>
+<li>
+<p>Added: a <code>native-os</code> GitHub workflow runs <code>advisor doctor</code> (with its new stdio check) and the stdio and doctor tests on Windows and macOS, PHP 8.3 and 8.5, on every push to main and every tag, and writes doctor's output to the run summary. It is separate from <code>ci.yml</code>, so the CI badge still means <code>composer ci</code>; the full suite stays Linux only.</p>
+</li>
 </ul>
 <h3 id="changed"><span class="docs-heading-tail"><span>Changed</span><a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></span></h3>
 <ul>
