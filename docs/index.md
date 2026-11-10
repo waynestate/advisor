@@ -35,7 +35,7 @@ The command is `php vendor/bin/advisor`. This works the same on Windows, macOS a
 
 ## Status
 
-Current release 0.2.0. PHP ^8.3, license MIT, MCP SDK 0.9.0. New in 0.2.0: ADVISOR reads the policy through CREED's own reader (`waynestate/creed` ^0.1.8), `upgrade_path` takes `from_php`, `policy_lookup` answers end of life for a version older than the policy lists, the [threat pages](threats/prompt-injection.md), and a bundle resynced with the stack's 2026-11-09 main branches. The [changelog](changelog.md) has the full list, and [Upgrading](upgrading.md) the one step it needs. Agent-ready index: [llms.txt](../llms.txt).
+Current release 0.3.0. PHP ^8.3, license MIT, MCP SDK 0.9.0. New in 0.3.0: Parity, Citadel on your own computer, is the fifteenth part of the stack, so `list_projects`, `get_project_status`, `read_project_docs` and `owner_of` ("local development") know it; the bundle is resynced with the stack's 2026-11-09 night main branches; and CI runs on Composer 2.11.1 and Preflight 0.5.0. The [changelog](changelog.md) has the full list, and [Upgrading](upgrading.md) the one step it needs. Agent-ready index: [llms.txt](../llms.txt).
 
 ## Related
 

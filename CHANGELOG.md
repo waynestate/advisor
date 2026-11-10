@@ -4,6 +4,8 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-09
+
 ### Added
 
 - Added: Parity is in the parts list (`generator/projects.seed.json`), after Squire: Citadel on your own computer (Citadel's PHP image, its proxy and MySQL 5.6) for any app, with or without Squire, as one Go command line for every OS on Docker or Podman (Podman recommended). `list_projects`, `get_project_status` and `read_project_docs` know it, and the stack-parts table in the README and the "Where it sits" page has fifteen rows.

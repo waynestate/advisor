@@ -1,6 +1,6 @@
 # ADVISOR open questions
 
-Status at 0.2.0 (2026-11-09). Each question names who can answer it, what it blocks, and the default that was built so work
+Status at 0.3.0 (2026-11-09). Each question names who can answer it, what it blocks, and the default that was built so work
 could continue.
 
 ## Questions

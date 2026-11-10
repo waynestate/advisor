@@ -7,6 +7,15 @@ description: How to upgrade ADVISOR, version by version.
 
 This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
 
+## [0.3.0] - 2026-11-09
+
+A new minor line, so a `^0.2` constraint does not pick it up: move to `composer require --dev waynestate/advisor:^0.3`. No code in your app changes; the MCP server reports version 0.3.0.
+
+- The parts list has fifteen projects: Parity, Citadel on your own computer, comes after Squire. `get_project_status` and `read_project_docs` take `parity`, so an agent that validates project ids against the tool's enum sees one more.
+- `owner_of` answers "local development" with Parity, and the deploy-files row no longer lists the parity kit under Squire.
+- A project whose `CHANGELOG.md` heading says unreleased no longer shows that number as its version, and a Go module counts as built.
+- The bundled data is resynced with the stack's 2026-11-09 night main branches, and the front page deploy layer runs Squire's kit 0.10.2 with CREED ^0.1.8 and HELMET ^1.3.
+
 ## [0.2.0] - 2026-11-09
 
 A new minor line, so a `^0.1` constraint does not pick it up: move to `composer require --dev waynestate/advisor:^0.2`. ADVISOR now requires `waynestate/creed` (^0.1.8); if your app locks an older CREED (PROCTOR brings one), let Composer move it too with `composer update waynestate/advisor --with-dependencies`. The MCP server reports version 0.2.0.
