@@ -62,10 +62,16 @@ for plain bans, and a custom rule only when neither fits.
 - No disabled TLS verification, such as `withoutVerifying()` or
   `CURLOPT_SSL_VERIFYPEER` set to false (OWASP ASVS).
   `withoutVerifying()` is banned by `pinstripe.banned.withoutVerifying`
-  (Pinstripe 0.2.0); `CURLOPT_SSL_VERIFYPEER` set to false is still
-  Planned.
+  (Pinstripe 0.2.0). Since Pinstripe 0.3.0 the rest are banned too:
+  `CURLOPT_SSL_VERIFYPEER` set to false or `CURLOPT_SSL_VERIFYHOST` set to 0
+  (`pinstripe.banned.curlVerifyOff`), a stream context that skips the peer
+  check (`pinstripe.banned.streamVerifyOff`) and Guzzle's `verify` set to
+  false (`pinstripe.banned.verifyFalse`).
 - No SQL built by joining strings; use bindings (OWASP SQL Injection
-  Prevention Cheat Sheet). Planned.
+  Prevention Cheat Sheet). Banned since Pinstripe 0.3.0 as
+  `pinstripe.banned.joinedSql`: a variable joined into the SQL given to PDO,
+  mysqli, `oci_parse()` (and the old `ociparse()`) or Laravel's `DB::` calls
+  fails; literal SQL with bindings passes.
 - No debug leftovers or dynamic code: `eval()`, `extract()`, `var_dump()`,
   `dd()` and `dump()`. `phpstan-disallowed-calls` bans them as
   `pinstripe.banned.eval`, `pinstripe.banned.extract`,
@@ -94,7 +100,7 @@ for plain bans, and a custom rule only when neither fits.
 ## How it is enforced
 
 - Pint, PHPStan, Rector dry-runs and ESLint run in CI through Preflight
-  components, not in the deploy gate (the stack's coding standard). Preflight 0.4.0
+  components, not in the deploy gate (the stack's coding standard). Preflight 0.5.0
   ships the `pint`, `phpstan` and `eslint` components; a Rector dry-run component
   is Planned.
 - New rules arrive as warnings and become errors on a stated date, the same
@@ -111,7 +117,7 @@ for plain bans, and a custom rule only when neither fits.
 | Static analysis, level 8 | `phpstan/base.neon` | Built (Pinstripe 0.1.4) |
 | Static analysis, raw apps | `phpstan/raw.neon` | Built (Pinstripe 0.1.4) |
 | Static analysis, Laravel apps | `phpstan/laravel.neon` | Built (Pinstripe 0.1.4) |
-| Banned patterns | `phpstan/disallowed.neon` | Built (Pinstripe 0.2.0) |
+| Banned patterns | `phpstan/disallowed.neon` | Built (Pinstripe 0.2.0; the joined SQL and TLS-off bans in 0.3.0) |
 | Vue and JavaScript | `eslint/javascript.js` and `eslint/typescript.js` (npm `@waynestate/pinstripe`) | Built (Pinstripe 0.1.4) |
 | Security analysis | `phpstan/laravel.neon` (the env rule) and `phpstan/disallowed.neon` (the banned calls) are built; the Psalm taint pilot is not yet | Planned |
 

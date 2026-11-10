@@ -40,12 +40,17 @@ as a gate, and decisions written down. WELD is the Laravel starter app with the 
 | WayneUI | the interface layer (project 0 of the stack) |
 | CREED | the shared rules and policy format |
 | PROCTOR | checks an app against the version policy |
-| Preflight | the shared CI components |
 | SESAME | sign-in inside the app; its `gateway` driver verifies what Drawbridge signs |
 | HELMET | security headers and CSP reporting |
-| Pinstripe | the coding standard presets (Pint, PHPStan, ESLint, Rector) |
 | Sourdough | the starter that keeps the stack fed |
+| Squire | the Citadel deploy kit; the layer that serves this repo's front page is one |
+| Preflight | the shared CI components |
+| Pinstripe | the coding standard presets (Pint, PHPStan, ESLint, Rector) |
+| Booster | upgrades an app's PHP, Laravel and front end, one hop at a time |
+| Rollcall | the fleet census: which apps run what, and how close each is to end of life |
 | **Drawbridge** | **the one OpenID Connect front door for the Citadel** |
+| ADVISOR | the read-only MCP server that answers a coding agent's stack questions |
+| WELD | the Laravel starter app with the rest of the stack already set up |
 
 ## How it works
 

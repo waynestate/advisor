@@ -89,7 +89,7 @@
             "role": "The starters: one command generates a new app in the shape you pick: raw PHP (`sourdough new --raw`), raw PHP with a Vue SPA (`--raw --vue`), Laravel with Blade (`--laravel`), Laravel with Blade and Vue islands (`--laravel --vue`) or Laravel with Inertia and Vue (`--inertia`). `--sail` or `--docker` adds a local runtime to the Laravel shapes.",
             "state": "built",
             "package": "waynestate/sourdough",
-            "version": "0.3.0",
+            "version": "0.4.0",
             "php": "^8.3",
             "next_step": "Start a new app with `sourdough new` and the shape flag you need; keep an app honest with `sourdough manifest --check`, and bring template updates in with `sourdough feed`.",
             "docs": [
@@ -137,7 +137,7 @@
             "role": "The upgrade tool: Rector recipes and checks that move an app one PHP or Laravel version at a time.",
             "state": "built",
             "package": "waynestate/booster",
-            "version": "1.14.0",
+            "version": "1.15.0",
             "php": "^8.3",
             "next_step": "Plan one hop at a time with `upgrade_path`, and read its README for the Rector recipes.",
             "docs": [

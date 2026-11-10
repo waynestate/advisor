@@ -29,7 +29,7 @@ Tags describe the repository and design documents as they stand on 2026-10-29. P
 HELMET main and Rollcall main, and five tags moved (practices 8, 17, 23, 34 and 53). Later that day the pin moved to
 Preflight 0.3.0, and the practices that name it (23 and 42) were re-read against 0.3.0. PROCTOR v0.1 is specified in
 `first-repos.md` and its checks are named below as specified. CREED's own pipeline includes the `php-test`,
-`composer-audit` and `proctor` components, pinned to Preflight 0.4.0; the `proctor` job checks `deploy/` and is
+`composer-audit`, `proctor` and `a11y` components, pinned to Preflight 0.5.0; the `proctor` job checks `deploy/` and is
 allowed to fail while its current findings are fixed. Later on 2026-11-08, after a re-read of PROCTOR main and HELMET
 main, two more tags moved: practice 26 to `Checked` and practice 28 to `Partially`.
 
@@ -368,7 +368,7 @@ Sources: [Composer CLI reference, `audit`](https://getcomposer.org/doc/03-cli.md
 Second pass: you may already have a choice without writing one. The current config page gives `audit.abandoned` a default
 of `fail` (since Composer 2.7; it was `report` in 2.6), and says the whole `audit` section is deprecated in favor of
 `config.policy`, where blocking abandoned packages (`block`) is off by default. Composer 2.10 added `config.policy`
-(2.10.0 on 2026-05-28), with advisory, abandoned and malware blocks; the latest stable is 2.10.3. The same page says the
+(2.10.0 on 2026-05-28), with advisory, abandoned and malware blocks; the latest stable is 2.11.1. The same page says the
 legacy keys keep
 working only while the matching `policy` section is absent. So the stack should write down which Composer version its CI
 uses, and which of the two config styles it follows.
@@ -402,8 +402,8 @@ Sources: [Composer basic usage](https://getcomposer.org/doc/01-basic-usage.md) (
 commit SHA, which it calls preferred, or to a release tag; it says to avoid `~latest`). The pinning rule itself is the
 stack's own, from the first-repos design.
 
-How the stack holds it: `Partially`. `ci.md` states it, and CREED's `.gitlab-ci.yml` pins its three Preflight
-components (`php-test`, `composer-audit` and `proctor`) to the 0.4.0 tag. PROCTOR main's `proctor/preflight-pinned`
+How the stack holds it: `Partially`. `ci.md` states it, and CREED's `.gitlab-ci.yml` pins its four Preflight
+components (`php-test`, `composer-audit`, `proctor` and `a11y`) to the 0.5.0 tag. PROCTOR main's `proctor/preflight-pinned`
 warns when an app includes a Preflight component at a branch, `~latest`, a partial version such as `0.3` or no ref; a
 full release tag (such as `@0.3.0`) or a full commit SHA passes. Components from anywhere else are not checked.
 
@@ -421,7 +421,7 @@ Sources: [OWASP Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.o
 
 How the stack holds it: `Partially`. `handbook/secrets.md` writes the rules. PROCTOR main warns on two kinds of committed
 secret: a real `.env` file or a real `APP_KEY` (`proctor/app-key/committed-env` and `committed-key`, practice 43) and a
-token written into a package source URL or `.npmrc` (`proctor/repo-url-credentials`). Preflight 0.4.0's
+token written into a package source URL or `.npmrc` (`proctor/repo-url-credentials`). Preflight 0.5.0's
 `secret-detection` component runs Gitleaks over the checked-out tree and fails the pipeline on a match, so an API key
 pasted into code is caught in an app that includes it. CREED's own pipeline does not include it yet, and rotation
 stays a process.
@@ -670,8 +670,8 @@ Attackers now publish through accounts and tokens they took over. Packagist's 20
 stolen tokens to publish new tags. Packagist responded with malware warnings imported from Aikido (since March 2026), a
 public transparency log, and tag immutability for stable versions. It also warns that `composer update` refreshes lock
 entries, so a lock file alone does not protect against a re-tagged version. A cooldown policy (`policy.cooldown.period`,
-for example `"7 days"`) is documented on Composer's config page; the releases page lists it in 2.11.0-RC1, a pre-release,
-while 2.10.3 is the stable release shown. Dependabot's cooldown supports Composer and defaults to 3 days, so it is a
+for example `"7 days"`) is documented on Composer's config page; it first appeared in 2.11.0-RC1 and shipped in 2.11.0;
+2.11.1 is the stable release now. Dependabot's cooldown supports Composer and defaults to 3 days, so it is a
 usable control now. On the front-end side, the Shai-Hulud worm (GitHub was notified on 2025-09-14)
 spread through post-install scripts, and GitHub removed more than 500 compromised packages.
 
@@ -688,8 +688,8 @@ Sources: [Packagist supply chain security update](https://blog.packagist.com/an-
 How the stack holds it: `Not yet`. No setting in `policy.json` or in CI delays new versions. Decided 2026-11-03: a 3 day
 cooldown once Composer 2.11 is stable and in the base images, with Sourdough apps setting it and PROCTOR warning when it
 is missing (PROCTOR plan 4.11). Composer 2.11.0 shipped on 2026-10-29 (2.11.1 on 2026-10-30) with
-`policy.cooldown.period`, but nothing sets it yet: the stack's images and CI still pin Composer 2.10.3, and moving them
-to 2.11 is the next step. The lock file
+`policy.cooldown.period`, but nothing sets it yet. The stack's images and CI now pin Composer 2.11.1 by digest
+(Preflight 0.5.0 installs 2.11.1 by default), so setting the cooldown is the next step. The lock file
 (practice 18) is necessary but, per Packagist, not enough.
 
 ### 41. Set the front-end install options, and map severity words
@@ -718,9 +718,9 @@ fails the job on a high or critical advisory in a runtime dependency (sourdough
 templates/laravel-blade-vue/.gitlab-ci.yml:112-114, templates/laravel-inertia/.gitlab-ci.yml:113-115,
 templates/raw-vue/.gitlab-ci.yml:104-106). The rest is written down only: WELD's own CI runs
 `npm ci --no-audit --no-fund` without `--ignore-scripts` and with no audit step (weld .gitlab-ci.yml:111),
-Preflight 0.4.0 has no component that audits `package-lock.json` (its thirteen templates are a11y, composer-audit,
-eslint, package-publish, php-test, phpstan, pint, portability, proctor, renovate, sbom, secret-detection and
-squire-kit), and the `audit_severity_threshold` rule is read by the Composer audit alone (proctor README.md:111), so the
+Preflight 0.5.0 adds an `npm-audit` component that audits `package-lock.json` (its fourteen templates are a11y,
+composer-audit, eslint, npm-audit, package-publish, php-test, phpstan, pint, portability, proctor, renovate, sbom,
+secret-detection and squire-kit), but no stack repo or template includes it yet, and the `audit_severity_threshold` rule is read by the Composer audit alone (proctor README.md:111), so the
 mapping between npm's `moderate` and Composer's `medium` is unwritten. (Sourdough grades the same release install
 `Documented` from its own seat, sourdough BEST_PRACTICES.md:203; the tag here counts the built code in the stack.)
 
@@ -933,7 +933,7 @@ WayneUI's own gate is outside CREED and was not reviewed in this pass.
 
 Sources: [GitLab accessibility testing](https://docs.gitlab.com/ci/testing/accessibility_testing/).
 
-How the stack holds it: `Checked`. Preflight 0.4.0's `a11y` component opens the app's pages in Chromium (Playwright),
+How the stack holds it: `Checked`. Preflight 0.5.0's `a11y` component opens the app's pages in Chromium (Playwright),
 in light and dark at 320 and 1280 px, runs axe-core and fails the pipeline on any violation; CREED's pipeline pins
 the component to that tag and asks it for WCAG 2.2 AA (practice 54). It is axe-core, not GitLab's Pa11y job. CREED
 runs that same checker on its own site: `scripts/a11y.sh` and `scripts/a11y.ps1` drive the copy vendored in
@@ -971,7 +971,7 @@ Sources: the WSU developer standards, 2024 (an internal WSU document), [OWASP AS
 
 How the stack holds it: `Partially`. `handbook/secrets.md` writes the rule. PROCTOR main warns on committed env files and
 APP_KEYs (`proctor/app-key`, practice 43), on tokens in package source URLs (`proctor/repo-url-credentials`), and on
-dumps, backups, logs and env files in the served folder (`proctor/served-folder`, practice 59), and Preflight 0.4.0's
+dumps, backups, logs and env files in the served folder (`proctor/served-folder`, practice 59), and Preflight 0.5.0's
 `secret-detection` component fails a pipeline on a committed secret Gitleaks recognizes. What a log or an
 exception carries at runtime is not something a static check can see.
 
@@ -1145,9 +1145,9 @@ Added in the second pass (2026-10-27):
 20. Add a response window per severity to `rules` (for example "fix within N days"; the maintainers choose N), and a
     check that applies it to `composer audit` output (practice 38).
 21. Done: `config.policy` it is. Practice 21 is `Checked`, PROCTOR's `composer-audit` reads the `config.policy` block
-    (with the legacy `audit` keys as a fallback), and the Composer the stack pins, 2.10.3, supports it (practices 21
+    (with the legacy `audit` keys as a fallback), and the Composer the stack pins, 2.11.1, supports it (practices 21
     and 39).
-22. Done: decided 2026-11-03: a 3 day cooldown once Composer 2.11 is stable and in the base images; Sourdough apps set it and PROCTOR warns when it is missing (PROCTOR plan 4.11). Composer 2.11.0 shipped on 2026-10-29 (2.11.1 on 2026-10-30) with `policy.cooldown.period`; it is not set anywhere yet, because the stack's images and CI still pin 2.10.3, and moving them is the next step (practice 40).
+22. Done: decided 2026-11-03: a 3 day cooldown once Composer 2.11 is stable and in the base images; Sourdough apps set it and PROCTOR warns when it is missing (PROCTOR plan 4.11). Composer 2.11.0 shipped on 2026-10-29 (2.11.1 on 2026-10-30) with `policy.cooldown.period`; it is not set anywhere yet; the stack's images and CI pin 2.11.1 now, so setting it is the next step (practice 40).
 23. Add an npm check (`audit-level`, `ignore-scripts`, `min-release-age`) to Preflight, with a severity word map between
     Composer and npm (practice 41).
 24. Done: git.wayne.edu and nougat both run GitLab 19.5.1 Community Edition, the Free tier (the rule is written in

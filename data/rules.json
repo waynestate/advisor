@@ -88,7 +88,7 @@
             "id": "accessibility-7",
             "chapter": "accessibility",
             "heading": "Checks",
-            "text": "Preflight's `a11y` component (0.4.0) is the stack's CI check: it opens the app's pages in Chromium, runs axe-core in light and dark at 320 and 1280 px, and fails the pipeline on any violation. Add `wcag22aa` to its tags for the WCAG 2.2 AA target above.",
+            "text": "Preflight's `a11y` component (0.5.0) is the stack's CI check: it opens the app's pages in Chromium, runs axe-core in light and dark at 320 and 1280 px, and fails the pipeline on any violation. Add `wcag22aa` to its tags for the WCAG 2.2 AA target above.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -754,7 +754,7 @@
             "id": "code-24",
             "chapter": "code",
             "heading": "Banned patterns",
-            "text": "No disabled TLS verification, such as `withoutVerifying()` or `CURLOPT_SSL_VERIFYPEER` set to false (OWASP ASVS). `withoutVerifying()` is banned by `pinstripe.banned.withoutVerifying` (Pinstripe 0.2.0); `CURLOPT_SSL_VERIFYPEER` set to false is still Planned.",
+            "text": "No disabled TLS verification, such as `withoutVerifying()` or `CURLOPT_SSL_VERIFYPEER` set to false (OWASP ASVS). `withoutVerifying()` is banned by `pinstripe.banned.withoutVerifying` (Pinstripe 0.2.0). Since Pinstripe 0.3.0 the rest are banned too: `CURLOPT_SSL_VERIFYPEER` set to false or `CURLOPT_SSL_VERIFYHOST` set to 0 (`pinstripe.banned.curlVerifyOff`), a stream context that skips the peer check (`pinstripe.banned.streamVerifyOff`) and Guzzle's `verify` set to false (`pinstripe.banned.verifyFalse`).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -768,15 +768,13 @@
             "id": "code-25",
             "chapter": "code",
             "heading": "Banned patterns",
-            "text": "No SQL built by joining strings; use bindings (OWASP SQL Injection Prevention Cheat Sheet). Planned.",
+            "text": "No SQL built by joining strings; use bindings (OWASP SQL Injection Prevention Cheat Sheet). Banned since Pinstripe 0.3.0 as `pinstripe.banned.joinedSql`: a variable joined into the SQL given to PDO, mysqli, `oci_parse()` (and the old `ociparse()`) or Laravel's `DB::` calls fails; literal SQL with bindings passes.",
             "applies_to": [
-                "raw-php",
-                "raw-php-vue",
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:67"
+            "source": "handbook/code.md:70"
         },
         {
             "id": "code-26",
@@ -790,7 +788,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:69"
+            "source": "handbook/code.md:75"
         },
         {
             "id": "code-27",
@@ -804,7 +802,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:78"
+            "source": "handbook/code.md:84"
         },
         {
             "id": "code-28",
@@ -816,7 +814,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:79"
+            "source": "handbook/code.md:85"
         },
         {
             "id": "code-29",
@@ -830,7 +828,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:80"
+            "source": "handbook/code.md:86"
         },
         {
             "id": "code-30",
@@ -844,7 +842,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:81"
+            "source": "handbook/code.md:87"
         },
         {
             "id": "code-31",
@@ -858,7 +856,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:82"
+            "source": "handbook/code.md:88"
         },
         {
             "id": "code-32",
@@ -870,7 +868,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:83"
+            "source": "handbook/code.md:89"
         },
         {
             "id": "code-33",
@@ -884,7 +882,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:85"
+            "source": "handbook/code.md:91"
         },
         {
             "id": "code-34",
@@ -898,7 +896,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:89"
+            "source": "handbook/code.md:95"
         },
         {
             "id": "code-35",
@@ -910,13 +908,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:91"
+            "source": "handbook/code.md:97"
         },
         {
             "id": "code-36",
             "chapter": "code",
             "heading": "How it is enforced",
-            "text": "Pint, PHPStan, Rector dry-runs and ESLint run in CI through Preflight components, not in the deploy gate (the stack's coding standard). Preflight 0.4.0 ships the `pint`, `phpstan` and `eslint` components; a Rector dry-run component is Planned.",
+            "text": "Pint, PHPStan, Rector dry-runs and ESLint run in CI through Preflight components, not in the deploy gate (the stack's coding standard). Preflight 0.5.0 ships the `pint`, `phpstan` and `eslint` components; a Rector dry-run component is Planned.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -924,7 +922,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:96"
+            "source": "handbook/code.md:102"
         },
         {
             "id": "code-37",
@@ -938,7 +936,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:100"
+            "source": "handbook/code.md:106"
         },
         {
             "id": "code-38",
@@ -952,7 +950,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:102"
+            "source": "handbook/code.md:108"
         },
         {
             "id": "code-39",
@@ -966,7 +964,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:120"
+            "source": "handbook/code.md:126"
         },
         {
             "id": "code-40",
@@ -980,7 +978,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:122"
+            "source": "handbook/code.md:128"
         },
         {
             "id": "code-41",
@@ -994,7 +992,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:126"
+            "source": "handbook/code.md:132"
         },
         {
             "id": "code-42",
@@ -1008,7 +1006,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:128"
+            "source": "handbook/code.md:134"
         },
         {
             "id": "code-43",
@@ -1022,7 +1020,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:129"
+            "source": "handbook/code.md:135"
         },
         {
             "id": "code-44",
@@ -1036,7 +1034,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:133"
+            "source": "handbook/code.md:139"
         },
         {
             "id": "code-45",
@@ -1050,7 +1048,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:134"
+            "source": "handbook/code.md:140"
         },
         {
             "id": "code-46",
@@ -1062,7 +1060,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:135"
+            "source": "handbook/code.md:141"
         },
         {
             "id": "code-47",
@@ -1076,7 +1074,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:136"
+            "source": "handbook/code.md:142"
         },
         {
             "id": "code-48",
@@ -1090,7 +1088,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:137"
+            "source": "handbook/code.md:143"
         },
         {
             "id": "code-49",
@@ -1104,7 +1102,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:138"
+            "source": "handbook/code.md:144"
         },
         {
             "id": "code-50",
@@ -1118,7 +1116,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:139"
+            "source": "handbook/code.md:145"
         },
         {
             "id": "code-51",
@@ -1130,7 +1128,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:140"
+            "source": "handbook/code.md:146"
         },
         {
             "id": "code-52",
@@ -1142,7 +1140,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:141"
+            "source": "handbook/code.md:147"
         },
         {
             "id": "code-53",
@@ -1156,7 +1154,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:143"
+            "source": "handbook/code.md:149"
         },
         {
             "id": "code-54",
@@ -1170,7 +1168,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:145"
+            "source": "handbook/code.md:151"
         },
         {
             "id": "code-55",
@@ -1182,7 +1180,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:147"
+            "source": "handbook/code.md:153"
         },
         {
             "id": "code-56",
@@ -1196,7 +1194,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:148"
+            "source": "handbook/code.md:154"
         },
         {
             "id": "code-57",
@@ -1208,7 +1206,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:149"
+            "source": "handbook/code.md:155"
         },
         {
             "id": "code-58",
@@ -1222,7 +1220,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:151"
+            "source": "handbook/code.md:157"
         },
         {
             "id": "code-59",
@@ -1236,7 +1234,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:152"
+            "source": "handbook/code.md:158"
         },
         {
             "id": "code-60",
@@ -1250,7 +1248,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:153"
+            "source": "handbook/code.md:159"
         },
         {
             "id": "code-61",
@@ -1264,7 +1262,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:154"
+            "source": "handbook/code.md:160"
         },
         {
             "id": "code-62",
@@ -1278,7 +1276,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:156"
+            "source": "handbook/code.md:162"
         },
         {
             "id": "code-63",
@@ -1292,7 +1290,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/code.md:157"
+            "source": "handbook/code.md:163"
         },
         {
             "id": "databases-1",
