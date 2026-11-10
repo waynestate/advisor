@@ -54,7 +54,7 @@
 <ul>
 <li><code>policy_lookup</code> and <code>get_project_status</code> answer through CREED's own reader, so they say exactly what PROCTOR decides. A line the policy marks current (Vue 3, Inertia 2 and 3) now reads <code>active</code> instead of having no state, and a version older than every line the policy lists is answered as end of life with a note instead of being refused.</li>
 <li><code>upgrade_path</code> takes <code>from_php</code>, for a project whose <code>composer.json</code> names no PHP constraint (Booster's <code>--from-php</code>).</li>
-<li>Only for module authors: <code>ContentBundle::policy()</code> returns CREED's <code>Waynestate\Creed\Policy</code>, <code>Content\PolicyReader</code> only checks the schema version, and <code>Content\State</code> is gone (use <code>Waynestate\Creed\State</code>). No stack project ships a module yet.</li>
+<li>Only for module authors: <code>ContentBundle::policy()</code> returns CREED's <code>Waynestate\Creed\Policy</code>, <code>Content\PolicyReader</code> only checks the schema version, and <code>Content\State</code> is gone (use <code>Waynestate\Creed\State</code>). Squire's module (<code>Waynestate\Squire\Advisor\SquireModule</code>) uses none of these.</li>
 <li>The bundled data is resynced with the stack's 2026-11-09 main branches, the docs gain four threat pages, and the front page deploy layer runs Squire's kit 0.10.1 with HELMET ^1.0 and PROCTOR ^0.11.</li>
 </ul>
 <h2 id="0-1-7-2026-11-07">[0.1.7] - <span class="docs-heading-tail"><span>2026-11-07</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-1-7-2026-11-07">#</a></span></h2>

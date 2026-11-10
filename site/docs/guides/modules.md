@@ -12,7 +12,7 @@ This page explains how ADVISOR modules extend what it can answer and the rules t
 
 ## How modules load [#](https://advisor.apps.wayne.edu/docs/guides/modules.html#how-modules-load)
 
-Each stack project can later ship its own ADVISOR tools.
+Each stack project can ship its own ADVISOR tools, and Squire already does (see [Modules the stack ships](https://advisor.apps.wayne.edu/docs/guides/modules.html#modules-the-stack-ships)).
 
 Note
 
@@ -39,6 +39,14 @@ It lists one module, `Waynestate\Advisor\Module\CoreModule`.
 | `ADVISOR_MODULES_FILE` | none | An extra module manifest. |
 
 Set `ADVISOR_MODULES_FILE` to point at an extra module manifest; its default is none. An extra manifest is held to the same rules: manifest only, the `Waynestate\` namespace, and the `Module` interface.
+
+## Modules the stack ships [#](https://advisor.apps.wayne.edu/docs/guides/modules.html#modules-the-stack-ships)
+
+| Project | Module class | Tools it adds | Since |
+| --- | --- | --- | --- |
+| Squire | `Waynestate\Squire\Advisor\SquireModule` | `squire_doctor`, `squire_drift` (both read-only) | Squire 0.5.0 |
+
+To use one, require the project in your app, list its class in a manifest of your own, and point `ADVISOR_MODULES_FILE` at that manifest. ADVISOR reads its own `modules.json` and that one extra file, nothing else.
 
 ## Related [#](https://advisor.apps.wayne.edu/docs/guides/modules.html#related)
 

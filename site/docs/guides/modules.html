@@ -42,7 +42,7 @@
       <article class="docs-article"><h1 id="modules"><span class="docs-heading-tail"><span>Modules</span><a class="docs-heading-link" aria-label="Link to this section" href="#modules">#</a></span></h1>
 <p>This page explains how ADVISOR modules extend what it can answer and the rules that decide which modules load.</p>
 <h2 id="how-modules-load">How modules <span class="docs-heading-tail"><span>load</span><a class="docs-heading-link" aria-label="Link to this section" href="#how-modules-load">#</a></span></h2>
-<p>Each stack project can later ship its own ADVISOR tools.</p>
+<p>Each stack project can ship its own ADVISOR tools, and Squire already does (see <a href="#modules-the-stack-ships">Modules the stack ships</a>).</p>
 <aside class="docs-callout docs-callout--note" role="note"><p class="docs-callout__label">Note</p><p>Modules load only from a manifest (<code>modules.json</code>), only from the <code>Waynestate\</code> namespace, and only if they implement the <code>Module</code> interface. Nothing scans a folder.</p></aside>
 <h2 id="the-manifest">The <span class="docs-heading-tail"><span>manifest</span><a class="docs-heading-link" aria-label="Link to this section" href="#the-manifest">#</a></span></h2>
 <p>The repository's own manifest is <code>modules.json</code> at the root:</p>
@@ -71,6 +71,26 @@
 </tbody>
 </table></div>
 <p>Set <code>ADVISOR_MODULES_FILE</code> to point at an extra module manifest; its default is none. An extra manifest is held to the same rules: manifest only, the <code>Waynestate\</code> namespace, and the <code>Module</code> interface.</p>
+<h2 id="modules-the-stack-ships">Modules the stack <span class="docs-heading-tail"><span>ships</span><a class="docs-heading-link" aria-label="Link to this section" href="#modules-the-stack-ships">#</a></span></h2>
+<div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Module class</th>
+<th>Tools it adds</th>
+<th>Since</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Squire</td>
+<td><code>Waynestate\Squire\Advisor\SquireModule</code></td>
+<td><code>squire_doctor</code>, <code>squire_drift</code> (both read-only)</td>
+<td>Squire 0.5.0</td>
+</tr>
+</tbody>
+</table></div>
+<p>To use one, require the project in your app, list its class in a manifest of your own, and point <code>ADVISOR_MODULES_FILE</code> at that manifest. ADVISOR reads its own <code>modules.json</code> and that one extra file, nothing else.</p>
 <h2 id="related"><span class="docs-heading-tail"><span>Related</span><a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></span></h2>
 <ul>
 <li><a href="what-it-offers.html">What it offers</a></li>
@@ -82,7 +102,7 @@
     </main>
     <nav class="docs-pager" aria-label="Pages"><a class="docs-pager__link" href="../../docs/guides/safety.html"><span class="docs-pager__dir">Previous</span><span class="docs-pager__title">Safety</span></a><a class="docs-pager__link docs-pager__link--next" href="../../docs/guides/doctor.html"><span class="docs-pager__dir">Next</span><span class="docs-pager__title">When it does not show up</span></a></nav>
   </div>
-  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#how-modules-load">How modules load</a></li><li class="docs-toc__item"><a href="#the-manifest">The manifest</a></li><li class="docs-toc__item"><a href="#an-extra-manifest">An extra manifest</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
+  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#how-modules-load">How modules load</a></li><li class="docs-toc__item"><a href="#the-manifest">The manifest</a></li><li class="docs-toc__item"><a href="#an-extra-manifest">An extra manifest</a></li><li class="docs-toc__item"><a href="#modules-the-stack-ships">Modules the stack ships</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
 </div>
 <footer class="docs-footer">
   <span>Documents ADVISOR <span data-docs-version>0.3.0</span></span>

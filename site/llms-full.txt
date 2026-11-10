@@ -301,8 +301,11 @@ The file is never committed. The bundle is regenerated with the file present bef
 
 ### Modules
 
-Each stack project can later ship its own ADVISOR tools. Modules load only from a manifest (`modules.json`), only from
+Each stack project can ship its own ADVISOR tools. Modules load only from a manifest (`modules.json`), only from
 the `Waynestate\` namespace, and only if they implement the `Module` interface. Nothing scans a folder.
+
+Squire ships the first one: list `Waynestate\Squire\Advisor\SquireModule` in a manifest of your own, point
+`ADVISOR_MODULES_FILE` at it, and your agent gains `squire_doctor` and `squire_drift`, both read-only.
 
 ### Running the checks
 
@@ -456,6 +459,8 @@ ADVISOR has nine tools. These six are the ones you'll use most; the others are `
 - where the answer lives
 
 **Run it next to Laravel Boost.** Boost knows Laravel and ADVISOR knows Wayne State, so they don't overlap. In a Laravel app the same server also runs as `php artisan mcp:start advisor`.
+
+**Add a project's own tools.** Squire ships an ADVISOR module. List `Waynestate\Squire\Advisor\SquireModule` in a `modules.json` manifest, point `ADVISOR_MODULES_FILE` at it, and your agent gains `squire_doctor` and `squire_drift`, both read-only. The loader takes only what a manifest lists, so nothing sneaks onto the map.
 
 Turn-by-turn
 
@@ -634,9 +639,6 @@ The edges of the map. None of these is built yet, so none of them gets a command
   ### Tools that write
   Things like starting an app with Sourdough or applying a Booster hop. When they come, they stay off until you set `ADVISOR_READ_ONLY=0`.
 - Coming soon
-  ### Modules from each project
-  The loader is built and tested. It only loads what `modules.json` lists, and no project ships a module yet.
-- Coming soon
   ### HTTP transport
   stdio first. Remote needs a threat model before it needs a port.
 
@@ -652,6 +654,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 #### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
+- Site: the front page's stale facts are current (Squire ships an ADVISOR module, `squire_doctor` and `squire_drift`, so "Modules from each project" leaves "Not yet surveyed" for the Legend; the README, the Modules guide and the 0.2.0 upgrade note say so too).
 - Changed: the deploy kit is Squire 0.10.7 (was 0.10.6): it ships a `.gitattributes` that pins line endings, so the deploy layer clears PROCTOR's line-ending warnings.
 - Changed: the docs, agent-ready and deploy kits are Squire 0.10.6 (docs and agent-ready tools were the 0.9.0 bytes, deploy was 0.10.2): the docs builder and agent-ready generator see every file on Docker Desktop mounts, and `oracle-check.php` loses its D-046 reference.
 
@@ -1264,7 +1267,7 @@ This page explains how ADVISOR modules extend what it can answer and the rules t
 
 ### How modules load [#](https://advisor.apps.wayne.edu/docs/guides/modules.html#how-modules-load)
 
-Each stack project can later ship its own ADVISOR tools.
+Each stack project can ship its own ADVISOR tools, and Squire already does (see [Modules the stack ships](https://advisor.apps.wayne.edu/docs/guides/modules.html#modules-the-stack-ships)).
 
 Note
 
@@ -1291,6 +1294,14 @@ It lists one module, `Waynestate\Advisor\Module\CoreModule`.
 | `ADVISOR_MODULES_FILE` | none | An extra module manifest. |
 
 Set `ADVISOR_MODULES_FILE` to point at an extra module manifest; its default is none. An extra manifest is held to the same rules: manifest only, the `Waynestate\` namespace, and the `Module` interface.
+
+### Modules the stack ships [#](https://advisor.apps.wayne.edu/docs/guides/modules.html#modules-the-stack-ships)
+
+| Project | Module class | Tools it adds | Since |
+| --- | --- | --- | --- |
+| Squire | `Waynestate\Squire\Advisor\SquireModule` | `squire_doctor`, `squire_drift` (both read-only) | Squire 0.5.0 |
+
+To use one, require the project in your app, list its class in a manifest of your own, and point `ADVISOR_MODULES_FILE` at that manifest. ADVISOR reads its own `modules.json` and that one extra file, nothing else.
 
 ### Related [#](https://advisor.apps.wayne.edu/docs/guides/modules.html#related)
 
@@ -2302,7 +2313,7 @@ A new minor line, so a `^0.1` constraint does not pick it up: move to `composer 
 
 - `policy_lookup` and `get_project_status` answer through CREED's own reader, so they say exactly what PROCTOR decides. A line the policy marks current (Vue 3, Inertia 2 and 3) now reads `active` instead of having no state, and a version older than every line the policy lists is answered as end of life with a note instead of being refused.
 - `upgrade_path` takes `from_php`, for a project whose `composer.json` names no PHP constraint (Booster's `--from-php`).
-- Only for module authors: `ContentBundle::policy()` returns CREED's `Waynestate\Creed\Policy`, `Content\PolicyReader` only checks the schema version, and `Content\State` is gone (use `Waynestate\Creed\State`). No stack project ships a module yet.
+- Only for module authors: `ContentBundle::policy()` returns CREED's `Waynestate\Creed\Policy`, `Content\PolicyReader` only checks the schema version, and `Content\State` is gone (use `Waynestate\Creed\State`). Squire's module (`Waynestate\Squire\Advisor\SquireModule`) uses none of these.
 - The bundled data is resynced with the stack's 2026-11-09 main branches, the docs gain four threat pages, and the front page deploy layer runs Squire's kit 0.10.1 with HELMET ^1.0 and PROCTOR ^0.11.
 
 ### \[0.1.7\] - 2026-11-07 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-7-2026-11-07)

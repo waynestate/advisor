@@ -87,6 +87,8 @@ ADVISOR has nine tools. These six are the ones you'll use most; the others are `
 
 **Run it next to Laravel Boost.** Boost knows Laravel and ADVISOR knows Wayne State, so they don't overlap. In a Laravel app the same server also runs as `php artisan mcp:start advisor`.
 
+**Add a project's own tools.** Squire ships an ADVISOR module. List `Waynestate\Squire\Advisor\SquireModule` in a `modules.json` manifest, point `ADVISOR_MODULES_FILE` at it, and your agent gains `squire_doctor` and `squire_drift`, both read-only. The loader takes only what a manifest lists, so nothing sneaks onto the map.
+
 Turn-by-turn
 
 ## Directions
@@ -263,9 +265,6 @@ The edges of the map. None of these is built yet, so none of them gets a command
 - Coming soon
   ### Tools that write
   Things like starting an app with Sourdough or applying a Booster hop. When they come, they stay off until you set `ADVISOR_READ_ONLY=0`.
-- Coming soon
-  ### Modules from each project
-  The loader is built and tested. It only loads what `modules.json` lists, and no project ships a module yet.
 - Coming soon
   ### HTTP transport
   stdio first. Remote needs a threat model before it needs a port.
