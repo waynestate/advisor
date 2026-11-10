@@ -6,11 +6,11 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Path traversal[#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#path-traversal)
+# Path traversal [#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#path-traversal)
 
 An attacker who controls a tool's path argument wants to read files outside the project: private keys, credentials, neighboring projects, or enough of the disk layout to plan a next step.
 
-## Where it applies in ADVISOR[#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#where-it-applies-in-advisor)
+## Where it applies in ADVISOR [#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#where-it-applies-in-advisor)
 
 Two tools take a `path` argument, and both hand the resolved folder to a child program:
 
@@ -23,7 +23,7 @@ The schema caps the argument at 1024 characters, the same limit the guard enforc
 
 PROCTOR and BOOSTER read whatever sits under the folder they are given, so that folder is the only boundary between their file access and the rest of the machine. The other tools take no path at all: `read_project_docs` takes a project id and a document name from closed lists (`src/Tools/ReadProjectDocs.php:27-28`), and the rest take no file input.
 
-## What stops it[#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#what-stops-it)
+## What stops it [#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#what-stops-it)
 
 - **Odd input is refused before resolution.** Empty paths, paths over 1024 characters and null bytes are rejected (`src/Security/PathGuard.php:40-42`), as are paths that start with `~` (`src/Security/PathGuard.php:43-45`).
 - **Parent segments are refused outright.** Any segment equal to `..`, under forward or back slashes, ends the call (`src/Security/PathGuard.php:46-50`).
@@ -38,7 +38,7 @@ The tests prove each refusal: hostile paths covering `..` segments, nested and b
 
 The same two tools are the only ones that start a process; see [Command injection](https://advisor.apps.wayne.edu/docs/threats/command-injection.html) for how their argument lists are pinned.
 
-## What is left[#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#what-is-left)
+## What is left [#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#what-is-left)
 
 Confinement is to the configured project root, and everything inside that root is readable by these tools by design, since they exist to inspect the app. The guard checks the path once per call; a symlink swapped in after the check, before PROCTOR or BOOSTER reads the file, is not caught, and a path that moves out later (a bind mount, a moved volume) is outside the guard's view.
 

@@ -40,17 +40,21 @@
   <div class="docs-content">
     <main id="main">
       <article class="docs-article"><!-- Generated from CHANGELOG.md by bin/docs-site.php. Edit CHANGELOG.md, not this file. -->
-<h1 id="changelog">Changelog<a class="docs-heading-link" aria-label="Link to this section" href="#changelog">#</a></h1>
+<h1 id="changelog"><span class="docs-heading-tail"><span>Changelog</span><a class="docs-heading-link" aria-label="Link to this section" href="#changelog">#</a></span></h1>
 <p>All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.</p>
-<h2 id="unreleased">[Unreleased]<a class="docs-heading-link" aria-label="Link to this section" href="#unreleased">#</a></h2>
-<h2 id="0-3-0-2026-11-09">[0.3.0] - 2026-11-09<a class="docs-heading-link" aria-label="Link to this section" href="#0-3-0-2026-11-09">#</a></h2>
-<h3 id="added">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added">#</a></h3>
+<h2 id="unreleased"><span class="docs-heading-tail"><span>[Unreleased]</span><a class="docs-heading-link" aria-label="Link to this section" href="#unreleased">#</a></span></h2>
+<h3 id="changed"><span class="docs-heading-tail"><span>Changed</span><a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></span></h3>
+<ul>
+<li>Changed: the docs, agent-ready and deploy kits are Squire 0.10.6 (docs and agent-ready tools were the 0.9.0 bytes, deploy was 0.10.2): the docs builder and agent-ready generator see every file on Docker Desktop mounts, and <code>oracle-check.php</code> loses its D-046 reference.</li>
+</ul>
+<h2 id="0-3-0-2026-11-09">[0.3.0] - <span class="docs-heading-tail"><span>2026-11-09</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-3-0-2026-11-09">#</a></span></h2>
+<h3 id="added"><span class="docs-heading-tail"><span>Added</span><a class="docs-heading-link" aria-label="Link to this section" href="#added">#</a></span></h3>
 <ul>
 <li>Added: Parity is in the parts list (<code>generator/projects.seed.json</code>), after Squire: Citadel on your own computer (Citadel's PHP image, its proxy and MySQL 5.6) for any app, with or without Squire, as one Go command line for every OS on Docker or Podman (Podman recommended). <code>list_projects</code>, <code>get_project_status</code> and <code>read_project_docs</code> know it, and the stack-parts table in the README and the &quot;Where it sits&quot; page has fifteen rows.</li>
 <li>Added: <code>owner_of</code> answers &quot;local development&quot; (and Parity, run Citadel locally, the parity kit, Podman) with Parity: the stack's local-development answer, which replaces Squire's parity group. The deploy-files row says Squire's old parity group is deprecated, and names Parity as the one that runs <code>build.sh</code>, <code>deployments/</code> and the health check the way Citadel does.</li>
 <li>Added: the front page puts Parity on the map (the Reflecting Pool, top left) with a route for &quot;Can I run my app like Citadel on my laptop?&quot; (<code>get_project_status</code>, then <code>read_project_docs</code> for Parity) and a chip that asks it, and in the neighborhood, linked to its repository on git.wayne.edu until its site is live. The neighborhood is five across, three on a tablet and two on a phone with the odd one centered. The README cast and the readme-art kit gain Parity's mark (copied from Parity's own brand files, resized only).</li>
 </ul>
-<h3 id="changed">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></h3>
+<h3 id="changed-1"><span class="docs-heading-tail"><span>Changed</span><a class="docs-heading-link" aria-label="Link to this section" href="#changed-1">#</a></span></h3>
 <ul>
 <li>
 <p>Changed: the generator counts a Go module (<code>go.mod</code>) as built, like a Composer or npm package, and no longer reads a <code>CHANGELOG.md</code> heading marked unreleased (<code>## 0.1.0 (unreleased)</code>) as a published version.</p>
@@ -92,13 +96,13 @@
 <p>Docs: the Proof page's &quot;Last run&quot; table records <code>composer ci</code> on the 0.2.0 release commit on 2026-11-09 (282 tests, 1535 assertions; the 2026-11-07 run had 249).</p>
 </li>
 </ul>
-<h2 id="0-2-0-2026-11-09">[0.2.0] - 2026-11-09<a class="docs-heading-link" aria-label="Link to this section" href="#0-2-0-2026-11-09">#</a></h2>
-<h3 id="added-1">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-1">#</a></h3>
+<h2 id="0-2-0-2026-11-09">[0.2.0] - <span class="docs-heading-tail"><span>2026-11-09</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-2-0-2026-11-09">#</a></span></h2>
+<h3 id="added-1"><span class="docs-heading-tail"><span>Added</span><a class="docs-heading-link" aria-label="Link to this section" href="#added-1">#</a></span></h3>
 <ul>
 <li>Added: docs/threats/ explains four threats (prompt injection, path traversal, command injection, data exfiltration), where each applies, the code and tests that stop it, and what risk is left (backlog row 16).</li>
 <li>Added: upgrade_path takes from_php, so a project with no composer.json or no php constraint still gets a plan (Booster's --from-php); the 2026-11-08 proof run found 71 such refusals.</li>
 </ul>
-<h3 id="changed-1">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-1">#</a></h3>
+<h3 id="changed-2"><span class="docs-heading-tail"><span>Changed</span><a class="docs-heading-link" aria-label="Link to this section" href="#changed-2">#</a></span></h3>
 <ul>
 <li>Changed: the deploy kit is Squire 0.10.1 (was 0.10.0): <code>.squire/base-fallback.Dockerfile</code> copies Composer 2.11.1 (was 2.10.3, no longer maintained), and the deploy layer requires PROCTOR ^0.11 (locked 0.11.0, was ^0.8 at 0.8.0).</li>
 <li>Changed: the deploy kit is Squire 0.10.0 (was 0.7.1): release.sh keeps Composer and npm download caches in the app folder and the gate takes SQUIRE_PHP_RUNTIME; the compose file, health.php and .env.squire.example follow the template, and the portable image files are added.</li>
@@ -128,7 +132,7 @@
 <li>Changed: the a11y-extra job runs Playwright 1.65.0 and axe-core 4.14.0 on the image digest Preflight 0.4.0 pins (was Playwright 1.49.1 and axe-core 4.10), so ADVISOR's own page checks and the stack's a11y gate use one engine.</li>
 <li>data: resyncs from 2026-11-08 03:40 through 2026-11-09 08:45 against each stack repo's main: Preflight 0.4.0 pins and its must-fail fixtures, PROCTOR 0.9.0 (the entrypoint-migrate, gitattributes, preflight-gates and mysql-minimum rules), Squire 0.9.0, SESAME 0.6.2 (strict-mode sessions, CAS 2.0, the Eloquent refresh fix), HELMET 1.0.1 and its ribbon list, Rollcall 1.0.0, Pinstripe 0.3.0, Booster 1.12.0, Drawbridge 0.4.0, CREED handbook tags and WELD's regen gate.</li>
 </ul>
-<h3 id="fixed">Fixed<a class="docs-heading-link" aria-label="Link to this section" href="#fixed">#</a></h3>
+<h3 id="fixed"><span class="docs-heading-tail"><span>Fixed</span><a class="docs-heading-link" aria-label="Link to this section" href="#fixed">#</a></span></h3>
 <ul>
 <li>Fixed: a docs truth pass (2026-11-09). The install page lists <code>waynestate/creed</code> and the Symfony <code>^7.4 || ^8.0</code> range; &quot;Where it sits&quot; names all four Preflight components; the best-practices and contributing pages stop listing the threat model as not built; the commands page gives doctor's exit code 2; the threat pages cite the lines the code is on today; OPEN_QUESTIONS lists every optional setting. The front page's ask box says Drawbridge is an OpenID Connect client for Entra ID (it said SAML), names SESAME's OpenID Connect driver, carries Laravel 13's real active-support date and MySQL 5.6 from the policy, and writes Booster, Preflight, Squire, Rollcall and Drawbridge as words.</li>
 <li>Fixed: the docs and the front page keep their Docs link in the header on a phone (it used to vanish below 900px with the section links), the docs sidebar opens scrolled to the page you are on with a thin scrollbar, Troubleshooting's symptoms are h2 headings under the h1 (they skipped to h3), and the Overview's tagline sits under its title.</li>
@@ -139,13 +143,13 @@
 <li>The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (<code>-v stack-composer-cache:/tmp/cache</code>), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.</li>
 <li>The front page's parts list says Sourdough starts all five app shapes; it said &quot;the raw PHP starter&quot;.</li>
 </ul>
-<h2 id="0-1-7-2026-11-07">[0.1.7] - 2026-11-07<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-7-2026-11-07">#</a></h2>
-<h3 id="changed-2">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-2">#</a></h3>
+<h2 id="0-1-7-2026-11-07">[0.1.7] - <span class="docs-heading-tail"><span>2026-11-07</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-1-7-2026-11-07">#</a></span></h2>
+<h3 id="changed-3"><span class="docs-heading-tail"><span>Changed</span><a class="docs-heading-link" aria-label="Link to this section" href="#changed-3">#</a></span></h3>
 <ul>
 <li>The front page's deploy layer (<code>deploy/</code>) completes Squire's kit 0.5.0: <code>oracle-check.php</code>, which the 0.5.0 <code>squire update</code> did not add, is written and recorded, so <code>squire init --check</code> passes. <code>site/assets/stack-env.js</code> takes the stack's one copy, with bindingless catch blocks.</li>
 <li>The canonical repository is git.wayne.edu (ADR-0021); docs, links and package metadata no longer point at the archived nougat copy.</li>
 </ul>
-<h3 id="added-2">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-2">#</a></h3>
+<h3 id="added-2"><span class="docs-heading-tail"><span>Added</span><a class="docs-heading-link" aria-label="Link to this section" href="#added-2">#</a></span></h3>
 <ul>
 <li>
 <p><code>owner_of</code> answers from an ownership table rebuilt from the stack's decisions, the one-owner-per-rule table first (version policy, lock file, <code>composer audit</code>, MySQL 5.6, <code>/up</code>, deploy files, CI contents, the parts list), then app wiring, sign-in and the coding standard. Every match carries <code>decision</code>, the decision it comes from, named by title and date. Rows gain <code>aliases</code> (&quot;composer.lock&quot;, &quot;.gitlab-ci.yml&quot;, &quot;/up&quot;), question words are ignored (&quot;who owns composer audit&quot; works), words match at word starts, and exact topic or alias matches come first. <code>content:verify</code> requires the decision and refuses an alias that names two rows.</p>
@@ -163,8 +167,8 @@
 <p>data: resync for the 2026-11-07 releases (Booster 1.10.0, CREED 0.1.7, Drawbridge 0.3.0, HELMET 0.4.0, Preflight 0.2.0, PROCTOR 0.7.0, Rollcall 0.1.10, SESAME 0.5.0, Sourdough 0.1.7, Squire 0.6.0, WELD 0.1.4; Pinstripe stays 0.1.4).</p>
 </li>
 </ul>
-<h2 id="0-1-6-2026-11-06">[0.1.6] - 2026-11-06<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-6-2026-11-06">#</a></h2>
-<h3 id="added-3">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-3">#</a></h3>
+<h2 id="0-1-6-2026-11-06">[0.1.6] - <span class="docs-heading-tail"><span>2026-11-06</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-1-6-2026-11-06">#</a></span></h2>
+<h3 id="added-3"><span class="docs-heading-tail"><span>Added</span><a class="docs-heading-link" aria-label="Link to this section" href="#added-3">#</a></span></h3>
 <ul>
 <li>data: resync 2026-11-05 evening (booster:eaf2758 drawbridge:aa403f3 helmet:36cb918 sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:335c4e4 preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:4fdc7b0)</li>
 <li>data: resync 2026-11-05 late (booster:5b25715 drawbridge:19698ea helmet:417129a sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:9384c1d preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:ba8b7e1)</li>
@@ -175,7 +179,7 @@
 <li>Added: an accessibility gate (scripts/a11y/check.mjs) that loads every HTML page under site/ in a real browser and fails on any axe-core WCAG violation, in light and dark themes at phone and desktop width, plus a reduced-motion pass; runs as the a11y job in GitLab CI.</li>
 <li>Added: a docs site (site/docs/) built by the shared docs builder from docs/, checked in composer ci.</li>
 </ul>
-<h3 id="changed-3">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-3">#</a></h3>
+<h3 id="changed-4"><span class="docs-heading-tail"><span>Changed</span><a class="docs-heading-link" aria-label="Link to this section" href="#changed-4">#</a></span></h3>
 <ul>
 <li>Changed: resynced the bundled content (data/) with the stack as of 2026-11-05, including Booster 1.8.2 and 1.8.3, DRAWBRIDGE (session store, secret files, GitHub references removed), HELMET (H21 partly enforced, warn_broad_proxies), SESAME (CAS login bound to its browser), PROCTOR, ROLLCALL, CREED handbook chapters, Sourdough (--sail, --docker, Pest 4) and the WELD and SQUIRE guides; the Sourdough role now lists every shape that generates; the docs builder and kit follow SQUIRE 97744a4, which keeps the changelog page h1 itself.</li>
 <li>Changed: the docs pages wear the front page's look: the same sheet head and main menu (Docs marked current), Fraunces titles with a plotted maroon route, the legend's mono labels, commands on the dark code ground with the gold Copy tab, callouts drawn as map marks (note, tip, out of bounds), the green footer band, and a dark mode derived from the Directions band. Motion only without a reduced-motion preference. Source: <code>docs/_header.html</code> and <code>docs/theme/advisor.css</code> through the builder's <code>theme</code> key. The front page site owes a Quick Update.</li>
@@ -187,7 +191,7 @@
 <li>Changed: symfony/console and symfony/process accept ^8.0 as well as ^7.4, so apps on Pest 5 / PHPUnit 13 can install ADVISOR.</li>
 <li>Changed: the docs builder and kit are resynced from Squire's unified builder (theme hook, callouts, code tabs, task lists, copy button fix).</li>
 </ul>
-<h3 id="fixed-1">Fixed<a class="docs-heading-link" aria-label="Link to this section" href="#fixed-1">#</a></h3>
+<h3 id="fixed-1"><span class="docs-heading-tail"><span>Fixed</span><a class="docs-heading-link" aria-label="Link to this section" href="#fixed-1">#</a></span></h3>
 <ul>
 <li>Fixed: the proof runner keeps the tool binary paths out of the error text: each of the proctor, booster and advisor binary paths is shortened to its file name before the scratch and corpus folders are masked as /app.</li>
 <li>Fixed: front-page scroll reveals start hidden from first paint (plain CSS under <code>html.motion</code>, set in <code>&lt;head&gt;</code> before the body parses) instead of fading out after load, so unscrolled below-the-fold content sits at opacity 0 rather than being caught mid-fade; the motion class is only set where IntersectionObserver exists, so a page that hides content can always bring it back.</li>
@@ -195,11 +199,11 @@
 <li>Fixed: the changelog docs page keeps its <code># Changelog</code> heading, so the page has exactly one level-1 heading (a comment now sits above the heading in CHANGELOG.md, so the shared builder keeps it).</li>
 <li>Fixed: table-of-contents sub-links carry the base <code>docs-toc__item</code> class again, so they get the block display and padding that keep them at or above the 24px target size (and their hover color).</li>
 </ul>
-<h3 id="security">Security<a class="docs-heading-link" aria-label="Link to this section" href="#security">#</a></h3>
+<h3 id="security"><span class="docs-heading-tail"><span>Security</span><a class="docs-heading-link" aria-label="Link to this section" href="#security">#</a></span></h3>
 <ul>
 <li>The front-page deploy layer moves to Symfony 7.4.23 (symfony/http-foundation and symfony/yaml advisories, including CVE-2026-118514).</li>
 </ul>
-<h2 id="0-1-5-2026-11-03">[0.1.5] - 2026-11-03<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-5-2026-11-03">#</a></h2>
+<h2 id="0-1-5-2026-11-03">[0.1.5] - <span class="docs-heading-tail"><span>2026-11-03</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-1-5-2026-11-03">#</a></span></h2>
 <ul>
 <li>
 <p>Changed: the deploy layer requires HELMET ^0.3 and PROCTOR ^0.4 (locked at 0.3.0 and 0.4.0) and sets minimum-stability to stable, which clears PROCTOR 0.4's new minimum-stability warning. HELMET 0.3 reads an empty <code>HELMET_PROXIES=</code> as trust nobody; the front page sets only the <code>citadel</code> preset, so nothing changes for it. The front page site owes a Quick Update.</p>
@@ -220,12 +224,12 @@
 <p>Changed: docs and package metadata name nougat as the canonical repository, with git.wayne.edu and GitHub as read-only mirrors, until git.wayne.edu has CI runners.</p>
 </li>
 </ul>
-<h2 id="0-1-4-2026-11-03">[0.1.4] - 2026-11-03<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-4-2026-11-03">#</a></h2>
+<h2 id="0-1-4-2026-11-03">[0.1.4] - <span class="docs-heading-tail"><span>2026-11-03</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-1-4-2026-11-03">#</a></span></h2>
 <ul>
 <li>Changed: CI pulls its Docker Hub images through the GitLab Dependency Proxy (the group's CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX), so pipelines no longer hit Docker Hub's anonymous pull limit.</li>
 </ul>
-<h2 id="0-1-3-2026-11-02">[0.1.3] - 2026-11-02<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-3-2026-11-02">#</a></h2>
-<h3 id="added-4">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-4">#</a></h3>
+<h2 id="0-1-3-2026-11-02">[0.1.3] - <span class="docs-heading-tail"><span>2026-11-02</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-1-3-2026-11-02">#</a></span></h2>
+<h3 id="added-4"><span class="docs-heading-tail"><span>Added</span><a class="docs-heading-link" aria-label="Link to this section" href="#added-4">#</a></span></h3>
 <ul>
 <li>Added: hand-written guides bundled from generator/guides/ and served as advisor://guide/<slug>; first guide: Connect to Oracle on Citadel.</li>
 <li>Added: policy_lookup returns latest_patch; the bundled docs drop hero images, badges and GIFs.</li>
@@ -233,13 +237,13 @@
 <li>Docs: a one-line <code>claude mcp add</code> and a Docker <code>.mcp.json</code> for machines without PHP.</li>
 <li>Added: composer content:drift and an optional CI job that fail when data/ no longer matches the sibling repos.</li>
 </ul>
-<h3 id="changed-4">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-4">#</a></h3>
+<h3 id="changed-5"><span class="docs-heading-tail"><span>Changed</span><a class="docs-heading-link" aria-label="Link to this section" href="#changed-5">#</a></span></h3>
 <ul>
 <li>Changed: the deploy layer's Squire kit is refreshed to 0.3.3 (release options can now live in ./.env.squire).</li>
 <li>Changed: the deploy layer's Squire kit is refreshed to 0.3.4 (the local .env.squire file is now git-ignored).</li>
 </ul>
-<h2 id="0-1-2-2026-10-29">[0.1.2] - 2026-10-29<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-2-2026-10-29">#</a></h2>
-<h3 id="added-5">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-5">#</a></h3>
+<h2 id="0-1-2-2026-10-29">[0.1.2] - <span class="docs-heading-tail"><span>2026-10-29</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-1-2-2026-10-29">#</a></span></h2>
+<h3 id="added-5"><span class="docs-heading-tail"><span>Added</span><a class="docs-heading-link" aria-label="Link to this section" href="#added-5">#</a></span></h3>
 <ul>
 <li>Added: agent-ready site (prompt blocks, Markdown twins, llms.txt), from Squire's kit.</li>
 <li><code>playbook_lookup</code> tool: answers &quot;what is the value of X?&quot; for WSU shared values. An environment variable of the
@@ -247,23 +251,23 @@ same name wins, then the private <code>waynestate/playbook</code> package (Playb
 says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are
 refused. <code>waynestate/playbook</code> is suggested, never required.</li>
 </ul>
-<h3 id="changed-5">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-5">#</a></h3>
+<h3 id="changed-6"><span class="docs-heading-tail"><span>Changed</span><a class="docs-heading-link" aria-label="Link to this section" href="#changed-6">#</a></span></h3>
 <ul>
 <li>Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.</li>
 <li>Changed: project names written as words except acronyms.</li>
 </ul>
-<h3 id="fixed-2">Fixed<a class="docs-heading-link" aria-label="Link to this section" href="#fixed-2">#</a></h3>
+<h3 id="fixed-2"><span class="docs-heading-tail"><span>Fixed</span><a class="docs-heading-link" aria-label="Link to this section" href="#fixed-2">#</a></span></h3>
 <ul>
 <li>Fixed: stale capability claims in the site and docs.</li>
 </ul>
-<h2 id="0-1-1-2026-10-29">[0.1.1] - 2026-10-29<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-1-2026-10-29">#</a></h2>
-<h3 id="added-6">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-6">#</a></h3>
+<h2 id="0-1-1-2026-10-29">[0.1.1] - <span class="docs-heading-tail"><span>2026-10-29</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-1-1-2026-10-29">#</a></span></h2>
+<h3 id="added-6"><span class="docs-heading-tail"><span>Added</span><a class="docs-heading-link" aria-label="Link to this section" href="#added-6">#</a></span></h3>
 <ul>
 <li><code>owner_of</code> tool: answers &quot;which project owns X?&quot; from a new bundled <code>data/ownership.json</code> table (sourced from
 <code>generator/ownership.json</code>, verified by <code>content:verify</code>). Fuzzy match: every word of the topic must appear in a
 row's topic or role; a no-match answer lists every known topic.</li>
 </ul>
-<h3 id="changed-6">Changed<a class="docs-heading-link" aria-label="Link to this section" href="#changed-6">#</a></h3>
+<h3 id="changed-7"><span class="docs-heading-tail"><span>Changed</span><a class="docs-heading-link" aria-label="Link to this section" href="#changed-7">#</a></span></h3>
 <ul>
 <li><code>upgrade_path</code> moves from the <code>stack</code> group to a new <code>booster</code> group, so <code>ADVISOR_GROUPS=stack</code> offers reference
 tools only and never starts a program. <code>ADVISOR_GROUPS</code> now accepts <code>stack</code>, <code>proctor</code> and <code>booster</code>.</li>
@@ -271,9 +275,9 @@ tools only and never starts a program. <code>ADVISOR_GROUPS</code> now accepts <
 copy of its settings; two docblocks were tightened to satisfy the preset's method-signature checks. Pint already
 used the <code>per</code> preset, so <code>pint.json</code> is unchanged.</li>
 </ul>
-<h2 id="0-1-0-2026-10-29">[0.1.0] - 2026-10-29<a class="docs-heading-link" aria-label="Link to this section" href="#0-1-0-2026-10-29">#</a></h2>
+<h2 id="0-1-0-2026-10-29">[0.1.0] - <span class="docs-heading-tail"><span>2026-10-29</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-1-0-2026-10-29">#</a></span></h2>
 <p>First build, aimed at 0.1.0.</p>
-<h3 id="added-7">Added<a class="docs-heading-link" aria-label="Link to this section" href="#added-7">#</a></h3>
+<h3 id="added-7"><span class="docs-heading-tail"><span>Added</span><a class="docs-heading-link" aria-label="Link to this section" href="#added-7">#</a></span></h3>
 <ul>
 <li>Read-only MCP server over stdio (<code>php vendor/bin/advisor mcp</code>) on the official <code>mcp/sdk</code> 0.9.0, speaking both the
 legacy <code>initialize</code> handshake and the 2026-07-28 per-request form.</li>
@@ -296,7 +300,7 @@ GitLab (PREFLIGHT 0.1.0) and GitHub.</li>
     </main>
     <nav class="docs-pager" aria-label="Pages"><a class="docs-pager__link" href="../docs/contributing.html"><span class="docs-pager__dir">Previous</span><span class="docs-pager__title">Contributing</span></a></nav>
   </div>
-  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#unreleased">[Unreleased]</a></li><li class="docs-toc__item"><a href="#0-3-0-2026-11-09">[0.3.0] - 2026-11-09</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed">Changed</a></li><li class="docs-toc__item"><a href="#0-2-0-2026-11-09">[0.2.0] - 2026-11-09</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-1">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-1">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-7-2026-11-07">[0.1.7] - 2026-11-07</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-2">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-2">Added</a></li><li class="docs-toc__item"><a href="#0-1-6-2026-11-06">[0.1.6] - 2026-11-06</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-3">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-3">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-1">Fixed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#security">Security</a></li><li class="docs-toc__item"><a href="#0-1-5-2026-11-03">[0.1.5] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-4-2026-11-03">[0.1.4] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-3-2026-11-02">[0.1.3] - 2026-11-02</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-4">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-4">Changed</a></li><li class="docs-toc__item"><a href="#0-1-2-2026-10-29">[0.1.2] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-5">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-5">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-2">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-1-2026-10-29">[0.1.1] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-6">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-6">Changed</a></li><li class="docs-toc__item"><a href="#0-1-0-2026-10-29">[0.1.0] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-7">Added</a></li></ul></nav>
+  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#unreleased">[Unreleased]</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed">Changed</a></li><li class="docs-toc__item"><a href="#0-3-0-2026-11-09">[0.3.0] - 2026-11-09</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-1">Changed</a></li><li class="docs-toc__item"><a href="#0-2-0-2026-11-09">[0.2.0] - 2026-11-09</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-1">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-2">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-7-2026-11-07">[0.1.7] - 2026-11-07</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-3">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-2">Added</a></li><li class="docs-toc__item"><a href="#0-1-6-2026-11-06">[0.1.6] - 2026-11-06</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-3">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-4">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-1">Fixed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#security">Security</a></li><li class="docs-toc__item"><a href="#0-1-5-2026-11-03">[0.1.5] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-4-2026-11-03">[0.1.4] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-3-2026-11-02">[0.1.3] - 2026-11-02</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-4">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-5">Changed</a></li><li class="docs-toc__item"><a href="#0-1-2-2026-10-29">[0.1.2] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-5">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-6">Changed</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#fixed-2">Fixed</a></li><li class="docs-toc__item"><a href="#0-1-1-2026-10-29">[0.1.1] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-6">Added</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#changed-7">Changed</a></li><li class="docs-toc__item"><a href="#0-1-0-2026-10-29">[0.1.0] - 2026-10-29</a></li><li class="docs-toc__item docs-toc__item--sub"><a href="#added-7">Added</a></li></ul></nav>
 </div>
 <footer class="docs-footer">
   <span>Documents ADVISOR <span data-docs-version>0.3.0</span></span>

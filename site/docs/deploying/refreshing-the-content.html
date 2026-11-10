@@ -39,12 +39,12 @@
   <nav class="docs-nav docs-nav--sidebar" aria-label="Documentation"><ul class="docs-nav__list"><li class="docs-nav__group"><span class="docs-nav__label">Getting started</span><ul><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/install.html">Install</a></li><li><a href="../../docs/guides/quick-start.html">Quick start</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Guides</span><ul><li><a href="../../docs/guides/where-it-sits.html">Where it sits in WELD</a></li><li><a href="../../docs/guides/claude-code.html">One line for Claude Code</a></li><li><a href="../../docs/guides/docker.html">No PHP? Use Docker</a></li><li><a href="../../docs/guides/laravel.html">Laravel apps</a></li><li><a href="../../docs/guides/what-it-offers.html">What it offers</a></li><li><a href="../../docs/guides/served-content.html">Served content</a></li><li><a href="../../docs/guides/safety.html">Safety</a></li><li><a href="../../docs/guides/modules.html">Modules</a></li><li><a href="../../docs/guides/doctor.html">When it does not show up</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Threats</span><ul><li><a href="../../docs/threats/prompt-injection.html">Prompt injection</a></li><li><a href="../../docs/threats/path-traversal.html">Path traversal</a></li><li><a href="../../docs/threats/command-injection.html">Command injection</a></li><li><a href="../../docs/threats/data-exfiltration.html">Data exfiltration</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Reference</span><ul><li><a href="../../docs/reference/configuration.html">Configuration</a></li><li><a href="../../docs/reference/commands.html">Commands</a></li><li><a href="../../docs/reference/best-practices.html">Best practices</a></li><li><a href="../../docs/reference/proof.html">Proof</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Deploying</span><ul><li><a href="../../docs/deploying/releasing.html">Releasing</a></li><li><a href="../../docs/deploying/refreshing-the-content.html" aria-current="page">Refreshing the content</a></li></ul></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/upgrading.html">Upgrading</a></li><li><a href="../../docs/contributing.html">Contributing</a></li><li><a href="../../docs/changelog.html">Changelog</a></li></ul></nav>
   <div class="docs-content">
     <main id="main">
-      <article class="docs-article"><h1 id="refreshing-the-content">Refreshing the content<a class="docs-heading-link" aria-label="Link to this section" href="#refreshing-the-content">#</a></h1>
+      <article class="docs-article"><h1 id="refreshing-the-content">Refreshing the <span class="docs-heading-tail"><span>content</span><a class="docs-heading-link" aria-label="Link to this section" href="#refreshing-the-content">#</a></span></h1>
 <p>This page shows how to keep ADVISOR's bundled content in <code>data/</code> current with the stack: regenerate it, verify it, and check for drift.</p>
-<h2 id="what-is-generated">What is generated<a class="docs-heading-link" aria-label="Link to this section" href="#what-is-generated">#</a></h2>
+<h2 id="what-is-generated">What is <span class="docs-heading-tail"><span>generated</span><a class="docs-heading-link" aria-label="Link to this section" href="#what-is-generated">#</a></span></h2>
 <p>The handbook, policy, project docs, the WayneUI markup contract and WayneUI's 1.x to 2.x migration guide in <code>data/</code> are generated from the sibling stack repositories by <code>content:generate</code> and verified at start-up against <code>data/manifest.json</code> (a SHA-256 for every file). If a file does not match, the server refuses to start rather than serve it. Files are cleaned on the way in: line endings are normalized and invisible characters (the TAG block, zero-width and bidirectional controls) are stripped. Image boilerplate is trimmed from the project docs, on the way in and again when <code>read_project_docs</code> serves them: centred hero, badge and cast blocks, lone images whose target is relative or a GIF (linked or not), and rows of nothing but badges. Prose, tables and code blocks are left alone, and the bundled file itself is never rewritten at read time, so its manifest hash still holds. Each project entry also carries its version when the project publishes one (composer.json, else package.json, else the newest CHANGELOG heading).</p>
 <p>Beside the generated docs, hand-written guides are kept by hand in <code>generator/guides/</code> (one Markdown file per slug), the same way the ownership table is kept. Each is bundled into <code>data/guides/</code> and served as <code>advisor://guide/&lt;slug&gt;</code>; the first is &quot;Connect to Oracle on Citadel&quot;.</p>
-<h2 id="regenerate">Regenerate<a class="docs-heading-link" aria-label="Link to this section" href="#regenerate">#</a></h2>
+<h2 id="regenerate"><span class="docs-heading-tail"><span>Regenerate</span><a class="docs-heading-link" aria-label="Link to this section" href="#regenerate">#</a></span></h2>
 <p>With the stack repos checked out side by side:</p>
 <pre tabindex="0"><code class="language-bash">php vendor/bin/advisor content:generate --sources=/path/to/stack
 </code></pre>
@@ -52,12 +52,12 @@
 <p>The generator reads each project's folder from beside the other repos, so a stale clone gives stale docs. WayneUI's development happens on its GitLab repository and the checked-out copy is only a mirror of it: fast-forward the local wayne-ui clone to that repository's main before a resync.</p>
 <p>To add a project to the parts list, add its <code>name</code> and <code>tagline</code> to <code>generator/projects.seed.json</code>, then regenerate and run <code>php bin/advisor stack-parts --write=README.md</code>.</p>
 <p>Beyond a project's README and best practices, a seed may bundle further files under <code>extra_docs</code> (a map of slug to path in the project); each lands in <code>data/docs/&lt;id&gt;/&lt;slug&gt;.md</code> and in the project's docs list, and a missing file is skipped, not an error. WayneUI's entry bundles its MIGRATING.md as the <code>migrating</code> doc.</p>
-<h2 id="verify">Verify<a class="docs-heading-link" aria-label="Link to this section" href="#verify">#</a></h2>
+<h2 id="verify"><span class="docs-heading-tail"><span>Verify</span><a class="docs-heading-link" aria-label="Link to this section" href="#verify">#</a></span></h2>
 <p>CI cannot see the sibling repositories, so <code>composer ci</code> runs <code>content:verify</code>, which needs none of them:</p>
 <pre tabindex="0"><code class="language-bash">php vendor/bin/advisor content:verify
 </code></pre>
 <p>It checks the bundled <code>data/</code> against <code>data/manifest.json</code> (a SHA-256 for every file).</p>
-<h2 id="check-for-drift">Check for drift<a class="docs-heading-link" aria-label="Link to this section" href="#check-for-drift">#</a></h2>
+<h2 id="check-for-drift">Check for <span class="docs-heading-tail"><span>drift</span><a class="docs-heading-link" aria-label="Link to this section" href="#check-for-drift">#</a></span></h2>
 <p><code>composer content:drift</code> compares <code>data/</code> with a checkout of the stack repos and exits 1 when they no longer agree. It takes the folder from <code>ADVISOR_STACK_DIR</code>; without it, it prints how to run it and exits 1:</p>
 <pre tabindex="0"><code class="language-bash">ADVISOR_STACK_DIR=&lt;folder holding the stack repos&gt; composer content:drift
 </code></pre>
@@ -66,7 +66,7 @@
 </code></pre>
 <p>That exits 1 on drift.</p>
 <p>The GitLab job <code>content-drift</code> does the same in CI: it clones the repos listed in <code>data/projects.json</code> with the job token, puts them in one folder, sets <code>ADVISOR_STACK_DIR</code> and runs the check. It is manual or scheduled and allowed to fail, so it cannot block main. Run the drift check before every tag: a release must carry docs that still match the repos it advises on.</p>
-<h2 id="the-private-denylist">The private denylist<a class="docs-heading-link" aria-label="Link to this section" href="#the-private-denylist">#</a></h2>
+<h2 id="the-private-denylist">The private <span class="docs-heading-tail"><span>denylist</span><a class="docs-heading-link" aria-label="Link to this section" href="#the-private-denylist">#</a></span></h2>
 <p>ADVISOR is a public repository, so the bundle must not carry internal names. The public-posture test always checks generic shapes (ADR numbers, open-question numbers, design-doc paths, the coordination repo). Private strings (hostnames, people) are loaded from the file named by <code>ADVISOR_PRIVATE_DENYLIST</code> and checked only when the file is present.</p>
 <p>To release with the denylist:</p>
 <ol>
@@ -76,7 +76,7 @@
 <li>Run <code>composer ci</code> to confirm the public-posture test passes.</li>
 </ol>
 <aside class="docs-callout docs-callout--warning" role="note"><p class="docs-callout__label">Warning</p><p>The denylist file is never committed. The bundle is regenerated with the file present before every release.</p></aside>
-<h2 id="related">Related<a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></h2>
+<h2 id="related"><span class="docs-heading-tail"><span>Related</span><a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></span></h2>
 <ul>
 <li><a href="releasing.html">Releasing</a></li>
 <li><a href="../guides/served-content.html">Served content</a></li>

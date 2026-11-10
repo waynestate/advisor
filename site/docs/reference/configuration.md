@@ -6,11 +6,11 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Configuration[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#configuration)
+# Configuration [#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#configuration)
 
 ADVISOR reads the process environment only, never a file. This page lists every variable with its default and its meaning, and the placeholders are in `.env.example`. Nothing in ADVISOR needs a secret, key, certificate, token or host, so every setting is optional.
 
-## Environment variables[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#environment-variables)
+## Environment variables [#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#environment-variables)
 
 | Variable | Meaning | Default | Read in |
 | --- | --- | --- | --- |
@@ -29,7 +29,7 @@ ADVISOR reads the process environment only, never a file. This page lists every 
 | ADVISOR_READ_ONLY | Set to `0` or `false` to allow tools that write. None exist yet. Read-only wins over `ADVISOR_GROUPS`. | on | src/Config.php |
 | ADVISOR_STACK_DIR | Folder holding the sibling stack repos; used only by `content:generate`. | none | src/Command/ContentGenerateCommand.php |
 
-## Example[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#example)
+## Example [#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#example)
 
 A short example, with placeholder values:
 
@@ -46,7 +46,7 @@ Warning
 
 A bad value stops the server with a message on stderr. It does not guess.
 
-## Related[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#related)
+## Related [#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#related)
 
 - [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)

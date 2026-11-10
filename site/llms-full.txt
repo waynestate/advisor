@@ -644,21 +644,25 @@ The edges of the map. None of these is built yet, so none of them gets a command
 
 Source: https://advisor.apps.wayne.edu/docs/changelog.html
 
-## Changelog[#](https://advisor.apps.wayne.edu/docs/changelog.html#changelog)
+## Changelog [#](https://advisor.apps.wayne.edu/docs/changelog.html#changelog)
 
 All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.
 
-### \[Unreleased\][#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
+### \[Unreleased\] [#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
 
-### \[0.3.0\] - 2026-11-09[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-3-0-2026-11-09)
+#### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
-#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
+- Changed: the docs, agent-ready and deploy kits are Squire 0.10.6 (docs and agent-ready tools were the 0.9.0 bytes, deploy was 0.10.2): the docs builder and agent-ready generator see every file on Docker Desktop mounts, and `oracle-check.php` loses its D-046 reference.
+
+### \[0.3.0\] - 2026-11-09 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-3-0-2026-11-09)
+
+#### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
 
 - Added: Parity is in the parts list (`generator/projects.seed.json`), after Squire: Citadel on your own computer (Citadel's PHP image, its proxy and MySQL 5.6) for any app, with or without Squire, as one Go command line for every OS on Docker or Podman (Podman recommended). `list_projects`, `get_project_status` and `read_project_docs` know it, and the stack-parts table in the README and the "Where it sits" page has fifteen rows.
 - Added: `owner_of` answers "local development" (and Parity, run Citadel locally, the parity kit, Podman) with Parity: the stack's local-development answer, which replaces Squire's parity group. The deploy-files row says Squire's old parity group is deprecated, and names Parity as the one that runs `build.sh`, `deployments/` and the health check the way Citadel does.
 - Added: the front page puts Parity on the map (the Reflecting Pool, top left) with a route for "Can I run my app like Citadel on my laptop?" (`get_project_status`, then `read_project_docs` for Parity) and a chip that asks it, and in the neighborhood, linked to its repository on git.wayne.edu until its site is live. The neighborhood is five across, three on a tablet and two on a phone with the odd one centered. The README cast and the readme-art kit gain Parity's mark (copied from Parity's own brand files, resized only).
 
-#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
+#### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-1)
 
 - Changed: the generator counts a Go module (`go.mod`) as built, like a Composer or npm package, and no longer reads a `CHANGELOG.md` heading marked unreleased (`## 0.1.0 (unreleased)`) as a published version.
 - Changed: Squire's role in the parts list names what goes onto Citadel (build.sh, deployments/, the release script, the health check, the portable image) and points local runs at Parity; the front page's deploy answer does the same.
@@ -674,14 +678,14 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - data: resync 2026-11-09 late night against each stack repo's main (booster:c708793 creed:6267c2a drawbridge:e45e2a8 helmet:5c7c1f2 pinstripe:bf2726d preflight:62a0c76 proctor:3efbc73 rollcall:0039490 sesame:03f78b1 sourdough:2117d25 squire:c553d29 weld:5168fb1 wayne-ui:dedc66f parity:34a5589, and this branch for ADVISOR's own docs): Parity's README is bundled as `docs/parity/readme.md`, and `projects.json` moves to Sourdough 0.4.1, Squire 0.10.4 and WELD 0.2.0, with the Drawbridge, Pinstripe, Preflight, Rollcall, Sourdough, Squire and WELD docs that moved.
 - Docs: the Proof page's "Last run" table records `composer ci` on the 0.2.0 release commit on 2026-11-09 (282 tests, 1535 assertions; the 2026-11-07 run had 249).
 
-### \[0.2.0\] - 2026-11-09[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-2-0-2026-11-09)
+### \[0.2.0\] - 2026-11-09 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-2-0-2026-11-09)
 
-#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-1)
+#### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-1)
 
 - Added: docs/threats/ explains four threats (prompt injection, path traversal, command injection, data exfiltration), where each applies, the code and tests that stop it, and what risk is left (backlog row 16).
 - Added: upgrade_path takes from_php, so a project with no composer.json or no php constraint still gets a plan (Booster's --from-php); the 2026-11-08 proof run found 71 such refusals.
 
-#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-1)
+#### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-2)
 
 - Changed: the deploy kit is Squire 0.10.1 (was 0.10.0): `.squire/base-fallback.Dockerfile` copies Composer 2.11.1 (was 2.10.3, no longer maintained), and the deploy layer requires PROCTOR ^0.11 (locked 0.11.0, was ^0.8 at 0.8.0).
 - Changed: the deploy kit is Squire 0.10.0 (was 0.7.1): release.sh keeps Composer and npm download caches in the app folder and the gate takes SQUIRE_PHP_RUNTIME; the compose file, health.php and .env.squire.example follow the template, and the portable image files are added.
@@ -711,7 +715,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: the a11y-extra job runs Playwright 1.65.0 and axe-core 4.14.0 on the image digest Preflight 0.4.0 pins (was Playwright 1.49.1 and axe-core 4.10), so ADVISOR's own page checks and the stack's a11y gate use one engine.
 - data: resyncs from 2026-11-08 03:40 through 2026-11-09 08:45 against each stack repo's main: Preflight 0.4.0 pins and its must-fail fixtures, PROCTOR 0.9.0 (the entrypoint-migrate, gitattributes, preflight-gates and mysql-minimum rules), Squire 0.9.0, SESAME 0.6.2 (strict-mode sessions, CAS 2.0, the Eloquent refresh fix), HELMET 1.0.1 and its ribbon list, Rollcall 1.0.0, Pinstripe 0.3.0, Booster 1.12.0, Drawbridge 0.4.0, CREED handbook tags and WELD's regen gate.
 
-#### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
+#### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
 
 - Fixed: a docs truth pass (2026-11-09). The install page lists `waynestate/creed` and the Symfony `^7.4 || ^8.0` range; "Where it sits" names all four Preflight components; the best-practices and contributing pages stop listing the threat model as not built; the commands page gives doctor's exit code 2; the threat pages cite the lines the code is on today; OPEN_QUESTIONS lists every optional setting. The front page's ask box says Drawbridge is an OpenID Connect client for Entra ID (it said SAML), names SESAME's OpenID Connect driver, carries Laravel 13's real active-support date and MySQL 5.6 from the policy, and writes Booster, Preflight, Squire, Rollcall and Drawbridge as words.
 - Fixed: the docs and the front page keep their Docs link in the header on a phone (it used to vanish below 900px with the section links), the docs sidebar opens scrolled to the page you are on with a thin scrollbar, Troubleshooting's symptoms are h2 headings under the h1 (they skipped to h3), and the Overview's tagline sits under its title.
@@ -722,14 +726,14 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (`-v stack-composer-cache:/tmp/cache`), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.
 - The front page's parts list says Sourdough starts all five app shapes; it said "the raw PHP starter".
 
-### \[0.1.7\] - 2026-11-07[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-7-2026-11-07)
+### \[0.1.7\] - 2026-11-07 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-7-2026-11-07)
 
-#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-2)
+#### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-3)
 
 - The front page's deploy layer (`deploy/`) completes Squire's kit 0.5.0: `oracle-check.php`, which the 0.5.0 `squire update` did not add, is written and recorded, so `squire init --check` passes. `site/assets/stack-env.js` takes the stack's one copy, with bindingless catch blocks.
 - The canonical repository is git.wayne.edu (ADR-0021); docs, links and package metadata no longer point at the archived nougat copy.
 
-#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-2)
+#### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-2)
 
 - `owner_of` answers from an ownership table rebuilt from the stack's decisions, the one-owner-per-rule table first (version policy, lock file, `composer audit`, MySQL 5.6, `/up`, deploy files, CI contents, the parts list), then app wiring, sign-in and the coding standard. Every match carries `decision`, the decision it comes from, named by title and date. Rows gain `aliases` ("composer.lock", ".gitlab-ci.yml", "/up"), question words are ignored ("who owns composer audit" works), words match at word starts, and exact topic or alias matches come first. `content:verify` requires the decision and refuses an alias that names two rows.
 - `read_project_docs` trims image boilerplate again at read time, so docs bundled before a trim rule existed are served clean without editing `data/docs`. The trim (now `Content\ImageTrim`, shared with the generator) also drops linked hero images (an image Markdown wrapped in a link) and rows of nothing but badges, which the generator used to let through (Sourdough's README hero and badge row).
@@ -737,9 +741,9 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - data: resync 2026-11-06 night (booster:8c57a15 drawbridge:a60990a helmet:8a79b46 sesame:2505033 proctor:038d632 rollcall:aed8dd9 creed:0f6ab20 sourdough:b2644b3 weld:baf8e60 squire:88fd2ec preflight:a5ed45a pinstripe:eb03078 advisor:c3964c5 wayne-ui:9e1e762): Booster, CREED handbook and best practices, PROCTOR, Preflight and SESAME docs, the abandoned_packages policy, and the released versions of Booster, PROCTOR, Sourdough and others.
 - data: resync for the 2026-11-07 releases (Booster 1.10.0, CREED 0.1.7, Drawbridge 0.3.0, HELMET 0.4.0, Preflight 0.2.0, PROCTOR 0.7.0, Rollcall 0.1.10, SESAME 0.5.0, Sourdough 0.1.7, Squire 0.6.0, WELD 0.1.4; Pinstripe stays 0.1.4).
 
-### \[0.1.6\] - 2026-11-06[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-6-2026-11-06)
+### \[0.1.6\] - 2026-11-06 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-6-2026-11-06)
 
-#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-3)
+#### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-3)
 
 - data: resync 2026-11-05 evening (booster:eaf2758 drawbridge:aa403f3 helmet:36cb918 sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:335c4e4 preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:4fdc7b0)
 - data: resync 2026-11-05 late (booster:5b25715 drawbridge:19698ea helmet:417129a sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:9384c1d preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:ba8b7e1)
@@ -750,7 +754,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Added: an accessibility gate (scripts/a11y/check.mjs) that loads every HTML page under site/ in a real browser and fails on any axe-core WCAG violation, in light and dark themes at phone and desktop width, plus a reduced-motion pass; runs as the a11y job in GitLab CI.
 - Added: a docs site (site/docs/) built by the shared docs builder from docs/, checked in composer ci.
 
-#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-3)
+#### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-4)
 
 - Changed: resynced the bundled content (data/) with the stack as of 2026-11-05, including Booster 1.8.2 and 1.8.3, DRAWBRIDGE (session store, secret files, GitHub references removed), HELMET (H21 partly enforced, warn_broad_proxies), SESAME (CAS login bound to its browser), PROCTOR, ROLLCALL, CREED handbook chapters, Sourdough (--sail, --docker, Pest 4) and the WELD and SQUIRE guides; the Sourdough role now lists every shape that generates; the docs builder and kit follow SQUIRE 97744a4, which keeps the changelog page h1 itself.
 - Changed: the docs pages wear the front page's look: the same sheet head and main menu (Docs marked current), Fraunces titles with a plotted maroon route, the legend's mono labels, commands on the dark code ground with the gold Copy tab, callouts drawn as map marks (note, tip, out of bounds), the green footer band, and a dark mode derived from the Directions band. Motion only without a reduced-motion preference. Source: `docs/_header.html` and `docs/theme/advisor.css` through the builder's `theme` key. The front page site owes a Quick Update.
@@ -762,7 +766,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: symfony/console and symfony/process accept ^8.0 as well as ^7.4, so apps on Pest 5 / PHPUnit 13 can install ADVISOR.
 - Changed: the docs builder and kit are resynced from Squire's unified builder (theme hook, callouts, code tabs, task lists, copy button fix).
 
-#### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-1)
+#### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-1)
 
 - Fixed: the proof runner keeps the tool binary paths out of the error text: each of the proctor, booster and advisor binary paths is shortened to its file name before the scratch and corpus folders are masked as /app.
 - Fixed: front-page scroll reveals start hidden from first paint (plain CSS under `html.motion`, set in `<head>` before the body parses) instead of fading out after load, so unscrolled below-the-fold content sits at opacity 0 rather than being caught mid-fade; the motion class is only set where IntersectionObserver exists, so a page that hides content can always bring it back.
@@ -770,11 +774,11 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Fixed: the changelog docs page keeps its `# Changelog` heading, so the page has exactly one level-1 heading (a comment now sits above the heading in CHANGELOG.md, so the shared builder keeps it).
 - Fixed: table-of-contents sub-links carry the base `docs-toc__item` class again, so they get the block display and padding that keep them at or above the 24px target size (and their hover color).
 
-#### Security[#](https://advisor.apps.wayne.edu/docs/changelog.html#security)
+#### Security [#](https://advisor.apps.wayne.edu/docs/changelog.html#security)
 
 - The front-page deploy layer moves to Symfony 7.4.23 (symfony/http-foundation and symfony/yaml advisories, including CVE-2026-118514).
 
-### \[0.1.5\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-5-2026-11-03)
+### \[0.1.5\] - 2026-11-03 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-5-2026-11-03)
 
 - Changed: the deploy layer requires HELMET ^0.3 and PROCTOR ^0.4 (locked at 0.3.0 and 0.4.0) and sets minimum-stability to stable, which clears PROCTOR 0.4's new minimum-stability warning. HELMET 0.3 reads an empty `HELMET_PROXIES=` as trust nobody; the front page sets only the `citadel` preset, so nothing changes for it. The front page site owes a Quick Update.
 - Changed: the deploy layer's Squire kit is refreshed to 0.5.0 (updated `base-fallback.Dockerfile`, `scripts/release.sh` and `scripts/parity.ps1`). The front page site owes a Quick Update.
@@ -783,13 +787,13 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: `.env.playbook` is git-ignored; the agent-ready files (`site/llms.txt`, `site/llms-full.txt`) are regenerated.
 - Changed: docs and package metadata name nougat as the canonical repository, with git.wayne.edu and GitHub as read-only mirrors, until git.wayne.edu has CI runners.
 
-### \[0.1.4\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-4-2026-11-03)
+### \[0.1.4\] - 2026-11-03 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-4-2026-11-03)
 
 - Changed: CI pulls its Docker Hub images through the GitLab Dependency Proxy (the group's CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX), so pipelines no longer hit Docker Hub's anonymous pull limit.
 
-### \[0.1.3\] - 2026-11-02[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-3-2026-11-02)
+### \[0.1.3\] - 2026-11-02 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-3-2026-11-02)
 
-#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-4)
+#### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-4)
 
 - Added: hand-written guides bundled from generator/guides/ and served as advisor://guide/; first guide: Connect to Oracle on Citadel.
 - Added: policy_lookup returns latest_patch; the bundled docs drop hero images, badges and GIFs.
@@ -797,43 +801,43 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Docs: a one-line `claude mcp add` and a Docker `.mcp.json` for machines without PHP.
 - Added: composer content:drift and an optional CI job that fail when data/ no longer matches the sibling repos.
 
-#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-4)
+#### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-5)
 
 - Changed: the deploy layer's Squire kit is refreshed to 0.3.3 (release options can now live in ./.env.squire).
 - Changed: the deploy layer's Squire kit is refreshed to 0.3.4 (the local .env.squire file is now git-ignored).
 
-### \[0.1.2\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-2-2026-10-29)
+### \[0.1.2\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-2-2026-10-29)
 
-#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-5)
+#### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-5)
 
 - Added: agent-ready site (prompt blocks, Markdown twins, llms.txt), from Squire's kit.
 - `playbook_lookup` tool: answers "what is the value of X?" for WSU shared values. An environment variable of the same name wins, then the private `waynestate/playbook` package (Playbook) supplies the rest; without it the tool says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are refused. `waynestate/playbook` is suggested, never required.
 
-#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-5)
+#### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-6)
 
 - Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.
 - Changed: project names written as words except acronyms.
 
-#### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-2)
+#### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-2)
 
 - Fixed: stale capability claims in the site and docs.
 
-### \[0.1.1\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-1-2026-10-29)
+### \[0.1.1\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-1-2026-10-29)
 
-#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-6)
+#### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-6)
 
 - `owner_of` tool: answers "which project owns X?" from a new bundled `data/ownership.json` table (sourced from `generator/ownership.json`, verified by `content:verify`). Fuzzy match: every word of the topic must appear in a row's topic or role; a no-match answer lists every known topic.
 
-#### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-6)
+#### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-7)
 
 - `upgrade_path` moves from the `stack` group to a new `booster` group, so `ADVISOR_GROUPS=stack` offers reference tools only and never starts a program. `ADVISOR_GROUPS` now accepts `stack`, `proctor` and `booster`.
 - PHPStan includes Pinstripe's `raw.neon` preset (`waynestate/pinstripe` 0.1.0 as a dev dependency) instead of a hand copy of its settings; two docblocks were tightened to satisfy the preset's method-signature checks. Pint already used the `per` preset, so `pint.json` is unchanged.
 
-### \[0.1.0\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-0-2026-10-29)
+### \[0.1.0\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-0-2026-10-29)
 
 First build, aimed at 0.1.0.
 
-#### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-7)
+#### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-7)
 
 - Read-only MCP server over stdio (`php vendor/bin/advisor mcp`) on the official `mcp/sdk` 0.9.0, speaking both the legacy `initialize` handshake and the 2026-07-28 per-request form.
 - Seven tools: `list_projects`, `get_project_status`, `read_project_docs`, `policy_lookup`, `list_stack_rules`, `run_proctor_check`, `upgrade_path`. Resources `advisor://policy` and `advisor://creed/<chapter>`. Prompts `orient_me` and `plan_upgrade`.
@@ -848,15 +852,15 @@ First build, aimed at 0.1.0.
 
 Source: https://advisor.apps.wayne.edu/docs/contributing.html
 
-## Contributing[#](https://advisor.apps.wayne.edu/docs/contributing.html#contributing)
+## Contributing [#](https://advisor.apps.wayne.edu/docs/contributing.html#contributing)
 
 This page tells you how to make a change to ADVISOR, what rules the change must keep, and what work is still open.
 
-### Where changes go[#](https://advisor.apps.wayne.edu/docs/contributing.html#where-changes-go)
+### Where changes go [#](https://advisor.apps.wayne.edu/docs/contributing.html#where-changes-go)
 
 Development happens on git.wayne.edu, the canonical repository: [enterprise-apps/advisor](https://git.wayne.edu/enterprise-apps/advisor) (clone `git@git.wayne.edu:enterprise-apps/advisor.git` over SSH, or `https://git.wayne.edu/enterprise-apps/advisor.git` over HTTPS). Changes, issues and merge requests go there, CI runs there on its instance runner, and tags are made there by the maintainer, with an approver. GitHub ([waynestate/advisor](https://github.com/waynestate/advisor)) is a read-only push mirror of git.wayne.edu for Packagist: nobody pushes to it.
 
-### Build and test[#](https://advisor.apps.wayne.edu/docs/contributing.html#build-and-test)
+### Build and test [#](https://advisor.apps.wayne.edu/docs/contributing.html#build-and-test)
 
 | Task | Command |
 | --- | --- |
@@ -878,7 +882,7 @@ docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app comp
 
 Snapshot tests are updated with `ADVISOR_UPDATE_SNAPSHOTS=1` (`$env:ADVISOR_UPDATE_SNAPSHOTS = "1"` in PowerShell) before `vendor/bin/phpunit`.
 
-### Rules a change must keep[#](https://advisor.apps.wayne.edu/docs/contributing.html#rules-a-change-must-keep)
+### Rules a change must keep [#](https://advisor.apps.wayne.edu/docs/contributing.html#rules-a-change-must-keep)
 
 Every change to ADVISOR must keep the following practices:
 
@@ -892,7 +896,7 @@ Every change to ADVISOR must keep the following practices:
 8. **Review any change to the tool list.** `tools/list` is snapshotted; a changed description is a reviewed diff. Enforced (snapshot test).
 9. **Cite sources and date.** Policy answers carry the day they were worked out for and the file they came from. Enforced.
 
-### Keeping the content fresh[#](https://advisor.apps.wayne.edu/docs/contributing.html#keeping-the-content-fresh)
+### Keeping the content fresh [#](https://advisor.apps.wayne.edu/docs/contributing.html#keeping-the-content-fresh)
 
 Run `content:generate` after any change that lands in CREED's policy or handbook, a project's README or best practices, an extra doc, or the projects seed. Commit the regenerated `data/` with the source commits in the message. To add a project to the parts list, add its `name` and `tagline` to `generator/projects.seed.json`, then regenerate and `stack-parts --write`.
 
@@ -900,7 +904,7 @@ Beyond a project's README and best practices, a seed may bundle further files un
 
 Hand-written guides live in `generator/guides/`, one Markdown file per slug, served as `advisor://guide/<slug>`. Edit them there, then run `content:generate`.
 
-### Catch stale bundled docs[#](https://advisor.apps.wayne.edu/docs/contributing.html#catch-stale-bundled-docs)
+### Catch stale bundled docs [#](https://advisor.apps.wayne.edu/docs/contributing.html#catch-stale-bundled-docs)
 
 `composer content:drift` compares `data/` with a checkout of the stack repos and exits 1 when they no longer agree. It takes the folder from `ADVISOR_STACK_DIR`; without it, it prints how to run it and exits 1:
 
@@ -912,7 +916,7 @@ It writes nothing. On drift it lists the files that moved; regenerate with `comp
 
 Run the drift check before every tag: a release must carry docs that still match the repos it advises on.
 
-### Releasing[#](https://advisor.apps.wayne.edu/docs/contributing.html#releasing)
+### Releasing [#](https://advisor.apps.wayne.edu/docs/contributing.html#releasing)
 
 ADVISOR is public, so its bundle must not carry internal names. The public-posture test always checks generic shapes; private strings are loaded from a denylist file named by `ADVISOR_PRIVATE_DENYLIST`, kept outside the repository (in CI, a masked file-type variable).
 
@@ -926,7 +930,7 @@ The denylist file is never committed. The bundle is regenerated with the file pr
 4. Tag `X.Y.Z` (no `v`) on git.wayne.edu. Its push mirror carries the tag to GitHub, and Packagist picks it up from there.
 5. A release needs a maintainer's approval. Never move or delete a published tag.
 
-### Open work[#](https://advisor.apps.wayne.edu/docs/contributing.html#open-work)
+### Open work [#](https://advisor.apps.wayne.edu/docs/contributing.html#open-work)
 
 The following items are open questions or not yet built:
 
@@ -942,7 +946,7 @@ The following items are open questions or not yet built:
 - Full-capture audit mode: hashes only by default; an opt-in needs a retention decision.
 - MCP Inspector in CI, native Windows and macOS CI.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/contributing.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/contributing.html#related)
 
 - [Upgrading](https://advisor.apps.wayne.edu/docs/upgrading.html)
 - [Releasing](https://advisor.apps.wayne.edu/docs/deploying/releasing.html)
@@ -953,17 +957,17 @@ The following items are open questions or not yet built:
 
 Source: https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html
 
-## Refreshing the content[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#refreshing-the-content)
+## Refreshing the content [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#refreshing-the-content)
 
 This page shows how to keep ADVISOR's bundled content in `data/` current with the stack: regenerate it, verify it, and check for drift.
 
-### What is generated[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#what-is-generated)
+### What is generated [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#what-is-generated)
 
 The handbook, policy, project docs, the WayneUI markup contract and WayneUI's 1.x to 2.x migration guide in `data/` are generated from the sibling stack repositories by `content:generate` and verified at start-up against `data/manifest.json` (a SHA-256 for every file). If a file does not match, the server refuses to start rather than serve it. Files are cleaned on the way in: line endings are normalized and invisible characters (the TAG block, zero-width and bidirectional controls) are stripped. Image boilerplate is trimmed from the project docs, on the way in and again when `read_project_docs` serves them: centred hero, badge and cast blocks, lone images whose target is relative or a GIF (linked or not), and rows of nothing but badges. Prose, tables and code blocks are left alone, and the bundled file itself is never rewritten at read time, so its manifest hash still holds. Each project entry also carries its version when the project publishes one (composer.json, else package.json, else the newest CHANGELOG heading).
 
 Beside the generated docs, hand-written guides are kept by hand in `generator/guides/` (one Markdown file per slug), the same way the ownership table is kept. Each is bundled into `data/guides/` and served as `advisor://guide/<slug>`; the first is "Connect to Oracle on Citadel".
 
-### Regenerate[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#regenerate)
+### Regenerate [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#regenerate)
 
 With the stack repos checked out side by side:
 
@@ -979,7 +983,7 @@ To add a project to the parts list, add its `name` and `tagline` to `generator/p
 
 Beyond a project's README and best practices, a seed may bundle further files under `extra_docs` (a map of slug to path in the project); each lands in `data/docs/<id>/<slug>.md` and in the project's docs list, and a missing file is skipped, not an error. WayneUI's entry bundles its MIGRATING.md as the `migrating` doc.
 
-### Verify[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#verify)
+### Verify [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#verify)
 
 CI cannot see the sibling repositories, so `composer ci` runs `content:verify`, which needs none of them:
 
@@ -989,7 +993,7 @@ php vendor/bin/advisor content:verify
 
 It checks the bundled `data/` against `data/manifest.json` (a SHA-256 for every file).
 
-### Check for drift[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#check-for-drift)
+### Check for drift [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#check-for-drift)
 
 `composer content:drift` compares `data/` with a checkout of the stack repos and exits 1 when they no longer agree. It takes the folder from `ADVISOR_STACK_DIR`; without it, it prints how to run it and exits 1:
 
@@ -1007,7 +1011,7 @@ That exits 1 on drift.
 
 The GitLab job `content-drift` does the same in CI: it clones the repos listed in `data/projects.json` with the job token, puts them in one folder, sets `ADVISOR_STACK_DIR` and runs the check. It is manual or scheduled and allowed to fail, so it cannot block main. Run the drift check before every tag: a release must carry docs that still match the repos it advises on.
 
-### The private denylist[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#the-private-denylist)
+### The private denylist [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#the-private-denylist)
 
 ADVISOR is a public repository, so the bundle must not carry internal names. The public-posture test always checks generic shapes (ADR numbers, open-question numbers, design-doc paths, the coordination repo). Private strings (hostnames, people) are loaded from the file named by `ADVISOR_PRIVATE_DENYLIST` and checked only when the file is present.
 
@@ -1022,7 +1026,7 @@ Warning
 
 The denylist file is never committed. The bundle is regenerated with the file present before every release.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#related)
 
 - [Releasing](https://advisor.apps.wayne.edu/docs/deploying/releasing.html)
 - [Served content](https://advisor.apps.wayne.edu/docs/guides/served-content.html)
@@ -1034,7 +1038,7 @@ The denylist file is never committed. The bundle is regenerated with the file pr
 
 Source: https://advisor.apps.wayne.edu/docs/deploying/releasing.html
 
-## Releasing[#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#releasing)
+## Releasing [#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#releasing)
 
 This page gives the numbered steps for releasing ADVISOR, from the README's "Releasing" section and MAINTAINING.md.
 
@@ -1044,7 +1048,7 @@ Warning
 
 A release needs a maintainer's approval. Never move or delete a published tag.
 
-### Steps[#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#steps)
+### Steps [#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#steps)
 
 1. Move the lines under `## [Unreleased]` in `CHANGELOG.md` (Keep a Changelog) to a new `## [X.Y.Z] - YYYY-MM-DD` heading.
 2. With the denylist file present, regenerate: `php bin/advisor content:generate --sources=<stack folder>`, then `composer ci` (the public-posture test must pass).
@@ -1052,11 +1056,11 @@ A release needs a maintainer's approval. Never move or delete a published tag.
 4. Tag `X.Y.Z` (no `v`) on git.wayne.edu. Its push mirror carries the tag to GitHub, and Packagist picks it up from there.
 5. A release needs a maintainer's approval. Never move or delete a published tag.
 
-### The denylist[#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#the-denylist)
+### The denylist [#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#the-denylist)
 
 The public-posture test always checks generic shapes (ADR numbers, open-question numbers, design-doc paths, the coordination repo). Private strings (hostnames, people) are loaded from the file named by `ADVISOR_PRIVATE_DENYLIST` and checked only when the file is present. Set it to a file kept outside the repository (one literal or `regex:` pattern per line, `#` comments); in GitLab CI, the file comes from a masked file-type CI variable. The file is never committed. The bundle is regenerated with the file present before every release.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/deploying/releasing.html#related)
 
 - [Proof](https://advisor.apps.wayne.edu/docs/reference/proof.html)
 - [Refreshing the content](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html)
@@ -1066,11 +1070,11 @@ The public-posture test always checks generic shapes (ADR numbers, open-question
 
 Source: https://advisor.apps.wayne.edu/docs/guides/claude-code.html
 
-## One line for Claude Code[#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#one-line-for-claude-code)
+## One line for Claude Code [#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#one-line-for-claude-code)
 
 This page gives the one line that connects Claude Code to ADVISOR, and the `install` command that does the same thing.
 
-### The one line[#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#the-one-line)
+### The one line [#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#the-one-line)
 
 If you would rather type it than generate it, this does the same as `install --client=claude --write`; project scope keeps it out of your other projects, and the same "do not commit it" warning applies:
 
@@ -1078,7 +1082,7 @@ If you would rather type it than generate it, this does the same as `install --c
 claude mcp add --scope project advisor -e ADVISOR_ENABLED=1 -- php vendor/bin/advisor mcp
 ```
 
-### The install command[#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#the-install-command)
+### The install command [#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#the-install-command)
 
 The `install` command does the same thing and supports Claude among its clients:
 
@@ -1088,13 +1092,13 @@ php vendor/bin/advisor install [--client=claude] [--write] [--force] [--path=.]
 
 `install` puts `ADVISOR_ENABLED` in the client config's env block and warns when the file is not in `.gitignore`.
 
-### Keep it out of git[#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#keep-it-out-of-git)
+### Keep it out of git [#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#keep-it-out-of-git)
 
 Warning
 
 Approve it by name, and review the config like code. `.mcp.json` starts a program on whoever opens the project. Keep it out of git (this repo ignores it); `advisor install` warns when you have not.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/guides/claude-code.html#related)
 
 - [No PHP? Use Docker](https://advisor.apps.wayne.edu/docs/guides/docker.html)
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
@@ -1105,11 +1109,11 @@ Approve it by name, and review the config like code. `.mcp.json` starts a progra
 
 Source: https://advisor.apps.wayne.edu/docs/guides/docker.html
 
-## No PHP? Use Docker[#](https://advisor.apps.wayne.edu/docs/guides/docker.html#no-php-use-docker)
+## No PHP? Use Docker [#](https://advisor.apps.wayne.edu/docs/guides/docker.html#no-php-use-docker)
 
 This page shows how to point your MCP client at Docker to run ADVISOR when PHP is not on your PATH.
 
-### Point the client at Docker[#](https://advisor.apps.wayne.edu/docs/guides/docker.html#point-the-client-at-docker)
+### Point the client at Docker [#](https://advisor.apps.wayne.edu/docs/guides/docker.html#point-the-client-at-docker)
 
 If PHP is not on your PATH, point the client at Docker instead. Run it from the project root, the folder that holds `vendor/`, with a hand-written `.mcp.json` like this:
 
@@ -1146,15 +1150,15 @@ If PHP is not on your PATH, point the client at Docker instead. Run it from the 
 }
 ```
 
-### What the config does[#](https://advisor.apps.wayne.edu/docs/guides/docker.html#what-the-config-does)
+### What the config does [#](https://advisor.apps.wayne.edu/docs/guides/docker.html#what-the-config-does)
 
 The container has no network, and the project is mounted read-only. `ADVISOR_GROUPS=stack` keeps the tools that start programs (proctor, upgrade_path) off, because those need the app's own PHP. Some clients want an absolute path in place of `.` for the mount; give them one. Advice comes in; nothing goes out.
 
-### Where to run it[#](https://advisor.apps.wayne.edu/docs/guides/docker.html#where-to-run-it)
+### Where to run it [#](https://advisor.apps.wayne.edu/docs/guides/docker.html#where-to-run-it)
 
 Run the client from the folder that holds `vendor/`. If it starts somewhere else, set `ADVISOR_PROJECT_ROOT`.
 
-### Keep it out of git[#](https://advisor.apps.wayne.edu/docs/guides/docker.html#keep-it-out-of-git)
+### Keep it out of git [#](https://advisor.apps.wayne.edu/docs/guides/docker.html#keep-it-out-of-git)
 
 This file is written by hand, so keep it out of git like the generated one. `install` never replaces a different existing `advisor` entry unless you pass `--force`, keeps your other servers, and warns when the file is not in `.gitignore`.
 
@@ -1162,7 +1166,7 @@ Warning
 
 A client config starts a program on whoever opens the project, so do not commit a generated one; this repository ignores `.mcp.json` for that reason.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/guides/docker.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/guides/docker.html#related)
 
 - [One line for Claude Code](https://advisor.apps.wayne.edu/docs/guides/claude-code.html)
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
@@ -1173,11 +1177,11 @@ A client config starts a program on whoever opens the project, so do not commit 
 
 Source: https://advisor.apps.wayne.edu/docs/guides/doctor.html
 
-## When it does not show up[#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#when-it-does-not-show-up)
+## When it does not show up [#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#when-it-does-not-show-up)
 
 This page is the one to follow when you added the config, opened the project, and the `advisor` server is not in the list.
 
-### Run the doctor[#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#run-the-doctor)
+### Run the doctor [#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#run-the-doctor)
 
 ```bash
 php vendor/bin/advisor doctor [--json]   # check the install when the server does not show up
@@ -1185,20 +1189,20 @@ php vendor/bin/advisor doctor [--json]   # check the install when the server doe
 
 It checks the four things that keep a server from appearing, in plain words, and changes nothing. `--json` prints the findings as JSON.
 
-### What it checks[#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#what-it-checks)
+### What it checks [#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#what-it-checks)
 
 - **php**: the PHP on your machine satisfies ADVISOR's own `composer.json` (8.3 or newer).
 - **content**: the bundled `data/` still matches its manifest.
 - **client:claude**, **client:warriorgpt**, **client:cursor**, **client:vscode**: each client's MCP config: is the file there, does it have the `advisor` entry, and is the script it points at in the project? A missing file is a warning, not a failure; you only need the one client you use.
 - **mcp**: the server actually starts. Doctor boots it in-process and asks for its tools.
 
-### Reading the result[#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#reading-the-result)
+### Reading the result [#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#reading-the-result)
 
 A `fail` is something to fix; a `warn` is something you may not care about. The exit code is `0` when nothing failed and `1` when something did. If doctor itself cannot run, it reports a `doctor` failure and exits `2`.
 
 The advisor will see you now.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/guides/doctor.html#related)
 
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
 - [One line for Claude Code](https://advisor.apps.wayne.edu/docs/guides/claude-code.html)
@@ -1210,11 +1214,11 @@ The advisor will see you now.
 
 Source: https://advisor.apps.wayne.edu/docs/guides/laravel.html
 
-## Laravel apps[#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#laravel-apps)
+## Laravel apps [#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#laravel-apps)
 
 This page shows how ADVISOR runs inside a Laravel app, beside Laravel Boost.
 
-### The Laravel adapter[#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#the-laravel-adapter)
+### The Laravel adapter [#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#the-laravel-adapter)
 
 ADVISOR ships a Laravel adapter on `laravel/mcp`, auto-discovered by the service provider. With it, the same server runs as `php artisan mcp:start advisor`, beside Boost.
 
@@ -1222,7 +1226,7 @@ Tip
 
 Boost knows the framework, ADVISOR knows WSU. They do not overlap, so run both.
 
-### Publish the config[#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#publish-the-config)
+### Publish the config [#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#publish-the-config)
 
 Publish the config if you want it in the app:
 
@@ -1230,7 +1234,7 @@ Publish the config if you want it in the app:
 php artisan vendor:publish --tag=advisor-config
 ```
 
-### Settings[#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#settings)
+### Settings [#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#settings)
 
 Settings come from the same `ADVISOR_*` variables, read through `config/advisor.php`.
 
@@ -1238,11 +1242,11 @@ Warning
 
 The same rules apply: off unless `ADVISOR_ENABLED` is set, and never in production.
 
-### Registering the server[#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#registering-the-server)
+### Registering the server [#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#registering-the-server)
 
 `advisor install` always writes the plain PHP command, `php vendor/bin/advisor mcp`. The artisan route, `php artisan mcp:start advisor`, is available through the service provider.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/guides/laravel.html#related)
 
 - [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
@@ -1253,11 +1257,11 @@ The same rules apply: off unless `ADVISOR_ENABLED` is set, and never in producti
 
 Source: https://advisor.apps.wayne.edu/docs/guides/modules.html
 
-## Modules[#](https://advisor.apps.wayne.edu/docs/guides/modules.html#modules)
+## Modules [#](https://advisor.apps.wayne.edu/docs/guides/modules.html#modules)
 
 This page explains how ADVISOR modules extend what it can answer and the rules that decide which modules load.
 
-### How modules load[#](https://advisor.apps.wayne.edu/docs/guides/modules.html#how-modules-load)
+### How modules load [#](https://advisor.apps.wayne.edu/docs/guides/modules.html#how-modules-load)
 
 Each stack project can later ship its own ADVISOR tools.
 
@@ -1265,7 +1269,7 @@ Note
 
 Modules load only from a manifest (`modules.json`), only from the `Waynestate\` namespace, and only if they implement the `Module` interface. Nothing scans a folder.
 
-### The manifest[#](https://advisor.apps.wayne.edu/docs/guides/modules.html#the-manifest)
+### The manifest [#](https://advisor.apps.wayne.edu/docs/guides/modules.html#the-manifest)
 
 The repository's own manifest is `modules.json` at the root:
 
@@ -1279,7 +1283,7 @@ The repository's own manifest is `modules.json` at the root:
 
 It lists one module, `Waynestate\Advisor\Module\CoreModule`.
 
-### An extra manifest[#](https://advisor.apps.wayne.edu/docs/guides/modules.html#an-extra-manifest)
+### An extra manifest [#](https://advisor.apps.wayne.edu/docs/guides/modules.html#an-extra-manifest)
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
@@ -1287,7 +1291,7 @@ It lists one module, `Waynestate\Advisor\Module\CoreModule`.
 
 Set `ADVISOR_MODULES_FILE` to point at an extra module manifest; its default is none. An extra manifest is held to the same rules: manifest only, the `Waynestate\` namespace, and the `Module` interface.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/guides/modules.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/guides/modules.html#related)
 
 - [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
@@ -1298,7 +1302,7 @@ Set `ADVISOR_MODULES_FILE` to point at an extra module manifest; its default is 
 
 Source: https://advisor.apps.wayne.edu/docs/guides/quick-start.html
 
-## Quick start[#](https://advisor.apps.wayne.edu/docs/guides/quick-start.html#quick-start)
+## Quick start [#](https://advisor.apps.wayne.edu/docs/guides/quick-start.html#quick-start)
 
 This page takes you from a fresh install to the `advisor` server registered in your client.
 
@@ -1316,17 +1320,17 @@ This page takes you from a fresh install to the `advisor` server registered in y
 
 The command it registers is always the same fixed string, `php vendor/bin/advisor mcp`, with `ADVISOR_ENABLED=1` in its environment. Clients: `claude` (`.mcp.json`), `warriorgpt` (`.mcp.json`), `cursor` (`.cursor/mcp.json`), `vscode` (`.vscode/mcp.json`) and `codex` (TOML, printed only; paste it into `~/.codex/config.toml`).
 
-### What you built[#](https://advisor.apps.wayne.edu/docs/guides/quick-start.html#what-you-built)
+### What you built [#](https://advisor.apps.wayne.edu/docs/guides/quick-start.html#what-you-built)
 
 The `advisor` server is registered in your client, running `php vendor/bin/advisor mcp` with `ADVISOR_ENABLED=1` in its environment, and it is ready to answer questions about the stack.
 
-### Next steps[#](https://advisor.apps.wayne.edu/docs/guides/quick-start.html#next-steps)
+### Next steps [#](https://advisor.apps.wayne.edu/docs/guides/quick-start.html#next-steps)
 
 - [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html): the nine read-only tools.
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html): the environment variables.
 - [One line for Claude Code](https://advisor.apps.wayne.edu/docs/guides/claude-code.html): if you would rather type it than generate it.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/guides/quick-start.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/guides/quick-start.html#related)
 
 - [Install](https://advisor.apps.wayne.edu/docs/install.html)
 - [Overview](https://advisor.apps.wayne.edu/docs/index.html)
@@ -1337,13 +1341,13 @@ The `advisor` server is registered in your client, running `php vendor/bin/advis
 
 Source: https://advisor.apps.wayne.edu/docs/guides/safety.html
 
-## Safety[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety)
+## Safety [#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety)
 
 This page collects the safety rules ADVISOR enforces and the settings behind them, so you know what it will and will not do.
 
 Each control is also written up as a threat page: [prompt injection](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html), [path traversal](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html), [command injection](https://advisor.apps.wayne.edu/docs/threats/command-injection.html) and [data exfiltration](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html).
 
-### Safety, in short[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety-in-short)
+### Safety, in short [#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety-in-short)
 
 - Off unless enabled; refuses production; refuses to start on a bad setting or a content file that fails its hash.
 - Read-only by default; no tool takes a command, a URL or a free path.
@@ -1352,7 +1356,7 @@ Each control is also written up as a threat page: [prompt injection](https://adv
 - `upgrade_path` runs Booster's read-only `plan` the same way: one fixed program, an argument array, an allowlisted command, never a shell. It plans; it never runs a hop.
 - No network calls, and no model calls, from ADVISOR itself.
 
-### Settings that enforce it[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#settings-that-enforce-it)
+### Settings that enforce it [#](https://advisor.apps.wayne.edu/docs/guides/safety.html#settings-that-enforce-it)
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
@@ -1366,7 +1370,7 @@ Warning
 
 A bad value stops the server with a message on stderr. It does not guess.
 
-### Best practices[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#best-practices)
+### Best practices [#](https://advisor.apps.wayne.edu/docs/guides/safety.html#best-practices)
 
 From `BEST_PRACTICES.md`, the safety rules:
 
@@ -1378,7 +1382,7 @@ From `BEST_PRACTICES.md`, the safety rules:
 - **Strip invisible characters.** The TAG block, zero-width and bidirectional controls are removed from everything served and rejected in tool metadata. Enforced (contract test).
 - **Serve from verified data.** Bundled content is checked against a SHA-256 manifest at start-up and in CI; a mismatch stops the server. Enforced.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/guides/safety.html#related)
 
 - [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
@@ -1390,11 +1394,11 @@ From `BEST_PRACTICES.md`, the safety rules:
 
 Source: https://advisor.apps.wayne.edu/docs/guides/served-content.html
 
-## Served content[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#served-content)
+## Served content [#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#served-content)
 
 This page explains what content ADVISOR serves, where it comes from, and how to keep it fresh.
 
-### What is served[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#what-is-served)
+### What is served [#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#what-is-served)
 
 The handbook, policy, project docs, the WayneUI markup contract and WayneUI's 1.x to 2.x migration guide in `data/` are generated from the sibling stack repositories. `data/` is generated, never hand-edited: `policy.json` and `handbook/` from CREED, `projects.json` from each project repo and `generator/projects.seed.json` (state, package, version, PHP floor), plus each project's README, best practices and any extra docs its seed names.
 
@@ -1402,7 +1406,7 @@ Each project entry also carries its version when the project publishes one (comp
 
 Beyond a project's README and best practices, a seed may bundle further files under `extra_docs` (a map of slug to path in the project); each lands in `data/docs/<id>/<slug>.md` and in the project's docs list, and a missing file is skipped, not an error. WayneUI's entry bundles its MIGRATING.md as the `migrating` doc.
 
-### Verified at start-up[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#verified-at-start-up)
+### Verified at start-up [#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#verified-at-start-up)
 
 Content is generated by `content:generate` and verified at start-up against `data/manifest.json` (a SHA-256 for every file).
 
@@ -1412,11 +1416,11 @@ If a file does not match, the server refuses to start rather than serve it.
 
 Files are cleaned on the way in: line endings are normalized and invisible characters (the TAG block, zero-width and bidirectional controls) are stripped. Image boilerplate is trimmed from the project docs, on the way in and again when `read_project_docs` serves them: centred hero, badge and cast blocks, lone images whose target is relative or a GIF (linked or not), and rows of nothing but badges. Prose, tables and code blocks are left alone, and the bundled file itself is never rewritten at read time, so its manifest hash still holds.
 
-### Hand-written guides[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#hand-written-guides)
+### Hand-written guides [#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#hand-written-guides)
 
 Beside the generated docs, hand-written guides are kept by hand in `generator/guides/` (one Markdown file per slug), the same way the ownership table is kept. Each is bundled into `data/guides/` and served as `advisor://guide/<slug>`; the first is "Connect to Oracle on Citadel". Edit them there, then run `content:generate`.
 
-### Refreshing the content[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#refreshing-the-content)
+### Refreshing the content [#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#refreshing-the-content)
 
 To refresh it, with the stack repos checked out side by side:
 
@@ -1431,13 +1435,13 @@ The generator reads each project's folder from beside the other repos, so a stal
 
 CI cannot see the sibling repositories, so `composer ci` runs `content:verify`, which needs none of them.
 
-### Catching drift[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#catching-drift)
+### Catching drift [#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#catching-drift)
 
 `composer content:drift` compares `data/` with a checkout of the stack repos and exits 1 when they no longer agree. It takes the folder from `ADVISOR_STACK_DIR`; without it, it prints how to run it and exits 1. It writes nothing. On drift it lists the files that moved; regenerate with `composer content:generate` and review the diff before committing.
 
 The GitLab job `content-drift` does the same in CI: it clones the repos listed in `data/projects.json` with the job token, puts them in one folder, sets `ADVISOR_STACK_DIR` and runs the check. It is manual or scheduled and allowed to fail, so it cannot block main. Run the drift check before every tag: a release must carry docs that still match the repos it advises on.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/guides/served-content.html#related)
 
 - [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
 - [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
@@ -1448,11 +1452,11 @@ The GitLab job `content-drift` does the same in CI: it clones the repos listed i
 
 Source: https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html
 
-## What it offers[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#what-it-offers)
+## What it offers [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#what-it-offers)
 
 ADVISOR gives a coding agent nine read-only tools, plus two prompts and three resource routes, and each answer says where it came from.
 
-### Tools[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#tools)
+### Tools [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#tools)
 
 Nine tools, all read-only. Each one says where its answer came from:
 
@@ -1472,11 +1476,11 @@ Note
 
 Everything ADVISOR returns is labeled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.
 
-### Groups[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#groups)
+### Groups [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#groups)
 
 The groups split by what they may start: `stack` never starts a program, `proctor` starts the app's own `vendor/bin/proctor`, and `booster` starts Booster's read-only `plan` (never `run`). Set `ADVISOR_GROUPS=stack` when you want ADVISOR as pure reference material.
 
-### Resources[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#resources)
+### Resources [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#resources)
 
 | Resource | Serves |
 | --- | --- |
@@ -1484,7 +1488,7 @@ The groups split by what they may start: `stack` never starts a program, `procto
 | `advisor://creed/<chapter>` | One per handbook chapter. |
 | `advisor://guide/<slug>` | Hand-written guides; the first is "Connect to Oracle on Citadel". |
 
-### Prompts[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#prompts)
+### Prompts [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#prompts)
 
 Prompts: `orient_me` and `plan_upgrade`.
 
@@ -1492,7 +1496,7 @@ Here is what that looks like when you ask. Each numbered control point is one of
 
 ![A topographic field map of the stack. Three questions are plotted from 'your app' through the ADVISOR advising office to the project that answers. 'Which PHP can I build on?' goes through policy_lookup (component: php) to CREED's policy.json. 'Which security headers do I need?' goes through list_stack_rules (chapter: runtime-and-headers) and read_project_docs (project: helmet) to HELMET. 'How do I get off PHP 8.2?' goes through the plan_upgrade prompt, policy_lookup, run_proctor_check and read_project_docs (project: booster) to Booster.](https://advisor.apps.wayne.edu/docs/readme/route.svg)
 
-### Related[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#related)
 
 - [Served content](https://advisor.apps.wayne.edu/docs/guides/served-content.html)
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
@@ -1504,15 +1508,15 @@ Here is what that looks like when you ask. Each numbered control point is one of
 
 Source: https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html
 
-## Where it sits in WELD[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#where-it-sits-in-weld)
+## Where it sits in WELD [#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#where-it-sits-in-weld)
 
 This page shows where ADVISOR sits among the parts of the Wayne State application stack and in WELD.
 
-### The stack and WELD[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#the-stack-and-weld)
+### The stack and WELD [#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#the-stack-and-weld)
 
 The stack is the Wayne State application stack. WELD, Wired, Everything, Linked, Deployed, is its Laravel starter app. You can add ADVISOR to a WELD app or to any other Wayne State PHP app, and in either case it is the part of the stack that talks to your coding agent.
 
-### The parts[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#the-parts)
+### The parts [#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#the-parts)
 
 | Part | What it is |
 | --- | --- |
@@ -1532,7 +1536,7 @@ The stack is the Wayne State application stack. WELD, Wired, Everything, Linked,
 | **ADVISOR** | MCP server |
 | **WELD** | the Laravel starter app |
 
-### What each part is[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#what-each-part-is)
+### What each part is [#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#what-each-part-is)
 
 ADVISOR serves a bundled copy of what these projects publish, so it works offline. Each part:
 
@@ -1556,7 +1560,7 @@ Note
 
 ADVISOR does not replace Laravel Boost. Boost knows Laravel; ADVISOR knows WSU. Run both.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#related)
 
 - [Served content](https://advisor.apps.wayne.edu/docs/guides/served-content.html)
 - [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
@@ -1567,7 +1571,7 @@ ADVISOR does not replace Laravel Boost. Boost knows Laravel; ADVISOR knows WSU. 
 
 Source: https://advisor.apps.wayne.edu/docs/
 
-## Overview[#](https://advisor.apps.wayne.edu/docs/#overview)
+## Overview [#](https://advisor.apps.wayne.edu/docs/#overview)
 
 **What applies, and what's next.**
 
@@ -1579,7 +1583,7 @@ It is read-only. It cannot write a file, run a shell command, or call out to the
 
 > Every WSU student has an advisor. Now every WSU app does too, and this one answers email.
 
-### Install and run[#](https://advisor.apps.wayne.edu/docs/#install-and-run)
+### Install and run [#](https://advisor.apps.wayne.edu/docs/#install-and-run)
 
 Add it to the app as a dev dependency, then run it:
 
@@ -1590,18 +1594,18 @@ php vendor/bin/advisor
 
 The command is `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.
 
-### Pick your path[#](https://advisor.apps.wayne.edu/docs/#pick-your-path)
+### Pick your path [#](https://advisor.apps.wayne.edu/docs/#pick-your-path)
 
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html): register the `advisor` server with your client.
 - [Install](https://advisor.apps.wayne.edu/docs/install.html): what it needs and how to add it to an app.
 - [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html): the nine read-only tools.
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html): the environment variables.
 
-### Status[#](https://advisor.apps.wayne.edu/docs/#status)
+### Status [#](https://advisor.apps.wayne.edu/docs/#status)
 
 Current release 0.3.0. PHP ^8.3, license MIT, MCP SDK 0.9.0. New in 0.3.0: Parity, Citadel on your own computer, is the fifteenth part of the stack, so `list_projects`, `get_project_status`, `read_project_docs` and `owner_of` ("local development") know it; the bundle is resynced with the stack's 2026-11-09 night main branches; and CI runs on Composer 2.11.1 and Preflight 0.5.0. The [changelog](https://advisor.apps.wayne.edu/docs/changelog.html) has the full list, and [Upgrading](https://advisor.apps.wayne.edu/docs/upgrading.html) the one step it needs. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
 
-### Related[#](https://advisor.apps.wayne.edu/docs/#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/#related)
 
 - [Install](https://advisor.apps.wayne.edu/docs/install.html)
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
@@ -1612,11 +1616,11 @@ Current release 0.3.0. PHP ^8.3, license MIT, MCP SDK 0.9.0. New in 0.3.0: Parit
 
 Source: https://advisor.apps.wayne.edu/docs/install.html
 
-## Install[#](https://advisor.apps.wayne.edu/docs/install.html#install)
+## Install [#](https://advisor.apps.wayne.edu/docs/install.html#install)
 
 This page shows what ADVISOR needs and how to add it to a Wayne State PHP app.
 
-### Requirements[#](https://advisor.apps.wayne.edu/docs/install.html#requirements)
+### Requirements [#](https://advisor.apps.wayne.edu/docs/install.html#requirements)
 
 PHP 8.3 or newer (8.3, 8.4 and 8.5 are tested). The package requires:
 
@@ -1632,7 +1636,7 @@ PHP 8.3 or newer (8.3, 8.4 and 8.5 are tested). The package requires:
 
 The platform is pinned to PHP 8.3.0 in `composer.json`.
 
-### Install[#](https://advisor.apps.wayne.edu/docs/install.html#install-1)
+### Install [#](https://advisor.apps.wayne.edu/docs/install.html#install-1)
 
 Add it to the app as a dev dependency:
 
@@ -1648,7 +1652,7 @@ Note
 
 Native Windows is not yet proven. ADVISOR is one PHP command, so it is built to run the same everywhere, but it has not been proven on native Windows. If you are on Windows, [use Docker](https://advisor.apps.wayne.edu/docs/guides/docker.html).
 
-### Verify[#](https://advisor.apps.wayne.edu/docs/install.html#verify)
+### Verify [#](https://advisor.apps.wayne.edu/docs/install.html#verify)
 
 Check the install with:
 
@@ -1665,13 +1669,13 @@ It checks the four things that keep a server from appearing, in plain words, and
 
 A `fail` is something to fix; a `warn` is something you may not care about. The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
 
-### Next steps[#](https://advisor.apps.wayne.edu/docs/install.html#next-steps)
+### Next steps [#](https://advisor.apps.wayne.edu/docs/install.html#next-steps)
 
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html): register the `advisor` server with a client.
 - [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html): the nine read-only tools.
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html): the environment variables.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/install.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/install.html#related)
 
 - [Overview](https://advisor.apps.wayne.edu/docs/index.html)
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
@@ -1682,79 +1686,79 @@ A `fail` is something to fix; a `warn` is something you may not care about. The 
 
 Source: https://advisor.apps.wayne.edu/docs/reference/best-practices.html
 
-## Best practices[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#best-practices)
+## Best practices [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#best-practices)
 
 These are the rules ADVISOR holds itself to, the short version for people who use ADVISOR and people who add to it, with the test that enforces each rule where there is one.
 
 Tags: Enforced (code or CI stops the bad outcome), Documented (written down only), Not yet (a gap).
 
-### Approve it by name, and review the config like code[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#approve-it-by-name-and-review-the-config-like-code)
+### Approve it by name, and review the config like code [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#approve-it-by-name-and-review-the-config-like-code)
 
 `.mcp.json` starts a program on whoever opens the project. Keep it out of git (this repo ignores it); `advisor install` warns when you have not. Enforced (warning).
 
-### Treat answers as data[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#treat-answers-as-data)
+### Treat answers as data [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#treat-answers-as-data)
 
 Every result says where it came from and that it is reference text. PROCTOR in CI decides pass or fail; ADVISOR never does. Enforced (labels), Documented (the rule).
 
-### Run it in development only[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#run-it-in-development-only)
+### Run it in development only [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#run-it-in-development-only)
 
 It refuses to start unless `ADVISOR_ENABLED` is set and refuses in production. Enforced.
 
-### Keep secrets out of what you ask[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#keep-secrets-out-of-what-you-ask)
+### Keep secrets out of what you ask [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#keep-secrets-out-of-what-you-ask)
 
 Do not paste tokens into prompts. Audit logs hold hashes, never arguments, and PROCTOR output is redacted. Enforced.
 
-### Run Boost beside it in Laravel apps[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#run-boost-beside-it-in-laravel-apps)
+### Run Boost beside it in Laravel apps [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#run-boost-beside-it-in-laravel-apps)
 
 Boost knows the framework, ADVISOR knows WSU. They do not overlap. Documented.
 
-### Read-only first[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#read-only-first)
+### Read-only first [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#read-only-first)
 
 Every tool states all four hints (read-only, destructive, idempotent, open-world). A tool that writes is left out unless `ADVISOR_READ_ONLY` is turned off, and that switch beats tool groups. Enforced (contract test).
 
-### Narrow tools, closed schemas[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#narrow-tools-closed-schemas)
+### Narrow tools, closed schemas [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#narrow-tools-closed-schemas)
 
 No tool takes a command, a URL or a free path. Schemas set `additionalProperties: false`, and arguments are validated again on our side. Enforced (contract test).
 
-### Run other programs the safe way[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#run-other-programs-the-safe-way)
+### Run other programs the safe way [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#run-other-programs-the-safe-way)
 
 Fixed program, argument array, allowlisted environment, a timeout, and no shell. Paths are resolved and must stay inside the project root. Enforced.
 
-### Keep stdout clean[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#keep-stdout-clean)
+### Keep stdout clean [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#keep-stdout-clean)
 
 Only protocol lines go to stdout; logs, warnings and stray output go to stderr. Enforced (subprocess test).
 
-### Strip invisible characters[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#strip-invisible-characters)
+### Strip invisible characters [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#strip-invisible-characters)
 
 The TAG block, zero-width and bidirectional controls are removed from everything served and rejected in tool metadata. Enforced (contract test).
 
-### Load modules from a manifest only[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#load-modules-from-a-manifest-only)
+### Load modules from a manifest only [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#load-modules-from-a-manifest-only)
 
 From the `Waynestate\` namespace, implementing `Module`. Never scan. Enforced.
 
-### Serve from verified data[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#serve-from-verified-data)
+### Serve from verified data [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#serve-from-verified-data)
 
 Bundled content is checked against a SHA-256 manifest at start-up and in CI; a mismatch stops the server. Enforced.
 
-### Review any change to the tool list[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#review-any-change-to-the-tool-list)
+### Review any change to the tool list [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#review-any-change-to-the-tool-list)
 
 `tools/list` is snapshotted; a changed description is a reviewed diff. Enforced (snapshot test).
 
-### Cite sources and date[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#cite-sources-and-date)
+### Cite sources and date [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#cite-sources-and-date)
 
 Policy answers carry the day they were worked out for and the file they came from. Enforced.
 
-### Threat model[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#threat-model)
+### Threat model [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#threat-model)
 
 `BEST_PRACTICES.md` carries the threat model: eleven threats, each mapped to the rules above and to OWASP Top 10:2025, OWASP ASVS 5.0 or NIST SSDF, plus what is out of scope. Four of them have a page of their own: [prompt injection](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html), [path traversal](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html), [command injection](https://advisor.apps.wayne.edu/docs/threats/command-injection.html) and [data exfiltration](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html).
 
-### Not yet[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#not-yet)
+### Not yet [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#not-yet)
 
 - Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.
 - Signing of any state handed back to a client (no tool needs it yet).
 - A full-capture audit mode.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#related)
 
 - [Proof](https://advisor.apps.wayne.edu/docs/reference/proof.html)
 - [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
@@ -1765,11 +1769,11 @@ Policy answers carry the day they were worked out for and the file they came fro
 
 Source: https://advisor.apps.wayne.edu/docs/reference/commands.html
 
-## Commands[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#commands)
+## Commands [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#commands)
 
 Every command the `advisor` CLI takes, and what it does.
 
-### Running a command[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#running-a-command)
+### Running a command [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#running-a-command)
 
 Run any command with `php vendor/bin/advisor <command>`. This is one PHP command, not a shell script, so it works the same on Windows, macOS and Linux. The `mcp` command is started by your MCP client, not by you.
 
@@ -1784,7 +1788,7 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 
 Stdout carries only protocol messages. Logs, warnings and stray output go to stderr, so a client never sees garbage.
 
-### Commands[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#commands-1)
+### Commands [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#commands-1)
 
 | Command | What it does |
 | --- | --- |
@@ -1864,7 +1868,7 @@ Usage: `bin/advisor content:verify`
 | --- | --- | --- |
 | `--silent` | Do not output any message |  |
 
-#### Options every command accepts[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#options-every-command-accepts)
+#### Options every command accepts [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#options-every-command-accepts)
 
 | Option | Meaning | Default |
 | --- | --- | --- |
@@ -1876,13 +1880,13 @@ Usage: `bin/advisor content:verify`
 | `--no-ansi` | Negate the "--ansi" option |  |
 | `-n`, `--no-interaction` | Do not ask any interactive question |  |
 
-### Exit codes[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#exit-codes)
+### Exit codes [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#exit-codes)
 
 - `content:generate --check` exits `1` on drift, when the bundled content no longer matches the source repos.
 - `doctor` exits `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON. If doctor itself cannot run, it reports a `doctor` failure and exits `2`.
 - `composer content:drift` exits `1` when `data/` no longer matches the stack repos, or when `ADVISOR_STACK_DIR` is not set.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#related)
 
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
 - [When it does not show up](https://advisor.apps.wayne.edu/docs/guides/doctor.html)
@@ -1893,11 +1897,11 @@ Usage: `bin/advisor content:verify`
 
 Source: https://advisor.apps.wayne.edu/docs/reference/configuration.html
 
-## Configuration[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#configuration)
+## Configuration [#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#configuration)
 
 ADVISOR reads the process environment only, never a file. This page lists every variable with its default and its meaning, and the placeholders are in `.env.example`. Nothing in ADVISOR needs a secret, key, certificate, token or host, so every setting is optional.
 
-### Environment variables[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#environment-variables)
+### Environment variables [#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#environment-variables)
 
 | Variable | Meaning | Default | Read in |
 | --- | --- | --- | --- |
@@ -1916,7 +1920,7 @@ ADVISOR reads the process environment only, never a file. This page lists every 
 | ADVISOR_READ_ONLY | Set to `0` or `false` to allow tools that write. None exist yet. Read-only wins over `ADVISOR_GROUPS`. | on | src/Config.php |
 | ADVISOR_STACK_DIR | Folder holding the sibling stack repos; used only by `content:generate`. | none | src/Command/ContentGenerateCommand.php |
 
-### Example[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#example)
+### Example [#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#example)
 
 A short example, with placeholder values:
 
@@ -1933,7 +1937,7 @@ Warning
 
 A bad value stops the server with a message on stderr. It does not guess.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#related)
 
 - [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
@@ -1944,13 +1948,13 @@ A bad value stops the server with a message on stderr. It does not guess.
 
 Source: https://advisor.apps.wayne.edu/docs/reference/proof.html
 
-## Proof[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#proof)
+## Proof [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#proof)
 
 This page walks through `composer ci`, the one command that proves the build, and what each step of it proves.
 
 The same command runs on GitLab and GitHub.
 
-### Last run[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#last-run)
+### Last run [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#last-run)
 
 | Check | Date | Commit | Result | Duration |
 | --- | --- | --- | --- | --- |
@@ -1966,7 +1970,7 @@ The same command runs on GitLab and GitHub.
 
 Commit 7818dae is the 0.2.0 release. The skipped test is the private half of `PublicPostureTest`, which runs only when `ADVISOR_PRIVATE_DENYLIST` is set. To refresh this table, re-run `composer ci` (or each command above) on the commit you want to record and rewrite the date, commit, results and durations. Every check this page names was run on 2026-11-09 in Docker (`composer:2.11.1`, PHP 8.5) on a copy of the tracked files; none was skipped. The proof run (`bin/proof.php`, see the README) is dev tooling outside `composer ci` and was not run: it needs a corpus of app folders and the PROCTOR and Booster binaries.
 
-### The command[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#the-command)
+### The command [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#the-command)
 
 ```
 composer ci
@@ -1978,19 +1982,19 @@ No PHP on your machine? Use Docker:
 docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && composer ci"
 ```
 
-### composer validate --strict[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#composer-validate-strict)
+### composer validate --strict [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#composer-validate-strict)
 
 Runs `composer validate --strict` on the package metadata.
 
-### content:verify[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#content-verify)
+### content:verify [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#content-verify)
 
 Runs `php bin/advisor content:verify`, which checks the bundled content against its manifest. CI cannot see the sibling repositories, so `composer ci` runs `content:verify`, which needs none of them.
 
-### stack-parts --check=README.md[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#stack-parts-check-readme-md)
+### stack-parts --check=README.md [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#stack-parts-check-readme-md)
 
 Runs `php bin/advisor stack-parts --check=README.md`, which proves the parts table in the README still matches `generator/projects.seed.json`.
 
-### PHPUnit[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#phpunit)
+### PHPUnit [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#phpunit)
 
 Runs `phpunit`. Tests drive the real SDK server in-process with a small MCP client, snapshot `tools/list`, and start `bin/advisor mcp` as a subprocess to prove stdout stays clean.
 
@@ -1998,27 +2002,27 @@ Tip
 
 To accept an intended change to the tool list, run `ADVISOR_UPDATE_SNAPSHOTS=1 vendor/bin/phpunit`, then review and commit the diff.
 
-### Pint[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#pint)
+### Pint [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#pint)
 
 Runs `pint --test`, the style check.
 
-### site:agent-ready-check[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#site-agent-ready-check)
+### site:agent-ready-check [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#site-agent-ready-check)
 
 Fails when the agent-ready files are stale, a page lacks its Markdown link, a prompt drifts from the docs, or the kit was edited here.
 
-### PHPStan[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#phpstan)
+### PHPStan [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#phpstan)
 
 Runs `phpstan analyse --memory-limit=1G`: level 8, Pinstripe's raw preset, included from `vendor/waynestate/pinstripe`.
 
-### composer audit[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#composer-audit)
+### composer audit [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#composer-audit)
 
 Runs `composer audit`.
 
-### docs:check[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#docs-check)
+### docs:check [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#docs-check)
 
 Fails when `site/docs/` is stale or a docs page has a broken link, block or nav entry.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/reference/proof.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/reference/proof.html#related)
 
 - [Best practices](https://advisor.apps.wayne.edu/docs/reference/best-practices.html)
 - [Commands](https://advisor.apps.wayne.edu/docs/reference/commands.html)
@@ -2029,11 +2033,11 @@ Fails when `site/docs/` is stale or a docs page has a broken link, block or nav 
 
 Source: https://advisor.apps.wayne.edu/docs/threats/command-injection.html
 
-## Command injection[#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#command-injection)
+## Command injection [#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#command-injection)
 
 An attacker who controls a tool argument wants ADVISOR to start a program or run a command the developer never approved, using the server's privileges on the developer's machine.
 
-### Where it applies in ADVISOR[#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#where-it-applies-in-advisor)
+### Where it applies in ADVISOR [#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#where-it-applies-in-advisor)
 
 Only two tools start a child process, and both do it on purpose:
 
@@ -2046,7 +2050,7 @@ The server usually runs on the developer's own machine, next to the credentials 
 
 Both tools take a few extra arguments, but each is validated against a closed set before it reaches the command: the check ids against a fixed list (`src/Security/ProctorRunner.php:46-50`), and the version targets against strict patterns (`src/Security/BoosterRunner.php:37-45`).
 
-### What stops it[#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#what-stops-it)
+### What stops it [#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#what-stops-it)
 
 - **The program is fixed, not chosen.** The binary is located only in the project's own `vendor/bin` or the operator's configured setting; nothing a model sends picks which program runs (`src/Security/ProctorRunner.php:58-63`, `src/Security/BoosterRunner.php:96-118`). The fallback path must look like a PHP script or phar before it is accepted (`src/Security/BoosterRunner.php:107-113`, `src/Security/BoosterRunner.php:121-127`).
 - **The subcommand is part of the allowlist.** PROCTOR may only run `check` and Booster only `plan`; a third slot holding anything else is refused (`src/Security/CommandAllowlist.php:53`, `src/Security/CommandAllowlist.php:81`).
@@ -2058,7 +2062,7 @@ The tests prove the refusals: another program, another script, another subcomman
 
 A reviewer can check this by reading the two bad-command providers in `tests/Security/CommandAllowlistTest.php` and running `composer test`.
 
-### What is left[#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#what-is-left)
+### What is left [#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#what-is-left)
 
 The allowlist pins the shape of the command; it does not audit what the child program does. PROCTOR and BOOSTER run with full access to the project folder and their own logic, so a vulnerability in either one is outside this control.
 
@@ -2070,11 +2074,11 @@ A misconfigured machine can point `ADVISOR_BOOSTER_BIN` at a different PHP scrip
 
 Source: https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html
 
-## Data exfiltration[#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#data-exfiltration)
+## Data exfiltration [#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#data-exfiltration)
 
 An attacker wants a secret (an environment variable, a token, a key, a file's contents) to leave the machine and land somewhere the model, a log, or a report can carry it out.
 
-### Where it applies in ADVISOR[#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#where-it-applies-in-advisor)
+### Where it applies in ADVISOR [#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#where-it-applies-in-advisor)
 
 Three channels could carry a secret out:
 
@@ -2084,7 +2088,7 @@ Three channels could carry a secret out:
 
 ADVISOR itself makes no network calls, so "out" means into the model's context or onto disk in a log; the client then decides what happens to that text (`docs/guides/safety.md:19`). A fourth, quieter channel is the tool descriptions and prompts the client reads before any call; they ship in the repo and are scanned for hidden characters (`tests/Contract/ServerContractTest.php:70-83`).
 
-### What stops it[#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#what-stops-it)
+### What stops it [#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#what-stops-it)
 
 - **Child processes get an allowlisted environment.** Only the names in `EnvAllowlist::NAMES` survive; everything else, including the app's `.env` values, tokens and cloud keys, is removed before the process starts (`src/Security/EnvAllowlist.php:18-24`, applied at `src/Security/SymfonyProcessRunner.php:30`).
 - **Secret-shaped text is redacted.** Every string that came from a child process or a project file passes through the redactor, which blanks credential-shaped `key=value` pairs, Bearer tokens, PEM private-key blocks and well-known token shapes (`src/Security/Redactor.php:16-26`, `src/Security/Redactor.php:28-41`; applied at `src/Security/ProctorRunner.php:82`, `src/Security/ProctorRunner.php:116`, `src/Security/ProctorRunner.php:142` and `src/Security/BoosterRunner.php:80`, `src/Security/BoosterRunner.php:209`).
@@ -2098,7 +2102,7 @@ The tests prove the first two: `APP_KEY`, `DB_PASSWORD`, `AWS_SECRET_ACCESS_KEY`
 
 A reviewer can check the channels by reading `tests/Security/EnvAndRedactionTest.php` and the audit-log writer, and by running `composer test`.
 
-### What is left[#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#what-is-left)
+### What is left [#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#what-is-left)
 
 The redactor is pattern-based and blunt on purpose: a false positive costs a word, a miss costs a key (`src/Security/Redactor.php:7-11`). The patterns cover the shapes developers actually leak; they are not a general-purpose secret scanner. A secret that matches no known shape, such as an unusual variable name or a quoted value with no key, passes through.
 
@@ -2110,11 +2114,11 @@ Once a value reaches the model's context, the client's own logging, retention an
 
 Source: https://advisor.apps.wayne.edu/docs/threats/path-traversal.html
 
-## Path traversal[#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#path-traversal)
+## Path traversal [#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#path-traversal)
 
 An attacker who controls a tool's path argument wants to read files outside the project: private keys, credentials, neighboring projects, or enough of the disk layout to plan a next step.
 
-### Where it applies in ADVISOR[#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#where-it-applies-in-advisor)
+### Where it applies in ADVISOR [#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#where-it-applies-in-advisor)
 
 Two tools take a `path` argument, and both hand the resolved folder to a child program:
 
@@ -2127,7 +2131,7 @@ The schema caps the argument at 1024 characters, the same limit the guard enforc
 
 PROCTOR and BOOSTER read whatever sits under the folder they are given, so that folder is the only boundary between their file access and the rest of the machine. The other tools take no path at all: `read_project_docs` takes a project id and a document name from closed lists (`src/Tools/ReadProjectDocs.php:27-28`), and the rest take no file input.
 
-### What stops it[#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#what-stops-it)
+### What stops it [#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#what-stops-it)
 
 - **Odd input is refused before resolution.** Empty paths, paths over 1024 characters and null bytes are rejected (`src/Security/PathGuard.php:40-42`), as are paths that start with `~` (`src/Security/PathGuard.php:43-45`).
 - **Parent segments are refused outright.** Any segment equal to `..`, under forward or back slashes, ends the call (`src/Security/PathGuard.php:46-50`).
@@ -2142,7 +2146,7 @@ The tests prove each refusal: hostile paths covering `..` segments, nested and b
 
 The same two tools are the only ones that start a process; see [Command injection](https://advisor.apps.wayne.edu/docs/threats/command-injection.html) for how their argument lists are pinned.
 
-### What is left[#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#what-is-left)
+### What is left [#](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html#what-is-left)
 
 Confinement is to the configured project root, and everything inside that root is readable by these tools by design, since they exist to inspect the app. The guard checks the path once per call; a symlink swapped in after the check, before PROCTOR or BOOSTER reads the file, is not caught, and a path that moves out later (a bind mount, a moved volume) is outside the guard's view.
 
@@ -2152,11 +2156,11 @@ The guard also trusts the root it is given (`src/Security/PathGuard.php:21-28`):
 
 Source: https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html
 
-## Prompt injection[#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#prompt-injection)
+## Prompt injection [#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#prompt-injection)
 
 An attacker who controls some of the text ADVISOR serves wants the model reading that text to follow hidden instructions, leak data, or trust a false answer.
 
-### Where it applies in ADVISOR[#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#where-it-applies-in-advisor)
+### Where it applies in ADVISOR [#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#where-it-applies-in-advisor)
 
 Every tool result is plain text that lands in the client model's context, so anything ADVISOR serves is a possible carrier for instructions aimed at the model:
 
@@ -2168,7 +2172,7 @@ Every tool result is plain text that lands in the client model's context, so any
 
 The interesting cases are the ones the developer never typed: a document shipped in a stack repository, or a file inside the project that PROCTOR quotes back. Both reach the model inside an answer that looks like a trusted reference, which is exactly what makes them persuasive. The resources (the policy feed, the CREED chapter feeds and the guide feeds) serve the same hash-pinned content as the tools (`src/Module/CoreModule.php:52-83`).
 
-### What stops it[#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#what-stops-it)
+### What stops it [#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#what-stops-it)
 
 - **Answers are labeled as data.** Every result carries its `source` and a `generated_on` date, and the docs tool says outright that the text is reference material, not instructions (`src/Tools/ReadProjectDocs.php:63-64`, `src/Tools/ReadProjectDocs.php:68`). The rules tool repeats the point (`src/Tools/ListStackRules.php:76`).
 - **Decisions stay with PROCTOR.** PROCTOR reports say PROCTOR in CI decides pass or fail (`src/Security/ProctorRunner.php:131`), and Booster plans say they change nothing (`src/Security/BoosterRunner.php:180`), so a served answer cannot claim authority it does not have.
@@ -2182,7 +2186,7 @@ The layers are deliberate: labeling tells the model what the text is, pinning ke
 
 A reviewer can check these controls without trusting this page: read the `notice` fields above, run `composer ci` (the contract and snapshot tests are part of it), and diff `tools/list` against the committed snapshot.
 
-### What is left[#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#what-is-left)
+### What is left [#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#what-is-left)
 
 Labels reduce the risk, but they do not make injected instructions inert. A client model can still be fooled by text it reads, especially text that quotes the project's own files in the middle of a plausible report, and ADVISOR's job is to make sure that text is labeled, pinned and clean, not to guarantee the model will ignore it.
 
@@ -2192,11 +2196,11 @@ Hash pinning guarantees the text is what was released, not that it is harmless: 
 
 Source: https://advisor.apps.wayne.edu/docs/troubleshooting.html
 
-## Troubleshooting[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#troubleshooting)
+## Troubleshooting [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#troubleshooting)
 
 This page lists the failure symptoms ADVISOR's own docs describe, with the cause, the fix and the command that checks it.
 
-### The advisor server is not in the list[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-advisor-server-is-not-in-the-list)
+### The advisor server is not in the list [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-advisor-server-is-not-in-the-list)
 
 You added the config, opened the project, and the `advisor` server is not in the list.
 
@@ -2217,7 +2221,7 @@ php vendor/bin/advisor doctor
 
 The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
 
-### The server refuses to start because it is not enabled[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-because-it-is-not-enabled)
+### The server refuses to start because it is not enabled [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-because-it-is-not-enabled)
 
 **Cause.** `ADVISOR_ENABLED` defaults to off. It must be `1` or `true`, or the server refuses to start.
 
@@ -2229,7 +2233,7 @@ The exit code is `0` when nothing failed and `1` when something did; `--json` pr
 php vendor/bin/advisor doctor
 ```
 
-### The server refuses to start in production[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-in-production)
+### The server refuses to start in production [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-in-production)
 
 **Cause.** `ADVISOR_ENV` reads `APP_ENV`, then `local`. `production` or `prod` always refuses to start.
 
@@ -2241,7 +2245,7 @@ php vendor/bin/advisor doctor
 php vendor/bin/advisor doctor
 ```
 
-### A bad setting stops the server[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#a-bad-setting-stops-the-server)
+### A bad setting stops the server [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#a-bad-setting-stops-the-server)
 
 **Cause.** A bad value stops the server with a message on stderr. It does not guess.
 
@@ -2253,7 +2257,7 @@ php vendor/bin/advisor doctor
 php vendor/bin/advisor doctor
 ```
 
-### The server refuses to start because a content file fails its hash[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-because-a-content-file-fails-its-hash)
+### The server refuses to start because a content file fails its hash [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-because-a-content-file-fails-its-hash)
 
 **Cause.** The bundled `data/` is verified at start-up against `data/manifest.json` (a SHA-256 for every file). If a file does not match, the server refuses to start rather than serve it.
 
@@ -2265,7 +2269,7 @@ php vendor/bin/advisor doctor
 php vendor/bin/advisor content:verify
 ```
 
-### Related[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#related)
 
 - [When it does not show up](https://advisor.apps.wayne.edu/docs/guides/doctor.html)
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
@@ -2278,11 +2282,11 @@ php vendor/bin/advisor content:verify
 
 Source: https://advisor.apps.wayne.edu/docs/upgrading.html
 
-## Upgrading[#](https://advisor.apps.wayne.edu/docs/upgrading.html#upgrading)
+## Upgrading [#](https://advisor.apps.wayne.edu/docs/upgrading.html#upgrading)
 
 This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
 
-### \[0.3.0\] - 2026-11-09[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-3-0-2026-11-09)
+### \[0.3.0\] - 2026-11-09 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-3-0-2026-11-09)
 
 A new minor line, so a `^0.2` constraint does not pick it up: move to `composer require --dev waynestate/advisor:^0.3`. No code in your app changes; the MCP server reports version 0.3.0.
 
@@ -2291,7 +2295,7 @@ A new minor line, so a `^0.2` constraint does not pick it up: move to `composer 
 - A project whose `CHANGELOG.md` heading says unreleased no longer shows that number as its version, and a Go module counts as built.
 - The bundled data is resynced with the stack's 2026-11-09 night main branches, and the front page deploy layer runs Squire's kit 0.10.2 with CREED ^0.1.8 and HELMET ^1.3.
 
-### \[0.2.0\] - 2026-11-09[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-2-0-2026-11-09)
+### \[0.2.0\] - 2026-11-09 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-2-0-2026-11-09)
 
 A new minor line, so a `^0.1` constraint does not pick it up: move to `composer require --dev waynestate/advisor:^0.2`. ADVISOR now requires `waynestate/creed` (^0.1.8); if your app locks an older CREED (PROCTOR brings one), let Composer move it too with `composer update waynestate/advisor --with-dependencies`. The MCP server reports version 0.2.0.
 
@@ -2300,14 +2304,14 @@ A new minor line, so a `^0.1` constraint does not pick it up: move to `composer 
 - Only for module authors: `ContentBundle::policy()` returns CREED's `Waynestate\Creed\Policy`, `Content\PolicyReader` only checks the schema version, and `Content\State` is gone (use `Waynestate\Creed\State`). No stack project ships a module yet.
 - The bundled data is resynced with the stack's 2026-11-09 main branches, the docs gain four threat pages, and the front page deploy layer runs Squire's kit 0.10.1 with HELMET ^1.0 and PROCTOR ^0.11.
 
-### \[0.1.7\] - 2026-11-07[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-7-2026-11-07)
+### \[0.1.7\] - 2026-11-07 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-7-2026-11-07)
 
 No breaking changes are marked for this release. Update with `composer update waynestate/advisor`; the MCP server reports version 0.1.7.
 
 - `owner_of` answers from an ownership table rebuilt from the stack's decisions, and `read_project_docs` trims image boilerplate at read time as well.
 - The bundled data is resynced with the stack's 2026-11-07 releases, and the canonical repository is git.wayne.edu.
 
-### \[0.1.6\] - 2026-11-06[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-6-2026-11-06)
+### \[0.1.6\] - 2026-11-06 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-6-2026-11-06)
 
 No breaking changes are marked for this release. Update with `composer update waynestate/advisor`; the MCP server reports version 0.1.6.
 
@@ -2315,7 +2319,7 @@ No breaking changes are marked for this release. Update with `composer update wa
 - The bundled data is resynced with the stack's main branches through the evening of 2026-11-06, including Booster 1.9.0, WELD 0.1.3, the accessibility gates across the stack and the Sourdough raw PHP + Vue shape.
 - A docs site built from `docs/` is added and checked in `composer ci`, and the front page and docs pass an accessibility gate. The proof runner is dev tooling and is not part of the served product.
 
-### \[0.1.5\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-5-2026-11-03)
+### \[0.1.5\] - 2026-11-03 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-5-2026-11-03)
 
 No breaking changes are marked for this release.
 
@@ -2326,13 +2330,13 @@ No breaking changes are marked for this release.
 - `.env.playbook` is git-ignored; the agent-ready files (`site/llms.txt`, `site/llms-full.txt`) are regenerated.
 - Docs and package metadata name nougat as the canonical repository, with git.wayne.edu and GitHub as read-only mirrors, until git.wayne.edu has CI runners.
 
-### \[0.1.4\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-4-2026-11-03)
+### \[0.1.4\] - 2026-11-03 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-4-2026-11-03)
 
 No breaking changes are marked for this release.
 
 - CI pulls its Docker Hub images through the GitLab Dependency Proxy (the group's CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX), so pipelines no longer hit Docker Hub's anonymous pull limit.
 
-### \[0.1.3\] - 2026-11-02[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-3-2026-11-02)
+### \[0.1.3\] - 2026-11-02 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-3-2026-11-02)
 
 No breaking changes are marked for this release.
 
@@ -2343,7 +2347,7 @@ No breaking changes are marked for this release.
 - `composer content:drift` and an optional CI job fail when `data/` no longer matches the sibling repos.
 - The deploy layer's Squire kit is refreshed to 0.3.4 (the local `.env.squire` file is now git-ignored).
 
-### \[0.1.2\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-2-2026-10-29)
+### \[0.1.2\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-2-2026-10-29)
 
 No breaking changes are marked for this release.
 
@@ -2353,7 +2357,7 @@ No breaking changes are marked for this release.
 - Project names are written as words except acronyms.
 - Stale capability claims in the site and docs are fixed.
 
-### \[0.1.1\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-1-2026-10-29)
+### \[0.1.1\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-1-2026-10-29)
 
 No breaking changes are marked for this release.
 
@@ -2361,7 +2365,7 @@ No breaking changes are marked for this release.
 - `upgrade_path` moves from the `stack` group to a new `booster` group, so `ADVISOR_GROUPS=stack` offers reference tools only and never starts a program. `ADVISOR_GROUPS` now accepts `stack`, `proctor` and `booster`.
 - PHPStan includes Pinstripe's `raw.neon` preset (`waynestate/pinstripe` 0.1.0 as a dev dependency) instead of a hand copy of its settings; two docblocks were tightened to satisfy the preset's method-signature checks. Pint already used the `per` preset, so `pint.json` is unchanged.
 
-### \[0.1.0\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-0-2026-10-29)
+### \[0.1.0\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-0-2026-10-29)
 
 This is the first release, so there is nothing to break.
 
@@ -2374,13 +2378,13 @@ This is the first release, so there is nothing to break.
 - Safety: off unless enabled, refuses production, read-only by default, path confinement, allowlisted child environment, redaction, invisible-character stripping, manifest-only module loading, argument-hash audit log.
 - `composer ci`: validate, content verify, PHPUnit, Pint, PHPStan level 8 (Pinstripe settings), audit. CI files for GitLab (Preflight 0.1.0) and GitHub.
 
-### Taking a new version[#](https://advisor.apps.wayne.edu/docs/upgrading.html#taking-a-new-version)
+### Taking a new version [#](https://advisor.apps.wayne.edu/docs/upgrading.html#taking-a-new-version)
 
 ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.3`. No extra repository needed.
 
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.
 
-### Related[#](https://advisor.apps.wayne.edu/docs/upgrading.html#related)
+### Related [#](https://advisor.apps.wayne.edu/docs/upgrading.html#related)
 
 - [Install](https://advisor.apps.wayne.edu/docs/install.html)
 - [Changelog](https://advisor.apps.wayne.edu/docs/changelog.html)

@@ -39,9 +39,9 @@
   <nav class="docs-nav docs-nav--sidebar" aria-label="Documentation"><ul class="docs-nav__list"><li class="docs-nav__group"><span class="docs-nav__label">Getting started</span><ul><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/install.html">Install</a></li><li><a href="../../docs/guides/quick-start.html">Quick start</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Guides</span><ul><li><a href="../../docs/guides/where-it-sits.html">Where it sits in WELD</a></li><li><a href="../../docs/guides/claude-code.html">One line for Claude Code</a></li><li><a href="../../docs/guides/docker.html">No PHP? Use Docker</a></li><li><a href="../../docs/guides/laravel.html">Laravel apps</a></li><li><a href="../../docs/guides/what-it-offers.html">What it offers</a></li><li><a href="../../docs/guides/served-content.html">Served content</a></li><li><a href="../../docs/guides/safety.html">Safety</a></li><li><a href="../../docs/guides/modules.html">Modules</a></li><li><a href="../../docs/guides/doctor.html">When it does not show up</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Threats</span><ul><li><a href="../../docs/threats/prompt-injection.html">Prompt injection</a></li><li><a href="../../docs/threats/path-traversal.html">Path traversal</a></li><li><a href="../../docs/threats/command-injection.html">Command injection</a></li><li><a href="../../docs/threats/data-exfiltration.html">Data exfiltration</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Reference</span><ul><li><a href="../../docs/reference/configuration.html" aria-current="page">Configuration</a></li><li><a href="../../docs/reference/commands.html">Commands</a></li><li><a href="../../docs/reference/best-practices.html">Best practices</a></li><li><a href="../../docs/reference/proof.html">Proof</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Deploying</span><ul><li><a href="../../docs/deploying/releasing.html">Releasing</a></li><li><a href="../../docs/deploying/refreshing-the-content.html">Refreshing the content</a></li></ul></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/upgrading.html">Upgrading</a></li><li><a href="../../docs/contributing.html">Contributing</a></li><li><a href="../../docs/changelog.html">Changelog</a></li></ul></nav>
   <div class="docs-content">
     <main id="main">
-      <article class="docs-article"><h1 id="configuration">Configuration<a class="docs-heading-link" aria-label="Link to this section" href="#configuration">#</a></h1>
+      <article class="docs-article"><h1 id="configuration"><span class="docs-heading-tail"><span>Configuration</span><a class="docs-heading-link" aria-label="Link to this section" href="#configuration">#</a></span></h1>
 <p>ADVISOR reads the process environment only, never a file. This page lists every variable with its default and its meaning, and the placeholders are in <code>.env.example</code>. Nothing in ADVISOR needs a secret, key, certificate, token or host, so every setting is optional.</p>
-<h2 id="environment-variables">Environment variables<a class="docs-heading-link" aria-label="Link to this section" href="#environment-variables">#</a></h2>
+<h2 id="environment-variables">Environment <span class="docs-heading-tail"><span>variables</span><a class="docs-heading-link" aria-label="Link to this section" href="#environment-variables">#</a></span></h2>
 <!-- generated:env -->
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
 <thead>
@@ -140,7 +140,7 @@
 </tbody>
 </table></div>
 <!-- /generated -->
-<h2 id="example">Example<a class="docs-heading-link" aria-label="Link to this section" href="#example">#</a></h2>
+<h2 id="example"><span class="docs-heading-tail"><span>Example</span><a class="docs-heading-link" aria-label="Link to this section" href="#example">#</a></span></h2>
 <p>A short example, with placeholder values:</p>
 <pre tabindex="0"><code class="language-bash">ADVISOR_ENABLED=1
 ADVISOR_ENV=local
@@ -149,7 +149,7 @@ ADVISOR_AUDIT_LOG=/path/to/advisor-audit.log
 </code></pre>
 <p><code>advisor install</code> sets <code>ADVISOR_ENABLED</code> in the client config for you.</p>
 <aside class="docs-callout docs-callout--warning" role="note"><p class="docs-callout__label">Warning</p><p>A bad value stops the server with a message on stderr. It does not guess.</p></aside>
-<h2 id="related">Related<a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></h2>
+<h2 id="related"><span class="docs-heading-tail"><span>Related</span><a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></span></h2>
 <ul>
 <li><a href="commands.html">Commands</a></li>
 <li><a href="../guides/quick-start.html">Quick start</a></li>

@@ -6,11 +6,11 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Upgrading[#](https://advisor.apps.wayne.edu/docs/upgrading.html#upgrading)
+# Upgrading [#](https://advisor.apps.wayne.edu/docs/upgrading.html#upgrading)
 
 This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
 
-## \[0.3.0\] - 2026-11-09[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-3-0-2026-11-09)
+## \[0.3.0\] - 2026-11-09 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-3-0-2026-11-09)
 
 A new minor line, so a `^0.2` constraint does not pick it up: move to `composer require --dev waynestate/advisor:^0.3`. No code in your app changes; the MCP server reports version 0.3.0.
 
@@ -19,7 +19,7 @@ A new minor line, so a `^0.2` constraint does not pick it up: move to `composer 
 - A project whose `CHANGELOG.md` heading says unreleased no longer shows that number as its version, and a Go module counts as built.
 - The bundled data is resynced with the stack's 2026-11-09 night main branches, and the front page deploy layer runs Squire's kit 0.10.2 with CREED ^0.1.8 and HELMET ^1.3.
 
-## \[0.2.0\] - 2026-11-09[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-2-0-2026-11-09)
+## \[0.2.0\] - 2026-11-09 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-2-0-2026-11-09)
 
 A new minor line, so a `^0.1` constraint does not pick it up: move to `composer require --dev waynestate/advisor:^0.2`. ADVISOR now requires `waynestate/creed` (^0.1.8); if your app locks an older CREED (PROCTOR brings one), let Composer move it too with `composer update waynestate/advisor --with-dependencies`. The MCP server reports version 0.2.0.
 
@@ -28,14 +28,14 @@ A new minor line, so a `^0.1` constraint does not pick it up: move to `composer 
 - Only for module authors: `ContentBundle::policy()` returns CREED's `Waynestate\Creed\Policy`, `Content\PolicyReader` only checks the schema version, and `Content\State` is gone (use `Waynestate\Creed\State`). No stack project ships a module yet.
 - The bundled data is resynced with the stack's 2026-11-09 main branches, the docs gain four threat pages, and the front page deploy layer runs Squire's kit 0.10.1 with HELMET ^1.0 and PROCTOR ^0.11.
 
-## \[0.1.7\] - 2026-11-07[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-7-2026-11-07)
+## \[0.1.7\] - 2026-11-07 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-7-2026-11-07)
 
 No breaking changes are marked for this release. Update with `composer update waynestate/advisor`; the MCP server reports version 0.1.7.
 
 - `owner_of` answers from an ownership table rebuilt from the stack's decisions, and `read_project_docs` trims image boilerplate at read time as well.
 - The bundled data is resynced with the stack's 2026-11-07 releases, and the canonical repository is git.wayne.edu.
 
-## \[0.1.6\] - 2026-11-06[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-6-2026-11-06)
+## \[0.1.6\] - 2026-11-06 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-6-2026-11-06)
 
 No breaking changes are marked for this release. Update with `composer update waynestate/advisor`; the MCP server reports version 0.1.6.
 
@@ -43,7 +43,7 @@ No breaking changes are marked for this release. Update with `composer update wa
 - The bundled data is resynced with the stack's main branches through the evening of 2026-11-06, including Booster 1.9.0, WELD 0.1.3, the accessibility gates across the stack and the Sourdough raw PHP + Vue shape.
 - A docs site built from `docs/` is added and checked in `composer ci`, and the front page and docs pass an accessibility gate. The proof runner is dev tooling and is not part of the served product.
 
-## \[0.1.5\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-5-2026-11-03)
+## \[0.1.5\] - 2026-11-03 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-5-2026-11-03)
 
 No breaking changes are marked for this release.
 
@@ -54,13 +54,13 @@ No breaking changes are marked for this release.
 - `.env.playbook` is git-ignored; the agent-ready files (`site/llms.txt`, `site/llms-full.txt`) are regenerated.
 - Docs and package metadata name nougat as the canonical repository, with git.wayne.edu and GitHub as read-only mirrors, until git.wayne.edu has CI runners.
 
-## \[0.1.4\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-4-2026-11-03)
+## \[0.1.4\] - 2026-11-03 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-4-2026-11-03)
 
 No breaking changes are marked for this release.
 
 - CI pulls its Docker Hub images through the GitLab Dependency Proxy (the group's CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX), so pipelines no longer hit Docker Hub's anonymous pull limit.
 
-## \[0.1.3\] - 2026-11-02[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-3-2026-11-02)
+## \[0.1.3\] - 2026-11-02 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-3-2026-11-02)
 
 No breaking changes are marked for this release.
 
@@ -71,7 +71,7 @@ No breaking changes are marked for this release.
 - `composer content:drift` and an optional CI job fail when `data/` no longer matches the sibling repos.
 - The deploy layer's Squire kit is refreshed to 0.3.4 (the local `.env.squire` file is now git-ignored).
 
-## \[0.1.2\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-2-2026-10-29)
+## \[0.1.2\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-2-2026-10-29)
 
 No breaking changes are marked for this release.
 
@@ -81,7 +81,7 @@ No breaking changes are marked for this release.
 - Project names are written as words except acronyms.
 - Stale capability claims in the site and docs are fixed.
 
-## \[0.1.1\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-1-2026-10-29)
+## \[0.1.1\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-1-2026-10-29)
 
 No breaking changes are marked for this release.
 
@@ -89,7 +89,7 @@ No breaking changes are marked for this release.
 - `upgrade_path` moves from the `stack` group to a new `booster` group, so `ADVISOR_GROUPS=stack` offers reference tools only and never starts a program. `ADVISOR_GROUPS` now accepts `stack`, `proctor` and `booster`.
 - PHPStan includes Pinstripe's `raw.neon` preset (`waynestate/pinstripe` 0.1.0 as a dev dependency) instead of a hand copy of its settings; two docblocks were tightened to satisfy the preset's method-signature checks. Pint already used the `per` preset, so `pint.json` is unchanged.
 
-## \[0.1.0\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-0-2026-10-29)
+## \[0.1.0\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-0-2026-10-29)
 
 This is the first release, so there is nothing to break.
 
@@ -102,13 +102,13 @@ This is the first release, so there is nothing to break.
 - Safety: off unless enabled, refuses production, read-only by default, path confinement, allowlisted child environment, redaction, invisible-character stripping, manifest-only module loading, argument-hash audit log.
 - `composer ci`: validate, content verify, PHPUnit, Pint, PHPStan level 8 (Pinstripe settings), audit. CI files for GitLab (Preflight 0.1.0) and GitHub.
 
-## Taking a new version[#](https://advisor.apps.wayne.edu/docs/upgrading.html#taking-a-new-version)
+## Taking a new version [#](https://advisor.apps.wayne.edu/docs/upgrading.html#taking-a-new-version)
 
 ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.3`. No extra repository needed.
 
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.
 
-## Related[#](https://advisor.apps.wayne.edu/docs/upgrading.html#related)
+## Related [#](https://advisor.apps.wayne.edu/docs/upgrading.html#related)
 
 - [Install](https://advisor.apps.wayne.edu/docs/install.html)
 - [Changelog](https://advisor.apps.wayne.edu/docs/changelog.html)

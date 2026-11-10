@@ -6,11 +6,11 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Install[#](https://advisor.apps.wayne.edu/docs/install.html#install)
+# Install [#](https://advisor.apps.wayne.edu/docs/install.html#install)
 
 This page shows what ADVISOR needs and how to add it to a Wayne State PHP app.
 
-## Requirements[#](https://advisor.apps.wayne.edu/docs/install.html#requirements)
+## Requirements [#](https://advisor.apps.wayne.edu/docs/install.html#requirements)
 
 PHP 8.3 or newer (8.3, 8.4 and 8.5 are tested). The package requires:
 
@@ -26,7 +26,7 @@ PHP 8.3 or newer (8.3, 8.4 and 8.5 are tested). The package requires:
 
 The platform is pinned to PHP 8.3.0 in `composer.json`.
 
-## Install[#](https://advisor.apps.wayne.edu/docs/install.html#install-1)
+## Install [#](https://advisor.apps.wayne.edu/docs/install.html#install-1)
 
 Add it to the app as a dev dependency:
 
@@ -42,7 +42,7 @@ Note
 
 Native Windows is not yet proven. ADVISOR is one PHP command, so it is built to run the same everywhere, but it has not been proven on native Windows. If you are on Windows, [use Docker](https://advisor.apps.wayne.edu/docs/guides/docker.html).
 
-## Verify[#](https://advisor.apps.wayne.edu/docs/install.html#verify)
+## Verify [#](https://advisor.apps.wayne.edu/docs/install.html#verify)
 
 Check the install with:
 
@@ -59,13 +59,13 @@ It checks the four things that keep a server from appearing, in plain words, and
 
 A `fail` is something to fix; a `warn` is something you may not care about. The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
 
-## Next steps[#](https://advisor.apps.wayne.edu/docs/install.html#next-steps)
+## Next steps [#](https://advisor.apps.wayne.edu/docs/install.html#next-steps)
 
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html): register the `advisor` server with a client.
 - [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html): the nine read-only tools.
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html): the environment variables.
 
-## Related[#](https://advisor.apps.wayne.edu/docs/install.html#related)
+## Related [#](https://advisor.apps.wayne.edu/docs/install.html#related)
 
 - [Overview](https://advisor.apps.wayne.edu/docs/index.html)
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)

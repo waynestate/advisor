@@ -6,11 +6,11 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Data exfiltration[#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#data-exfiltration)
+# Data exfiltration [#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#data-exfiltration)
 
 An attacker wants a secret (an environment variable, a token, a key, a file's contents) to leave the machine and land somewhere the model, a log, or a report can carry it out.
 
-## Where it applies in ADVISOR[#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#where-it-applies-in-advisor)
+## Where it applies in ADVISOR [#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#where-it-applies-in-advisor)
 
 Three channels could carry a secret out:
 
@@ -20,7 +20,7 @@ Three channels could carry a secret out:
 
 ADVISOR itself makes no network calls, so "out" means into the model's context or onto disk in a log; the client then decides what happens to that text (`docs/guides/safety.md:19`). A fourth, quieter channel is the tool descriptions and prompts the client reads before any call; they ship in the repo and are scanned for hidden characters (`tests/Contract/ServerContractTest.php:70-83`).
 
-## What stops it[#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#what-stops-it)
+## What stops it [#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#what-stops-it)
 
 - **Child processes get an allowlisted environment.** Only the names in `EnvAllowlist::NAMES` survive; everything else, including the app's `.env` values, tokens and cloud keys, is removed before the process starts (`src/Security/EnvAllowlist.php:18-24`, applied at `src/Security/SymfonyProcessRunner.php:30`).
 - **Secret-shaped text is redacted.** Every string that came from a child process or a project file passes through the redactor, which blanks credential-shaped `key=value` pairs, Bearer tokens, PEM private-key blocks and well-known token shapes (`src/Security/Redactor.php:16-26`, `src/Security/Redactor.php:28-41`; applied at `src/Security/ProctorRunner.php:82`, `src/Security/ProctorRunner.php:116`, `src/Security/ProctorRunner.php:142` and `src/Security/BoosterRunner.php:80`, `src/Security/BoosterRunner.php:209`).
@@ -34,7 +34,7 @@ The tests prove the first two: `APP_KEY`, `DB_PASSWORD`, `AWS_SECRET_ACCESS_KEY`
 
 A reviewer can check the channels by reading `tests/Security/EnvAndRedactionTest.php` and the audit-log writer, and by running `composer test`.
 
-## What is left[#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#what-is-left)
+## What is left [#](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html#what-is-left)
 
 The redactor is pattern-based and blunt on purpose: a false positive costs a word, a miss costs a key (`src/Security/Redactor.php:7-11`). The patterns cover the shapes developers actually leak; they are not a general-purpose secret scanner. A secret that matches no known shape, such as an unusual variable name or a quoted value with no key, passes through.
 

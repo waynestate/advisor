@@ -6,11 +6,11 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Prompt injection[#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#prompt-injection)
+# Prompt injection [#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#prompt-injection)
 
 An attacker who controls some of the text ADVISOR serves wants the model reading that text to follow hidden instructions, leak data, or trust a false answer.
 
-## Where it applies in ADVISOR[#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#where-it-applies-in-advisor)
+## Where it applies in ADVISOR [#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#where-it-applies-in-advisor)
 
 Every tool result is plain text that lands in the client model's context, so anything ADVISOR serves is a possible carrier for instructions aimed at the model:
 
@@ -22,7 +22,7 @@ Every tool result is plain text that lands in the client model's context, so any
 
 The interesting cases are the ones the developer never typed: a document shipped in a stack repository, or a file inside the project that PROCTOR quotes back. Both reach the model inside an answer that looks like a trusted reference, which is exactly what makes them persuasive. The resources (the policy feed, the CREED chapter feeds and the guide feeds) serve the same hash-pinned content as the tools (`src/Module/CoreModule.php:52-83`).
 
-## What stops it[#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#what-stops-it)
+## What stops it [#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#what-stops-it)
 
 - **Answers are labeled as data.** Every result carries its `source` and a `generated_on` date, and the docs tool says outright that the text is reference material, not instructions (`src/Tools/ReadProjectDocs.php:63-64`, `src/Tools/ReadProjectDocs.php:68`). The rules tool repeats the point (`src/Tools/ListStackRules.php:76`).
 - **Decisions stay with PROCTOR.** PROCTOR reports say PROCTOR in CI decides pass or fail (`src/Security/ProctorRunner.php:131`), and Booster plans say they change nothing (`src/Security/BoosterRunner.php:180`), so a served answer cannot claim authority it does not have.
@@ -36,7 +36,7 @@ The layers are deliberate: labeling tells the model what the text is, pinning ke
 
 A reviewer can check these controls without trusting this page: read the `notice` fields above, run `composer ci` (the contract and snapshot tests are part of it), and diff `tools/list` against the committed snapshot.
 
-## What is left[#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#what-is-left)
+## What is left [#](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html#what-is-left)
 
 Labels reduce the risk, but they do not make injected instructions inert. A client model can still be fooled by text it reads, especially text that quotes the project's own files in the middle of a plausible report, and ADVISOR's job is to make sure that text is labeled, pinned and clean, not to guarantee the model will ignore it.
 

@@ -6,13 +6,13 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Safety[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety)
+# Safety [#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety)
 
 This page collects the safety rules ADVISOR enforces and the settings behind them, so you know what it will and will not do.
 
 Each control is also written up as a threat page: [prompt injection](https://advisor.apps.wayne.edu/docs/threats/prompt-injection.html), [path traversal](https://advisor.apps.wayne.edu/docs/threats/path-traversal.html), [command injection](https://advisor.apps.wayne.edu/docs/threats/command-injection.html) and [data exfiltration](https://advisor.apps.wayne.edu/docs/threats/data-exfiltration.html).
 
-## Safety, in short[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety-in-short)
+## Safety, in short [#](https://advisor.apps.wayne.edu/docs/guides/safety.html#safety-in-short)
 
 - Off unless enabled; refuses production; refuses to start on a bad setting or a content file that fails its hash.
 - Read-only by default; no tool takes a command, a URL or a free path.
@@ -21,7 +21,7 @@ Each control is also written up as a threat page: [prompt injection](https://adv
 - `upgrade_path` runs Booster's read-only `plan` the same way: one fixed program, an argument array, an allowlisted command, never a shell. It plans; it never runs a hop.
 - No network calls, and no model calls, from ADVISOR itself.
 
-## Settings that enforce it[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#settings-that-enforce-it)
+## Settings that enforce it [#](https://advisor.apps.wayne.edu/docs/guides/safety.html#settings-that-enforce-it)
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
@@ -35,7 +35,7 @@ Warning
 
 A bad value stops the server with a message on stderr. It does not guess.
 
-## Best practices[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#best-practices)
+## Best practices [#](https://advisor.apps.wayne.edu/docs/guides/safety.html#best-practices)
 
 From `BEST_PRACTICES.md`, the safety rules:
 
@@ -47,7 +47,7 @@ From `BEST_PRACTICES.md`, the safety rules:
 - **Strip invisible characters.** The TAG block, zero-width and bidirectional controls are removed from everything served and rejected in tool metadata. Enforced (contract test).
 - **Serve from verified data.** Bundled content is checked against a SHA-256 manifest at start-up and in CI; a mismatch stops the server. Enforced.
 
-## Related[#](https://advisor.apps.wayne.edu/docs/guides/safety.html#related)
+## Related [#](https://advisor.apps.wayne.edu/docs/guides/safety.html#related)
 
 - [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)

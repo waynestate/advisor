@@ -39,11 +39,11 @@
   <nav class="docs-nav docs-nav--sidebar" aria-label="Documentation"><ul class="docs-nav__list"><li class="docs-nav__group"><span class="docs-nav__label">Getting started</span><ul><li><a href="../docs/index.html">Overview</a></li><li><a href="../docs/install.html">Install</a></li><li><a href="../docs/guides/quick-start.html">Quick start</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Guides</span><ul><li><a href="../docs/guides/where-it-sits.html">Where it sits in WELD</a></li><li><a href="../docs/guides/claude-code.html">One line for Claude Code</a></li><li><a href="../docs/guides/docker.html">No PHP? Use Docker</a></li><li><a href="../docs/guides/laravel.html">Laravel apps</a></li><li><a href="../docs/guides/what-it-offers.html">What it offers</a></li><li><a href="../docs/guides/served-content.html">Served content</a></li><li><a href="../docs/guides/safety.html">Safety</a></li><li><a href="../docs/guides/modules.html">Modules</a></li><li><a href="../docs/guides/doctor.html">When it does not show up</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Threats</span><ul><li><a href="../docs/threats/prompt-injection.html">Prompt injection</a></li><li><a href="../docs/threats/path-traversal.html">Path traversal</a></li><li><a href="../docs/threats/command-injection.html">Command injection</a></li><li><a href="../docs/threats/data-exfiltration.html">Data exfiltration</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Reference</span><ul><li><a href="../docs/reference/configuration.html">Configuration</a></li><li><a href="../docs/reference/commands.html">Commands</a></li><li><a href="../docs/reference/best-practices.html">Best practices</a></li><li><a href="../docs/reference/proof.html">Proof</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Deploying</span><ul><li><a href="../docs/deploying/releasing.html">Releasing</a></li><li><a href="../docs/deploying/refreshing-the-content.html">Refreshing the content</a></li></ul></li><li><a href="../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../docs/upgrading.html">Upgrading</a></li><li><a href="../docs/contributing.html" aria-current="page">Contributing</a></li><li><a href="../docs/changelog.html">Changelog</a></li></ul></nav>
   <div class="docs-content">
     <main id="main">
-      <article class="docs-article"><h1 id="contributing">Contributing<a class="docs-heading-link" aria-label="Link to this section" href="#contributing">#</a></h1>
+      <article class="docs-article"><h1 id="contributing"><span class="docs-heading-tail"><span>Contributing</span><a class="docs-heading-link" aria-label="Link to this section" href="#contributing">#</a></span></h1>
 <p>This page tells you how to make a change to ADVISOR, what rules the change must keep, and what work is still open.</p>
-<h2 id="where-changes-go">Where changes go<a class="docs-heading-link" aria-label="Link to this section" href="#where-changes-go">#</a></h2>
+<h2 id="where-changes-go">Where changes <span class="docs-heading-tail"><span>go</span><a class="docs-heading-link" aria-label="Link to this section" href="#where-changes-go">#</a></span></h2>
 <p>Development happens on git.wayne.edu, the canonical repository: <a rel="noopener" href="https://git.wayne.edu/enterprise-apps/advisor">enterprise-apps/advisor</a> (clone <code>git@git.wayne.edu:enterprise-apps/advisor.git</code> over SSH, or <code>https://git.wayne.edu/enterprise-apps/advisor.git</code> over HTTPS). Changes, issues and merge requests go there, CI runs there on its instance runner, and tags are made there by the maintainer, with an approver. GitHub (<a rel="noopener" href="https://github.com/waynestate/advisor">waynestate/advisor</a>) is a read-only push mirror of git.wayne.edu for Packagist: nobody pushes to it.</p>
-<h2 id="build-and-test">Build and test<a class="docs-heading-link" aria-label="Link to this section" href="#build-and-test">#</a></h2>
+<h2 id="build-and-test">Build and <span class="docs-heading-tail"><span>test</span><a class="docs-heading-link" aria-label="Link to this section" href="#build-and-test">#</a></span></h2>
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
 <thead>
 <tr>
@@ -87,7 +87,7 @@
 <pre tabindex="0"><code>docker run --rm -v &quot;${PWD}:/app&quot; -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c &quot;composer install --no-interaction &amp;&amp; composer ci&quot;
 </code></pre>
 <p>Snapshot tests are updated with <code>ADVISOR_UPDATE_SNAPSHOTS=1</code> (<code>$env:ADVISOR_UPDATE_SNAPSHOTS = &quot;1&quot;</code> in PowerShell) before <code>vendor/bin/phpunit</code>.</p>
-<h2 id="rules-a-change-must-keep">Rules a change must keep<a class="docs-heading-link" aria-label="Link to this section" href="#rules-a-change-must-keep">#</a></h2>
+<h2 id="rules-a-change-must-keep">Rules a change must <span class="docs-heading-tail"><span>keep</span><a class="docs-heading-link" aria-label="Link to this section" href="#rules-a-change-must-keep">#</a></span></h2>
 <p>Every change to ADVISOR must keep the following practices:</p>
 <ol>
 <li><strong>Read-only first.</strong> Every tool states all four hints (read-only, destructive, idempotent, open-world). A tool that writes is left out unless <code>ADVISOR_READ_ONLY</code> is turned off, and that switch beats tool groups. Enforced (contract test).</li>
@@ -100,17 +100,17 @@
 <li><strong>Review any change to the tool list.</strong> <code>tools/list</code> is snapshotted; a changed description is a reviewed diff. Enforced (snapshot test).</li>
 <li><strong>Cite sources and date.</strong> Policy answers carry the day they were worked out for and the file they came from. Enforced.</li>
 </ol>
-<h2 id="keeping-the-content-fresh">Keeping the content fresh<a class="docs-heading-link" aria-label="Link to this section" href="#keeping-the-content-fresh">#</a></h2>
+<h2 id="keeping-the-content-fresh">Keeping the content <span class="docs-heading-tail"><span>fresh</span><a class="docs-heading-link" aria-label="Link to this section" href="#keeping-the-content-fresh">#</a></span></h2>
 <p>Run <code>content:generate</code> after any change that lands in CREED's policy or handbook, a project's README or best practices, an extra doc, or the projects seed. Commit the regenerated <code>data/</code> with the source commits in the message. To add a project to the parts list, add its <code>name</code> and <code>tagline</code> to <code>generator/projects.seed.json</code>, then regenerate and <code>stack-parts --write</code>.</p>
 <p>Beyond a project's README and best practices, a seed may bundle further files under <code>extra_docs</code> (a map of slug to path in the project); each lands in <code>data/docs/&lt;id&gt;/&lt;slug&gt;.md</code> and in the project's docs list, and a missing file is skipped, not an error. WayneUI's entry bundles its MIGRATING.md as the <code>migrating</code> doc.</p>
 <p>Hand-written guides live in <code>generator/guides/</code>, one Markdown file per slug, served as <code>advisor://guide/&lt;slug&gt;</code>. Edit them there, then run <code>content:generate</code>.</p>
-<h2 id="catch-stale-bundled-docs">Catch stale bundled docs<a class="docs-heading-link" aria-label="Link to this section" href="#catch-stale-bundled-docs">#</a></h2>
+<h2 id="catch-stale-bundled-docs">Catch stale bundled <span class="docs-heading-tail"><span>docs</span><a class="docs-heading-link" aria-label="Link to this section" href="#catch-stale-bundled-docs">#</a></span></h2>
 <p><code>composer content:drift</code> compares <code>data/</code> with a checkout of the stack repos and exits 1 when they no longer agree. It takes the folder from <code>ADVISOR_STACK_DIR</code>; without it, it prints how to run it and exits 1:</p>
 <pre tabindex="0"><code>ADVISOR_STACK_DIR=&lt;folder holding the stack repos&gt; composer content:drift
 </code></pre>
 <p>It writes nothing. On drift it lists the files that moved; regenerate with <code>composer content:generate</code> and review the diff before committing.</p>
 <p>Run the drift check before every tag: a release must carry docs that still match the repos it advises on.</p>
-<h2 id="releasing">Releasing<a class="docs-heading-link" aria-label="Link to this section" href="#releasing">#</a></h2>
+<h2 id="releasing"><span class="docs-heading-tail"><span>Releasing</span><a class="docs-heading-link" aria-label="Link to this section" href="#releasing">#</a></span></h2>
 <p>ADVISOR is public, so its bundle must not carry internal names. The public-posture test always checks generic shapes; private strings are loaded from a denylist file named by <code>ADVISOR_PRIVATE_DENYLIST</code>, kept outside the repository (in CI, a masked file-type variable).</p>
 <aside class="docs-callout docs-callout--warning" role="note"><p class="docs-callout__label">Warning</p><p>The denylist file is never committed. The bundle is regenerated with the file present before every release.</p></aside>
 <ol>
@@ -120,7 +120,7 @@
 <li>Tag <code>X.Y.Z</code> (no <code>v</code>) on git.wayne.edu. Its push mirror carries the tag to GitHub, and Packagist picks it up from there.</li>
 <li>A release needs a maintainer's approval. Never move or delete a published tag.</li>
 </ol>
-<h2 id="open-work">Open work<a class="docs-heading-link" aria-label="Link to this section" href="#open-work">#</a></h2>
+<h2 id="open-work">Open <span class="docs-heading-tail"><span>work</span><a class="docs-heading-link" aria-label="Link to this section" href="#open-work">#</a></span></h2>
 <p>The following items are open questions or not yet built:</p>
 <ul>
 <li>Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.</li>
@@ -135,7 +135,7 @@
 <li>Full-capture audit mode: hashes only by default; an opt-in needs a retention decision.</li>
 <li>MCP Inspector in CI, native Windows and macOS CI.</li>
 </ul>
-<h2 id="related">Related<a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></h2>
+<h2 id="related"><span class="docs-heading-tail"><span>Related</span><a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></span></h2>
 <ul>
 <li><a href="upgrading.html">Upgrading</a></li>
 <li><a href="deploying/releasing.html">Releasing</a></li>

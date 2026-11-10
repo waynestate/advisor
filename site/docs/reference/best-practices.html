@@ -39,46 +39,46 @@
   <nav class="docs-nav docs-nav--sidebar" aria-label="Documentation"><ul class="docs-nav__list"><li class="docs-nav__group"><span class="docs-nav__label">Getting started</span><ul><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/install.html">Install</a></li><li><a href="../../docs/guides/quick-start.html">Quick start</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Guides</span><ul><li><a href="../../docs/guides/where-it-sits.html">Where it sits in WELD</a></li><li><a href="../../docs/guides/claude-code.html">One line for Claude Code</a></li><li><a href="../../docs/guides/docker.html">No PHP? Use Docker</a></li><li><a href="../../docs/guides/laravel.html">Laravel apps</a></li><li><a href="../../docs/guides/what-it-offers.html">What it offers</a></li><li><a href="../../docs/guides/served-content.html">Served content</a></li><li><a href="../../docs/guides/safety.html">Safety</a></li><li><a href="../../docs/guides/modules.html">Modules</a></li><li><a href="../../docs/guides/doctor.html">When it does not show up</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Threats</span><ul><li><a href="../../docs/threats/prompt-injection.html">Prompt injection</a></li><li><a href="../../docs/threats/path-traversal.html">Path traversal</a></li><li><a href="../../docs/threats/command-injection.html">Command injection</a></li><li><a href="../../docs/threats/data-exfiltration.html">Data exfiltration</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Reference</span><ul><li><a href="../../docs/reference/configuration.html">Configuration</a></li><li><a href="../../docs/reference/commands.html">Commands</a></li><li><a href="../../docs/reference/best-practices.html" aria-current="page">Best practices</a></li><li><a href="../../docs/reference/proof.html">Proof</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Deploying</span><ul><li><a href="../../docs/deploying/releasing.html">Releasing</a></li><li><a href="../../docs/deploying/refreshing-the-content.html">Refreshing the content</a></li></ul></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/upgrading.html">Upgrading</a></li><li><a href="../../docs/contributing.html">Contributing</a></li><li><a href="../../docs/changelog.html">Changelog</a></li></ul></nav>
   <div class="docs-content">
     <main id="main">
-      <article class="docs-article"><h1 id="best-practices">Best practices<a class="docs-heading-link" aria-label="Link to this section" href="#best-practices">#</a></h1>
+      <article class="docs-article"><h1 id="best-practices">Best <span class="docs-heading-tail"><span>practices</span><a class="docs-heading-link" aria-label="Link to this section" href="#best-practices">#</a></span></h1>
 <p>These are the rules ADVISOR holds itself to, the short version for people who use ADVISOR and people who add to it, with the test that enforces each rule where there is one.</p>
 <p>Tags: Enforced (code or CI stops the bad outcome), Documented (written down only), Not yet (a gap).</p>
-<h2 id="approve-it-by-name-and-review-the-config-like-code">Approve it by name, and review the config like code<a class="docs-heading-link" aria-label="Link to this section" href="#approve-it-by-name-and-review-the-config-like-code">#</a></h2>
+<h2 id="approve-it-by-name-and-review-the-config-like-code">Approve it by name, and review the config like <span class="docs-heading-tail"><span>code</span><a class="docs-heading-link" aria-label="Link to this section" href="#approve-it-by-name-and-review-the-config-like-code">#</a></span></h2>
 <p><code>.mcp.json</code> starts a program on whoever opens the project. Keep it out of git (this repo ignores it); <code>advisor install</code> warns when you have not. Enforced (warning).</p>
-<h2 id="treat-answers-as-data">Treat answers as data<a class="docs-heading-link" aria-label="Link to this section" href="#treat-answers-as-data">#</a></h2>
+<h2 id="treat-answers-as-data">Treat answers as <span class="docs-heading-tail"><span>data</span><a class="docs-heading-link" aria-label="Link to this section" href="#treat-answers-as-data">#</a></span></h2>
 <p>Every result says where it came from and that it is reference text. PROCTOR in CI decides pass or fail; ADVISOR never does. Enforced (labels), Documented (the rule).</p>
-<h2 id="run-it-in-development-only">Run it in development only<a class="docs-heading-link" aria-label="Link to this section" href="#run-it-in-development-only">#</a></h2>
+<h2 id="run-it-in-development-only">Run it in development <span class="docs-heading-tail"><span>only</span><a class="docs-heading-link" aria-label="Link to this section" href="#run-it-in-development-only">#</a></span></h2>
 <p>It refuses to start unless <code>ADVISOR_ENABLED</code> is set and refuses in production. Enforced.</p>
-<h2 id="keep-secrets-out-of-what-you-ask">Keep secrets out of what you ask<a class="docs-heading-link" aria-label="Link to this section" href="#keep-secrets-out-of-what-you-ask">#</a></h2>
+<h2 id="keep-secrets-out-of-what-you-ask">Keep secrets out of what you <span class="docs-heading-tail"><span>ask</span><a class="docs-heading-link" aria-label="Link to this section" href="#keep-secrets-out-of-what-you-ask">#</a></span></h2>
 <p>Do not paste tokens into prompts. Audit logs hold hashes, never arguments, and PROCTOR output is redacted. Enforced.</p>
-<h2 id="run-boost-beside-it-in-laravel-apps">Run Boost beside it in Laravel apps<a class="docs-heading-link" aria-label="Link to this section" href="#run-boost-beside-it-in-laravel-apps">#</a></h2>
+<h2 id="run-boost-beside-it-in-laravel-apps">Run Boost beside it in Laravel <span class="docs-heading-tail"><span>apps</span><a class="docs-heading-link" aria-label="Link to this section" href="#run-boost-beside-it-in-laravel-apps">#</a></span></h2>
 <p>Boost knows the framework, ADVISOR knows WSU. They do not overlap. Documented.</p>
-<h2 id="read-only-first">Read-only first<a class="docs-heading-link" aria-label="Link to this section" href="#read-only-first">#</a></h2>
+<h2 id="read-only-first">Read-only <span class="docs-heading-tail"><span>first</span><a class="docs-heading-link" aria-label="Link to this section" href="#read-only-first">#</a></span></h2>
 <p>Every tool states all four hints (read-only, destructive, idempotent, open-world). A tool that writes is left out unless <code>ADVISOR_READ_ONLY</code> is turned off, and that switch beats tool groups. Enforced (contract test).</p>
-<h2 id="narrow-tools-closed-schemas">Narrow tools, closed schemas<a class="docs-heading-link" aria-label="Link to this section" href="#narrow-tools-closed-schemas">#</a></h2>
+<h2 id="narrow-tools-closed-schemas">Narrow tools, closed <span class="docs-heading-tail"><span>schemas</span><a class="docs-heading-link" aria-label="Link to this section" href="#narrow-tools-closed-schemas">#</a></span></h2>
 <p>No tool takes a command, a URL or a free path. Schemas set <code>additionalProperties: false</code>, and arguments are validated again on our side. Enforced (contract test).</p>
-<h2 id="run-other-programs-the-safe-way">Run other programs the safe way<a class="docs-heading-link" aria-label="Link to this section" href="#run-other-programs-the-safe-way">#</a></h2>
+<h2 id="run-other-programs-the-safe-way">Run other programs the safe <span class="docs-heading-tail"><span>way</span><a class="docs-heading-link" aria-label="Link to this section" href="#run-other-programs-the-safe-way">#</a></span></h2>
 <p>Fixed program, argument array, allowlisted environment, a timeout, and no shell. Paths are resolved and must stay inside the project root. Enforced.</p>
-<h2 id="keep-stdout-clean">Keep stdout clean<a class="docs-heading-link" aria-label="Link to this section" href="#keep-stdout-clean">#</a></h2>
+<h2 id="keep-stdout-clean">Keep stdout <span class="docs-heading-tail"><span>clean</span><a class="docs-heading-link" aria-label="Link to this section" href="#keep-stdout-clean">#</a></span></h2>
 <p>Only protocol lines go to stdout; logs, warnings and stray output go to stderr. Enforced (subprocess test).</p>
-<h2 id="strip-invisible-characters">Strip invisible characters<a class="docs-heading-link" aria-label="Link to this section" href="#strip-invisible-characters">#</a></h2>
+<h2 id="strip-invisible-characters">Strip invisible <span class="docs-heading-tail"><span>characters</span><a class="docs-heading-link" aria-label="Link to this section" href="#strip-invisible-characters">#</a></span></h2>
 <p>The TAG block, zero-width and bidirectional controls are removed from everything served and rejected in tool metadata. Enforced (contract test).</p>
-<h2 id="load-modules-from-a-manifest-only">Load modules from a manifest only<a class="docs-heading-link" aria-label="Link to this section" href="#load-modules-from-a-manifest-only">#</a></h2>
+<h2 id="load-modules-from-a-manifest-only">Load modules from a manifest <span class="docs-heading-tail"><span>only</span><a class="docs-heading-link" aria-label="Link to this section" href="#load-modules-from-a-manifest-only">#</a></span></h2>
 <p>From the <code>Waynestate\</code> namespace, implementing <code>Module</code>. Never scan. Enforced.</p>
-<h2 id="serve-from-verified-data">Serve from verified data<a class="docs-heading-link" aria-label="Link to this section" href="#serve-from-verified-data">#</a></h2>
+<h2 id="serve-from-verified-data">Serve from verified <span class="docs-heading-tail"><span>data</span><a class="docs-heading-link" aria-label="Link to this section" href="#serve-from-verified-data">#</a></span></h2>
 <p>Bundled content is checked against a SHA-256 manifest at start-up and in CI; a mismatch stops the server. Enforced.</p>
-<h2 id="review-any-change-to-the-tool-list">Review any change to the tool list<a class="docs-heading-link" aria-label="Link to this section" href="#review-any-change-to-the-tool-list">#</a></h2>
+<h2 id="review-any-change-to-the-tool-list">Review any change to the tool <span class="docs-heading-tail"><span>list</span><a class="docs-heading-link" aria-label="Link to this section" href="#review-any-change-to-the-tool-list">#</a></span></h2>
 <p><code>tools/list</code> is snapshotted; a changed description is a reviewed diff. Enforced (snapshot test).</p>
-<h2 id="cite-sources-and-date">Cite sources and date<a class="docs-heading-link" aria-label="Link to this section" href="#cite-sources-and-date">#</a></h2>
+<h2 id="cite-sources-and-date">Cite sources and <span class="docs-heading-tail"><span>date</span><a class="docs-heading-link" aria-label="Link to this section" href="#cite-sources-and-date">#</a></span></h2>
 <p>Policy answers carry the day they were worked out for and the file they came from. Enforced.</p>
-<h2 id="threat-model">Threat model<a class="docs-heading-link" aria-label="Link to this section" href="#threat-model">#</a></h2>
+<h2 id="threat-model">Threat <span class="docs-heading-tail"><span>model</span><a class="docs-heading-link" aria-label="Link to this section" href="#threat-model">#</a></span></h2>
 <p><code>BEST_PRACTICES.md</code> carries the threat model: eleven threats, each mapped to the rules above and to OWASP Top 10:2025, OWASP ASVS 5.0 or NIST SSDF, plus what is out of scope. Four of them have a page of their own: <a href="../threats/prompt-injection.html">prompt injection</a>, <a href="../threats/path-traversal.html">path traversal</a>, <a href="../threats/command-injection.html">command injection</a> and <a href="../threats/data-exfiltration.html">data exfiltration</a>.</p>
-<h2 id="not-yet">Not yet<a class="docs-heading-link" aria-label="Link to this section" href="#not-yet">#</a></h2>
+<h2 id="not-yet">Not <span class="docs-heading-tail"><span>yet</span><a class="docs-heading-link" aria-label="Link to this section" href="#not-yet">#</a></span></h2>
 <ul>
 <li>Testing on a native Windows PHP (the SDK has no Windows CI), and the MCP Inspector in CI.</li>
 <li>Signing of any state handed back to a client (no tool needs it yet).</li>
 <li>A full-capture audit mode.</li>
 </ul>
-<h2 id="related">Related<a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></h2>
+<h2 id="related"><span class="docs-heading-tail"><span>Related</span><a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></span></h2>
 <ul>
 <li><a href="proof.html">Proof</a></li>
 <li><a href="commands.html">Commands</a></li>

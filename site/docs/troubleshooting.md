@@ -6,11 +6,11 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Troubleshooting[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#troubleshooting)
+# Troubleshooting [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#troubleshooting)
 
 This page lists the failure symptoms ADVISOR's own docs describe, with the cause, the fix and the command that checks it.
 
-## The advisor server is not in the list[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-advisor-server-is-not-in-the-list)
+## The advisor server is not in the list [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-advisor-server-is-not-in-the-list)
 
 You added the config, opened the project, and the `advisor` server is not in the list.
 
@@ -31,7 +31,7 @@ php vendor/bin/advisor doctor
 
 The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
 
-## The server refuses to start because it is not enabled[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-because-it-is-not-enabled)
+## The server refuses to start because it is not enabled [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-because-it-is-not-enabled)
 
 **Cause.** `ADVISOR_ENABLED` defaults to off. It must be `1` or `true`, or the server refuses to start.
 
@@ -43,7 +43,7 @@ The exit code is `0` when nothing failed and `1` when something did; `--json` pr
 php vendor/bin/advisor doctor
 ```
 
-## The server refuses to start in production[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-in-production)
+## The server refuses to start in production [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-in-production)
 
 **Cause.** `ADVISOR_ENV` reads `APP_ENV`, then `local`. `production` or `prod` always refuses to start.
 
@@ -55,7 +55,7 @@ php vendor/bin/advisor doctor
 php vendor/bin/advisor doctor
 ```
 
-## A bad setting stops the server[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#a-bad-setting-stops-the-server)
+## A bad setting stops the server [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#a-bad-setting-stops-the-server)
 
 **Cause.** A bad value stops the server with a message on stderr. It does not guess.
 
@@ -67,7 +67,7 @@ php vendor/bin/advisor doctor
 php vendor/bin/advisor doctor
 ```
 
-## The server refuses to start because a content file fails its hash[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-because-a-content-file-fails-its-hash)
+## The server refuses to start because a content file fails its hash [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#the-server-refuses-to-start-because-a-content-file-fails-its-hash)
 
 **Cause.** The bundled `data/` is verified at start-up against `data/manifest.json` (a SHA-256 for every file). If a file does not match, the server refuses to start rather than serve it.
 
@@ -79,7 +79,7 @@ php vendor/bin/advisor doctor
 php vendor/bin/advisor content:verify
 ```
 
-## Related[#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#related)
+## Related [#](https://advisor.apps.wayne.edu/docs/troubleshooting.html#related)
 
 - [When it does not show up](https://advisor.apps.wayne.edu/docs/guides/doctor.html)
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)

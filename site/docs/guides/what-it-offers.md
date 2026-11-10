@@ -6,11 +6,11 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# What it offers[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#what-it-offers)
+# What it offers [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#what-it-offers)
 
 ADVISOR gives a coding agent nine read-only tools, plus two prompts and three resource routes, and each answer says where it came from.
 
-## Tools[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#tools)
+## Tools [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#tools)
 
 Nine tools, all read-only. Each one says where its answer came from:
 
@@ -30,11 +30,11 @@ Note
 
 Everything ADVISOR returns is labeled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.
 
-## Groups[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#groups)
+## Groups [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#groups)
 
 The groups split by what they may start: `stack` never starts a program, `proctor` starts the app's own `vendor/bin/proctor`, and `booster` starts Booster's read-only `plan` (never `run`). Set `ADVISOR_GROUPS=stack` when you want ADVISOR as pure reference material.
 
-## Resources[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#resources)
+## Resources [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#resources)
 
 | Resource | Serves |
 | --- | --- |
@@ -42,7 +42,7 @@ The groups split by what they may start: `stack` never starts a program, `procto
 | `advisor://creed/<chapter>` | One per handbook chapter. |
 | `advisor://guide/<slug>` | Hand-written guides; the first is "Connect to Oracle on Citadel". |
 
-## Prompts[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#prompts)
+## Prompts [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#prompts)
 
 Prompts: `orient_me` and `plan_upgrade`.
 
@@ -50,7 +50,7 @@ Here is what that looks like when you ask. Each numbered control point is one of
 
 ![A topographic field map of the stack. Three questions are plotted from 'your app' through the ADVISOR advising office to the project that answers. 'Which PHP can I build on?' goes through policy_lookup (component: php) to CREED's policy.json. 'Which security headers do I need?' goes through list_stack_rules (chapter: runtime-and-headers) and read_project_docs (project: helmet) to HELMET. 'How do I get off PHP 8.2?' goes through the plan_upgrade prompt, policy_lookup, run_proctor_check and read_project_docs (project: booster) to Booster.](https://advisor.apps.wayne.edu/docs/readme/route.svg)
 
-## Related[#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#related)
+## Related [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#related)
 
 - [Served content](https://advisor.apps.wayne.edu/docs/guides/served-content.html)
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)

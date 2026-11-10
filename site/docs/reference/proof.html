@@ -39,10 +39,10 @@
   <nav class="docs-nav docs-nav--sidebar" aria-label="Documentation"><ul class="docs-nav__list"><li class="docs-nav__group"><span class="docs-nav__label">Getting started</span><ul><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/install.html">Install</a></li><li><a href="../../docs/guides/quick-start.html">Quick start</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Guides</span><ul><li><a href="../../docs/guides/where-it-sits.html">Where it sits in WELD</a></li><li><a href="../../docs/guides/claude-code.html">One line for Claude Code</a></li><li><a href="../../docs/guides/docker.html">No PHP? Use Docker</a></li><li><a href="../../docs/guides/laravel.html">Laravel apps</a></li><li><a href="../../docs/guides/what-it-offers.html">What it offers</a></li><li><a href="../../docs/guides/served-content.html">Served content</a></li><li><a href="../../docs/guides/safety.html">Safety</a></li><li><a href="../../docs/guides/modules.html">Modules</a></li><li><a href="../../docs/guides/doctor.html">When it does not show up</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Threats</span><ul><li><a href="../../docs/threats/prompt-injection.html">Prompt injection</a></li><li><a href="../../docs/threats/path-traversal.html">Path traversal</a></li><li><a href="../../docs/threats/command-injection.html">Command injection</a></li><li><a href="../../docs/threats/data-exfiltration.html">Data exfiltration</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Reference</span><ul><li><a href="../../docs/reference/configuration.html">Configuration</a></li><li><a href="../../docs/reference/commands.html">Commands</a></li><li><a href="../../docs/reference/best-practices.html">Best practices</a></li><li><a href="../../docs/reference/proof.html" aria-current="page">Proof</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Deploying</span><ul><li><a href="../../docs/deploying/releasing.html">Releasing</a></li><li><a href="../../docs/deploying/refreshing-the-content.html">Refreshing the content</a></li></ul></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/upgrading.html">Upgrading</a></li><li><a href="../../docs/contributing.html">Contributing</a></li><li><a href="../../docs/changelog.html">Changelog</a></li></ul></nav>
   <div class="docs-content">
     <main id="main">
-      <article class="docs-article"><h1 id="proof">Proof<a class="docs-heading-link" aria-label="Link to this section" href="#proof">#</a></h1>
+      <article class="docs-article"><h1 id="proof"><span class="docs-heading-tail"><span>Proof</span><a class="docs-heading-link" aria-label="Link to this section" href="#proof">#</a></span></h1>
 <p>This page walks through <code>composer ci</code>, the one command that proves the build, and what each step of it proves.</p>
 <p>The same command runs on GitLab and GitHub.</p>
-<h2 id="last-run">Last run<a class="docs-heading-link" aria-label="Link to this section" href="#last-run">#</a></h2>
+<h2 id="last-run">Last <span class="docs-heading-tail"><span>run</span><a class="docs-heading-link" aria-label="Link to this section" href="#last-run">#</a></span></h2>
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
 <thead>
 <tr>
@@ -120,32 +120,32 @@
 </tbody>
 </table></div>
 <p>Commit 7818dae is the 0.2.0 release. The skipped test is the private half of <code>PublicPostureTest</code>, which runs only when <code>ADVISOR_PRIVATE_DENYLIST</code> is set. To refresh this table, re-run <code>composer ci</code> (or each command above) on the commit you want to record and rewrite the date, commit, results and durations. Every check this page names was run on 2026-11-09 in Docker (<code>composer:2.11.1</code>, PHP 8.5) on a copy of the tracked files; none was skipped. The proof run (<code>bin/proof.php</code>, see the README) is dev tooling outside <code>composer ci</code> and was not run: it needs a corpus of app folders and the PROCTOR and Booster binaries.</p>
-<h2 id="the-command">The command<a class="docs-heading-link" aria-label="Link to this section" href="#the-command">#</a></h2>
+<h2 id="the-command">The <span class="docs-heading-tail"><span>command</span><a class="docs-heading-link" aria-label="Link to this section" href="#the-command">#</a></span></h2>
 <pre tabindex="0"><code>composer ci
 </code></pre>
 <p>No PHP on your machine? Use Docker:</p>
 <pre tabindex="0"><code>docker run --rm -v &quot;${PWD}:/app&quot; -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c &quot;composer install --no-interaction &amp;&amp; composer ci&quot;
 </code></pre>
-<h2 id="composer-validate-strict">composer validate --strict<a class="docs-heading-link" aria-label="Link to this section" href="#composer-validate-strict">#</a></h2>
+<h2 id="composer-validate-strict">composer validate <span class="docs-heading-tail"><span>--strict</span><a class="docs-heading-link" aria-label="Link to this section" href="#composer-validate-strict">#</a></span></h2>
 <p>Runs <code>composer validate --strict</code> on the package metadata.</p>
-<h2 id="content-verify">content:verify<a class="docs-heading-link" aria-label="Link to this section" href="#content-verify">#</a></h2>
+<h2 id="content-verify"><span class="docs-heading-tail"><span>content:verify</span><a class="docs-heading-link" aria-label="Link to this section" href="#content-verify">#</a></span></h2>
 <p>Runs <code>php bin/advisor content:verify</code>, which checks the bundled content against its manifest. CI cannot see the sibling repositories, so <code>composer ci</code> runs <code>content:verify</code>, which needs none of them.</p>
-<h2 id="stack-parts-check-readme-md">stack-parts --check=README.md<a class="docs-heading-link" aria-label="Link to this section" href="#stack-parts-check-readme-md">#</a></h2>
+<h2 id="stack-parts-check-readme-md">stack-parts <span class="docs-heading-tail"><span>--check=README.md</span><a class="docs-heading-link" aria-label="Link to this section" href="#stack-parts-check-readme-md">#</a></span></h2>
 <p>Runs <code>php bin/advisor stack-parts --check=README.md</code>, which proves the parts table in the README still matches <code>generator/projects.seed.json</code>.</p>
-<h2 id="phpunit">PHPUnit<a class="docs-heading-link" aria-label="Link to this section" href="#phpunit">#</a></h2>
+<h2 id="phpunit"><span class="docs-heading-tail"><span>PHPUnit</span><a class="docs-heading-link" aria-label="Link to this section" href="#phpunit">#</a></span></h2>
 <p>Runs <code>phpunit</code>. Tests drive the real SDK server in-process with a small MCP client, snapshot <code>tools/list</code>, and start <code>bin/advisor mcp</code> as a subprocess to prove stdout stays clean.</p>
 <aside class="docs-callout docs-callout--tip" role="note"><p class="docs-callout__label">Tip</p><p>To accept an intended change to the tool list, run <code>ADVISOR_UPDATE_SNAPSHOTS=1 vendor/bin/phpunit</code>, then review and commit the diff.</p></aside>
-<h2 id="pint">Pint<a class="docs-heading-link" aria-label="Link to this section" href="#pint">#</a></h2>
+<h2 id="pint"><span class="docs-heading-tail"><span>Pint</span><a class="docs-heading-link" aria-label="Link to this section" href="#pint">#</a></span></h2>
 <p>Runs <code>pint --test</code>, the style check.</p>
-<h2 id="site-agent-ready-check">site:agent-ready-check<a class="docs-heading-link" aria-label="Link to this section" href="#site-agent-ready-check">#</a></h2>
+<h2 id="site-agent-ready-check"><span class="docs-heading-tail"><span>site:agent-ready-check</span><a class="docs-heading-link" aria-label="Link to this section" href="#site-agent-ready-check">#</a></span></h2>
 <p>Fails when the agent-ready files are stale, a page lacks its Markdown link, a prompt drifts from the docs, or the kit was edited here.</p>
-<h2 id="phpstan">PHPStan<a class="docs-heading-link" aria-label="Link to this section" href="#phpstan">#</a></h2>
+<h2 id="phpstan"><span class="docs-heading-tail"><span>PHPStan</span><a class="docs-heading-link" aria-label="Link to this section" href="#phpstan">#</a></span></h2>
 <p>Runs <code>phpstan analyse --memory-limit=1G</code>: level 8, Pinstripe's raw preset, included from <code>vendor/waynestate/pinstripe</code>.</p>
-<h2 id="composer-audit">composer audit<a class="docs-heading-link" aria-label="Link to this section" href="#composer-audit">#</a></h2>
+<h2 id="composer-audit">composer <span class="docs-heading-tail"><span>audit</span><a class="docs-heading-link" aria-label="Link to this section" href="#composer-audit">#</a></span></h2>
 <p>Runs <code>composer audit</code>.</p>
-<h2 id="docs-check">docs:check<a class="docs-heading-link" aria-label="Link to this section" href="#docs-check">#</a></h2>
+<h2 id="docs-check"><span class="docs-heading-tail"><span>docs:check</span><a class="docs-heading-link" aria-label="Link to this section" href="#docs-check">#</a></span></h2>
 <p>Fails when <code>site/docs/</code> is stale or a docs page has a broken link, block or nav entry.</p>
-<h2 id="related">Related<a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></h2>
+<h2 id="related"><span class="docs-heading-tail"><span>Related</span><a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></span></h2>
 <ul>
 <li><a href="best-practices.html">Best practices</a></li>
 <li><a href="commands.html">Commands</a></li>

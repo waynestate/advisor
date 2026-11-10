@@ -6,11 +6,11 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Commands[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#commands)
+# Commands [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#commands)
 
 Every command the `advisor` CLI takes, and what it does.
 
-## Running a command[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#running-a-command)
+## Running a command [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#running-a-command)
 
 Run any command with `php vendor/bin/advisor <command>`. This is one PHP command, not a shell script, so it works the same on Windows, macOS and Linux. The `mcp` command is started by your MCP client, not by you.
 
@@ -25,7 +25,7 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 
 Stdout carries only protocol messages. Logs, warnings and stray output go to stderr, so a client never sees garbage.
 
-## Commands[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#commands-1)
+## Commands [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#commands-1)
 
 | Command | What it does |
 | --- | --- |
@@ -105,7 +105,7 @@ Usage: `bin/advisor content:verify`
 | --- | --- | --- |
 | `--silent` | Do not output any message |  |
 
-### Options every command accepts[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#options-every-command-accepts)
+### Options every command accepts [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#options-every-command-accepts)
 
 | Option | Meaning | Default |
 | --- | --- | --- |
@@ -117,13 +117,13 @@ Usage: `bin/advisor content:verify`
 | `--no-ansi` | Negate the "--ansi" option |  |
 | `-n`, `--no-interaction` | Do not ask any interactive question |  |
 
-## Exit codes[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#exit-codes)
+## Exit codes [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#exit-codes)
 
 - `content:generate --check` exits `1` on drift, when the bundled content no longer matches the source repos.
 - `doctor` exits `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON. If doctor itself cannot run, it reports a `doctor` failure and exits `2`.
 - `composer content:drift` exits `1` when `data/` no longer matches the stack repos, or when `ADVISOR_STACK_DIR` is not set.
 
-## Related[#](https://advisor.apps.wayne.edu/docs/reference/commands.html#related)
+## Related [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#related)
 
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html)
 - [When it does not show up](https://advisor.apps.wayne.edu/docs/guides/doctor.html)

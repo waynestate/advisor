@@ -39,9 +39,9 @@
   <nav class="docs-nav docs-nav--sidebar" aria-label="Documentation"><ul class="docs-nav__list"><li class="docs-nav__group"><span class="docs-nav__label">Getting started</span><ul><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/install.html">Install</a></li><li><a href="../../docs/guides/quick-start.html">Quick start</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Guides</span><ul><li><a href="../../docs/guides/where-it-sits.html">Where it sits in WELD</a></li><li><a href="../../docs/guides/claude-code.html">One line for Claude Code</a></li><li><a href="../../docs/guides/docker.html">No PHP? Use Docker</a></li><li><a href="../../docs/guides/laravel.html">Laravel apps</a></li><li><a href="../../docs/guides/what-it-offers.html">What it offers</a></li><li><a href="../../docs/guides/served-content.html">Served content</a></li><li><a href="../../docs/guides/safety.html">Safety</a></li><li><a href="../../docs/guides/modules.html">Modules</a></li><li><a href="../../docs/guides/doctor.html">When it does not show up</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Threats</span><ul><li><a href="../../docs/threats/prompt-injection.html">Prompt injection</a></li><li><a href="../../docs/threats/path-traversal.html">Path traversal</a></li><li><a href="../../docs/threats/command-injection.html">Command injection</a></li><li><a href="../../docs/threats/data-exfiltration.html">Data exfiltration</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Reference</span><ul><li><a href="../../docs/reference/configuration.html">Configuration</a></li><li><a href="../../docs/reference/commands.html" aria-current="page">Commands</a></li><li><a href="../../docs/reference/best-practices.html">Best practices</a></li><li><a href="../../docs/reference/proof.html">Proof</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Deploying</span><ul><li><a href="../../docs/deploying/releasing.html">Releasing</a></li><li><a href="../../docs/deploying/refreshing-the-content.html">Refreshing the content</a></li></ul></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/upgrading.html">Upgrading</a></li><li><a href="../../docs/contributing.html">Contributing</a></li><li><a href="../../docs/changelog.html">Changelog</a></li></ul></nav>
   <div class="docs-content">
     <main id="main">
-      <article class="docs-article"><h1 id="commands">Commands<a class="docs-heading-link" aria-label="Link to this section" href="#commands">#</a></h1>
+      <article class="docs-article"><h1 id="commands"><span class="docs-heading-tail"><span>Commands</span><a class="docs-heading-link" aria-label="Link to this section" href="#commands">#</a></span></h1>
 <p>Every command the <code>advisor</code> CLI takes, and what it does.</p>
-<h2 id="running-a-command">Running a command<a class="docs-heading-link" aria-label="Link to this section" href="#running-a-command">#</a></h2>
+<h2 id="running-a-command">Running a <span class="docs-heading-tail"><span>command</span><a class="docs-heading-link" aria-label="Link to this section" href="#running-a-command">#</a></span></h2>
 <p>Run any command with <code>php vendor/bin/advisor &lt;command&gt;</code>. This is one PHP command, not a shell script, so it works the same on Windows, macOS and Linux. The <code>mcp</code> command is started by your MCP client, not by you.</p>
 <pre tabindex="0"><code>php vendor/bin/advisor mcp                          # serve over stdio (your client starts this)
 php vendor/bin/advisor install [--client=claude] [--write] [--force] [--path=.]
@@ -51,7 +51,7 @@ php vendor/bin/advisor stack-parts [--write=&lt;readme&gt;] [--check=&lt;readme&
 php vendor/bin/advisor doctor [--json]              # check the install when the server does not show up
 </code></pre>
 <p>Stdout carries only protocol messages. Logs, warnings and stray output go to stderr, so a client never sees garbage.</p>
-<h2 id="commands-1">Commands<a class="docs-heading-link" aria-label="Link to this section" href="#commands-1">#</a></h2>
+<h2 id="commands-1"><span class="docs-heading-tail"><span>Commands</span><a class="docs-heading-link" aria-label="Link to this section" href="#commands-1">#</a></span></h2>
 <!-- generated:commands -->
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
 <thead>
@@ -87,7 +87,7 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 </tr>
 </tbody>
 </table></div>
-<h3 id="bin-advisor-doctor"><code>bin/advisor doctor</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-doctor">#</a></h3>
+<h3 id="bin-advisor-doctor"><span class="docs-heading-tail"><code>bin/advisor doctor</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-doctor">#</a></span></h3>
 <p>Check the install: PHP, the bundled content, the client config, and the server.</p>
 <p>Usage: <code>bin/advisor doctor [--json]</code></p>
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
@@ -111,7 +111,7 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 </tr>
 </tbody>
 </table></div>
-<h3 id="bin-advisor-install"><code>bin/advisor install</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-install">#</a></h3>
+<h3 id="bin-advisor-install"><span class="docs-heading-tail"><code>bin/advisor install</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-install">#</a></span></h3>
 <p>Print (or with --write, write) the MCP client config that starts ADVISOR.</p>
 <p>Usage: <code>bin/advisor install [-c|--client CLIENT] [--write] [--force] [--path PATH]</code></p>
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
@@ -150,7 +150,7 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 </tr>
 </tbody>
 </table></div>
-<h3 id="bin-advisor-mcp"><code>bin/advisor mcp</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-mcp">#</a></h3>
+<h3 id="bin-advisor-mcp"><span class="docs-heading-tail"><code>bin/advisor mcp</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-mcp">#</a></span></h3>
 <p>Serve ADVISOR to an MCP client over stdio (started by the client, not by hand).</p>
 <p>Usage: <code>bin/advisor mcp</code></p>
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
@@ -169,7 +169,7 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 </tr>
 </tbody>
 </table></div>
-<h3 id="bin-advisor-stack-parts"><code>bin/advisor stack-parts</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-stack-parts">#</a></h3>
+<h3 id="bin-advisor-stack-parts"><span class="docs-heading-tail"><code>bin/advisor stack-parts</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-stack-parts">#</a></span></h3>
 <p>Render the stack parts table from the seed; write or check the marked block in a README.</p>
 <p>Usage: <code>bin/advisor stack-parts [--write WRITE] [--check CHECK]</code></p>
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
@@ -198,7 +198,7 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 </tr>
 </tbody>
 </table></div>
-<h3 id="bin-advisor-content-generate"><code>bin/advisor content:generate</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-content-generate">#</a></h3>
+<h3 id="bin-advisor-content-generate"><span class="docs-heading-tail"><code>bin/advisor content:generate</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-content-generate">#</a></span></h3>
 <p>Rebuild the bundled content from the stack repositories (--check only compares).</p>
 <p>Usage: <code>bin/advisor content:generate [-s|--sources SOURCES] [--check]</code></p>
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
@@ -227,7 +227,7 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 </tr>
 </tbody>
 </table></div>
-<h3 id="bin-advisor-content-verify"><code>bin/advisor content:verify</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-content-verify">#</a></h3>
+<h3 id="bin-advisor-content-verify"><span class="docs-heading-tail"><code>bin/advisor content:verify</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-content-verify">#</a></span></h3>
 <p>Check the bundled content against its manifest.</p>
 <p>Usage: <code>bin/advisor content:verify</code></p>
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
@@ -246,7 +246,7 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 </tr>
 </tbody>
 </table></div>
-<h3 id="options-every-command-accepts">Options every command accepts<a class="docs-heading-link" aria-label="Link to this section" href="#options-every-command-accepts">#</a></h3>
+<h3 id="options-every-command-accepts">Options every command <span class="docs-heading-tail"><span>accepts</span><a class="docs-heading-link" aria-label="Link to this section" href="#options-every-command-accepts">#</a></span></h3>
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
 <thead>
 <tr>
@@ -294,13 +294,13 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 </tbody>
 </table></div>
 <!-- /generated -->
-<h2 id="exit-codes">Exit codes<a class="docs-heading-link" aria-label="Link to this section" href="#exit-codes">#</a></h2>
+<h2 id="exit-codes">Exit <span class="docs-heading-tail"><span>codes</span><a class="docs-heading-link" aria-label="Link to this section" href="#exit-codes">#</a></span></h2>
 <ul>
 <li><code>content:generate --check</code> exits <code>1</code> on drift, when the bundled content no longer matches the source repos.</li>
 <li><code>doctor</code> exits <code>0</code> when nothing failed and <code>1</code> when something did; <code>--json</code> prints the findings as JSON. If doctor itself cannot run, it reports a <code>doctor</code> failure and exits <code>2</code>.</li>
 <li><code>composer content:drift</code> exits <code>1</code> when <code>data/</code> no longer matches the stack repos, or when <code>ADVISOR_STACK_DIR</code> is not set.</li>
 </ul>
-<h2 id="related">Related<a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></h2>
+<h2 id="related"><span class="docs-heading-tail"><span>Related</span><a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></span></h2>
 <ul>
 <li><a href="../guides/quick-start.html">Quick start</a></li>
 <li><a href="../guides/doctor.html">When it does not show up</a></li>

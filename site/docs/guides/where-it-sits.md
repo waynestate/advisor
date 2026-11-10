@@ -6,15 +6,15 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Where it sits in WELD[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#where-it-sits-in-weld)
+# Where it sits in WELD [#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#where-it-sits-in-weld)
 
 This page shows where ADVISOR sits among the parts of the Wayne State application stack and in WELD.
 
-## The stack and WELD[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#the-stack-and-weld)
+## The stack and WELD [#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#the-stack-and-weld)
 
 The stack is the Wayne State application stack. WELD, Wired, Everything, Linked, Deployed, is its Laravel starter app. You can add ADVISOR to a WELD app or to any other Wayne State PHP app, and in either case it is the part of the stack that talks to your coding agent.
 
-## The parts[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#the-parts)
+## The parts [#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#the-parts)
 
 | Part | What it is |
 | --- | --- |
@@ -34,7 +34,7 @@ The stack is the Wayne State application stack. WELD, Wired, Everything, Linked,
 | **ADVISOR** | MCP server |
 | **WELD** | the Laravel starter app |
 
-## What each part is[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#what-each-part-is)
+## What each part is [#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#what-each-part-is)
 
 ADVISOR serves a bundled copy of what these projects publish, so it works offline. Each part:
 
@@ -58,7 +58,7 @@ Note
 
 ADVISOR does not replace Laravel Boost. Boost knows Laravel; ADVISOR knows WSU. Run both.
 
-## Related[#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#related)
+## Related [#](https://advisor.apps.wayne.edu/docs/guides/where-it-sits.html#related)
 
 - [Served content](https://advisor.apps.wayne.edu/docs/guides/served-content.html)
 - [What it offers](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html)

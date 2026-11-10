@@ -39,7 +39,7 @@
   <nav class="docs-nav docs-nav--sidebar" aria-label="Documentation"><ul class="docs-nav__list"><li class="docs-nav__group"><span class="docs-nav__label">Getting started</span><ul><li><a href="../docs/index.html" aria-current="page">Overview</a></li><li><a href="../docs/install.html">Install</a></li><li><a href="../docs/guides/quick-start.html">Quick start</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Guides</span><ul><li><a href="../docs/guides/where-it-sits.html">Where it sits in WELD</a></li><li><a href="../docs/guides/claude-code.html">One line for Claude Code</a></li><li><a href="../docs/guides/docker.html">No PHP? Use Docker</a></li><li><a href="../docs/guides/laravel.html">Laravel apps</a></li><li><a href="../docs/guides/what-it-offers.html">What it offers</a></li><li><a href="../docs/guides/served-content.html">Served content</a></li><li><a href="../docs/guides/safety.html">Safety</a></li><li><a href="../docs/guides/modules.html">Modules</a></li><li><a href="../docs/guides/doctor.html">When it does not show up</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Threats</span><ul><li><a href="../docs/threats/prompt-injection.html">Prompt injection</a></li><li><a href="../docs/threats/path-traversal.html">Path traversal</a></li><li><a href="../docs/threats/command-injection.html">Command injection</a></li><li><a href="../docs/threats/data-exfiltration.html">Data exfiltration</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Reference</span><ul><li><a href="../docs/reference/configuration.html">Configuration</a></li><li><a href="../docs/reference/commands.html">Commands</a></li><li><a href="../docs/reference/best-practices.html">Best practices</a></li><li><a href="../docs/reference/proof.html">Proof</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Deploying</span><ul><li><a href="../docs/deploying/releasing.html">Releasing</a></li><li><a href="../docs/deploying/refreshing-the-content.html">Refreshing the content</a></li></ul></li><li><a href="../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../docs/upgrading.html">Upgrading</a></li><li><a href="../docs/contributing.html">Contributing</a></li><li><a href="../docs/changelog.html">Changelog</a></li></ul></nav>
   <div class="docs-content">
     <main id="main">
-      <article class="docs-article"><h1 id="overview">Overview<a class="docs-heading-link" aria-label="Link to this section" href="#overview">#</a></h1>
+      <article class="docs-article"><h1 id="overview"><span class="docs-heading-tail"><span>Overview</span><a class="docs-heading-link" aria-label="Link to this section" href="#overview">#</a></span></h1>
 <div align="center"><b>What applies, and what's next.</b></div>
 <p>This page tells you what ADVISOR is, how to run it, and where to go next.</p>
 <p>ADVISOR is an MCP server for the Wayne State application stack, a bit like Laravel Boost but for WSU. It orients a developer who is new to the stack and gives their coding agent nine read-only tools into it: the CREED standards and policy, PROCTOR results, the upgrade path, the WayneUI markup contract and migration guide, SESAME and HELMET guidance, and the parts list. Ask it &quot;which PHP can I build on?&quot; and it answers from the policy file, with the date and the source, instead of from whatever the model remembers.</p>
@@ -47,22 +47,22 @@
 <blockquote>
 <p>Every WSU student has an advisor. Now every WSU app does too, and this one answers email.</p>
 </blockquote>
-<h2 id="install-and-run">Install and run<a class="docs-heading-link" aria-label="Link to this section" href="#install-and-run">#</a></h2>
+<h2 id="install-and-run">Install and <span class="docs-heading-tail"><span>run</span><a class="docs-heading-link" aria-label="Link to this section" href="#install-and-run">#</a></span></h2>
 <p>Add it to the app as a dev dependency, then run it:</p>
 <pre tabindex="0"><code class="language-bash">composer require --dev waynestate/advisor
 php vendor/bin/advisor
 </code></pre>
 <p>The command is <code>php vendor/bin/advisor</code>. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.</p>
-<h2 id="pick-your-path">Pick your path<a class="docs-heading-link" aria-label="Link to this section" href="#pick-your-path">#</a></h2>
+<h2 id="pick-your-path">Pick your <span class="docs-heading-tail"><span>path</span><a class="docs-heading-link" aria-label="Link to this section" href="#pick-your-path">#</a></span></h2>
 <ul>
 <li><a href="guides/quick-start.html">Quick start</a>: register the <code>advisor</code> server with your client.</li>
 <li><a href="install.html">Install</a>: what it needs and how to add it to an app.</li>
 <li><a href="guides/what-it-offers.html">What it offers</a>: the nine read-only tools.</li>
 <li><a href="reference/configuration.html">Configuration</a>: the environment variables.</li>
 </ul>
-<h2 id="status">Status<a class="docs-heading-link" aria-label="Link to this section" href="#status">#</a></h2>
+<h2 id="status"><span class="docs-heading-tail"><span>Status</span><a class="docs-heading-link" aria-label="Link to this section" href="#status">#</a></span></h2>
 <p>Current release 0.3.0. PHP ^8.3, license MIT, MCP SDK 0.9.0. New in 0.3.0: Parity, Citadel on your own computer, is the fifteenth part of the stack, so <code>list_projects</code>, <code>get_project_status</code>, <code>read_project_docs</code> and <code>owner_of</code> (&quot;local development&quot;) know it; the bundle is resynced with the stack's 2026-11-09 night main branches; and CI runs on Composer 2.11.1 and Preflight 0.5.0. The <a href="changelog.html">changelog</a> has the full list, and <a href="upgrading.html">Upgrading</a> the one step it needs. Agent-ready index: <a href="../llms.txt">llms.txt</a>.</p>
-<h2 id="related">Related<a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></h2>
+<h2 id="related"><span class="docs-heading-tail"><span>Related</span><a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></span></h2>
 <ul>
 <li><a href="install.html">Install</a></li>
 <li><a href="guides/quick-start.html">Quick start</a></li>

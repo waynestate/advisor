@@ -6,21 +6,25 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Changelog[#](https://advisor.apps.wayne.edu/docs/changelog.html#changelog)
+# Changelog [#](https://advisor.apps.wayne.edu/docs/changelog.html#changelog)
 
 All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.
 
-## \[Unreleased\][#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
+## \[Unreleased\] [#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
 
-## \[0.3.0\] - 2026-11-09[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-3-0-2026-11-09)
+### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
+- Changed: the docs, agent-ready and deploy kits are Squire 0.10.6 (docs and agent-ready tools were the 0.9.0 bytes, deploy was 0.10.2): the docs builder and agent-ready generator see every file on Docker Desktop mounts, and `oracle-check.php` loses its D-046 reference.
+
+## \[0.3.0\] - 2026-11-09 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-3-0-2026-11-09)
+
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
 
 - Added: Parity is in the parts list (`generator/projects.seed.json`), after Squire: Citadel on your own computer (Citadel's PHP image, its proxy and MySQL 5.6) for any app, with or without Squire, as one Go command line for every OS on Docker or Podman (Podman recommended). `list_projects`, `get_project_status` and `read_project_docs` know it, and the stack-parts table in the README and the "Where it sits" page has fifteen rows.
 - Added: `owner_of` answers "local development" (and Parity, run Citadel locally, the parity kit, Podman) with Parity: the stack's local-development answer, which replaces Squire's parity group. The deploy-files row says Squire's old parity group is deprecated, and names Parity as the one that runs `build.sh`, `deployments/` and the health check the way Citadel does.
 - Added: the front page puts Parity on the map (the Reflecting Pool, top left) with a route for "Can I run my app like Citadel on my laptop?" (`get_project_status`, then `read_project_docs` for Parity) and a chip that asks it, and in the neighborhood, linked to its repository on git.wayne.edu until its site is live. The neighborhood is five across, three on a tablet and two on a phone with the odd one centered. The README cast and the readme-art kit gain Parity's mark (copied from Parity's own brand files, resized only).
 
-### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
+### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-1)
 
 - Changed: the generator counts a Go module (`go.mod`) as built, like a Composer or npm package, and no longer reads a `CHANGELOG.md` heading marked unreleased (`## 0.1.0 (unreleased)`) as a published version.
 - Changed: Squire's role in the parts list names what goes onto Citadel (build.sh, deployments/, the release script, the health check, the portable image) and points local runs at Parity; the front page's deploy answer does the same.
@@ -36,14 +40,14 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - data: resync 2026-11-09 late night against each stack repo's main (booster:c708793 creed:6267c2a drawbridge:e45e2a8 helmet:5c7c1f2 pinstripe:bf2726d preflight:62a0c76 proctor:3efbc73 rollcall:0039490 sesame:03f78b1 sourdough:2117d25 squire:c553d29 weld:5168fb1 wayne-ui:dedc66f parity:34a5589, and this branch for ADVISOR's own docs): Parity's README is bundled as `docs/parity/readme.md`, and `projects.json` moves to Sourdough 0.4.1, Squire 0.10.4 and WELD 0.2.0, with the Drawbridge, Pinstripe, Preflight, Rollcall, Sourdough, Squire and WELD docs that moved.
 - Docs: the Proof page's "Last run" table records `composer ci` on the 0.2.0 release commit on 2026-11-09 (282 tests, 1535 assertions; the 2026-11-07 run had 249).
 
-## \[0.2.0\] - 2026-11-09[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-2-0-2026-11-09)
+## \[0.2.0\] - 2026-11-09 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-2-0-2026-11-09)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-1)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-1)
 
 - Added: docs/threats/ explains four threats (prompt injection, path traversal, command injection, data exfiltration), where each applies, the code and tests that stop it, and what risk is left (backlog row 16).
 - Added: upgrade_path takes from_php, so a project with no composer.json or no php constraint still gets a plan (Booster's --from-php); the 2026-11-08 proof run found 71 such refusals.
 
-### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-1)
+### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-2)
 
 - Changed: the deploy kit is Squire 0.10.1 (was 0.10.0): `.squire/base-fallback.Dockerfile` copies Composer 2.11.1 (was 2.10.3, no longer maintained), and the deploy layer requires PROCTOR ^0.11 (locked 0.11.0, was ^0.8 at 0.8.0).
 - Changed: the deploy kit is Squire 0.10.0 (was 0.7.1): release.sh keeps Composer and npm download caches in the app folder and the gate takes SQUIRE_PHP_RUNTIME; the compose file, health.php and .env.squire.example follow the template, and the portable image files are added.
@@ -73,7 +77,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: the a11y-extra job runs Playwright 1.65.0 and axe-core 4.14.0 on the image digest Preflight 0.4.0 pins (was Playwright 1.49.1 and axe-core 4.10), so ADVISOR's own page checks and the stack's a11y gate use one engine.
 - data: resyncs from 2026-11-08 03:40 through 2026-11-09 08:45 against each stack repo's main: Preflight 0.4.0 pins and its must-fail fixtures, PROCTOR 0.9.0 (the entrypoint-migrate, gitattributes, preflight-gates and mysql-minimum rules), Squire 0.9.0, SESAME 0.6.2 (strict-mode sessions, CAS 2.0, the Eloquent refresh fix), HELMET 1.0.1 and its ribbon list, Rollcall 1.0.0, Pinstripe 0.3.0, Booster 1.12.0, Drawbridge 0.4.0, CREED handbook tags and WELD's regen gate.
 
-### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
+### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
 
 - Fixed: a docs truth pass (2026-11-09). The install page lists `waynestate/creed` and the Symfony `^7.4 || ^8.0` range; "Where it sits" names all four Preflight components; the best-practices and contributing pages stop listing the threat model as not built; the commands page gives doctor's exit code 2; the threat pages cite the lines the code is on today; OPEN_QUESTIONS lists every optional setting. The front page's ask box says Drawbridge is an OpenID Connect client for Entra ID (it said SAML), names SESAME's OpenID Connect driver, carries Laravel 13's real active-support date and MySQL 5.6 from the policy, and writes Booster, Preflight, Squire, Rollcall and Drawbridge as words.
 - Fixed: the docs and the front page keep their Docs link in the header on a phone (it used to vanish below 900px with the section links), the docs sidebar opens scrolled to the page you are on with a thin scrollbar, Troubleshooting's symptoms are h2 headings under the h1 (they skipped to h3), and the Overview's tagline sits under its title.
@@ -84,14 +88,14 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - The Docker commands in the README, MAINTAINING.md and the contributing and proof docs mount the shared Composer cache (`-v stack-composer-cache:/tmp/cache`), and the accessibility gate's command mounts the npm cache, so a local run does not download every package again.
 - The front page's parts list says Sourdough starts all five app shapes; it said "the raw PHP starter".
 
-## \[0.1.7\] - 2026-11-07[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-7-2026-11-07)
+## \[0.1.7\] - 2026-11-07 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-7-2026-11-07)
 
-### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-2)
+### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-3)
 
 - The front page's deploy layer (`deploy/`) completes Squire's kit 0.5.0: `oracle-check.php`, which the 0.5.0 `squire update` did not add, is written and recorded, so `squire init --check` passes. `site/assets/stack-env.js` takes the stack's one copy, with bindingless catch blocks.
 - The canonical repository is git.wayne.edu (ADR-0021); docs, links and package metadata no longer point at the archived nougat copy.
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-2)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-2)
 
 - `owner_of` answers from an ownership table rebuilt from the stack's decisions, the one-owner-per-rule table first (version policy, lock file, `composer audit`, MySQL 5.6, `/up`, deploy files, CI contents, the parts list), then app wiring, sign-in and the coding standard. Every match carries `decision`, the decision it comes from, named by title and date. Rows gain `aliases` ("composer.lock", ".gitlab-ci.yml", "/up"), question words are ignored ("who owns composer audit" works), words match at word starts, and exact topic or alias matches come first. `content:verify` requires the decision and refuses an alias that names two rows.
 - `read_project_docs` trims image boilerplate again at read time, so docs bundled before a trim rule existed are served clean without editing `data/docs`. The trim (now `Content\ImageTrim`, shared with the generator) also drops linked hero images (an image Markdown wrapped in a link) and rows of nothing but badges, which the generator used to let through (Sourdough's README hero and badge row).
@@ -99,9 +103,9 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - data: resync 2026-11-06 night (booster:8c57a15 drawbridge:a60990a helmet:8a79b46 sesame:2505033 proctor:038d632 rollcall:aed8dd9 creed:0f6ab20 sourdough:b2644b3 weld:baf8e60 squire:88fd2ec preflight:a5ed45a pinstripe:eb03078 advisor:c3964c5 wayne-ui:9e1e762): Booster, CREED handbook and best practices, PROCTOR, Preflight and SESAME docs, the abandoned_packages policy, and the released versions of Booster, PROCTOR, Sourdough and others.
 - data: resync for the 2026-11-07 releases (Booster 1.10.0, CREED 0.1.7, Drawbridge 0.3.0, HELMET 0.4.0, Preflight 0.2.0, PROCTOR 0.7.0, Rollcall 0.1.10, SESAME 0.5.0, Sourdough 0.1.7, Squire 0.6.0, WELD 0.1.4; Pinstripe stays 0.1.4).
 
-## \[0.1.6\] - 2026-11-06[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-6-2026-11-06)
+## \[0.1.6\] - 2026-11-06 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-6-2026-11-06)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-3)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-3)
 
 - data: resync 2026-11-05 evening (booster:eaf2758 drawbridge:aa403f3 helmet:36cb918 sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:335c4e4 preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:4fdc7b0)
 - data: resync 2026-11-05 late (booster:5b25715 drawbridge:19698ea helmet:417129a sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:9384c1d preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:ba8b7e1)
@@ -112,7 +116,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Added: an accessibility gate (scripts/a11y/check.mjs) that loads every HTML page under site/ in a real browser and fails on any axe-core WCAG violation, in light and dark themes at phone and desktop width, plus a reduced-motion pass; runs as the a11y job in GitLab CI.
 - Added: a docs site (site/docs/) built by the shared docs builder from docs/, checked in composer ci.
 
-### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-3)
+### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-4)
 
 - Changed: resynced the bundled content (data/) with the stack as of 2026-11-05, including Booster 1.8.2 and 1.8.3, DRAWBRIDGE (session store, secret files, GitHub references removed), HELMET (H21 partly enforced, warn_broad_proxies), SESAME (CAS login bound to its browser), PROCTOR, ROLLCALL, CREED handbook chapters, Sourdough (--sail, --docker, Pest 4) and the WELD and SQUIRE guides; the Sourdough role now lists every shape that generates; the docs builder and kit follow SQUIRE 97744a4, which keeps the changelog page h1 itself.
 - Changed: the docs pages wear the front page's look: the same sheet head and main menu (Docs marked current), Fraunces titles with a plotted maroon route, the legend's mono labels, commands on the dark code ground with the gold Copy tab, callouts drawn as map marks (note, tip, out of bounds), the green footer band, and a dark mode derived from the Directions band. Motion only without a reduced-motion preference. Source: `docs/_header.html` and `docs/theme/advisor.css` through the builder's `theme` key. The front page site owes a Quick Update.
@@ -124,7 +128,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: symfony/console and symfony/process accept ^8.0 as well as ^7.4, so apps on Pest 5 / PHPUnit 13 can install ADVISOR.
 - Changed: the docs builder and kit are resynced from Squire's unified builder (theme hook, callouts, code tabs, task lists, copy button fix).
 
-### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-1)
+### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-1)
 
 - Fixed: the proof runner keeps the tool binary paths out of the error text: each of the proctor, booster and advisor binary paths is shortened to its file name before the scratch and corpus folders are masked as /app.
 - Fixed: front-page scroll reveals start hidden from first paint (plain CSS under `html.motion`, set in `<head>` before the body parses) instead of fading out after load, so unscrolled below-the-fold content sits at opacity 0 rather than being caught mid-fade; the motion class is only set where IntersectionObserver exists, so a page that hides content can always bring it back.
@@ -132,11 +136,11 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Fixed: the changelog docs page keeps its `# Changelog` heading, so the page has exactly one level-1 heading (a comment now sits above the heading in CHANGELOG.md, so the shared builder keeps it).
 - Fixed: table-of-contents sub-links carry the base `docs-toc__item` class again, so they get the block display and padding that keep them at or above the 24px target size (and their hover color).
 
-### Security[#](https://advisor.apps.wayne.edu/docs/changelog.html#security)
+### Security [#](https://advisor.apps.wayne.edu/docs/changelog.html#security)
 
 - The front-page deploy layer moves to Symfony 7.4.23 (symfony/http-foundation and symfony/yaml advisories, including CVE-2026-118514).
 
-## \[0.1.5\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-5-2026-11-03)
+## \[0.1.5\] - 2026-11-03 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-5-2026-11-03)
 
 - Changed: the deploy layer requires HELMET ^0.3 and PROCTOR ^0.4 (locked at 0.3.0 and 0.4.0) and sets minimum-stability to stable, which clears PROCTOR 0.4's new minimum-stability warning. HELMET 0.3 reads an empty `HELMET_PROXIES=` as trust nobody; the front page sets only the `citadel` preset, so nothing changes for it. The front page site owes a Quick Update.
 - Changed: the deploy layer's Squire kit is refreshed to 0.5.0 (updated `base-fallback.Dockerfile`, `scripts/release.sh` and `scripts/parity.ps1`). The front page site owes a Quick Update.
@@ -145,13 +149,13 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: `.env.playbook` is git-ignored; the agent-ready files (`site/llms.txt`, `site/llms-full.txt`) are regenerated.
 - Changed: docs and package metadata name nougat as the canonical repository, with git.wayne.edu and GitHub as read-only mirrors, until git.wayne.edu has CI runners.
 
-## \[0.1.4\] - 2026-11-03[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-4-2026-11-03)
+## \[0.1.4\] - 2026-11-03 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-4-2026-11-03)
 
 - Changed: CI pulls its Docker Hub images through the GitLab Dependency Proxy (the group's CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX), so pipelines no longer hit Docker Hub's anonymous pull limit.
 
-## \[0.1.3\] - 2026-11-02[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-3-2026-11-02)
+## \[0.1.3\] - 2026-11-02 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-3-2026-11-02)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-4)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-4)
 
 - Added: hand-written guides bundled from generator/guides/ and served as advisor://guide/; first guide: Connect to Oracle on Citadel.
 - Added: policy_lookup returns latest_patch; the bundled docs drop hero images, badges and GIFs.
@@ -159,43 +163,43 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Docs: a one-line `claude mcp add` and a Docker `.mcp.json` for machines without PHP.
 - Added: composer content:drift and an optional CI job that fail when data/ no longer matches the sibling repos.
 
-### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-4)
+### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-5)
 
 - Changed: the deploy layer's Squire kit is refreshed to 0.3.3 (release options can now live in ./.env.squire).
 - Changed: the deploy layer's Squire kit is refreshed to 0.3.4 (the local .env.squire file is now git-ignored).
 
-## \[0.1.2\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-2-2026-10-29)
+## \[0.1.2\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-2-2026-10-29)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-5)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-5)
 
 - Added: agent-ready site (prompt blocks, Markdown twins, llms.txt), from Squire's kit.
 - `playbook_lookup` tool: answers "what is the value of X?" for WSU shared values. An environment variable of the same name wins, then the private `waynestate/playbook` package (Playbook) supplies the rest; without it the tool says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are refused. `waynestate/playbook` is suggested, never required.
 
-### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-5)
+### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-6)
 
 - Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.
 - Changed: project names written as words except acronyms.
 
-### Fixed[#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-2)
+### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-2)
 
 - Fixed: stale capability claims in the site and docs.
 
-## \[0.1.1\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-1-2026-10-29)
+## \[0.1.1\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-1-2026-10-29)
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-6)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-6)
 
 - `owner_of` tool: answers "which project owns X?" from a new bundled `data/ownership.json` table (sourced from `generator/ownership.json`, verified by `content:verify`). Fuzzy match: every word of the topic must appear in a row's topic or role; a no-match answer lists every known topic.
 
-### Changed[#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-6)
+### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed-7)
 
 - `upgrade_path` moves from the `stack` group to a new `booster` group, so `ADVISOR_GROUPS=stack` offers reference tools only and never starts a program. `ADVISOR_GROUPS` now accepts `stack`, `proctor` and `booster`.
 - PHPStan includes Pinstripe's `raw.neon` preset (`waynestate/pinstripe` 0.1.0 as a dev dependency) instead of a hand copy of its settings; two docblocks were tightened to satisfy the preset's method-signature checks. Pint already used the `per` preset, so `pint.json` is unchanged.
 
-## \[0.1.0\] - 2026-10-29[#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-0-2026-10-29)
+## \[0.1.0\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-0-2026-10-29)
 
 First build, aimed at 0.1.0.
 
-### Added[#](https://advisor.apps.wayne.edu/docs/changelog.html#added-7)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-7)
 
 - Read-only MCP server over stdio (`php vendor/bin/advisor mcp`) on the official `mcp/sdk` 0.9.0, speaking both the legacy `initialize` handshake and the 2026-07-28 per-request form.
 - Seven tools: `list_projects`, `get_project_status`, `read_project_docs`, `policy_lookup`, `list_stack_rules`, `run_proctor_check`, `upgrade_path`. Resources `advisor://policy` and `advisor://creed/<chapter>`. Prompts `orient_me` and `plan_upgrade`.

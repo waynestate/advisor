@@ -11,6 +11,10 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Changed
+
+- Changed: the docs, agent-ready and deploy kits are Squire 0.10.6 (docs and agent-ready tools were the 0.9.0 bytes, deploy was 0.10.2): the docs builder and agent-ready generator see every file on Docker Desktop mounts, and `oracle-check.php` loses its D-046 reference.
+
 ## [0.3.0] - 2026-11-09
 
 ### Added

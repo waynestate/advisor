@@ -6,17 +6,17 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Refreshing the content[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#refreshing-the-content)
+# Refreshing the content [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#refreshing-the-content)
 
 This page shows how to keep ADVISOR's bundled content in `data/` current with the stack: regenerate it, verify it, and check for drift.
 
-## What is generated[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#what-is-generated)
+## What is generated [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#what-is-generated)
 
 The handbook, policy, project docs, the WayneUI markup contract and WayneUI's 1.x to 2.x migration guide in `data/` are generated from the sibling stack repositories by `content:generate` and verified at start-up against `data/manifest.json` (a SHA-256 for every file). If a file does not match, the server refuses to start rather than serve it. Files are cleaned on the way in: line endings are normalized and invisible characters (the TAG block, zero-width and bidirectional controls) are stripped. Image boilerplate is trimmed from the project docs, on the way in and again when `read_project_docs` serves them: centred hero, badge and cast blocks, lone images whose target is relative or a GIF (linked or not), and rows of nothing but badges. Prose, tables and code blocks are left alone, and the bundled file itself is never rewritten at read time, so its manifest hash still holds. Each project entry also carries its version when the project publishes one (composer.json, else package.json, else the newest CHANGELOG heading).
 
 Beside the generated docs, hand-written guides are kept by hand in `generator/guides/` (one Markdown file per slug), the same way the ownership table is kept. Each is bundled into `data/guides/` and served as `advisor://guide/<slug>`; the first is "Connect to Oracle on Citadel".
 
-## Regenerate[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#regenerate)
+## Regenerate [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#regenerate)
 
 With the stack repos checked out side by side:
 
@@ -32,7 +32,7 @@ To add a project to the parts list, add its `name` and `tagline` to `generator/p
 
 Beyond a project's README and best practices, a seed may bundle further files under `extra_docs` (a map of slug to path in the project); each lands in `data/docs/<id>/<slug>.md` and in the project's docs list, and a missing file is skipped, not an error. WayneUI's entry bundles its MIGRATING.md as the `migrating` doc.
 
-## Verify[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#verify)
+## Verify [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#verify)
 
 CI cannot see the sibling repositories, so `composer ci` runs `content:verify`, which needs none of them:
 
@@ -42,7 +42,7 @@ php vendor/bin/advisor content:verify
 
 It checks the bundled `data/` against `data/manifest.json` (a SHA-256 for every file).
 
-## Check for drift[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#check-for-drift)
+## Check for drift [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#check-for-drift)
 
 `composer content:drift` compares `data/` with a checkout of the stack repos and exits 1 when they no longer agree. It takes the folder from `ADVISOR_STACK_DIR`; without it, it prints how to run it and exits 1:
 
@@ -60,7 +60,7 @@ That exits 1 on drift.
 
 The GitLab job `content-drift` does the same in CI: it clones the repos listed in `data/projects.json` with the job token, puts them in one folder, sets `ADVISOR_STACK_DIR` and runs the check. It is manual or scheduled and allowed to fail, so it cannot block main. Run the drift check before every tag: a release must carry docs that still match the repos it advises on.
 
-## The private denylist[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#the-private-denylist)
+## The private denylist [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#the-private-denylist)
 
 ADVISOR is a public repository, so the bundle must not carry internal names. The public-posture test always checks generic shapes (ADR numbers, open-question numbers, design-doc paths, the coordination repo). Private strings (hostnames, people) are loaded from the file named by `ADVISOR_PRIVATE_DENYLIST` and checked only when the file is present.
 
@@ -75,7 +75,7 @@ Warning
 
 The denylist file is never committed. The bundle is regenerated with the file present before every release.
 
-## Related[#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#related)
+## Related [#](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html#related)
 
 - [Releasing](https://advisor.apps.wayne.edu/docs/deploying/releasing.html)
 - [Served content](https://advisor.apps.wayne.edu/docs/guides/served-content.html)

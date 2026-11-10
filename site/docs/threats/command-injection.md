@@ -6,11 +6,11 @@ llms: https://advisor.apps.wayne.edu/llms.txt
 generator: Squire agent-ready
 ---
 
-# Command injection[#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#command-injection)
+# Command injection [#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#command-injection)
 
 An attacker who controls a tool argument wants ADVISOR to start a program or run a command the developer never approved, using the server's privileges on the developer's machine.
 
-## Where it applies in ADVISOR[#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#where-it-applies-in-advisor)
+## Where it applies in ADVISOR [#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#where-it-applies-in-advisor)
 
 Only two tools start a child process, and both do it on purpose:
 
@@ -23,7 +23,7 @@ The server usually runs on the developer's own machine, next to the credentials 
 
 Both tools take a few extra arguments, but each is validated against a closed set before it reaches the command: the check ids against a fixed list (`src/Security/ProctorRunner.php:46-50`), and the version targets against strict patterns (`src/Security/BoosterRunner.php:37-45`).
 
-## What stops it[#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#what-stops-it)
+## What stops it [#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#what-stops-it)
 
 - **The program is fixed, not chosen.** The binary is located only in the project's own `vendor/bin` or the operator's configured setting; nothing a model sends picks which program runs (`src/Security/ProctorRunner.php:58-63`, `src/Security/BoosterRunner.php:96-118`). The fallback path must look like a PHP script or phar before it is accepted (`src/Security/BoosterRunner.php:107-113`, `src/Security/BoosterRunner.php:121-127`).
 - **The subcommand is part of the allowlist.** PROCTOR may only run `check` and Booster only `plan`; a third slot holding anything else is refused (`src/Security/CommandAllowlist.php:53`, `src/Security/CommandAllowlist.php:81`).
@@ -35,7 +35,7 @@ The tests prove the refusals: another program, another script, another subcomman
 
 A reviewer can check this by reading the two bad-command providers in `tests/Security/CommandAllowlistTest.php` and running `composer test`.
 
-## What is left[#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#what-is-left)
+## What is left [#](https://advisor.apps.wayne.edu/docs/threats/command-injection.html#what-is-left)
 
 The allowlist pins the shape of the command; it does not audit what the child program does. PROCTOR and BOOSTER run with full access to the project folder and their own logic, so a vulnerability in either one is outside this control.
 

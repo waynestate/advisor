@@ -39,9 +39,9 @@
   <nav class="docs-nav docs-nav--sidebar" aria-label="Documentation"><ul class="docs-nav__list"><li class="docs-nav__group"><span class="docs-nav__label">Getting started</span><ul><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/install.html">Install</a></li><li><a href="../../docs/guides/quick-start.html">Quick start</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Guides</span><ul><li><a href="../../docs/guides/where-it-sits.html">Where it sits in WELD</a></li><li><a href="../../docs/guides/claude-code.html">One line for Claude Code</a></li><li><a href="../../docs/guides/docker.html">No PHP? Use Docker</a></li><li><a href="../../docs/guides/laravel.html">Laravel apps</a></li><li><a href="../../docs/guides/what-it-offers.html" aria-current="page">What it offers</a></li><li><a href="../../docs/guides/served-content.html">Served content</a></li><li><a href="../../docs/guides/safety.html">Safety</a></li><li><a href="../../docs/guides/modules.html">Modules</a></li><li><a href="../../docs/guides/doctor.html">When it does not show up</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Threats</span><ul><li><a href="../../docs/threats/prompt-injection.html">Prompt injection</a></li><li><a href="../../docs/threats/path-traversal.html">Path traversal</a></li><li><a href="../../docs/threats/command-injection.html">Command injection</a></li><li><a href="../../docs/threats/data-exfiltration.html">Data exfiltration</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Reference</span><ul><li><a href="../../docs/reference/configuration.html">Configuration</a></li><li><a href="../../docs/reference/commands.html">Commands</a></li><li><a href="../../docs/reference/best-practices.html">Best practices</a></li><li><a href="../../docs/reference/proof.html">Proof</a></li></ul></li><li class="docs-nav__group"><span class="docs-nav__label">Deploying</span><ul><li><a href="../../docs/deploying/releasing.html">Releasing</a></li><li><a href="../../docs/deploying/refreshing-the-content.html">Refreshing the content</a></li></ul></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/upgrading.html">Upgrading</a></li><li><a href="../../docs/contributing.html">Contributing</a></li><li><a href="../../docs/changelog.html">Changelog</a></li></ul></nav>
   <div class="docs-content">
     <main id="main">
-      <article class="docs-article"><h1 id="what-it-offers">What it offers<a class="docs-heading-link" aria-label="Link to this section" href="#what-it-offers">#</a></h1>
+      <article class="docs-article"><h1 id="what-it-offers">What it <span class="docs-heading-tail"><span>offers</span><a class="docs-heading-link" aria-label="Link to this section" href="#what-it-offers">#</a></span></h1>
 <p>ADVISOR gives a coding agent nine read-only tools, plus two prompts and three resource routes, and each answer says where it came from.</p>
-<h2 id="tools">Tools<a class="docs-heading-link" aria-label="Link to this section" href="#tools">#</a></h2>
+<h2 id="tools"><span class="docs-heading-tail"><span>Tools</span><a class="docs-heading-link" aria-label="Link to this section" href="#tools">#</a></span></h2>
 <p>Nine tools, all read-only. Each one says where its answer came from:</p>
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
 <thead>
@@ -90,9 +90,9 @@
 </tbody>
 </table></div>
 <aside class="docs-callout docs-callout--note" role="note"><p class="docs-callout__label">Note</p><p>Everything ADVISOR returns is labeled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.</p></aside>
-<h2 id="groups">Groups<a class="docs-heading-link" aria-label="Link to this section" href="#groups">#</a></h2>
+<h2 id="groups"><span class="docs-heading-tail"><span>Groups</span><a class="docs-heading-link" aria-label="Link to this section" href="#groups">#</a></span></h2>
 <p>The groups split by what they may start: <code>stack</code> never starts a program, <code>proctor</code> starts the app's own <code>vendor/bin/proctor</code>, and <code>booster</code> starts Booster's read-only <code>plan</code> (never <code>run</code>). Set <code>ADVISOR_GROUPS=stack</code> when you want ADVISOR as pure reference material.</p>
-<h2 id="resources">Resources<a class="docs-heading-link" aria-label="Link to this section" href="#resources">#</a></h2>
+<h2 id="resources"><span class="docs-heading-tail"><span>Resources</span><a class="docs-heading-link" aria-label="Link to this section" href="#resources">#</a></span></h2>
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
 <thead>
 <tr>
@@ -115,11 +115,11 @@
 </tr>
 </tbody>
 </table></div>
-<h2 id="prompts">Prompts<a class="docs-heading-link" aria-label="Link to this section" href="#prompts">#</a></h2>
+<h2 id="prompts"><span class="docs-heading-tail"><span>Prompts</span><a class="docs-heading-link" aria-label="Link to this section" href="#prompts">#</a></span></h2>
 <p>Prompts: <code>orient_me</code> and <code>plan_upgrade</code>.</p>
 <p>Here is what that looks like when you ask. Each numbered control point is one of the tools above, with the arguments the front page's own route table sends:</p>
 <p><img src="../readme/route.svg" alt="A topographic field map of the stack. Three questions are plotted from 'your app' through the ADVISOR advising office to the project that answers. 'Which PHP can I build on?' goes through policy_lookup (component: php) to CREED's policy.json. 'Which security headers do I need?' goes through list_stack_rules (chapter: runtime-and-headers) and read_project_docs (project: helmet) to HELMET. 'How do I get off PHP 8.2?' goes through the plan_upgrade prompt, policy_lookup, run_proctor_check and read_project_docs (project: booster) to Booster." /></p>
-<h2 id="related">Related<a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></h2>
+<h2 id="related"><span class="docs-heading-tail"><span>Related</span><a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></span></h2>
 <ul>
 <li><a href="served-content.html">Served content</a></li>
 <li><a href="../reference/configuration.html">Configuration</a></li>
