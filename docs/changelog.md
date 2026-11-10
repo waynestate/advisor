@@ -11,7 +11,18 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-09
+
+### Added
+
+- Added: Parity is in the parts list (`generator/projects.seed.json`), after Squire: Citadel on your own computer (Citadel's PHP image, its proxy and MySQL 5.6) for any app, with or without Squire, as one Go command line for every OS on Docker or Podman (Podman recommended). `list_projects`, `get_project_status` and `read_project_docs` know it, and the stack-parts table in the README and the "Where it sits" page has fifteen rows.
+- Added: `owner_of` answers "local development" (and Parity, run Citadel locally, the parity kit, Podman) with Parity: the stack's local-development answer, which replaces Squire's parity group. The deploy-files row says Squire's old parity group is deprecated, and names Parity as the one that runs `build.sh`, `deployments/` and the health check the way Citadel does.
+- Added: the front page puts Parity on the map (the Reflecting Pool, top left) with a route for "Can I run my app like Citadel on my laptop?" (`get_project_status`, then `read_project_docs` for Parity) and a chip that asks it, and in the neighborhood, linked to its repository on git.wayne.edu until its site is live. The neighborhood is five across, three on a tablet and two on a phone with the odd one centered. The README cast and the readme-art kit gain Parity's mark (copied from Parity's own brand files, resized only).
+
 ### Changed
+
+- Changed: the generator counts a Go module (`go.mod`) as built, like a Composer or npm package, and no longer reads a `CHANGELOG.md` heading marked unreleased (`## 0.1.0 (unreleased)`) as a published version.
+- Changed: Squire's role in the parts list names what goes onto Citadel (build.sh, deployments/, the release script, the health check, the portable image) and points local runs at Parity; the front page's deploy answer does the same.
 
 - Changed: the `wayneui-copies`, `composer-ci` and `content-drift` CI jobs and the documented Docker commands (README, MAINTAINING, Contributing, Docker, Proof) use `composer:2.11.1` pinned by its multi-arch list digest (`sha256:8de2184c...`; was `composer:2.10.3`). 2.10 is no longer maintained, and 2.11.1 fixes GHSA-c968-33g3-wh7p and GHSA-fm2w-xgf2-f9fh.
 - Changed: the deploy kit is Squire 0.10.2 (was 0.10.1): the kit's Dockerfiles name every image in full (`docker.io/library/...`), the fallback base takes Composer from a `COMPOSER_IMAGE` stage, `.squire/php.ini` sets `session.cookie_samesite = Lax`, and the portable image drops `node_modules/` after the frontend build. `squire init --check` passes.

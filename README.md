@@ -65,6 +65,7 @@ that talks to your coding agent.
 | **Rollcall** | fleet census |
 | **Drawbridge** | sign-in gateway |
 | **Squire** | deploy kit |
+| **Parity** | Citadel on your computer |
 | **ADVISOR** | MCP server |
 | **WELD** | the Laravel starter app |
 

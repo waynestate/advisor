@@ -160,7 +160,7 @@ function buildBadges() {
   const composer = JSON.parse(read("composer.json"));
   const defs = [
     { key: "php", label: "php", message: composer.require.php },
-    { key: "license", label: "licence", message: composer.license },
+    { key: "license", label: "license", message: composer.license },
     { key: "mcp-sdk", label: "mcp sdk", message: composer.require["mcp/sdk"] },
   ];
   for (const d of defs) {
