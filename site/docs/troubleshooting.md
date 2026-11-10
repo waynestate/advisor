@@ -14,12 +14,14 @@ This page lists the failure symptoms ADVISOR's own docs describe, with the cause
 
 You added the config, opened the project, and the `advisor` server is not in the list.
 
-**Cause.** One of four things keeps a server from appearing:
+**Cause.** One of six things keeps a server from appearing:
 
 - **php**: the PHP on your machine satisfies ADVISOR's own `composer.json` (8.3 or newer).
+- **php-path**: which `php` your client will start. Clients start `php` by name, so they get the first one on the PATH. A warning when there is none, or when it is not the PHP running doctor (then run doctor with that one too). Doctor only looks; it never runs what it finds.
 - **content**: the bundled `data/` still matches its manifest.
 - **client:claude**, **client:warriorgpt**, **client:cursor**, **client:vscode**: each client's MCP config: is the file there, does it have the `advisor` entry, and is the script it points at in the project? A missing file is a warning, not a failure; you only need the one client you use.
-- **mcp**: the server actually starts. Doctor boots it in-process and asks for its tools.
+- **mcp**: the server starts. Doctor boots it in-process and asks for its tools.
+- **stdio**: the real thing. Doctor starts `php vendor/bin/advisor mcp` as a child process, the way your client does, and asks it to initialize, list its tools and answer one `policy_lookup` call. Every stdout line must be protocol, and the child must exit 0 when its input closes. The pass line names your OS and PHP version, so on Windows it is the proof that stdio works there.
 
 **Fix.** Run doctor and fix anything it reports as a `fail`. A `fail` is something to fix; a `warn` is something you may not care about.
 

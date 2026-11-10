@@ -43,12 +43,14 @@
 <p>This page lists the failure symptoms ADVISOR's own docs describe, with the cause, the fix and the command that checks it.</p>
 <h2 id="the-advisor-server-is-not-in-the-list">The advisor server is not in the <span class="docs-heading-tail"><span>list</span><a class="docs-heading-link" aria-label="Link to this section" href="#the-advisor-server-is-not-in-the-list">#</a></span></h2>
 <p>You added the config, opened the project, and the <code>advisor</code> server is not in the list.</p>
-<p><strong>Cause.</strong> One of four things keeps a server from appearing:</p>
+<p><strong>Cause.</strong> One of six things keeps a server from appearing:</p>
 <ul>
 <li><strong>php</strong>: the PHP on your machine satisfies ADVISOR's own <code>composer.json</code> (8.3 or newer).</li>
+<li><strong>php-path</strong>: which <code>php</code> your client will start. Clients start <code>php</code> by name, so they get the first one on the PATH. A warning when there is none, or when it is not the PHP running doctor (then run doctor with that one too). Doctor only looks; it never runs what it finds.</li>
 <li><strong>content</strong>: the bundled <code>data/</code> still matches its manifest.</li>
 <li><strong>client:claude</strong>, <strong>client:warriorgpt</strong>, <strong>client:cursor</strong>, <strong>client:vscode</strong>: each client's MCP config: is the file there, does it have the <code>advisor</code> entry, and is the script it points at in the project? A missing file is a warning, not a failure; you only need the one client you use.</li>
-<li><strong>mcp</strong>: the server actually starts. Doctor boots it in-process and asks for its tools.</li>
+<li><strong>mcp</strong>: the server starts. Doctor boots it in-process and asks for its tools.</li>
+<li><strong>stdio</strong>: the real thing. Doctor starts <code>php vendor/bin/advisor mcp</code> as a child process, the way your client does, and asks it to initialize, list its tools and answer one <code>policy_lookup</code> call. Every stdout line must be protocol, and the child must exit 0 when its input closes. The pass line names your OS and PHP version, so on Windows it is the proof that stdio works there.</li>
 </ul>
 <p><strong>Fix.</strong> Run doctor and fix anything it reports as a <code>fail</code>. A <code>fail</code> is something to fix; a <code>warn</code> is something you may not care about.</p>
 <p><strong>Check.</strong></p>

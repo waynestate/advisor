@@ -29,7 +29,7 @@ Stdout carries only protocol messages. Logs, warnings and stray output go to std
 
 | Command | What it does |
 | --- | --- |
-| `bin/advisor doctor` | Check the install: PHP, the bundled content, the client config, and the server. |
+| `bin/advisor doctor` | Check the install: PHP, the PATH, the bundled content, the client config, and the server over stdio. |
 | `bin/advisor install` | Print (or with --write, write) the MCP client config that starts ADVISOR. |
 | `bin/advisor mcp` | Serve ADVISOR to an MCP client over stdio (started by the client, not by hand). |
 | `bin/advisor stack-parts` | Render the stack parts table from the seed; write or check the marked block in a README. |
@@ -38,7 +38,7 @@ Stdout carries only protocol messages. Logs, warnings and stray output go to std
 
 ### `bin/advisor doctor` [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#bin-advisor-doctor)
 
-Check the install: PHP, the bundled content, the client config, and the server.
+Check the install: PHP, the PATH, the bundled content, the client config, and the server over stdio.
 
 Usage: `bin/advisor doctor [--json]`
 

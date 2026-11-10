@@ -11,6 +11,10 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+### Added
+
+- Added: `advisor doctor` has a `stdio` check: it starts `php bin/advisor mcp` as a child process, the way a client does, asks it to initialize, list its tools and answer one `policy_lookup` call, and passes only when every stdout line is JSON-RPC and the child exits 0. The pass line names the OS and PHP version, so one run on a Windows PHP answers open question 1. A `php-path` check says which `php` on the PATH a client will start, and warns when there is none or it is not the PHP running doctor (open question 10). Doctor still changes nothing and runs nothing from a config file.
+
 ### Changed
 
 - Changed: the deploy layer requires PROCTOR ^0.15 (locked 0.15.0, was ^0.12): 0.13 checks the release cooldown against the CREED policy and 0.14 adds `script-pair`; 0.15 adds `mysql56-ci`; all of these only warn, nothing breaks.

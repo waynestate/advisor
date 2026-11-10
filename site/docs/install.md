@@ -40,7 +40,7 @@ ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.3`. No ex
 
 Note
 
-Native Windows is not yet proven. ADVISOR is one PHP command, so it is built to run the same everywhere, but it has not been proven on native Windows. If you are on Windows, [use Docker](https://advisor.apps.wayne.edu/docs/guides/docker.html).
+Native Windows is not yet proven. ADVISOR is one PHP command, so it is built to run the same everywhere, but it has not been proven on native Windows. If you are on Windows, run `php vendor\bin\advisor doctor`: its **stdio** line says whether the server works over stdio on your machine ([On Windows](https://advisor.apps.wayne.edu/docs/guides/doctor.html#on-windows)). If it fails, [use Docker](https://advisor.apps.wayne.edu/docs/guides/docker.html).
 
 ## Verify [#](https://advisor.apps.wayne.edu/docs/install.html#verify)
 
@@ -50,12 +50,14 @@ Check the install with:
 php vendor/bin/advisor doctor
 ```
 
-It checks the four things that keep a server from appearing, in plain words, and changes nothing:
+It checks the six things that keep a server from appearing, in plain words, and changes nothing:
 
 - **php**: the PHP on your machine satisfies ADVISOR's own `composer.json` (8.3 or newer).
+- **php-path**: which `php` your client will start. Clients start `php` by name, so they get the first one on the PATH. A warning when there is none, or when it is not the PHP running doctor (then run doctor with that one too). Doctor only looks; it never runs what it finds.
 - **content**: the bundled `data/` still matches its manifest.
 - **client:claude**, **client:warriorgpt**, **client:cursor**, **client:vscode**: each client's MCP config.
-- **mcp**: the server actually starts. Doctor boots it in-process and asks for its tools.
+- **mcp**: the server starts. Doctor boots it in-process and asks for its tools.
+- **stdio**: the real thing. Doctor starts `php vendor/bin/advisor mcp` as a child process, the way your client does, and asks it to initialize, list its tools and answer one `policy_lookup` call. Every stdout line must be protocol, and the child must exit 0 when its input closes. The pass line names your OS and PHP version, so on Windows it is the proof that stdio works there.
 
 A `fail` is something to fix; a `warn` is something you may not care about. The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
 
