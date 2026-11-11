@@ -330,4 +330,78 @@ final class GeneratorTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->generator()->build();
     }
+
+    public function testManifestRecordsTheSourceCommitOfAProjectRepository(): void
+    {
+        $commit = '1a2b3c4d5e6f7081920314151617181920212223';
+        $this->put($this->sources . '/creed/.git/HEAD', "ref: refs/heads/main\n");
+        $this->put($this->sources . '/creed/.git/refs/heads/main', $commit . "\n");
+
+        $this->generator()->generate();
+        $manifest = (new ContentBundle($this->out))->manifest();
+
+        $this->assertSame($commit, $manifest['files']['handbook/code.md']['source_commit']);
+        $this->assertSame($commit, $manifest['files']['policy.json']['source_commit']);
+        $this->assertNull($manifest['files']['rules.json']['source_commit'], 'A comma-list source names no single repository.');
+        $this->assertNull($manifest['files']['ownership.json']['source_commit'], 'Generator sources are not under a project folder.');
+        $this->assertNull($manifest['files']['projects.json']['source_commit']);
+    }
+
+    public function testPackedRefsAndDetachedHeadAreRead(): void
+    {
+        $packed = 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef';
+        $detached = 'cafebabecafebabecafebabecafebabecafebabe';
+        $this->put($this->sources . '/proctor/.git/HEAD', "ref: refs/heads/main\n");
+        $this->put($this->sources . '/proctor/.git/packed-refs', "# pack-refs with: peeled fully-peeled sorted\n{$packed} refs/heads/main\n");
+        $this->put($this->sources . '/wayne-ui/.git/HEAD', $detached . "\n");
+
+        $this->generator()->generate();
+        $manifest = (new ContentBundle($this->out))->manifest();
+
+        $this->assertSame($packed, $manifest['files']['docs/proctor/readme.md']['source_commit']);
+        $this->assertSame($detached, $manifest['files']['docs/wayne-ui/contract.json']['source_commit']);
+    }
+
+    public function testWorktreeGitFileIsFollowed(): void
+    {
+        $commit = '0123456789abcdef0123456789abcdef01234567';
+        $gitdir = $this->tempDir() . '/creed-main/.git/worktrees/advisor';
+        $this->put($gitdir . '/HEAD', "ref: refs/heads/main\n");
+        $this->put($gitdir . '/refs/heads/main', $commit . "\n");
+        $this->put($this->sources . '/creed/.git', 'gitdir: ' . $gitdir . "\n");
+
+        $this->generator()->generate();
+        $manifest = (new ContentBundle($this->out))->manifest();
+
+        $this->assertSame($commit, $manifest['files']['handbook/code.md']['source_commit']);
+    }
+
+    public function testSourceWithoutARepositoryGetsNull(): void
+    {
+        // No .git anywhere in the fixture repositories.
+        $this->generator()->generate();
+        $manifest = (new ContentBundle($this->out))->manifest();
+
+        foreach ($manifest['files'] as $relative => $entry) {
+            $this->assertNull($entry['source_commit'], $relative);
+        }
+        $this->assertNull($this->generator()->sourceCommit('creed/handbook/code.md'));
+        $this->assertNull($this->generator()->sourceCommit('generator/ownership.json'));
+        $this->assertNull($this->generator()->sourceCommit('creed/policy/policy.json, creed/handbook'));
+
+        // A .git whose HEAD is neither a commit nor a ref is unreadable.
+        $this->put($this->sources . '/later/.git/HEAD', "not a commit or a ref\n");
+        $this->assertNull($this->generator()->sourceCommit('later/README.md'));
+    }
+
+    public function testVerifyIgnoresASourceCommitChange(): void
+    {
+        $this->generator()->generate();
+        $manifestPath = $this->out . '/manifest.json';
+        $manifest = json_decode((string) file_get_contents($manifestPath), true, 512, JSON_THROW_ON_ERROR);
+        $manifest['files']['handbook/code.md']['source_commit'] = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+        file_put_contents($manifestPath, (string) json_encode($manifest));
+
+        $this->assertSame([], (new ContentBundle($this->out))->problems());
+    }
 }
