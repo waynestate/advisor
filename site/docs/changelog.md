@@ -10,7 +10,7 @@ generator: Squire agent-ready
 
 All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.
 
-## \[Unreleased\] [#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
+## \[0.3.1\] - 2026-11-11 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-3-1-2026-11-11)
 
 ### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
 
