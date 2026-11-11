@@ -21,6 +21,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
+- CI pins Preflight 0.8.0.
 - Changed: the deploy layer requires PROCTOR ^0.15 (locked 0.15.0, was ^0.12): 0.13 checks the release cooldown against the CREED policy and 0.14 adds `script-pair`; 0.15 adds `mysql56-ci`; all of these only warn, nothing breaks.
 - Changed: the GitHub workflow calls Preflight 0.5.0's reusable workflow (pinned to its release commit), the same release as the GitLab pipeline; it was on 0.1.4 because GitHub's copy of Preflight had no later tag.
 - Changed: the deploy layer requires PROCTOR ^0.12 (locked 0.12.0, was ^0.11): two new warning-only checks, nothing breaks.
