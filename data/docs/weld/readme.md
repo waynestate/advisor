@@ -141,7 +141,7 @@ Want a smaller starting point than a full Laravel app? Sourdough is the starter 
 | SESAME | Sign-in: CAS, Entra ID (OpenID Connect) and the auth gateway driver, and app-native sessions |
 | HELMET | The baseline runtime: security headers and CSP, sessions, trusted proxies, `/up` and the `/ready` readiness route |
 | ADVISOR | Dev only: the stack's read-only MCP server, so your coding agent knows the stack's rules and versions |
-| Squire | The deploy kit in `deploy/`, at 0.10.7: the Citadel image, an idempotent release script and one portable image for other hosts |
+| Squire | The deploy kit in `deploy/`, at 0.10.8: the Citadel image, an idempotent release script and one portable image for other hosts |
 | Laravel Boost | Dev only: the MCP server, guidelines and skills that teach your coding agent Laravel, with WELD's conventions in `.ai/` |
 | Ziggy | Route names as URLs: the route list ships inside the Vite bundle, so `route()` works in Vue templates and scripts without an inline script |
 
@@ -157,7 +157,7 @@ Want a smaller starting point than a full Laravel app? Sourdough is the starter 
 ## Status
 
 Every part is welded in: HELMET and SESAME are in `require`; CREED, Pinstripe, PROCTOR and ADVISOR are in
-`require-dev`; WayneUI 2.0.8 comes from npm; CI pins Preflight 0.6.0; the deploy layer runs Squire's kit 0.10.7.
+`require-dev`; WayneUI 2.0.8 comes from npm; CI pins Preflight 0.8.0; the deploy layer runs Squire's kit 0.10.8.
 Pinstripe's PHP presets are installed; its ESLint and Prettier presets move in once `@waynestate/pinstripe` 0.3.0 is
 on npm (the [status page](docs/reference/status.md#pinstripe-s-npm-half) has the steps). The bead is closed on the PHP side.
 What is on the bench today:
@@ -198,14 +198,15 @@ A deprecation your code raises or causes fails the suite (`failOnDeprecation` in
 before an upgrade does; `tests/TestCase.php` hands deprecations to PHPUnit (`tests/Support/ReportsDeprecationsToPhpUnit.php`, from
 Sourdough), because Laravel's own handler drops them while testing.
 The accessibility gate runs Preflight's own checker (vendored in `tools/a11y/check.mjs`, pinned to the CI tag
-0.6.0 by `tests/Unit/A11yCheckerPinTest.php`) over every page under `site/` with axe-core 4.14.0 (WCAG 2.2 AA,
+0.8.0 by `tests/Unit/A11yCheckerPinTest.php`) over every page under `site/` with axe-core 4.14.0 (WCAG 2.2 AA,
 light and dark, at 320 and 1280 px, plus the WCAG 1.4.10 reflow check), so a page that passes locally passes
 CI. It runs in Docker: `scripts/a11y.sh` from Git Bash, Linux or macOS, `scripts/a11y.ps1` on Windows.
 
 **The app's own gates.** The pipeline carries the three gates every Sourdough app carries, with the jobs copied
 from the Inertia shape. The `a11y-pages` job boots WELD with SESAME's fake driver and saves `/` signed out and
-`/dashboard` signed in into `a11y-site/`. The `a11y-app` job checks them with the same checker, blocking. Add each
-page you build to `A11Y_PATHS` and to the `a11y-app` include's `pages`. Automated checks find only part of the
+`/dashboard` and both settings pages signed in into `a11y-site/`. The `a11y-app` job checks them with the same
+checker, blocking. Add each page you build to `A11Y_PATHS` and to the `a11y-app` include's `pages`;
+`tests/Feature/A11yPagesTest.php` fails when the two lists differ or when no path draws an Inertia page. Automated checks find only part of the
 problems, so try each page with a keyboard and a screen reader too. Preflight's `sbom` job keeps `sbom.cdx.json`
 (Composer) and the `frontend` job keeps `sbom-npm.cdx.json` (npm), each for 30 days. Preflight's `secret-detection`
 job runs Gitleaks over the repository. Preflight's `portability` job builds the portable image

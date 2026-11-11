@@ -88,7 +88,7 @@
             "id": "accessibility-7",
             "chapter": "accessibility",
             "heading": "Checks",
-            "text": "Preflight's `a11y` component (0.5.0) is the stack's CI check: it opens the app's pages in Chromium, runs axe-core in light and dark at 320 and 1280 px, and fails the pipeline on any violation. An app SHOULD add `wcag22aa` to its tags for the WCAG 2.2 AA target above. Held by: Preflight's a11y component (templates/a11y/template.yml).",
+            "text": "Preflight's `a11y` component (since 0.2.0; the pin is 0.8.0) is the stack's CI check: it opens the app's pages in Chromium, runs axe-core in light and dark at 320 and 1280 px, and fails the pipeline on any violation. An app SHOULD add `wcag22aa` to its tags for the WCAG 2.2 AA target above. Held by: Preflight's a11y component (templates/a11y/template.yml).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -125,6 +125,188 @@
                 "laravel-inertia-vue"
             ],
             "source": "handbook/accessibility.md:35"
+        },
+        {
+            "id": "ai-1",
+            "chapter": "ai",
+            "heading": "Where models are called",
+            "text": "Model calls MUST be made server-side only, never from browser code. No check exists yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:7"
+        },
+        {
+            "id": "ai-2",
+            "chapter": "ai",
+            "heading": "Where models are called",
+            "text": "API tokens MUST live in server configuration or the environment and MUST NOT appear in `VITE_*` variables or any client-side code (anything that ships in the bundle is public). Held by: the general secret scan, Preflight's `secret-detection` component (Preflight 0.8.0), for committed tokens only; a token in a `VITE_*` variable is not checked yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:8"
+        },
+        {
+            "id": "ai-3",
+            "chapter": "ai",
+            "heading": "Where models are called",
+            "text": "Rate limits MUST apply per signed-in user, so one person cannot spend the whole app's budget. No check exists yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:9"
+        },
+        {
+            "id": "ai-4",
+            "chapter": "ai",
+            "heading": "Which service",
+            "text": "WarriorGPT, the university-run service, comes first: an app SHOULD use it before any outside provider. No check exists yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:13"
+        },
+        {
+            "id": "ai-5",
+            "chapter": "ai",
+            "heading": "Which service",
+            "text": "Outside model providers (OpenAI, Anthropic, Google and the like) MUST only ever receive public data. Any university data, whether internal or confidential, MUST go to WarriorGPT only. No check exists yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:14"
+        },
+        {
+            "id": "ai-6",
+            "chapter": "ai",
+            "heading": "Data in prompts and logs",
+            "text": "Personal data (student, employee or patient records, or identifiers such as AccessIDs, student IDs or Social Security numbers) MAY go to WarriorGPT only, and only the minimum the task needs. No check exists yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:18"
+        },
+        {
+            "id": "ai-7",
+            "chapter": "ai",
+            "heading": "Data in prompts and logs",
+            "text": "Personal data MUST NOT go to an outside model provider (an open stack question, an open stack question). No check exists yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:19"
+        },
+        {
+            "id": "ai-8",
+            "chapter": "ai",
+            "heading": "Data in prompts and logs",
+            "text": "Logs SHOULD keep metadata (user, model, token counts, latency) and MUST NOT keep prompt or answer bodies by default. No check exists yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:20"
+        },
+        {
+            "id": "ai-9",
+            "chapter": "ai",
+            "heading": "Data in prompts and logs",
+            "text": "If bodies are kept for debugging, retention MUST be short and personal data MUST be stripped first. No check exists yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:21"
+        },
+        {
+            "id": "ai-10",
+            "chapter": "ai",
+            "heading": "What people see and decide",
+            "text": "AI-written output MUST be labelled as AI-written in the UI. No check exists yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:25"
+        },
+        {
+            "id": "ai-11",
+            "chapter": "ai",
+            "heading": "What people see and decide",
+            "text": "A model MUST NOT make the final call on a decision about a person; a person makes it and is accountable. No check exists yet.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:26"
+        },
+        {
+            "id": "ai-12",
+            "chapter": "ai",
+            "heading": "Not decided here",
+            "text": "Prompt-injection handling is not decided here.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:32"
+        },
+        {
+            "id": "ai-13",
+            "chapter": "ai",
+            "heading": "Not decided here",
+            "text": "Evaluation of model quality is not decided here.",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/ai.md:33"
         },
         {
             "id": "auth-1",
@@ -1334,7 +1516,7 @@
             "id": "databases-4",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
-            "text": "An app MUST set `Schema::defaultStringLength(191)` in `AppServiceProvider::boot()`, before any migration runs. 5.6 caps an indexed `utf8mb4` column at 767 bytes, which is 191 characters. PROCTOR check: `mysql56`.",
+            "text": "An app MUST set `Schema::defaultStringLength(191)` in `AppServiceProvider::boot()`, before any migration runs. 5.6 caps an indexed `utf8mb4` column at 767 bytes, which is 191 characters: an index on a 255 character string is refused (probe `index-255`) and one on 191 fits (probe `index-191`). PROCTOR check: `mysql56`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1342,13 +1524,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:51"
+            "source": "handbook/databases.md:54"
         },
         {
             "id": "databases-5",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
-            "text": "An app MUST keep `utf8mb4` and `utf8mb4_unicode_ci`, the defaults, and MUST NOT use an 8.0-only collation such as `utf8mb4_0900_ai_ci` (not yet confirmed on a 5.6 server). No check exists yet.",
+            "text": "An app MUST keep `utf8mb4` and `utf8mb4_unicode_ci`, the defaults (probe `collation-unicode`), and MUST NOT use an 8.0-only collation such as `utf8mb4_0900_ai_ci`, which 5.6 does not know (probe `collation-0900`). No check exists yet.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1356,25 +1538,25 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:55"
+            "source": "handbook/databases.md:59"
         },
         {
             "id": "databases-6",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
-            "text": "An app MUST store JSON as `text` or `longText`, with Eloquent `array` or `json` casts, and MUST filter in PHP. 5.6 has no JSON column type. PROCTOR check: `mysql56`.",
+            "text": "An app MUST store JSON as `text` or `longText`, with Eloquent `array` or `json` casts, and MUST filter in PHP. 5.6 has no JSON column type (probe `json-column`) and no JSON functions (probe `json-functions`). PROCTOR check: `mysql56`.",
             "applies_to": [
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:58"
+            "source": "handbook/databases.md:63"
         },
         {
             "id": "databases-7",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
-            "text": "An app MUST leave `use_upsert_alias` unset, so `upsert()` uses `VALUES()`. The row alias that setting switches to needs MySQL 8.0.19. PROCTOR check: `mysql56`.",
+            "text": "An app MUST leave `use_upsert_alias` unset, so `upsert()` uses `VALUES()` (probe `upsert-values`). The row alias that setting switches to needs MySQL 8.0.19 (probe `upsert-alias`). PROCTOR check: `mysql56`.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1382,35 +1564,31 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:61"
+            "source": "handbook/databases.md:67"
         },
         {
             "id": "databases-8",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
-            "text": "An app MUST rename a column with raw `DB::statement('ALTER TABLE ... CHANGE ...')`, and MUST NOT use `renameColumn` or `renameIndex`, which emit 5.7 syntax. PROCTOR check: `mysql56`.",
+            "text": "An app MUST rename a column with raw `DB::statement('ALTER TABLE ... CHANGE ...')` (probe `rename-column-change`), and MUST NOT use `renameColumn` or `renameIndex`. On a 5.6 server Laravel 13's `renameColumn` first reads the column through the query 5.6 rejects (probe `column-introspection`), and on a newer one it writes `RENAME COLUMN`, which 5.6 cannot parse (probe `rename-column-syntax`); `renameIndex` writes `RENAME INDEX`, which arrived in 5.7 (probe `rename-index`). PROCTOR check: `mysql56`.",
             "applies_to": [
-                "raw-php",
-                "raw-php-vue",
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:64"
+            "source": "handbook/databases.md:70"
         },
         {
             "id": "databases-9",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
-            "text": "An app MUST use `Schema::hasTable` only. Column introspection is not reliable on 5.6 (not yet confirmed on a 5.6 server). PROCTOR check: `mysql56`.",
+            "text": "An app MUST use `Schema::hasTable` (probe `has-table`) and MUST NOT use column introspection: `hasColumn`, `hasColumns`, `getColumns`, `getColumnListing` and `getColumnType`. Laravel 13 reads them from `information_schema.columns.generation_expression`, a column 5.6 does not have, so the call fails outright (probe `column-introspection`). PROCTOR check: `mysql56`.",
             "applies_to": [
-                "raw-php",
-                "raw-php-vue",
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:68"
+            "source": "handbook/databases.md:78"
         },
         {
             "id": "databases-10",
@@ -1424,13 +1602,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:71"
+            "source": "handbook/databases.md:84"
         },
         {
             "id": "databases-11",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
-            "text": "An app SHOULD run one database-queue worker (or another driver if the platform offers one). 5.6 has no `SKIP LOCKED`, so a single worker avoids double-processing. No check exists yet.",
+            "text": "An app SHOULD run one database-queue worker (or another driver if the platform offers one). 5.6 has no `SKIP LOCKED` (probe `skip-locked`), so a single worker avoids double-processing. No check exists yet.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1438,21 +1616,19 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:72"
+            "source": "handbook/databases.md:85"
         },
         {
             "id": "databases-12",
             "chapter": "databases",
             "heading": "Conventions that keep 5.6 working",
-            "text": "An app MUST use `timestamp`, not `date`, for `useCurrent()`. A `date` column cannot take a current-timestamp default on 5.6. PROCTOR check: `mysql56`.",
+            "text": "An app MUST use `timestamp`, not `date`, for `useCurrent()` (probe `timestamp-current-default`). On a 5.6 server Laravel 13 drops `useCurrent()` from a `date` column without a word, so the migration passes, the column has no default, and an insert that leaves it out fails (probe `use-current-date`); 5.6 refuses a current-timestamp default on a `date` column in any case (probe `date-current-default`). PROCTOR check: `mysql56`.",
             "applies_to": [
-                "raw-php",
-                "raw-php-vue",
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:75"
+            "source": "handbook/databases.md:88"
         },
         {
             "id": "databases-13",
@@ -1466,13 +1642,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:78"
+            "source": "handbook/databases.md:94"
         },
         {
             "id": "databases-14",
             "chapter": "databases",
             "heading": "Schema",
-            "text": "JSON and jsonb columns",
+            "text": "JSON and jsonb columns (probe `json-column`)",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1480,13 +1656,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:88"
+            "source": "handbook/databases.md:104"
         },
         {
             "id": "databases-15",
             "chapter": "databases",
             "heading": "Schema",
-            "text": "Generated columns",
+            "text": "Generated columns, `storedAs` and `virtualAs` (probe `generated-column`)",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1494,13 +1670,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:89"
+            "source": "handbook/databases.md:105"
         },
         {
             "id": "databases-16",
             "chapter": "databases",
             "heading": "Schema",
-            "text": "`renameIndex` and `renameColumn`",
+            "text": "`renameIndex` and `renameColumn` (probes `rename-index`, `rename-column-syntax`)",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1508,13 +1684,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:90"
+            "source": "handbook/databases.md:106"
         },
         {
             "id": "databases-17",
             "chapter": "databases",
             "heading": "Schema",
-            "text": "Column introspection",
+            "text": "Column introspection (probe `column-introspection`)",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1522,13 +1698,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:91"
+            "source": "handbook/databases.md:108"
         },
         {
             "id": "databases-18",
             "chapter": "databases",
             "heading": "Schema",
-            "text": "`invisible`, `instant` and `vector` columns",
+            "text": "`invisible`, `instant` and `vector` columns (probes `invisible-column`, `vector-column`; 8.4 has no vector type either)",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1536,13 +1712,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:92"
+            "source": "handbook/databases.md:109"
         },
         {
             "id": "databases-19",
             "chapter": "databases",
             "heading": "Schema",
-            "text": "InnoDB `spatialIndex` (needs 5.7.5, not yet confirmed on a 5.6 server)",
+            "text": "InnoDB `spatialIndex`, which needs 5.7.5 (probe `spatial-index-innodb`)",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1550,13 +1726,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:93"
+            "source": "handbook/databases.md:111"
         },
         {
             "id": "databases-20",
             "chapter": "databases",
             "heading": "Schema",
-            "text": "DESC indexes and CHECK constraints",
+            "text": "DESC indexes and CHECK constraints. These are the quiet ones: 5.6 accepts both and then ignores them, so the migration passes, a DESC index is built ascending (probe `desc-index-ignored`) and a row that breaks a CHECK goes in (probe `check-constraint-ignored`). Validate in the app instead.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1564,13 +1740,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:94"
+            "source": "handbook/databases.md:112"
         },
         {
             "id": "databases-21",
             "chapter": "databases",
             "heading": "Queries",
-            "text": "`whereJson*` and JSON-path updates",
+            "text": "`whereJson*` and JSON-path updates (probe `json-functions`)",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1578,13 +1754,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:98"
+            "source": "handbook/databases.md:119"
         },
         {
             "id": "databases-22",
             "chapter": "databases",
             "heading": "Queries",
-            "text": "Window functions and CTEs",
+            "text": "Window functions and CTEs (probes `window-function`, `cte`)",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1592,13 +1768,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:99"
+            "source": "handbook/databases.md:120"
         },
         {
             "id": "databases-23",
             "chapter": "databases",
             "heading": "Queries",
-            "text": "`SKIP LOCKED` and `NOWAIT` in raw SQL",
+            "text": "`SKIP LOCKED` and `NOWAIT` in raw SQL (probes `skip-locked`, `nowait`)",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1606,13 +1782,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:100"
+            "source": "handbook/databases.md:121"
         },
         {
             "id": "databases-24",
             "chapter": "databases",
             "heading": "Queries",
-            "text": "`joinLateral`",
+            "text": "`joinLateral` (probe `join-lateral`)",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1620,13 +1796,13 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:101"
+            "source": "handbook/databases.md:122"
         },
         {
             "id": "databases-25",
             "chapter": "databases",
             "heading": "Queries",
-            "text": "Joined deletes with an order or a limit",
+            "text": "Joined deletes with an order or a limit (probe `joined-delete-order-limit`; no MySQL release accepts these, so they stay out after the upgrade too)",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1634,7 +1810,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:102"
+            "source": "handbook/databases.md:123"
         },
         {
             "id": "databases-26",
@@ -1648,7 +1824,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:106"
+            "source": "handbook/databases.md:129"
         },
         {
             "id": "databases-27",
@@ -1662,38 +1838,16 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:107"
+            "source": "handbook/databases.md:130"
         },
         {
             "id": "databases-28",
             "chapter": "databases",
-            "heading": "Sources",
-            "text": "Laravel 13 database docs: https://laravel.com/docs/13.x/database",
+            "heading": "Moving to 8.4",
+            "text": "The patterns above start working: JSON columns and functions, generated and invisible columns, InnoDB spatial indexes, the upsert row alias, column introspection, `renameColumn` and `renameIndex`, CTEs, window functions, `SKIP LOCKED`, `NOWAIT` and `joinLateral`. Two stay out: `vector` columns and joined deletes with an order or a limit.",
             "applies_to": [
-                "laravel-blade",
-                "laravel-blade-vue",
-                "laravel-inertia-vue"
-            ],
-            "source": "handbook/databases.md:136"
-        },
-        {
-            "id": "databases-29",
-            "chapter": "databases",
-            "heading": "Sources",
-            "text": "Laravel docs, `migrations.md` (index-length section): https://github.com/laravel/docs/blob/10.x/migrations.md",
-            "applies_to": [
-                "laravel-blade",
-                "laravel-blade-vue",
-                "laravel-inertia-vue"
-            ],
-            "source": "handbook/databases.md:137"
-        },
-        {
-            "id": "databases-30",
-            "chapter": "databases",
-            "heading": "Sources",
-            "text": "Laravel 13 migrations docs: https://laravel.com/docs/13.x/migrations",
-            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
@@ -1701,35 +1855,13 @@
             "source": "handbook/databases.md:139"
         },
         {
-            "id": "databases-31",
+            "id": "databases-29",
             "chapter": "databases",
-            "heading": "Sources",
-            "text": "Laravel 13 query builder docs: https://raw.githubusercontent.com/laravel/docs/13.x/queries.md",
+            "heading": "Moving to 8.4",
+            "text": "The two quiet ones turn real. 8.4 builds a DESC index descending (probe `desc-index-ignored`) and enforces a CHECK constraint, refusing the row 5.6 let in (probe `check-constraint-ignored`). A CHECK written while an app was on 5.6 has never refused anything, so test the code that writes to that table before the move.",
             "applies_to": [
-                "laravel-blade",
-                "laravel-blade-vue",
-                "laravel-inertia-vue"
-            ],
-            "source": "handbook/databases.md:140"
-        },
-        {
-            "id": "databases-32",
-            "chapter": "databases",
-            "heading": "Sources",
-            "text": "Laravel database queue: https://github.com/laravel/framework/blob/13.x/src/Illuminate/Queue/DatabaseQueue.php",
-            "applies_to": [
-                "laravel-blade",
-                "laravel-blade-vue",
-                "laravel-inertia-vue"
-            ],
-            "source": "handbook/databases.md:142"
-        },
-        {
-            "id": "databases-33",
-            "chapter": "databases",
-            "heading": "Sources",
-            "text": "Laravel schema builder: https://github.com/laravel/framework/blob/13.x/src/Illuminate/Database/Schema/Builder.php",
-            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
@@ -1737,66 +1869,22 @@
             "source": "handbook/databases.md:144"
         },
         {
-            "id": "databases-34",
+            "id": "databases-30",
             "chapter": "databases",
-            "heading": "Sources",
-            "text": "MySQL 5.7.7 release notes: https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-7.html",
+            "heading": "Moving to 8.4",
+            "text": "`useCurrent()` on a `date` column gets its default back: from 8.0.13 Laravel 13 writes `default (CURDATE())`, which 8.4 accepts and 5.6 cannot parse (probe `date-current-expression`). A plain current-timestamp default on a `date` column is still refused (probe `date-current-default`), and the `timestamp` convention keeps working.",
             "applies_to": [
-                "raw-php",
-                "raw-php-vue",
                 "laravel-blade",
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:146"
+            "source": "handbook/databases.md:149"
         },
         {
-            "id": "databases-35",
+            "id": "databases-31",
             "chapter": "databases",
-            "heading": "Sources",
-            "text": "MySQL 5.7.8 release notes (JSON): https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html",
-            "applies_to": [
-                "raw-php",
-                "raw-php-vue",
-                "laravel-blade",
-                "laravel-blade-vue",
-                "laravel-inertia-vue"
-            ],
-            "source": "handbook/databases.md:148"
-        },
-        {
-            "id": "databases-36",
-            "chapter": "databases",
-            "heading": "Sources",
-            "text": "MySQL 5.7.6 release notes (generated columns): https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-6.html",
-            "applies_to": [
-                "raw-php",
-                "raw-php-vue",
-                "laravel-blade",
-                "laravel-blade-vue",
-                "laravel-inertia-vue"
-            ],
-            "source": "handbook/databases.md:150"
-        },
-        {
-            "id": "databases-37",
-            "chapter": "databases",
-            "heading": "Sources",
-            "text": "MySQL 5.6 CREATE INDEX (767 and 3072 byte limits): https://dev.mysql.com/doc/refman/5.6/en/create-index.html",
-            "applies_to": [
-                "raw-php",
-                "raw-php-vue",
-                "laravel-blade",
-                "laravel-blade-vue",
-                "laravel-inertia-vue"
-            ],
-            "source": "handbook/databases.md:152"
-        },
-        {
-            "id": "databases-38",
-            "chapter": "databases",
-            "heading": "Sources",
-            "text": "MySQL 8.0, what is new: https://dev.mysql.com/doc/refman/8.0/en/mysql-nutshell.html",
+            "heading": "Moving to 8.4",
+            "text": "Large prefixes are always on. `innodb_large_prefix` no longer exists (probe `large-prefix-off`), `ROW_FORMAT=DYNAMIC` is honored without a warning (probe `row-format-dynamic`), and a 255 character `utf8mb4` index fits (probes `index-255`, `row-format-dynamic-index`). `defaultStringLength(191)` does no harm there, so it can stay until the app leaves 5.6 for good.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1807,7 +1895,149 @@
             "source": "handbook/databases.md:154"
         },
         {
+            "id": "databases-32",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "Laravel 13 database docs: https://laravel.com/docs/13.x/database",
+            "applies_to": [
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:214"
+        },
+        {
+            "id": "databases-33",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "Laravel docs, `migrations.md` (index-length section): https://github.com/laravel/docs/blob/10.x/migrations.md",
+            "applies_to": [
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:215"
+        },
+        {
+            "id": "databases-34",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "Laravel 13 migrations docs: https://laravel.com/docs/13.x/migrations",
+            "applies_to": [
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:217"
+        },
+        {
+            "id": "databases-35",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "Laravel 13 query builder docs: https://raw.githubusercontent.com/laravel/docs/13.x/queries.md",
+            "applies_to": [
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:218"
+        },
+        {
+            "id": "databases-36",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "Laravel database queue: https://github.com/laravel/framework/blob/13.x/src/Illuminate/Queue/DatabaseQueue.php",
+            "applies_to": [
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:220"
+        },
+        {
+            "id": "databases-37",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "Laravel schema builder: https://github.com/laravel/framework/blob/13.x/src/Illuminate/Database/Schema/Builder.php",
+            "applies_to": [
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:222"
+        },
+        {
+            "id": "databases-38",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "MySQL 5.7.7 release notes: https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-7.html",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:224"
+        },
+        {
             "id": "databases-39",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "MySQL 5.7.8 release notes (JSON): https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:226"
+        },
+        {
+            "id": "databases-40",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "MySQL 5.7.6 release notes (generated columns): https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-6.html",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:228"
+        },
+        {
+            "id": "databases-41",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "MySQL 5.6 CREATE INDEX (767 and 3072 byte limits): https://dev.mysql.com/doc/refman/5.6/en/create-index.html",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:230"
+        },
+        {
+            "id": "databases-42",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "MySQL 8.0, what is new: https://dev.mysql.com/doc/refman/8.0/en/mysql-nutshell.html",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:232"
+        },
+        {
+            "id": "databases-43",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL CHECK constraints: https://dev.mysql.com/doc/refman/8.0/en/create-table-check-constraints.html",
@@ -1818,10 +2048,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:155"
+            "source": "handbook/databases.md:233"
         },
         {
-            "id": "databases-40",
+            "id": "databases-44",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL 5.7 INFORMATION_SCHEMA COLUMNS: https://dev.mysql.com/doc/mysql-infoschema-excerpt/5.7/en/information-schema-columns-table.html",
@@ -1832,10 +2062,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:157"
+            "source": "handbook/databases.md:235"
         },
         {
-            "id": "databases-41",
+            "id": "databases-45",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL RENAME INDEX worklog: https://dev.mysql.com/worklog/task/?id=6555",
@@ -1846,10 +2076,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:159"
+            "source": "handbook/databases.md:237"
         },
         {
-            "id": "databases-42",
+            "id": "databases-46",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL INSERT ... ON DUPLICATE KEY UPDATE (row alias from 8.0.19): https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html",
@@ -1860,10 +2090,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:160"
+            "source": "handbook/databases.md:238"
         },
         {
-            "id": "databases-43",
+            "id": "databases-47",
             "chapter": "databases",
             "heading": "Sources",
             "text": "Oracle MySQL end-of-life notices: https://www.mysql.com/support/eol-notice.html",
@@ -1874,10 +2104,36 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:162"
+            "source": "handbook/databases.md:240"
         },
         {
-            "id": "databases-44",
+            "id": "databases-48",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "Laravel MySQL schema grammar (column, table and rename queries): https://github.com/laravel/framework/blob/13.x/src/Illuminate/Database/Schema/Grammars/MySqlGrammar.php",
+            "applies_to": [
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:241"
+        },
+        {
+            "id": "databases-49",
+            "chapter": "databases",
+            "heading": "Sources",
+            "text": "MySQL 5.6.46 release notes (TLS 1.1 and 1.2, yaSSL dropped): https://dev.mysql.com/doc/relnotes/mysql/5.6/en/news-5-6-46.html",
+            "applies_to": [
+                "raw-php",
+                "raw-php-vue",
+                "laravel-blade",
+                "laravel-blade-vue",
+                "laravel-inertia-vue"
+            ],
+            "source": "handbook/databases.md:243"
+        },
+        {
+            "id": "databases-50",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL 5.6 TLS protocols: https://docs.oracle.com/cd/E17952_01/mysql-5.6-en/encrypted-connection-protocols-ciphers.html",
@@ -1888,10 +2144,10 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:163"
+            "source": "handbook/databases.md:245"
         },
         {
-            "id": "databases-45",
+            "id": "databases-51",
             "chapter": "databases",
             "heading": "Sources",
             "text": "MySQL 9.7, native pluggable authentication: https://dev.mysql.com/doc/refman/9.7/en/native-pluggable-authentication.html",
@@ -1902,7 +2158,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/databases.md:165"
+            "source": "handbook/databases.md:247"
         },
         {
             "id": "dependencies-1",

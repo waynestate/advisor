@@ -251,6 +251,7 @@
                     "type": "string",
                     "enum": [
                         "accessibility",
+                        "ai",
                         "auth",
                         "ci",
                         "code",

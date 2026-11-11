@@ -50,14 +50,14 @@ Add Pinstripe as a dev dependency:
 
 ```
 composer config allow-plugins.phpstan/extension-installer true
-composer require --dev waynestate/pinstripe:^0.3
+composer require --dev waynestate/pinstripe:^0.4
 ```
 
 Pinstripe loads its PHPStan rules through `phpstan/extension-installer`, and Composer will not ask when it cannot prompt.
 If Composer stops because a package your app already locks (often an older PHPStan) does not fit, run the same `composer require` again with `-W`, as Composer suggests, so it may update that package too.
 
-`^0.3` gets you 0.3.2, the current release, with every [banned call](#banned-calls) below. Packagist reads the GitHub
-mirror, which can trail a release by a while. If Composer says it cannot find a 0.3 version, point it at the
+`^0.4` gets you 0.4.0, the current release, with every [banned call](#banned-calls) below. Packagist reads the GitHub
+mirror, which can trail a release by a while. If Composer says it cannot find a 0.4 version, point it at the
 canonical repository first (it asks for your git.wayne.edu sign-in), then run the `composer require` again:
 
 ```
@@ -186,7 +186,7 @@ Same, with the Laravel parts:
 
 ```
 composer config allow-plugins.phpstan/extension-installer true
-composer require --dev waynestate/pinstripe:^0.3 larastan/larastan
+composer require --dev waynestate/pinstripe:^0.4 larastan/larastan
 ```
 
 Pinstripe loads its PHPStan rules through `phpstan/extension-installer`, and Composer will not ask when it cannot prompt.
@@ -230,6 +230,13 @@ export default [...pinstripe]
 ```
 
 For plain JavaScript, import `@waynestate/pinstripe/eslint/javascript` instead.
+
+The TypeScript preset lints with types (typescript-eslint's `recommendedTypeChecked`, through `projectService`), so
+it catches what the syntax alone cannot, such as a promise nobody awaits: `save()` called without `await` fails lint
+with `@typescript-eslint/no-floating-promises`, in a `.ts` file and in a `.vue` file alike. It reads the app's
+`tsconfig.json`, so that file must include the `.ts` and `.vue` files you lint. Typed linting is slower than syntax
+linting, so run it in CI rather than on every save. Proven on fixtures: `tests/js/typed` holds a clean `.ts` file
+that must pass and a floating promise in `.ts` and in `.vue` that must each fail (`npm test`).
 
 Point Prettier at the preset in `package.json`:
 
@@ -429,7 +436,10 @@ the helper `@return literal-string`, or keep the call with a reasoned ignore. Ap
 files clear every report with one typed reader; the
 [Banned calls](https://pinstripe.apps.wayne.edu/docs/reference/banned-calls.html#sql-kept-in-sql-files) page has it.
 A wrapper that takes the whole SQL as a plain `string` is reported once, inside, and never at its callers, so type its
-parameter `literal-string` and PHPStan checks each caller; never baseline a wrapper. Postgres's `pg_query()` is not
+parameter `literal-string` and PHPStan checks each caller; never baseline a wrapper. The PDO and mysqli methods are
+matched by the connection's type, so a connection PHPStan cannot type (a `global $db` from an old include) hides
+every joined query made on it: name the type (`/** @var \PDO $db */`, or better a typed property) and they are
+reported. Postgres's `pg_query()` is not
 covered, since its connection argument is optional and the SQL has no fixed position.
 
 Only the off switch is banned. Setting `CURLOPT_SSL_VERIFYPEER` to true, `verify` to a CA bundle, or `false` on an
@@ -473,7 +483,8 @@ twins `SecureTransport.php` and `VerifiedHttp.php` stay green; `JoinedSql.php` (
 and `JoinedQueries.php` (Laravel, six of Pinstripe's and three of Laravel's own) must be reported for each, while
 `BoundSql.php` and `BoundQueries.php` bind their values and stay green; `SqlFiles.php` reads its SQL from `.sql`
 files through a typed reader and wrapper and stays green, while `JoinedThroughAWrapper.php` must be reported at each
-joined caller; and the
+joined caller; `UntypedConnection.php` must pass a joined query on an untyped `global` connection and report the same
+query once the connection is typed; and the
 Laravel app fixture installs Pinstripe through Composer and must fail on a leftover `dd()` and on curl told to skip
 the certificate check, which proves the curl rule loads from `vendor/`. A suit with a `dd()` in
 the pocket does not leave the shop.

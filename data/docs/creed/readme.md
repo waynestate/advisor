@@ -281,6 +281,11 @@ Preflight tag as CI), axe-core against WCAG 2.2 AA in a real Chromium browser, r
 in light and dark at 320 and 1280 pixels wide, so a page that passes locally passes CI. `scripts/a11y.sh` on Linux
 and macOS, `scripts/a11y.ps1` on Windows.
 
+The databases chapter's MySQL 5.6 claims are checked against a real 5.6.51: `scripts/mysql56-probe.sh` (or `.ps1`)
+starts the server in Docker and runs `bin/mysql56-probe.php`, 32 probes written in the SQL Laravel 13 sends. Give it
+`8.4` (`-Server 8.4` in PowerShell) and the same probes ask MySQL 8.4.13 instead, which is how the chapter's "Moving to
+8.4" section is proven. Creed Bratton tells stories about 1966 that nobody can check; 5.6 gets no such courtesy.
+
 ## Strongly recommended: a git.wayne.edu instance runner
 
 git.wayne.edu now has an instance runner, and the stack's CI runs on it.

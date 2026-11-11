@@ -121,7 +121,7 @@
             "role": "The coding standard: shared Pint and PHPStan presets, plus ESLint and Prettier configuration.",
             "state": "built",
             "package": "waynestate/pinstripe",
-            "version": "0.3.2",
+            "version": "0.4.0",
             "php": "^8.3",
             "next_step": "Point Pint and PHPStan at its presets; one formatter per repository.",
             "docs": [
@@ -153,7 +153,7 @@
             "role": "The fleet census: PHP, image, framework and PROCTOR result for every app, and the end-of-life burn-down.",
             "state": "built",
             "package": "waynestate/rollcall",
-            "version": "1.1.1",
+            "version": "1.2.0",
             "php": "^8.3",
             "next_step": "Owners check their app's row; a missing row means the app is not registered.",
             "docs": [
@@ -216,7 +216,7 @@
             "role": "This server: orients a developer and gives their coding agent read-only tools into the stack. It sits beside Laravel Boost and does not replace it.",
             "state": "built",
             "package": "waynestate/advisor",
-            "version": "0.3.0",
+            "version": "0.3.1",
             "php": "^8.3",
             "next_step": "Run `advisor install` to wire your agent, then start with list_projects.",
             "docs": [

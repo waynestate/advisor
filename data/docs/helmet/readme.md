@@ -897,7 +897,9 @@ document path) and nothing else. It accepts both report formats: the legacy
 `application/csp-report` object, and the Reporting API's
 `application/reports+json` array, from which it logs the `csp-violation`
 entries (at most 20 per POST; browsers batch other report types into the
-same request, and those are ignored). The route is off until you register it:
+same request, and those are ignored). Each field is made safe to log first:
+a run of whitespace or control characters becomes one underscore, and a field
+past 200 bytes is cut. The route is off until you register it:
 
 ```php
 // routes/web.php
@@ -917,6 +919,34 @@ throttle, or `null` to disable it:
 Route::cspReport('/reports/csp', 'throttle:120,1'); // your own limit
 Route::cspReport('/reports/csp', null);             // no throttle
 ```
+
+Raw PHP gets the same endpoint from one call in a file of its own. It never
+calls `helmet_boot()`, because a browser POSTs reports with no session and no
+CSRF token:
+
+```php
+<?php
+// public/csp-report.php
+require __DIR__ . '/../vendor/autoload.php';
+
+use Waynestate\Helmet\Logging\Logging;
+use function Waynestate\Helmet\helmet_csp_report;
+
+helmet_csp_report(Logging::create('csp', 'php://stderr'));
+```
+
+`helmet_csp_report()` answers exactly as the Laravel route does (both go
+through `Headers\CspReport`): the same formats and caps, `204` on success,
+`405` with `Allow: POST` for any other method, one warning per violation with
+the three fields as context. It has no throttle of its own, so rate-limit at
+the web server if reports ever flood. `helmet_csp_report_response()` returns
+the same answer as data without sending it. Think of it as the referee's
+whistle without the referee's opinions.
+
+A PSR-15 pipeline mounts `CspReportMiddleware` before the guard instead:
+`new CspReportMiddleware($factory, $factory, '/csp-report', $logger)`. On its
+path it gives the same answers; on any other path it passes through. See
+[Receiving the reports in PSR-15](docs/guides/csp.md#receiving-the-reports-in-psr-15).
 
 ### Cross-origin isolation and feature policy
 
@@ -1136,7 +1166,8 @@ Route::helmetMetrics('/metrics', null);           // no throttle
 
 With `HELMET_METRICS_STORAGE` set, a terminable middleware at the front of
 the global stack times every request and records it after the response is
-sent. `Route::cspReport()` counts violations by directive.
+sent. `Route::cspReport()` counts violations by directive; in raw PHP,
+`helmet_csp_report($logger, helmet_metrics_requests($config))` does the same.
 
 ### Raw PHP
 

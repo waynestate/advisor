@@ -29,10 +29,11 @@ Tags describe the repository and design documents as they stand on 2026-10-29. P
 HELMET main and Rollcall main, and five tags moved (practices 8, 17, 23, 34 and 53). Later that day the pin moved to
 Preflight 0.3.0, and the practices that name it (23 and 42) were re-read against 0.3.0. PROCTOR v0.1 is specified in
 `first-repos.md` and its checks are named below as specified. CREED's own pipeline includes the `php-test`,
-`composer-audit`, `proctor` and `a11y` components, pinned to Preflight 0.8.0; the `proctor` job checks `deploy/` and, since
+`composer-audit`, `proctor`, `a11y` and `mysql56-migrate` components, pinned to Preflight 0.8.0; the `proctor` job checks `deploy/` and, since
 2026-11-10, blocks: a failing check fails the pipeline, and a warning never does. Later on 2026-11-08, after a re-read of PROCTOR main and HELMET
 main, two more tags moved: practice 26 to `Checked` and practice 28 to `Partially`. On 2026-11-10 practice 40 moved
-to `Checked` after PROCTOR 0.13.0.
+to `Checked` after PROCTOR 0.13.0. On 2026-11-11 practice 23 moved to `Checked`: PROCTOR 0.12.0's `preflight-pinned`
+warns on any unpinned CI component, not only Preflight's, so no part of the rule is left to the page.
 
 ## 1. The version policy as data
 
@@ -404,9 +405,9 @@ Sources: [Composer basic usage](https://getcomposer.org/doc/01-basic-usage.md) (
 commit SHA, which it calls preferred, or to a release tag; it says to avoid `~latest`). The pinning rule itself is the
 stack's own, from the first-repos design.
 
-How the stack holds it: `Partially`. `ci.md` states it, and CREED's `.gitlab-ci.yml` pins its four Preflight
-components (`php-test`, `composer-audit`, `proctor` and `a11y`) to the 0.8.0 tag. PROCTOR main's `proctor/preflight-pinned`
-warns when an app includes any CI component (Preflight's or anyone else's) at a branch, `~latest`, a partial version
+How the stack holds it: `Checked`. `ci.md` states it, and CREED's `.gitlab-ci.yml` pins its five Preflight
+components (`php-test`, `composer-audit`, `proctor`, `a11y` and `mysql56-migrate`) to the 0.8.0 tag. PROCTOR 0.12.0's
+`proctor/preflight-pinned` warns when an app includes any CI component (Preflight's or anyone else's) at a branch, `~latest`, a partial version
 such as `0.3` or no ref; a full release tag (such as `@0.3.0`) or a full commit SHA passes.
 
 ## 4. Secrets and configuration
@@ -730,9 +731,9 @@ fails the job on a high or critical advisory in a runtime dependency (sourdough
 templates/laravel-blade-vue/.gitlab-ci.yml:112-114, templates/laravel-inertia/.gitlab-ci.yml:113-115,
 templates/raw-vue/.gitlab-ci.yml:104-106). The rest is written down only: WELD's own CI runs
 `npm ci --no-audit --no-fund` without `--ignore-scripts` and with no audit step (weld .gitlab-ci.yml:111),
-Preflight 0.5.0 adds an `npm-audit` component that audits `package-lock.json` (its fourteen templates are a11y,
-composer-audit, eslint, npm-audit, package-publish, php-test, phpstan, pint, portability, proctor, renovate, sbom,
-secret-detection and squire-kit), but no stack repo or template includes it yet, and the `audit_severity_threshold` rule is read by the Composer audit alone (proctor README.md:111). `handbook/dependencies.md` writes the map (`medium` is npm's `moderate`), which Preflight's `npm-audit` component applies (preflight templates/npm-audit/template.yml:38,76). (Sourdough grades the same release install
+Preflight 0.5.0 added an `npm-audit` component that audits `package-lock.json` (0.8.0 has fifteen templates: a11y,
+composer-audit, eslint, mysql56-migrate, npm-audit, package-publish, php-test, phpstan, pint, portability, proctor,
+renovate, sbom, secret-detection and squire-kit), but no stack repo or template includes it yet, and the `audit_severity_threshold` rule is read by the Composer audit alone (proctor README.md:111). `handbook/dependencies.md` writes the map (`medium` is npm's `moderate`), which Preflight's `npm-audit` component applies (preflight templates/npm-audit/template.yml:38,76). (Sourdough grades the same release install
 `Documented` from its own seat, sourdough BEST_PRACTICES.md:203; the tag here counts the built code in the stack.)
 
 ### 42. Gate on tools that work on every GitLab tier
@@ -755,8 +756,9 @@ Sources: [GitLab dependency scanning](https://docs.gitlab.com/user/application_s
 
 How the stack holds it: `Documented`. The rule is written in `handbook/code.md`: the stack's GitLab instances run the
 Free tier, so nothing relies on GitLab SAST. git.wayne.edu (and nougat, which keeps the container registry) runs GitLab
-19.5.1 Community Edition (the Free tier). The four components CREED uses run PHPUnit (`php-test`), `composer audit`
-(`composer-audit`), PROCTOR (`proctor`) and axe-core in Playwright (`a11y`), not a GitLab scanner (Preflight 0.8.0,
+19.5.1 Community Edition (the Free tier). The five components CREED uses run PHPUnit (`php-test`), `composer audit`
+(`composer-audit`), PROCTOR (`proctor`), axe-core in Playwright (`a11y`) and a MySQL 5.6.51 service
+(`mysql56-migrate`), not a GitLab scanner (Preflight 0.8.0,
 the pin in `.gitlab-ci.yml`), so they fit it.
 
 ### 43. Treat `APP_KEY` as a code-execution key
@@ -833,8 +835,14 @@ Sources: [Laravel 13 database docs](https://laravel.com/docs/13.x/database), [en
 How the stack holds it: `Partially`. `policy.json` records the minimum MySQL and MariaDB for each Laravel release
 (Laravel 10 to 13), and the reader exposes them through `requires()`; `tests/PolicyRequiresTest.php` pins the values.
 PROCTOR 0.10.0's `mysql-minimum` warns when an app's declared MySQL or MariaDB image (in a compose file,
-`.env.squire.example` or `.env.example`) is below its locked Laravel line's minimum; it warns only and is not in the deploy gate. The platform's
-MySQL timeline is still an open question.
+`.env.squire.example` or `.env.example`) is below its locked Laravel line's minimum; it warns only and is not in the deploy gate. The handbook's
+5.6 conventions (`handbook/databases.md`) are no longer taken on trust: `bin/mysql56-probe.php` sends the SQL Laravel 13
+writes to a real MySQL 5.6.51 and checks each claim, in CREED's `mysql56-probe` CI job and in `scripts/mysql56-probe.sh`
+or `.ps1`. The probes turned up two quiet failures the chapter now names: 5.6 accepts DESC indexes and CHECK constraints
+and ignores both, and on 5.6 Laravel drops `useCurrent()` from a `date` column. The same probes run on MySQL 8.4.13 in
+the `mysql84-probe` job, which proves the chapter's "Moving to 8.4" section: everything 5.6 accepts, 8.4 accepts too, except a row that
+breaks a CHECK constraint.
+The platform's MySQL timeline is still an open question.
 
 ### 47. Plan the MySQL move around authentication and LTS lines
 
@@ -850,7 +858,9 @@ Sources: [MySQL 9.7: native pluggable authentication](https://dev.mysql.com/doc/
 [endoflife.date MySQL](https://endoflife.date/mysql).
 
 How the stack holds it: `Documented`. `policy.json` lists the LTS lines 8.4 and 9.7 and not the short-lived ones, and
-`handbook/databases.md` writes down the rule and the authentication-plugin step.
+`handbook/databases.md` writes down the rule and the authentication-plugin step. Its "Moving to 8.4" section lists what
+the move changes for app code (CHECK constraints start refusing rows, DESC indexes are built descending, `date` columns
+get their `useCurrent()` default), each shown on MySQL 8.4.13 by a probe.
 
 ### 48. Say how fast the platform adds a new PHP, and how it announces a drop
 

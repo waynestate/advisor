@@ -371,7 +371,7 @@ include:
 | Input | Type | Default | What it does |
 |-------|------|---------|--------------|
 | `job_name` | string | `renovate` | Name of the job. Set it when you include this component more than once. |
-| `image` | string | `renovate/renovate:44.192.2@sha256:37960a62ba1faa9079a7c4eead9b3f4470748a64ecd207e06c09fd8858673e17` | Docker image for the job. |
+| `image` | string | `renovate/renovate:44.229.0@sha256:3cbb11917cc72ad4caf0ad96ade546447656310f2057e33e24a4398779d9330c` | Docker image for the job. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
 | `autodiscover_filter` | string | `$CI_PROJECT_NAMESPACE/*` | Glob limiting which projects Renovate discovers, relative to the runner project's namespace. |
 | `dry_run` | string | `"null"` | Dry run mode: `null` (disabled), `lookup` or `full`. |
@@ -423,7 +423,7 @@ sign-in route for `session-hop` and what each failure usually means.
 |-------|------|---------|--------------|
 | `stage` | string | `test` | Pipeline stage for the portability job. |
 | `job_name` | string | `portability` | Name of the job. Set it when you include this component more than once. |
-| `image` | string | `quay.io/buildah/stable:v1.43.5-immutable@sha256:7c2b605262748ace2c5c57c5550942d0adad57aec82ede3070927722306c0ffb` | Buildah image the job runs in. It builds the app image and runs the probe. |
+| `image` | string | `quay.io/buildah/stable:v1.45.1-immutable@sha256:e5a33092657823b0830186ea525054cf4cdeef29b6a44833444c59d86f561f29` | Buildah image the job runs in. It builds the app image and runs the probe. |
 | `dockerfile` | string | `Dockerfile` | Dockerfile to build, relative to the context. |
 | `context` | string | `.` | Build context, relative to the project root. |
 | `build_args` | array | `[]` | Build arguments as `NAME=value`; `$NAME` and `${NAME}` are replaced from the job's variables. |
@@ -947,7 +947,7 @@ Run the PHP fixture app separately:
 
 ```sh
 docker run --rm -v "$(pwd)/tests/fixture-app:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 composer install
-docker run --rm -v "$(pwd)/tests/fixture-app:/app" -w /app php:8.4-cli vendor/bin/phpunit
+docker run --rm -v "$(pwd)/tests/fixture-app:/app" -w /app php:8.4-cli-trixie vendor/bin/phpunit
 ```
 
 Run the portability fixtures with Docker. The check runs the component's own
@@ -959,7 +959,7 @@ namespace; it is not `--privileged`:
 
 ```sh
 docker run --rm --security-opt seccomp=unconfined -v "$(pwd):/src:ro" -w /src \
-  quay.io/buildah/stable:v1.43.5-immutable@sha256:7c2b605262748ace2c5c57c5550942d0adad57aec82ede3070927722306c0ffb \
+  quay.io/buildah/stable:v1.45.1-immutable@sha256:e5a33092657823b0830186ea525054cf4cdeef29b6a44833444c59d86f561f29 \
   sh tests/check-portability.sh
 ```
 

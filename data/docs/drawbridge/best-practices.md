@@ -329,7 +329,7 @@ How the stack holds it: `Enforced`. `AssertionSignerTest::testEveryTokenHasItsOw
 Sync time on the gateway and app hosts, and allow a skew of about 30 seconds, not minutes.
 Why: 60-second assertions fail on drifting clocks, and a wide tolerance undoes the short life.
 Sources: [Google IAP signed headers (30 seconds of skew on `exp` and `iat`)](https://docs.cloud.google.com/iap/docs/signed-headers-howto).
-How the stack holds it: `Not yet`. The signer drops an `auth_time` in the future (`AssertionSignerTest::testAnAuthTimeInTheFutureIsDropped`), but time sync on the hosts is the platform's, and it is not confirmed.
+How the stack holds it: `Not yet`. The signer drops an `auth_time` in the future (`AssertionSignerTest::testAnAuthTimeInTheFutureIsDropped`), but time sync on the hosts is the platform's, and it is not confirmed. `drawbridge smoke` compares the app host's clock with the gateway's on every deployment check and fails at more than 10 seconds apart (`SmokeClockTest`).
 
 ### D47. Patch the web server, and keep rewrite rules out of access decisions
 Use Apache 2.4.60 or later, and do not let `mod_rewrite` be the only thing that decides who gets in.

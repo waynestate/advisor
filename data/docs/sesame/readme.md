@@ -56,7 +56,7 @@ assertions.
 
 | Setting | Config key | Meaning |
 |---|---|---|
-| `SESAME_CAS_BASE_URL` | `cas.base_url` | The CAS server, an absolute https:// URL. |
+| `SESAME_CAS_BASE_URL` | `cas.base_url` | The CAS server, an absolute https:// URL (`http://localhost` or `http://127.0.0.1` only in a local environment). |
 | `SESAME_GATEWAY_ISSUER` | `gateway.issuer` | The `iss` claim the gateway assertion must carry. |
 | `SESAME_OAUTH2_ISSUER` | `oauth2.issuer` | The `iss` claim the bearer token must carry. |
 | `SESAME_OAUTH2_JWKS_URL` | `oauth2.jwks_url` | The URL of the issuer's key set. |
@@ -236,8 +236,10 @@ both.
 but from 0.7.0 `NativeSession` looks at the ones your session started with.
 When the session cookie lacks `HttpOnly`, lacks `Secure` on an https request
 (`HTTPS` set, or `X-Forwarded-Proto: https`), or has a `SameSite` other than
-`Lax` or `Strict`, the first use in the request raises one `E_USER_WARNING`
-naming the missing flags and the fix, and the session keeps working. PHP's own
+`Lax`, the first use in the request raises one `E_USER_WARNING` naming the
+missing flags and the fix, and the session keeps working. A `Strict` cookie
+gets its own sentence, because it is the one setting that looks safer and
+breaks every sign-in (see S41 below). PHP's own
 defaults trip it (`HttpOnly` off and no `SameSite`), and so did Squire's kit
 `php.ini` before Squire 0.10.2 (it now sets `session.cookie_samesite = Lax`;
 run `squire update`). Where the host's `php.ini` decides, the fix is the
@@ -288,8 +290,9 @@ settings in `config/session.php`:
   cookie is not sent on that request: it would be
   missing, so the app would see no session on the return request and any login
   binding (S18) would fail for every user. `Lax` is what HELMET sets and what
-  Laravel does by default. `NativeSession` warns about a missing or `None`
-  value, but it lets `Strict` through, so that mistake is yours to avoid. A cross-site `POST` carries no `Lax` cookie at all,
+  Laravel does by default. `NativeSession` warns about a missing, `None` or
+  `Strict` value (and the `Strict` warning says why sign-in fails); in
+  Laravel, `php artisan sesame:check` fails on it before a deploy does. A cross-site `POST` carries no `Lax` cookie at all,
   which is the defense you want; that is why the `saml` driver's ACS parks
   the IdP's POST without a session and sends the browser back to the login
   URL with a 303, where the `Lax` cookie is sent again (S35).
@@ -548,14 +551,22 @@ Config keys:
 
 | Key | Required | Default | Meaning |
 |---|---|---|---|
-| `cas.base_url` | Yes | none | The CAS server, an absolute https:// URL, including the path the CAS server lives under (for Academica, `/cas`). |
-| `cas.service_url` | Yes | none | Where the server sends the user back to. |
+| `cas.base_url` | Yes | none | The CAS server, an absolute https:// URL (`http://localhost` only in a local environment), including the path the CAS server lives under (for Academica, `/cas`). |
+| `cas.service_url` | Yes | none | Where the server sends the user back to: an absolute https:// URL, or `http://localhost` or `http://127.0.0.1` in a local environment. |
 | `cas.protocol` | No | `2.0` | `3.0` or `2.0`. |
 | `cas.renew` | No | `false` | Send `renew` on login and validation, so the CAS server requires a fresh, direct login. |
 | `cas.assume_mfa` | No | `false` | A successful validation counts as an MFA sign-in: the identity's `amr` includes `mfa`. On only when the CAS server enforces MFA for every sign-in. |
 
 The service URL is the configured value only: the driver never reads the
 request's Host or X-Forwarded-* headers to build it.
+
+Both addresses must be https, with one exception for a developer's own machine:
+when the app environment is local (`local`, `development`, `dev`, `testing` or
+`test`, the same list the fake driver checks), plain `http://localhost` and
+`http://127.0.0.1` are accepted too. In any other environment, production
+included, they are refused with the same `must be an absolute https:// URL`
+error as before. In Laravel the environment is `APP_ENV`; in raw PHP it is the
+`environment` config key.
 
 Protocol 2.0 is the default because Academica is believed to redirect
 cookieless `/p3/serviceValidate` calls to the login page. Set `cas.protocol`
@@ -1144,7 +1155,7 @@ spot the first time anything asks who is signed in.
 | `session.idle_minutes` | `120` | Drop the session after this much quiet time (2 hours by default). |
 | `session.absolute_minutes` | `720` | End the session this long after sign-in, even if it is still active (12 hours by default). |
 | `logoutReuseTtlSeconds` | `60` | The window in which a reused logged-out session ID is logged as an anomaly, in seconds. A `new NativeSession()` option, not a config key; `0` makes `invalidate()` destroy the session outright instead of leaving the logout marker. |
-| `checkSessionSettings` | `null` | How a native session treats `session.use_strict_mode`, `session.use_only_cookies` and the session cookie's flags. A `new NativeSession()` option, not a config key. `null` turns both settings on whenever no session is active and warns once per request (`E_USER_WARNING`) when the app started its session with either one off, or with a cookie that lacks `HttpOnly`, `Secure` (on https) or a `Lax` or `Strict` `SameSite`; `true` also turns the settings on but throws `LogicException` on every call instead of warning; `false` leaves the settings alone and stays quiet. SESAME never sets a cookie flag. |
+| `checkSessionSettings` | `null` | How a native session treats `session.use_strict_mode`, `session.use_only_cookies` and the session cookie's flags. A `new NativeSession()` option, not a config key. `null` turns both settings on whenever no session is active and warns once per request (`E_USER_WARNING`) when the app started its session with either one off, or with a cookie that lacks `HttpOnly`, `Secure` (on https) or a `Lax` `SameSite` (a `Strict` one is named as the reason sign-in fails); `true` also turns the settings on but throws `LogicException` on every call instead of warning; `false` leaves the settings alone and stays quiet. SESAME never sets a cookie flag. |
 
 On login the session stores the sign-in time and the last activity time, and
 `user()` refreshes the last activity time on every call that finds a live
@@ -1296,8 +1307,8 @@ Config keys (in `config/sesame.php`):
 | Key | Env | Default | Meaning |
 |---|---|---|---|
 | `driver` | `SESAME_DRIVER` | `cas` | `cas`, `gateway`, `oauth2`, `oidc`, `saml` or `fake`. The oidc keys are in "The oidc driver (Entra sign-in)", the saml keys in "The saml driver (SAML 2.0 sign-in)". |
-| `cas.base_url` | `SESAME_CAS_BASE_URL` | none | The CAS server, an absolute https:// URL. |
-| `cas.service_url` | `SESAME_CAS_SERVICE_URL` | the app's `/login` route | Where the server sends the user back to. |
+| `cas.base_url` | `SESAME_CAS_BASE_URL` | none | The CAS server, an absolute https:// URL (`http://localhost` or `http://127.0.0.1` only in a local environment). |
+| `cas.service_url` | `SESAME_CAS_SERVICE_URL` | the app's `/login` route | Where the server sends the user back to: an absolute https:// URL, or `http://localhost` or `http://127.0.0.1` in a local environment. |
 | `cas.protocol` | `SESAME_CAS_PROTOCOL` | `2.0` | `3.0` or `2.0`. |
 | `cas.assume_mfa` | `SESAME_CAS_ASSUME_MFA` | `false` | A successful validation counts as an MFA sign-in. On only when the CAS server enforces MFA for every sign-in. |
 | `fake.username` | `SESAME_FAKE_USERNAME` | none | The fake driver's username. |
@@ -1330,6 +1341,17 @@ Config keys (in `config/sesame.php`):
 | `routes` | `SESAME_ROUTES` | `true` | Register the login, logout and status routes. |
 | `log` | `SESAME_LOG` | `true` | Log the sign-in and sign-out events through the app's PSR-3 logger. Set to `false` to turn them off. |
 | `user_resolver` | `SESAME_USER_RESOLVER` | none | The class that resolves a verified identity to the app's user. Required. |
+
+**Check before a deploy.** SESAME rides on the app's own session in Laravel,
+so a wrong `config/session.php` breaks sign-in without an error. Run
+`php artisan sesame:check` in the deploy job: it prints one `[OK]`, `[WARN]`
+or `[FAIL]` line each for the driver, the user resolver, the session driver,
+HttpOnly, SameSite (`Strict` fails), Secure (`false` fails in production) and
+the session lifetime against SESAME's idle timeout, and exits `1` on any
+failure (`--strict` fails on warnings too). It reads config only: no sign-in,
+no call to the identity provider, no URL or secret in the output. Think of it
+as the locksmith's visit before opening day. The table of what each line
+checks is in the Laravel guide, "Check before a deploy".
 
 The routes, when `routes` is true:
 
@@ -1632,6 +1654,21 @@ two catches and the checks to run before shipping, is
 ## Proof
 
 Proof runs against real Wayne State applications are on a private site, [proof.apps.wayne.edu/sesame](https://proof.apps.wayne.edu/sesame/), behind a Wayne State employee sign-in.
+
+## Run it locally
+
+SESAME is a library, so the app you can run is its front page: the raw-PHP layer in `deploy/`, served the way
+Citadel serves it. Use [Parity](https://git.wayne.edu/enterprise-apps/parity) (a separate install):
+
+```sh
+cd deploy
+parity init --from-squire   # once: reads the Squire kit and writes parity.json
+parity up                   # Citadel's PHP image, proxy and MySQL 5.6, on the printed address
+parity check                # the same checks, against the running copy
+parity down
+```
+
+The library's own tests are under Tests below.
 
 ## Tests
 

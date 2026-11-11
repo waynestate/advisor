@@ -24,5 +24,6 @@ Every rule that uses MUST, SHOULD or MAY names what holds it, with one of three 
 - [Accessibility](accessibility.md)
 - [Every OS](every-os.md)
 - [Secrets](secrets.md)
+- [AI and LLM use](ai.md)
 - [Production](production.md)
 - [Overrides](overrides.md)

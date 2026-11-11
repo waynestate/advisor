@@ -144,7 +144,7 @@ no config). `--json` on the read commands is the stable contract.
 | Command | Status |
 |---|---|
 | `parity check [--json]` | works: engine (Podman, machine or native, rootless or rootful; Docker Desktop; anything that answers the `docker` command) and any other engine that is here, `PARITY_ENGINE`, Docker Compose v2 (and Podman's API socket on Linux), Linux containers mode, WSL 2, arm64 emulation (Rosetta, QEMU), Windows line endings in the files Citadel runs; with a `parity.json` and a running engine it ends with the same side-by-side as `parity status` |
-| `parity init [--from-squire] [--print]` | works: writes `parity.json` from what is in the folder (with Laravel's scheduler as a cron entry when the app schedules anything); flags `--image`, `--public-dir`, `--mode`, `--mysql`, `--no-mysql`, `--sign-in`, `--no-cron`, `--port`, `--name`, `--force` |
+| `parity init [--from-squire] [--print]` | works: writes `parity.json` from what is in the folder (with Laravel's scheduler as a cron entry when the app schedules anything); flags `--image`, `--public-dir`, `--mode`, `--mysql`, `--no-mysql`, `--sign-in`, `--health-check`, `--no-cron`, `--port`, `--name`, `--force` |
 | `parity up [--verbose] [--wait 5m]` | works: Citadel's image (checked against the catalog), the build, MySQL 5.6.51, the app's deployments and health check, the proxy, then the address. Exit 1 when the app's own build, deployments or health check failed, 2 when Parity could not run it (no engine, no image, a port taken) |
 | `parity status [--json]` | works: each piece and its health, then your machine and Citadel side by side (image, image id, PHP, platform, php.ini, MySQL, Node, PHP extensions). Exit 0 when all run and are healthy, 1 when not |
 | `parity logs [app\|mysql\|proxy\|cron:<name>] [-f] [--tail 100] [--apache]` | works; `--apache` shows Apache's own logs from `/citadel/logs/apache`, where Citadel keeps them; `cron:<name>` shows a cron entry's stdout and stderr files from `/citadel/logs/cron-jobs` |
@@ -154,6 +154,7 @@ no config). `--json` on the read commands is the stable contract.
 | `parity image get [tag] [--file x.tar] [--git] [--https] [--keep] [--force]` | works: downloads Citadel's image with your own git.wayne.edu access, checks its sha256 and image id, loads it |
 | `parity image verify [tag] [--file x.tar]` | works: the image here (or a tar) against Citadel's. Exit 1 when it differs |
 | `parity test [--json]` | works: the front page through the proxy, the app's health check, the requests in `parity.json`, and no PHP fatal error in Apache's log while it ran. Exit 1 when any fails |
+| `parity run [--user citadel] [--] command [args...]` | works: runs a tool (`composer ci`, `php artisan test`, `npm run build`) in the app container as user citadel and returns its exit code; in bake mode it says the files it writes vanish on the next `parity up` |
 | `parity engine [podman\|docker\|auto] [--json]` | works: says which engine Parity uses and why, or saves the choice for this computer (the desktop app reads the same setting); `PARITY_ENGINE` still wins where it is set |
 | `parity version [--json]` | works |
 
@@ -221,9 +222,11 @@ image Parity can get, or ask the Citadel team to publish it.
 Citadel's images are `docker save` tars in git LFS in `enterprise-apps/images` on git.wayne.edu, so getting one
 takes your own access there. `parity image get` tries, in order: a tar you name with `--file` (downloaded from the
 project's page in your browser), a personal access token in `PARITY_GITLAB_TOKEN` (`read_repository` is enough),
-then git LFS over SSH with your own key (`--https` for git's credential manager instead). Only the one tar is
-fetched, never the whole repository. Whatever the route, the tar's sha256 and the loaded image's id must match the
-catalog inside Parity before Parity calls it Citadel's:
+then git LFS over SSH with your own key (`--https` for git's credential manager instead). The git route needs git
+LFS set up once: install git-lfs (it ships with Git for Windows and Homebrew has `git-lfs`), then run
+`git lfs install`; without it git fetches a small pointer file and Parity says so. Only the one tar is fetched,
+never the whole repository. Whatever the route, the tar's sha256 and the loaded image's id must match the catalog
+inside Parity before Parity calls it Citadel's:
 
 ```text
   Parity image get  citadel/php-apache:8.5r3
@@ -384,6 +387,8 @@ Before the tag:
 
 - One real `parity up` and `parity test` on an Apple Silicon Mac, with Podman and with Docker. Windows is done
   (2026-11-10, Podman and Docker Desktop); that run found three bugs, all fixed before 1.0 (see the CHANGELOG).
+  `go run ./tools/checklist -engine podman` (then `-engine docker`) runs the whole check on that Mac and prints the
+  row for MAINTAINING's table.
 - 1.0 ships unsigned, with checksums, like 0.1.0.
 - Citadel's 8.4r5 image is the one outside dependency: until its tar exists, 1.0 offers 8.5r3 only.
 
@@ -427,7 +432,7 @@ WELD is the Wayne State application stack. Parity is its "run Citadel locally" l
 | SESAME | Sign-in; its fake driver is how a local copy signs in without CAS |
 | HELMET | The baseline runtime |
 | Pinstripe | The coding standard |
-| Sourdough | The starters (they write `parity.json` for you) |
+| Sourdough | The starters (each app's README tells you to run `parity init --from-squire`, which writes `parity.json`) |
 | Booster | Moves apps forward; a PHP upgrade is exactly when Citadel's real image matters |
 | Squire | Gets the app onto Citadel (`build.sh`, `deployments/`, `release.sh`); Parity runs those files the way Citadel does |
 | Parity | This project: Citadel on your computer |
@@ -458,12 +463,13 @@ With Go 1.26 or newer:
 go test ./...
 go build -o parity ./cmd/parity          (parity.exe on Windows)
 go run ./tools/build                     all six binaries into dist/, with checksums.txt
+go run ./tools/checklist                 the release checklist's up, test and down on this computer (MAINTAINING.md)
 ```
 
 Or with Docker only, the same image CI uses:
 
 ```text
-docker run --rm -v "${PWD}:/src" -w /src -v stack-go-cache:/go -e GOCACHE=/go/build-cache golang:1.26.10-trixie@sha256:fd9a91f0ece5664556f4851d06dce5e5b505a71166dffd385a03ba9d200b6983 go run ./tools/build
+docker run --rm -v "${PWD}:/src" -w /src -v stack-go-cache:/go -e GOCACHE=/go/build-cache golang:1.26.11-trixie@sha256:fa340cb59ebeb1d53ac1cccfc334201d938fe5f3458003cccb767096d8e032b8 go run ./tools/build
 ```
 
 ## Where the code lives
