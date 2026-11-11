@@ -10,9 +10,16 @@ generator: Squire agent-ready
 
 All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.
 
-## \[0.3.1\] - 2026-11-11 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-3-1-2026-11-11)
+## \[Unreleased\] [#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
 
 ### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
+
+- Added: `advisor install --runner=docker|php`. A project with a compose file or `parity.json` defaults to `docker` (the MCP client starts ADVISOR inside the app container through `docker compose run`), anything else to `php`; switching runner needs `--force`.
+- Added: each file in `content/manifest.json` can carry a `source_commit`, read straight from the source repository's `.git` with no git call. `content:verify` ignores it, and `content:generate` prints one line per project with its short commit.
+
+## \[0.3.1\] - 2026-11-11 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-3-1-2026-11-11)
+
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-1)
 
 - Added: every tool publishes a real output schema in `tools/list` (it was an open `{"type": "object"}`): closed, every field typed and described, with the fields always present marked required. A contract test checks each schema's shape and validates every answer the tool tests produce against it (opis/json-schema, already a dependency), the `playbook_lookup` and `run_proctor_check` paths included. Practice 2.8 (structured content with an output schema) is met.
 - Added: `advisor doctor` has a `stdio` check: it starts `php bin/advisor mcp` as a child process, the way a client does, asks it to initialize, list its tools and answer one `policy_lookup` call, and passes only when every stdout line is JSON-RPC and the child exits 0. The pass line names the OS and PHP version, so one run on a Windows PHP answers open question 1. A `php-path` check says which `php` on the PATH a client will start, and warns when there is none or it is not the PHP running doctor (open question 10). Doctor still changes nothing and runs nothing from a config file.
@@ -39,7 +46,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.3.0\] - 2026-11-09 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-3-0-2026-11-09)
 
-### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-1)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-2)
 
 - Added: Parity is in the parts list (`generator/projects.seed.json`), after Squire: Citadel on your own computer (Citadel's PHP image, its proxy and MySQL 5.6) for any app, with or without Squire, as one Go command line for every OS on Docker or Podman (Podman recommended). `list_projects`, `get_project_status` and `read_project_docs` know it, and the stack-parts table in the README and the "Where it sits" page has fifteen rows.
 - Added: `owner_of` answers "local development" (and Parity, run Citadel locally, the parity kit, Podman) with Parity: the stack's local-development answer, which replaces Squire's parity group. The deploy-files row says Squire's old parity group is deprecated, and names Parity as the one that runs `build.sh`, `deployments/` and the health check the way Citadel does.
@@ -63,7 +70,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.2.0\] - 2026-11-09 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-2-0-2026-11-09)
 
-### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-2)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-3)
 
 - Added: docs/threats/ explains four threats (prompt injection, path traversal, command injection, data exfiltration), where each applies, the code and tests that stop it, and what risk is left (backlog row 16).
 - Added: upgrade_path takes from_php, so a project with no composer.json or no php constraint still gets a plan (Booster's --from-php); the 2026-11-08 proof run found 71 such refusals.
@@ -116,7 +123,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - The front page's deploy layer (`deploy/`) completes Squire's kit 0.5.0: `oracle-check.php`, which the 0.5.0 `squire update` did not add, is written and recorded, so `squire init --check` passes. `site/assets/stack-env.js` takes the stack's one copy, with bindingless catch blocks.
 - The canonical repository is git.wayne.edu (ADR-0021); docs, links and package metadata no longer point at the archived nougat copy.
 
-### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-3)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-4)
 
 - `owner_of` answers from an ownership table rebuilt from the stack's decisions, the one-owner-per-rule table first (version policy, lock file, `composer audit`, MySQL 5.6, `/up`, deploy files, CI contents, the parts list), then app wiring, sign-in and the coding standard. Every match carries `decision`, the decision it comes from, named by title and date. Rows gain `aliases` ("composer.lock", ".gitlab-ci.yml", "/up"), question words are ignored ("who owns composer audit" works), words match at word starts, and exact topic or alias matches come first. `content:verify` requires the decision and refuses an alias that names two rows.
 - `read_project_docs` trims image boilerplate again at read time, so docs bundled before a trim rule existed are served clean without editing `data/docs`. The trim (now `Content\ImageTrim`, shared with the generator) also drops linked hero images (an image Markdown wrapped in a link) and rows of nothing but badges, which the generator used to let through (Sourdough's README hero and badge row).
@@ -126,7 +133,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.1.6\] - 2026-11-06 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-6-2026-11-06)
 
-### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-4)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-5)
 
 - data: resync 2026-11-05 evening (booster:eaf2758 drawbridge:aa403f3 helmet:36cb918 sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:335c4e4 preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:4fdc7b0)
 - data: resync 2026-11-05 late (booster:5b25715 drawbridge:19698ea helmet:417129a sesame:ae2fb9e proctor:33c329a rollcall:fc4cc43 creed:d919161 sourdough:bdb831d weld:6da94b9 squire:9384c1d preflight:7913c45 pinstripe:347a34e wayne-ui:66d5539 advisor:ba8b7e1)
@@ -176,7 +183,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.1.3\] - 2026-11-02 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-3-2026-11-02)
 
-### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-5)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-6)
 
 - Added: hand-written guides bundled from generator/guides/ and served as advisor://guide/; first guide: Connect to Oracle on Citadel.
 - Added: policy_lookup returns latest_patch; the bundled docs drop hero images, badges and GIFs.
@@ -191,7 +198,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.1.2\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-2-2026-10-29)
 
-### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-6)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-7)
 
 - Added: agent-ready site (prompt blocks, Markdown twins, llms.txt), from Squire's kit.
 - `playbook_lookup` tool: answers "what is the value of X?" for WSU shared values. An environment variable of the same name wins, then the private `waynestate/playbook` package (Playbook) supplies the rest; without it the tool says how to get it instead of failing. Keys that look like secrets (ending in SECRET, PASSWORD, TOKEN or KEY) are refused. `waynestate/playbook` is suggested, never required.
@@ -207,7 +214,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[0.1.1\] - 2026-10-29 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-1-1-2026-10-29)
 
-### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-7)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-8)
 
 - `owner_of` tool: answers "which project owns X?" from a new bundled `data/ownership.json` table (sourced from `generator/ownership.json`, verified by `content:verify`). Fuzzy match: every word of the topic must appear in a row's topic or role; a no-match answer lists every known topic.
 
@@ -220,7 +227,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 First build, aimed at 0.1.0.
 
-### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-8)
+### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-9)
 
 - Read-only MCP server over stdio (`php vendor/bin/advisor mcp`) on the official `mcp/sdk` 0.9.0, speaking both the legacy `initialize` handshake and the 2026-07-28 per-request form.
 - Seven tools: `list_projects`, `get_project_status`, `read_project_docs`, `policy_lookup`, `list_stack_rules`, `run_proctor_check`, `upgrade_path`. Resources `advisor://policy` and `advisor://creed/<chapter>`. Prompts `orient_me` and `plan_upgrade`.

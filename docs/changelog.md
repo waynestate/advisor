@@ -9,6 +9,13 @@ description: All notable changes to this project.
 
 All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.
 
+## [Unreleased]
+
+### Added
+
+- Added: `advisor install --runner=docker|php`. A project with a compose file or `parity.json` defaults to `docker` (the MCP client starts ADVISOR inside the app container through `docker compose run`), anything else to `php`; switching runner needs `--force`.
+- Added: each file in `content/manifest.json` can carry a `source_commit`, read straight from the source repository's `.git` with no git call. `content:verify` ignores it, and `content:generate` prints one line per project with its short commit.
+
 ## [0.3.1] - 2026-11-11
 
 ### Added
