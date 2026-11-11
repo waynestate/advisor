@@ -38,7 +38,7 @@ Every tool states all four hints (read-only, destructive, idempotent, open-world
 
 ## Narrow tools, closed schemas [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#narrow-tools-closed-schemas)
 
-No tool takes a command, a URL or a free path. Schemas set `additionalProperties: false`, and arguments are validated again on our side. Enforced (contract test).
+No tool takes a command, a URL or a free path. Schemas set `additionalProperties: false`, and arguments are validated again on our side. Answers are closed too: every tool publishes an output schema with each field described, and the tests check every answer against it. Enforced (contract test).
 
 ## Run other programs the safe way [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#run-other-programs-the-safe-way)
 

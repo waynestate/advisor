@@ -26,6 +26,7 @@ final class PlaybookLookup
                 ],
                 'additionalProperties' => false,
             ],
+            outputSchema: self::outputSchema(),
             handler: static function (array $args) use ($settings): array {
                 if (!$settings->available()) {
                     return ['available' => false, 'how_to_get' => $settings->howToGet()];
@@ -51,5 +52,38 @@ final class PlaybookLookup
                 return ['available' => true, 'key' => $key, 'value' => $setting->value, 'source' => $setting->source];
             },
         );
+    }
+
+    /**
+     * What playbook_lookup returns: one value with its source, or every key, or how to get PLAYBOOK.
+     *
+     * @return array<string, mixed>
+     */
+    private static function outputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'additionalProperties' => false,
+            'properties' => [
+                'available' => ['type' => 'boolean', 'description' => 'Whether Playbook is installed and found.'],
+                'how_to_get' => ['type' => 'string', 'description' => 'How to install Playbook, present when it is missing.'],
+                'entries' => [
+                    'type' => 'array',
+                    'description' => 'Every shared value with its source, present when no key was asked.',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'key' => ['type' => 'string', 'description' => 'The shared-value key.'],
+                            'value' => ['type' => ['string', 'null'], 'description' => 'The value, or null when it is set nowhere.'],
+                            'source' => ['type' => 'string', 'description' => 'Where the value came from (environment, playbook, env.playbook or unset).'],
+                        ],
+                    ],
+                ],
+                'key' => ['type' => 'string', 'description' => 'The key looked up, present when one was asked.'],
+                'value' => ['type' => ['string', 'null'], 'description' => 'The value, or null when it is set nowhere.'],
+                'source' => ['type' => 'string', 'description' => 'Where the value came from (environment, playbook, env.playbook or unset).'],
+            ],
+            'required' => ['available'],
+        ];
     }
 }

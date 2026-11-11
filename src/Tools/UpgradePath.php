@@ -35,6 +35,7 @@ final class UpgradePath
                 ],
                 'additionalProperties' => false,
             ],
+            outputSchema: self::outputSchema(),
             handler: static function (array $args) use ($runner): array {
                 return $runner->plan(
                     (string) ($args['path'] ?? '.'),
@@ -48,5 +49,36 @@ final class UpgradePath
             idempotent: true,
             openWorld: false,
         );
+    }
+
+    /**
+     * What upgrade_path returns: BOOSTER's plan, shaped by BoosterRunner.
+     *
+     * @return array<string, mixed>
+     */
+    private static function outputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'additionalProperties' => false,
+            'properties' => [
+                'tool' => ['type' => 'string', 'const' => 'booster', 'description' => 'The tool that produced the plan.'],
+                'app' => ['type' => 'string', 'description' => 'The app folder the plan is for, relative to the project root.'],
+                'project' => ['type' => ['object', 'array'], 'description' => 'What BOOSTER read from the project manifests, or an empty list when it read nothing.'],
+                'today' => ['type' => 'string', 'description' => 'The date the plan was made, YYYY-MM-DD.'],
+                'policy' => ['type' => 'string', 'description' => 'The policy the plan was checked against.'],
+                'target_php' => ['type' => ['string', 'null'], 'description' => 'The target PHP version, or null when the plan sets none.'],
+                'target_laravel' => ['type' => ['string', 'null'], 'description' => 'The target Laravel version, or null when the plan sets none.'],
+                'steps' => [
+                    'type' => 'array',
+                    'description' => 'The ordered upgrade hops, one supported hop at a time.',
+                    'items' => ['type' => 'object'],
+                ],
+                'warnings' => ['type' => 'array', 'items' => ['type' => 'string'], 'description' => 'The warnings BOOSTER raised about the plan.'],
+                'next_command' => ['type' => 'string', 'description' => 'The exact booster run command to start the plan.'],
+                'notice' => ['type' => 'string', 'description' => 'A reminder that the plan changes nothing until booster run does the work.'],
+            ],
+            'required' => ['tool', 'app', 'project', 'today', 'policy', 'target_php', 'target_laravel', 'steps', 'warnings', 'next_command', 'notice'],
+        ];
     }
 }

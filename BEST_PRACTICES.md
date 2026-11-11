@@ -24,7 +24,9 @@ Documented (written down only), Not yet (a gap).
    writes is left out unless `ADVISOR_READ_ONLY` is turned off, and that switch beats tool groups. Enforced (contract
    test).
 7. **Narrow tools, closed schemas.** No tool takes a command, a URL or a free path. Schemas set
-   `additionalProperties: false`, and arguments are validated again on our side. Enforced (contract test).
+   `additionalProperties: false`, and arguments are validated again on our side. Answers are closed too: every tool
+   publishes an output schema with each field described, and the tests check every answer against it. Enforced
+   (contract test).
 8. **Run other programs the safe way.** Fixed program, argument array, allowlisted environment, a timeout, and no
    shell. Paths are resolved and must stay inside the project root. Enforced.
 9. **Keep stdout clean.** Only protocol lines go to stdout; logs, warnings and stray output go to stderr. Enforced

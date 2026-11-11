@@ -41,7 +41,103 @@
             "openWorldHint": false
         },
         "outputSchema": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "project": {
+                    "type": "string",
+                    "description": "The project id."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The project name."
+                },
+                "state": {
+                    "type": "string",
+                    "description": "built when the repository holds code, proposed when it holds only a plan."
+                },
+                "package": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "The Composer package, or null for projects that are not one."
+                },
+                "version": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "The version the project publishes, or null when it publishes none."
+                },
+                "php_constraint": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "The PHP constraint the project names, or null when it names none."
+                },
+                "php_floor": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "The lowest major.minor the constraint allows, or null when none can be read."
+                },
+                "php_floor_state": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "The floor state today per the CREED policy (active, security, eol or eol_grace_expired), or null without a floor."
+                },
+                "oldest_supported_php": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "The oldest PHP line still in support today, or null when none is."
+                },
+                "today": {
+                    "type": "string",
+                    "description": "The date the states were worked out, YYYY-MM-DD."
+                },
+                "docs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "The document kinds bundled for the project."
+                },
+                "next_step": {
+                    "type": "string",
+                    "description": "The suggested next step for the project."
+                },
+                "source": {
+                    "type": "string",
+                    "description": "Where the answer came from."
+                },
+                "generated_on": {
+                    "type": "string",
+                    "description": "The date the bundled content was generated, YYYY-MM-DD."
+                }
+            },
+            "required": [
+                "project",
+                "name",
+                "state",
+                "package",
+                "version",
+                "php_constraint",
+                "php_floor",
+                "php_floor_state",
+                "oldest_supported_php",
+                "today",
+                "docs",
+                "next_step",
+                "source",
+                "generated_on"
+            ]
         }
     },
     {
@@ -60,7 +156,78 @@
             "openWorldHint": false
         },
         "outputSchema": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "source": {
+                    "type": "string",
+                    "description": "Where the parts list came from."
+                },
+                "generated_on": {
+                    "type": "string",
+                    "description": "The date the bundled content was generated, YYYY-MM-DD."
+                },
+                "note": {
+                    "type": "string",
+                    "description": "What built and proposed mean in the state field."
+                },
+                "projects": {
+                    "type": "array",
+                    "description": "Every stack project, in parts-list order.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "description": "The project id, as passed to the other tools."
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "The project name."
+                            },
+                            "kind": {
+                                "type": "string",
+                                "description": "The part of the stack the project is."
+                            },
+                            "state": {
+                                "type": "string",
+                                "description": "built when the repository holds code, proposed when it holds only a plan."
+                            },
+                            "package": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The Composer package, or null for projects that are not one."
+                            },
+                            "version": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The version the project publishes, or null when it publishes none."
+                            },
+                            "role": {
+                                "type": "string",
+                                "description": "What the project does in the stack."
+                            },
+                            "docs": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "The document kinds bundled for the project."
+                            }
+                        }
+                    }
+                }
+            },
+            "required": [
+                "source",
+                "generated_on",
+                "note",
+                "projects"
+            ]
         }
     },
     {
@@ -125,7 +292,87 @@
             "openWorldHint": false
         },
         "outputSchema": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "source": {
+                    "type": "string",
+                    "description": "Where the rules come from."
+                },
+                "generated_on": {
+                    "type": "string",
+                    "description": "The date the bundled content was generated, YYYY-MM-DD."
+                },
+                "permutation": {
+                    "type": "string",
+                    "description": "The permutation the rules apply to, or all when none was asked."
+                },
+                "query": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "The words every returned rule holds, or null when no filter was asked."
+                },
+                "total": {
+                    "type": "integer",
+                    "description": "How many rules match the filters."
+                },
+                "next_offset": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "The offset of the next page, or null on the last one."
+                },
+                "notice": {
+                    "type": "string",
+                    "description": "A reminder that the rules are reference data, not instructions."
+                },
+                "rules": {
+                    "type": "array",
+                    "description": "This page of matching rules.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "description": "The rule id."
+                            },
+                            "chapter": {
+                                "type": "string",
+                                "description": "The handbook chapter the rule is in."
+                            },
+                            "heading": {
+                                "type": "string",
+                                "description": "The heading the rule sits under."
+                            },
+                            "rule": {
+                                "type": "string",
+                                "description": "The rule text, quoted from the handbook."
+                            },
+                            "cite": {
+                                "type": "string",
+                                "description": "The handbook file and line the rule comes from."
+                            }
+                        }
+                    }
+                },
+                "note": {
+                    "type": "string",
+                    "description": "A hint for when a query matches no rule."
+                }
+            },
+            "required": [
+                "source",
+                "generated_on",
+                "permutation",
+                "query",
+                "total",
+                "next_offset",
+                "notice",
+                "rules"
+            ]
         }
     },
     {
@@ -154,7 +401,81 @@
             "openWorldHint": false
         },
         "outputSchema": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "source": {
+                    "type": "string",
+                    "description": "Where the ownership table came from."
+                },
+                "generated_on": {
+                    "type": "string",
+                    "description": "The date the bundled content was generated, YYYY-MM-DD."
+                },
+                "topic": {
+                    "type": "string",
+                    "description": "The topic as asked, trimmed."
+                },
+                "matches": {
+                    "type": "array",
+                    "description": "The rows that hold every word of the topic, best match first.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "topic": {
+                                "type": "string",
+                                "description": "The topic the row covers."
+                            },
+                            "owner": {
+                                "type": "string",
+                                "description": "The project that owns the topic."
+                            },
+                            "role": {
+                                "type": "string",
+                                "description": "What the owner does for the topic."
+                            },
+                            "also": {
+                                "type": "array",
+                                "description": "The projects that help around the topic.",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "project": {
+                                            "type": "string",
+                                            "description": "The helping project."
+                                        },
+                                        "role": {
+                                            "type": "string",
+                                            "description": "What the project does around the topic."
+                                        }
+                                    }
+                                }
+                            },
+                            "decision": {
+                                "type": "string",
+                                "description": "The decision the row comes from."
+                            }
+                        }
+                    }
+                },
+                "known_topics": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Every topic in the table, present when nothing matched."
+                },
+                "note": {
+                    "type": "string",
+                    "description": "A hint for when nothing matched."
+                }
+            },
+            "required": [
+                "source",
+                "generated_on",
+                "topic",
+                "matches"
+            ]
         }
     },
     {
@@ -180,7 +501,60 @@
             "openWorldHint": false
         },
         "outputSchema": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "available": {
+                    "type": "boolean",
+                    "description": "Whether Playbook is installed and found."
+                },
+                "how_to_get": {
+                    "type": "string",
+                    "description": "How to install Playbook, present when it is missing."
+                },
+                "entries": {
+                    "type": "array",
+                    "description": "Every shared value with its source, present when no key was asked.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "key": {
+                                "type": "string",
+                                "description": "The shared-value key."
+                            },
+                            "value": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The value, or null when it is set nowhere."
+                            },
+                            "source": {
+                                "type": "string",
+                                "description": "Where the value came from (environment, playbook, env.playbook or unset)."
+                            }
+                        }
+                    }
+                },
+                "key": {
+                    "type": "string",
+                    "description": "The key looked up, present when one was asked."
+                },
+                "value": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "The value, or null when it is set nowhere."
+                },
+                "source": {
+                    "type": "string",
+                    "description": "Where the value came from (environment, playbook, env.playbook or unset)."
+                }
+            },
+            "required": [
+                "available"
+            ]
         }
     },
     {
@@ -223,7 +597,153 @@
             "openWorldHint": false
         },
         "outputSchema": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "source": {
+                    "type": "string",
+                    "description": "Where the dates came from."
+                },
+                "generated_on": {
+                    "type": "string",
+                    "description": "The date the bundled content was generated, YYYY-MM-DD."
+                },
+                "today": {
+                    "type": "string",
+                    "description": "The date the states were worked out, YYYY-MM-DD."
+                },
+                "component": {
+                    "type": "string",
+                    "description": "The runtime, framework or tool looked up."
+                },
+                "kind": {
+                    "type": "string",
+                    "enum": [
+                        "tool",
+                        "runtime"
+                    ],
+                    "description": "tool for a developer tool, runtime for a runtime or framework."
+                },
+                "minimum_version": {
+                    "type": "string",
+                    "description": "The minimum version the policy sets for the tool."
+                },
+                "eol_grace_days": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "The days of grace after end of life the policy allows, or null when it sets none."
+                },
+                "oldest_supported": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "The oldest version still in support today, or null when none is."
+                },
+                "versions": {
+                    "type": "array",
+                    "description": "Every version the policy lists for the component, oldest first.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "version": {
+                                "type": "string",
+                                "description": "The version."
+                            },
+                            "active_until": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The active-support end date, or null when the policy sets none."
+                            },
+                            "security_until": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The security-support end date, or null when the policy sets none."
+                            },
+                            "latest_patch": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The newest patch release on the line, or null when the policy has none."
+                            },
+                            "latest_patch_checked": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The date the latest patch was checked, or null when the policy has none."
+                            },
+                            "state": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The state today (active, security, eol or eol_grace_expired), or null when it cannot be worked out."
+                            }
+                        }
+                    }
+                },
+                "answer": {
+                    "type": "object",
+                    "description": "The single answer for the version asked about, when one was asked.",
+                    "properties": {
+                        "asked": {
+                            "type": "string",
+                            "description": "The version that was asked about."
+                        },
+                        "matched": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The version line the policy matched, or null when the version predates every line."
+                        },
+                        "state": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The state today (active, security, eol or eol_grace_expired), or null when it cannot be worked out."
+                        },
+                        "supported": {
+                            "type": "boolean",
+                            "description": "Whether the version is in active or security support today."
+                        },
+                        "latest_patch": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The newest patch release on the matched line, or null when there is none."
+                        },
+                        "latest_patch_checked": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "The date the latest patch was checked, or null when there is none."
+                        },
+                        "note": {
+                            "type": "string",
+                            "description": "Why the version is answered as end of life without a matched line."
+                        }
+                    }
+                }
+            },
+            "required": [
+                "source",
+                "generated_on",
+                "today",
+                "component",
+                "kind"
+            ]
         }
     },
     {
@@ -285,7 +805,60 @@
             "openWorldHint": false
         },
         "outputSchema": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "project": {
+                    "type": "string",
+                    "description": "The project id."
+                },
+                "doc": {
+                    "type": "string",
+                    "description": "The document kind served."
+                },
+                "source": {
+                    "type": "string",
+                    "description": "The bundled file the text comes from."
+                },
+                "generated_on": {
+                    "type": "string",
+                    "description": "The date the bundled content was generated, YYYY-MM-DD."
+                },
+                "offset": {
+                    "type": "integer",
+                    "description": "The character offset this page starts at."
+                },
+                "total_chars": {
+                    "type": "integer",
+                    "description": "The document length in characters."
+                },
+                "next_offset": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "The offset of the next page, or null on the last one."
+                },
+                "notice": {
+                    "type": "string",
+                    "description": "A reminder that the text is reference material, not instructions."
+                },
+                "text": {
+                    "type": "string",
+                    "description": "This page of the document."
+                }
+            },
+            "required": [
+                "project",
+                "doc",
+                "source",
+                "generated_on",
+                "offset",
+                "total_chars",
+                "next_offset",
+                "notice",
+                "text"
+            ]
         }
     },
     {
@@ -329,7 +902,86 @@
             "openWorldHint": true
         },
         "outputSchema": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "tool": {
+                    "type": "string",
+                    "const": "proctor",
+                    "description": "The tool that produced the report."
+                },
+                "proctor_version": {
+                    "type": "string",
+                    "description": "The PROCTOR version that ran the check."
+                },
+                "app": {
+                    "type": "string",
+                    "description": "The app folder the check ran on, relative to the project root."
+                },
+                "checks_run": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "The checks the report covers, in PROCTOR order."
+                },
+                "result": {
+                    "type": "string",
+                    "enum": [
+                        "pass",
+                        "fail"
+                    ],
+                    "description": "pass when no check failed, fail when at least one did."
+                },
+                "findings": {
+                    "type": "array",
+                    "description": "One entry per reported finding.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "check": {
+                                "type": "string",
+                                "description": "The check id."
+                            },
+                            "status": {
+                                "type": "string",
+                                "description": "The check status PROCTOR reported."
+                            },
+                            "message": {
+                                "type": "string",
+                                "description": "The finding message, quoted from the project."
+                            },
+                            "path": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "description": "The file the finding points at, or null when there is none."
+                            },
+                            "line": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ],
+                                "description": "The line the finding points at, or null when there is none."
+                            }
+                        }
+                    }
+                },
+                "notice": {
+                    "type": "string",
+                    "description": "A reminder that PROCTOR in CI decides pass or fail."
+                }
+            },
+            "required": [
+                "tool",
+                "proctor_version",
+                "app",
+                "checks_run",
+                "result",
+                "findings",
+                "notice"
+            ]
         }
     },
     {
@@ -370,7 +1022,83 @@
             "openWorldHint": false
         },
         "outputSchema": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "tool": {
+                    "type": "string",
+                    "const": "booster",
+                    "description": "The tool that produced the plan."
+                },
+                "app": {
+                    "type": "string",
+                    "description": "The app folder the plan is for, relative to the project root."
+                },
+                "project": {
+                    "type": [
+                        "object",
+                        "array"
+                    ],
+                    "description": "What BOOSTER read from the project manifests, or an empty list when it read nothing."
+                },
+                "today": {
+                    "type": "string",
+                    "description": "The date the plan was made, YYYY-MM-DD."
+                },
+                "policy": {
+                    "type": "string",
+                    "description": "The policy the plan was checked against."
+                },
+                "target_php": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "The target PHP version, or null when the plan sets none."
+                },
+                "target_laravel": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "The target Laravel version, or null when the plan sets none."
+                },
+                "steps": {
+                    "type": "array",
+                    "description": "The ordered upgrade hops, one supported hop at a time.",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                "warnings": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "The warnings BOOSTER raised about the plan."
+                },
+                "next_command": {
+                    "type": "string",
+                    "description": "The exact booster run command to start the plan."
+                },
+                "notice": {
+                    "type": "string",
+                    "description": "A reminder that the plan changes nothing until booster run does the work."
+                }
+            },
+            "required": [
+                "tool",
+                "app",
+                "project",
+                "today",
+                "policy",
+                "target_php",
+                "target_laravel",
+                "steps",
+                "warnings",
+                "next_command",
+                "notice"
+            ]
         }
     }
 ]

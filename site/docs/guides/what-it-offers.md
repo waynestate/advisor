@@ -26,6 +26,8 @@ Nine tools, all read-only. Each one says where its answer came from:
 | `run_proctor_check` | Runs the app's own `vendor/bin/proctor check` against the bundled policy and returns the findings. |
 | `upgrade_path` | Plans the app's PHP and/or Laravel upgrade, one supported hop at a time, via Booster's read-only `plan`. Inputs: from_php (the version the app runs today, when the project names none), to_php, to_laravel. |
 
+Every tool also publishes an output schema in `tools/list`: the fields its structured answer holds, each one described, and nothing else. A client can read an answer without guessing, and the tests check every answer against its schema. The front page's field book shows a real answer from each tool.
+
 Note
 
 Everything ADVISOR returns is labeled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.

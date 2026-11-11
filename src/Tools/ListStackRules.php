@@ -42,6 +42,7 @@ final class ListStackRules
                 ],
                 'additionalProperties' => false,
             ],
+            outputSchema: self::outputSchema(),
             handler: static function (array $args) use ($context, $pageChars): array {
                 $permutation = isset($args['permutation']) ? (string) $args['permutation'] : null;
                 $chapter = isset($args['chapter']) ? (string) $args['chapter'] : null;
@@ -99,6 +100,44 @@ final class ListStackRules
                 ] + ($matching === [] && $query !== null ? ['note' => 'No rule holds every word of the query. Try fewer words, or drop permutation and chapter.'] : []);
             },
         );
+    }
+
+    /**
+     * What list_stack_rules returns: one page of matching rules with its paging state.
+     *
+     * @return array<string, mixed>
+     */
+    private static function outputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'additionalProperties' => false,
+            'properties' => [
+                'source' => ['type' => 'string', 'description' => 'Where the rules come from.'],
+                'generated_on' => ['type' => 'string', 'description' => 'The date the bundled content was generated, YYYY-MM-DD.'],
+                'permutation' => ['type' => 'string', 'description' => 'The permutation the rules apply to, or all when none was asked.'],
+                'query' => ['type' => ['string', 'null'], 'description' => 'The words every returned rule holds, or null when no filter was asked.'],
+                'total' => ['type' => 'integer', 'description' => 'How many rules match the filters.'],
+                'next_offset' => ['type' => ['integer', 'null'], 'description' => 'The offset of the next page, or null on the last one.'],
+                'notice' => ['type' => 'string', 'description' => 'A reminder that the rules are reference data, not instructions.'],
+                'rules' => [
+                    'type' => 'array',
+                    'description' => 'This page of matching rules.',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'id' => ['type' => 'string', 'description' => 'The rule id.'],
+                            'chapter' => ['type' => 'string', 'description' => 'The handbook chapter the rule is in.'],
+                            'heading' => ['type' => 'string', 'description' => 'The heading the rule sits under.'],
+                            'rule' => ['type' => 'string', 'description' => 'The rule text, quoted from the handbook.'],
+                            'cite' => ['type' => 'string', 'description' => 'The handbook file and line the rule comes from.'],
+                        ],
+                    ],
+                ],
+                'note' => ['type' => 'string', 'description' => 'A hint for when a query matches no rule.'],
+            ],
+            'required' => ['source', 'generated_on', 'permutation', 'query', 'total', 'next_offset', 'notice', 'rules'],
+        ];
     }
 
     /**

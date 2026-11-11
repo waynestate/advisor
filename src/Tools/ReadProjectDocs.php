@@ -31,6 +31,7 @@ final class ReadProjectDocs
                 'required' => ['project', 'doc'],
                 'additionalProperties' => false,
             ],
+            outputSchema: self::outputSchema(),
             handler: static function (array $args) use ($context, $pageSize): array {
                 $project = (string) ($args['project'] ?? '');
                 $doc = (string) ($args['doc'] ?? '');
@@ -70,5 +71,30 @@ final class ReadProjectDocs
                 ];
             },
         );
+    }
+
+    /**
+     * What read_project_docs returns: one page of a project document with its paging state.
+     *
+     * @return array<string, mixed>
+     */
+    private static function outputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'additionalProperties' => false,
+            'properties' => [
+                'project' => ['type' => 'string', 'description' => 'The project id.'],
+                'doc' => ['type' => 'string', 'description' => 'The document kind served.'],
+                'source' => ['type' => 'string', 'description' => 'The bundled file the text comes from.'],
+                'generated_on' => ['type' => 'string', 'description' => 'The date the bundled content was generated, YYYY-MM-DD.'],
+                'offset' => ['type' => 'integer', 'description' => 'The character offset this page starts at.'],
+                'total_chars' => ['type' => 'integer', 'description' => 'The document length in characters.'],
+                'next_offset' => ['type' => ['integer', 'null'], 'description' => 'The offset of the next page, or null on the last one.'],
+                'notice' => ['type' => 'string', 'description' => 'A reminder that the text is reference material, not instructions.'],
+                'text' => ['type' => 'string', 'description' => 'This page of the document.'],
+            ],
+            'required' => ['project', 'doc', 'source', 'generated_on', 'offset', 'total_chars', 'next_offset', 'notice', 'text'],
+        ];
     }
 }

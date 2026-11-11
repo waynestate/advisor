@@ -40,6 +40,7 @@ final class OwnerOf
                 'required' => ['topic'],
                 'additionalProperties' => false,
             ],
+            outputSchema: self::outputSchema(),
             handler: static function (array $args) use ($context): array {
                 $topic = trim((string) ($args['topic'] ?? ''));
                 if ($topic === '') {
@@ -87,6 +88,51 @@ final class OwnerOf
             idempotent: true,
             openWorld: false,
         );
+    }
+
+    /**
+     * What owner_of returns: the matching rows, or every known topic when nothing matches.
+     *
+     * @return array<string, mixed>
+     */
+    private static function outputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'additionalProperties' => false,
+            'properties' => [
+                'source' => ['type' => 'string', 'description' => 'Where the ownership table came from.'],
+                'generated_on' => ['type' => 'string', 'description' => 'The date the bundled content was generated, YYYY-MM-DD.'],
+                'topic' => ['type' => 'string', 'description' => 'The topic as asked, trimmed.'],
+                'matches' => [
+                    'type' => 'array',
+                    'description' => 'The rows that hold every word of the topic, best match first.',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'topic' => ['type' => 'string', 'description' => 'The topic the row covers.'],
+                            'owner' => ['type' => 'string', 'description' => 'The project that owns the topic.'],
+                            'role' => ['type' => 'string', 'description' => 'What the owner does for the topic.'],
+                            'also' => [
+                                'type' => 'array',
+                                'description' => 'The projects that help around the topic.',
+                                'items' => [
+                                    'type' => 'object',
+                                    'properties' => [
+                                        'project' => ['type' => 'string', 'description' => 'The helping project.'],
+                                        'role' => ['type' => 'string', 'description' => 'What the project does around the topic.'],
+                                    ],
+                                ],
+                            ],
+                            'decision' => ['type' => 'string', 'description' => 'The decision the row comes from.'],
+                        ],
+                    ],
+                ],
+                'known_topics' => ['type' => 'array', 'items' => ['type' => 'string'], 'description' => 'Every topic in the table, present when nothing matched.'],
+                'note' => ['type' => 'string', 'description' => 'A hint for when nothing matched.'],
+            ],
+            'required' => ['source', 'generated_on', 'topic', 'matches'],
+        ];
     }
 
     /**

@@ -30,6 +30,7 @@ final class PolicyLookup
                 'required' => ['component'],
                 'additionalProperties' => false,
             ],
+            outputSchema: self::outputSchema(),
             handler: static function (array $args) use ($context): array {
                 $policy = $context->content->policy();
                 $component = (string) ($args['component'] ?? '');
@@ -112,5 +113,57 @@ final class PolicyLookup
                 return $answer;
             },
         );
+    }
+
+    /**
+     * What policy_lookup returns: every line of a component, or one answer for a version.
+     *
+     * @return array<string, mixed>
+     */
+    private static function outputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'additionalProperties' => false,
+            'properties' => [
+                'source' => ['type' => 'string', 'description' => 'Where the dates came from.'],
+                'generated_on' => ['type' => 'string', 'description' => 'The date the bundled content was generated, YYYY-MM-DD.'],
+                'today' => ['type' => 'string', 'description' => 'The date the states were worked out, YYYY-MM-DD.'],
+                'component' => ['type' => 'string', 'description' => 'The runtime, framework or tool looked up.'],
+                'kind' => ['type' => 'string', 'enum' => ['tool', 'runtime'], 'description' => 'tool for a developer tool, runtime for a runtime or framework.'],
+                'minimum_version' => ['type' => 'string', 'description' => 'The minimum version the policy sets for the tool.'],
+                'eol_grace_days' => ['type' => ['integer', 'null'], 'description' => 'The days of grace after end of life the policy allows, or null when it sets none.'],
+                'oldest_supported' => ['type' => ['string', 'null'], 'description' => 'The oldest version still in support today, or null when none is.'],
+                'versions' => [
+                    'type' => 'array',
+                    'description' => 'Every version the policy lists for the component, oldest first.',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'version' => ['type' => 'string', 'description' => 'The version.'],
+                            'active_until' => ['type' => ['string', 'null'], 'description' => 'The active-support end date, or null when the policy sets none.'],
+                            'security_until' => ['type' => ['string', 'null'], 'description' => 'The security-support end date, or null when the policy sets none.'],
+                            'latest_patch' => ['type' => ['string', 'null'], 'description' => 'The newest patch release on the line, or null when the policy has none.'],
+                            'latest_patch_checked' => ['type' => ['string', 'null'], 'description' => 'The date the latest patch was checked, or null when the policy has none.'],
+                            'state' => ['type' => ['string', 'null'], 'description' => 'The state today (active, security, eol or eol_grace_expired), or null when it cannot be worked out.'],
+                        ],
+                    ],
+                ],
+                'answer' => [
+                    'type' => 'object',
+                    'description' => 'The single answer for the version asked about, when one was asked.',
+                    'properties' => [
+                        'asked' => ['type' => 'string', 'description' => 'The version that was asked about.'],
+                        'matched' => ['type' => ['string', 'null'], 'description' => 'The version line the policy matched, or null when the version predates every line.'],
+                        'state' => ['type' => ['string', 'null'], 'description' => 'The state today (active, security, eol or eol_grace_expired), or null when it cannot be worked out.'],
+                        'supported' => ['type' => 'boolean', 'description' => 'Whether the version is in active or security support today.'],
+                        'latest_patch' => ['type' => ['string', 'null'], 'description' => 'The newest patch release on the matched line, or null when there is none.'],
+                        'latest_patch_checked' => ['type' => ['string', 'null'], 'description' => 'The date the latest patch was checked, or null when there is none.'],
+                        'note' => ['type' => 'string', 'description' => 'Why the version is answered as end of life without a matched line.'],
+                    ],
+                ],
+            ],
+            'required' => ['source', 'generated_on', 'today', 'component', 'kind'],
+        ];
     }
 }

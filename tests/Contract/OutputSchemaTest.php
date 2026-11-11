@@ -98,6 +98,8 @@ final class OutputSchemaTest extends TestCase
         $this->assertCallConforms(Boot::core(), $tool, $args);
     }
 
+    /** The stub is a real class once loaded, so it stays in its own process: the Laravel bench must not see it. */
+    #[RunInSeparateProcess]
     public function testPlaybookAnswersMatchTheSchema(): void
     {
         require_once dirname(__DIR__) . '/Fixtures/playbook-stub.php';

@@ -55,7 +55,7 @@
 <h2 id="read-only-first">Read-only <span class="docs-heading-tail"><span>first</span><a class="docs-heading-link" aria-label="Link to this section" href="#read-only-first">#</a></span></h2>
 <p>Every tool states all four hints (read-only, destructive, idempotent, open-world). A tool that writes is left out unless <code>ADVISOR_READ_ONLY</code> is turned off, and that switch beats tool groups. Enforced (contract test).</p>
 <h2 id="narrow-tools-closed-schemas">Narrow tools, closed <span class="docs-heading-tail"><span>schemas</span><a class="docs-heading-link" aria-label="Link to this section" href="#narrow-tools-closed-schemas">#</a></span></h2>
-<p>No tool takes a command, a URL or a free path. Schemas set <code>additionalProperties: false</code>, and arguments are validated again on our side. Enforced (contract test).</p>
+<p>No tool takes a command, a URL or a free path. Schemas set <code>additionalProperties: false</code>, and arguments are validated again on our side. Answers are closed too: every tool publishes an output schema with each field described, and the tests check every answer against it. Enforced (contract test).</p>
 <h2 id="run-other-programs-the-safe-way">Run other programs the safe <span class="docs-heading-tail"><span>way</span><a class="docs-heading-link" aria-label="Link to this section" href="#run-other-programs-the-safe-way">#</a></span></h2>
 <p>Fixed program, argument array, allowlisted environment, a timeout, and no shell. Paths are resolved and must stay inside the project root. Enforced.</p>
 <h2 id="keep-stdout-clean">Keep stdout <span class="docs-heading-tail"><span>clean</span><a class="docs-heading-link" aria-label="Link to this section" href="#keep-stdout-clean">#</a></span></h2>

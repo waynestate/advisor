@@ -676,6 +676,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 #### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
 
+- Added: every tool publishes a real output schema in `tools/list` (it was an open `{"type": "object"}`): closed, every field typed and described, with the fields always present marked required. A contract test checks each schema's shape and validates every answer the tool tests produce against it (opis/json-schema, already a dependency), the `playbook_lookup` and `run_proctor_check` paths included. Practice 2.8 (structured content with an output schema) is met.
 - Added: `advisor doctor` has a `stdio` check: it starts `php bin/advisor mcp` as a child process, the way a client does, asks it to initialize, list its tools and answer one `policy_lookup` call, and passes only when every stdout line is JSON-RPC and the child exits 0. The pass line names the OS and PHP version, so one run on a Windows PHP answers open question 1. A `php-path` check says which `php` on the PATH a client will start, and warns when there is none or it is not the PHP running doctor (open question 10). Doctor still changes nothing and runs nothing from a config file.
 - Added: a `native-os` GitHub workflow runs `advisor doctor` (with its new stdio check) and the stdio and doctor tests on Windows and macOS, PHP 8.3 and 8.5, on every push to main and every tag, and writes doctor's output to the run summary. It is separate from `ci.yml`, so the CI badge still means `composer ci`; the full suite stays Linux only.
 - Added: `list_stack_rules` takes an optional `query` ("session cookie", or the whole question "what does the stack say about sessions?"): only the rules whose heading or text holds every word come back, matched case-insensitively at word starts, with question words and a plural s ignored. It combines with `permutation` and `chapter`, keeps the handbook order and paging, and says so when nothing matches. Still nine tools.
@@ -1557,6 +1558,8 @@ Nine tools, all read-only. Each one says where its answer came from:
 | `run_proctor_check` | Runs the app's own `vendor/bin/proctor check` against the bundled policy and returns the findings. |
 | `upgrade_path` | Plans the app's PHP and/or Laravel upgrade, one supported hop at a time, via Booster's read-only `plan`. Inputs: from_php (the version the app runs today, when the project names none), to_php, to_laravel. |
 
+Every tool also publishes an output schema in `tools/list`: the fields its structured answer holds, each one described, and nothing else. A client can read an answer without guessing, and the tests check every answer against its schema. The front page's field book shows a real answer from each tool.
+
 Note
 
 Everything ADVISOR returns is labeled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.
@@ -1805,7 +1808,7 @@ Every tool states all four hints (read-only, destructive, idempotent, open-world
 
 ### Narrow tools, closed schemas [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#narrow-tools-closed-schemas)
 
-No tool takes a command, a URL or a free path. Schemas set `additionalProperties: false`, and arguments are validated again on our side. Enforced (contract test).
+No tool takes a command, a URL or a free path. Schemas set `additionalProperties: false`, and arguments are validated again on our side. Answers are closed too: every tool publishes an output schema with each field described, and the tests check every answer against it. Enforced (contract test).
 
 ### Run other programs the safe way [#](https://advisor.apps.wayne.edu/docs/reference/best-practices.html#run-other-programs-the-safe-way)
 

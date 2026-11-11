@@ -89,6 +89,7 @@
 </tr>
 </tbody>
 </table></div>
+<p>Every tool also publishes an output schema in <code>tools/list</code>: the fields its structured answer holds, each one described, and nothing else. A client can read an answer without guessing, and the tests check every answer against its schema. The front page's field book shows a real answer from each tool.</p>
 <aside class="docs-callout docs-callout--note" role="note"><p class="docs-callout__label">Note</p><p>Everything ADVISOR returns is labeled as reference data. PROCTOR in CI, not ADVISOR, decides pass or fail.</p></aside>
 <h2 id="groups"><span class="docs-heading-tail"><span>Groups</span><a class="docs-heading-link" aria-label="Link to this section" href="#groups">#</a></span></h2>
 <p>The groups split by what they may start: <code>stack</code> never starts a program, <code>proctor</code> starts the app's own <code>vendor/bin/proctor</code>, and <code>booster</code> starts Booster's read-only <code>plan</code> (never <code>run</code>). Set <code>ADVISOR_GROUPS=stack</code> when you want ADVISOR as pure reference material.</p>
