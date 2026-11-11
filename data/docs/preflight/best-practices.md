@@ -196,9 +196,13 @@ the run.
 Sources: [GitLab: CI/CD inputs](https://docs.gitlab.com/ci/inputs/);
 [GitLab: component examples](https://docs.gitlab.com/ci/components/examples/).
 
-**How the stack holds it: Enforced.** All fourteen templates use `spec:inputs` with types, descriptions and defaults.
+**How the stack holds it: Enforced.** All fifteen templates use `spec:inputs` with types, descriptions and defaults.
 GitLab rejects a wrong type or an unknown input at pipeline creation. The first pipeline, back when Preflight had
-three components, passed all six jobs with the array input.
+three components, passed all six jobs with the array input. The documented defaults are held too:
+`tests/DocsInputTablesTest.php` (in `composer ci`) fails when the input table for a component in the README, the
+components reference or the component's guide misses an input, lists a removed one, or names another type or default
+than `contract/inputs.json`. Its first run found six stale tables: no `mysql56-migrate` section in the README or the
+reference, and both missing php-test's `php_advisory_version` and portability's three newest inputs.
 
 Second pass, limits to design around: GitLab's inputs page says a pipeline can take up to 20 inputs (it does not say
 whether that counts per include, so check on the real instance before adding many), a string that uses an input must be
@@ -889,7 +893,12 @@ Why: network limits reduce what a bad job can send out.
 
 Sources: [GitLab Runner: security, network segmentation](https://docs.gitlab.com/runner/security/).
 
-**How the stack holds it: Documented.** The instance runner case lists network access as an open question for ops.
+**How the stack holds it: Documented.** `docs/guides/network-egress.md` lists
+every host a Preflight job reaches, by component, with the runner's image pulls kept apart from the job's own
+requests, and the deduplicated list a firewall or proxy needs. `tests/DocsEgressTest.php` (in `composer ci`) fails
+when a component has no row, when a template fetches from an `https://` host the page does not name, or when a
+default image comes from a registry the page does not name. Turning the list into a runner allowlist is a
+setting on the runner's network, outside this repository, and stays a decision for ops.
 
 ### 5.5 Keep the GitLab instance and runners patched, and know the version
 Ask ops for the GitLab version and runner version, and for the patch schedule. Subscribe to GitLab's patch release notices.
@@ -1068,8 +1077,10 @@ CI by `must-fail-sbom`); `squire-kit` runs the template's own script against the
 naming the file, and a copy with no `.squire.json`, which must stop with exit 2 (`tests/check-squire-kit-fails`, run
 in CI by `must-fail-squire-kit`); and `package-publish`'s offline guards stop a non-semantic-version tag and a missing
 `composer.json` before any registry contact (`tests/check-package-publish-fails.sh`, run in CI by
-`must-fail-package-publish`). Still missing: `package-publish`'s moved-version path needs a live registry and stays untested; `renovate` is
-a config, not a job, so it has nothing to fail.
+`must-fail-package-publish`), and the same check runs the template's whole script against a fake registry serving
+GitLab's documented Composer shapes: a version published from another commit fails with no publish request, the
+same commit exits 0, and a new version is published once. Its first run showed the job had read the wrong keys and
+would have overwritten a moved version on GitLab. `renovate` is a config, not a job, so it has nothing to fail.
 
 ### 7.3 Use the stack's own projects as the first users
 Each stack repo includes Preflight, pinned.
@@ -1108,8 +1119,8 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
    app's installed CREED policy, then the copy bundled with PROCTOR), and both PROCTOR's and CREED's pipelines include
    `preflight/proctor@0.5.0`. 6.1 is `Checked`: this repository's pipeline runs the component on `tests/fixture-app`,
    and the `contract` job runs `tests/check-proctor-fails`.
-2. 7.2: Add a failing fixture for `package-publish`'s moved-version path (it needs a live registry). The other
-   components have theirs, and Preflight's pipeline runs the real PROCTOR.
+2. Done: 7.2: `package-publish`'s moved-version path has its failing fixture: a fake registry in
+   `tests/check-package-publish-fails.sh` (no live registry needed). Every component that runs as a job now has one.
 3. Done: 3.3: PROCTOR's `preflight-pinned` and `preflight-gates` checks flag apps that skip, unpin or weaken
    Preflight. A Rollcall fleet report of the same is still a plan.
 4. Done: 4.1: Image digests stay pinned, and the pins that matter most move through review: the shared preset
@@ -1148,7 +1159,8 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 19. Done: 5.3: Stated the runner request wording in the README: a non-privileged Docker executor (no privileged mode,
     no Docker socket mount), a fresh ephemeral environment for every job, and no shell executor shared between
     projects.
-20. 5.4: Agree the list of hosts jobs may reach.
+20. 5.4 (partly done): The list of hosts jobs reach is written and held by a test (`docs/guides/network-egress.md`,
+    `tests/DocsEgressTest.php`). Still open: ops agreeing it and enforcing it on the runner.
 21. Done: 1.4: The inputs contract is `contract/inputs.json`, held by `tests/ComponentsContractTest.php` (PHPUnit, in
     `composer ci`) and `tests/check-contract.sh` with its `.ps1` twin (the contract job); a renamed input or job, a
     changed type or a changed default fails the build, and `composer contract:update` rewrites the contract when the
@@ -1156,7 +1168,7 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 22. 2.3 and 2.6: Lint templates for global keys, and explain which components may be weakened.
 23. Done: 3.1: The "components do not force" limit is published in the README's "What the components cannot force"
     (README.md:735).
-24. 5.3 and 5.4 and 7.3: git.wayne.edu now has an instance runner, and the stack's CI runs on it; every product in the stack still strongly recommends a git.wayne.edu instance runner, so that capacity stays there. What remains open: 5.4's list of hosts jobs may reach.
+24. 5.3 and 5.4 and 7.3: git.wayne.edu now has an instance runner, and the stack's CI runs on it; every product in the stack still strongly recommends a git.wayne.edu instance runner, so that capacity stays there. What remains open: ops enforcing 5.4's host list (`docs/guides/network-egress.md`) on the runner.
 
 Added in the second pass (2026-10-27):
 

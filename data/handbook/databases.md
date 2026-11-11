@@ -76,7 +76,10 @@ second support window: the fix is still the upgrade. PROCTOR check:
   column cannot take a current-timestamp default on 5.6. PROCTOR check:
   `mysql56`.
 - An app MUST run migrations in CI against a real 5.6 container.
-  SQLite-only tests pass code that 5.6 rejects. No check exists yet.
+  SQLite-only tests pass code that 5.6 rejects. Held by: Preflight's
+  `mysql56-migrate` component (0.6.0), which runs the migrations against
+  MySQL 5.6.51 on an amd64 runner. PROCTOR check: `mysql56-ci` (0.15.0),
+  which warns when an app with migrations has no such job.
 
 ## Avoid until the server is upgraded
 

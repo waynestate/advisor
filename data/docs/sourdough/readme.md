@@ -22,7 +22,7 @@ Every loaf gets proofed before it ships.
 
 Documentation: the [docs site](site/docs/index.html) is built from [`docs/`](docs/) by Squire's docs builder; `composer docs:build` rebuilds it and `composer docs:check` fails when it is stale. The docs pages wear the front page's header, menu, palette and fonts: edit [`docs/_header.html`](docs/_header.html) and [`docs/theme/sourdough.css`](docs/theme/sourdough.css) (named by the `theme` key in `docs/docs.json`), never the kit's `docs.css`.
 
-Front page: [`site/index.html`](site/index.html), a static page you can open in a browser or serve from `site/`.
+Front page: [`site/index.html`](site/index.html), a static page you can open in a browser or serve from `site/`. Its order counter writes the `sourdough new` command for a loaf, an oven and a name, with the bake and the next steps, all read from [`site/assets/order-menu.json`](site/assets/order-menu.json), and copies a link that reopens the same order (`#order?loaf=...&oven=...`). `composer site:order-menu` writes that file from the same plan code `sourdough new --dry-run --json` runs, `composer ci` fails when it is stale, and `tests/OrderMenuTest.php` runs every order the ticket can write through the real command.
 
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
@@ -67,7 +67,7 @@ Options:
 - `--dry-run` print the plan and write nothing
 - `--name` app name (default: the basename of `<dir>`)
 - `--no-input` never prompt (Sourdough has no prompts)
-- `--json` with `--dry-run`, print the plan as JSON
+- `--json` with `--dry-run`, print the plan as JSON, with the bake's `steps` and the `next_steps` a real run prints
 - `--describe "<sentence>"` describe what the app does; a model plans it (needs the `SOURDOUGH_LLM_*` env vars)
 - `--plan-only` with `--describe`, print the plan as JSON and write nothing
 - `--plan <file>` a ready-made plan file (JSON, or YAML ending in `.yaml` or `.yml`, matching `resources/plan.schema.json`), such as the `.sourdough/plan.yaml` every bake saves
@@ -276,7 +276,7 @@ The `stack-composer-cache` volume keeps Composer's downloads between runs; Docke
 
 The proof harness runs that gate on every shape and every Laravel shape in each oven, one after another in Docker: it bakes each with this checkout, checks the manifest, feeds a bake of the last release forward, installs the app, runs its own suite, PROCTOR and `composer ci`, then boots it and fetches its front page. `sh scripts/proof.sh` on Linux and macOS, `.\scripts\proof.ps1` on Windows. What each run proves, and the Last run table, are on the [Proof](docs/reference/proof.md) page.
 
-The site accessibility gate runs Preflight's own a11y checker (vendored in `tools/a11y/check.mjs` from the 0.5.0 tag CI pins, held there by `tests/A11yCheckerPinTest.php`) over every page under `site/` in Docker, in light and dark at 320 px and 1280 px with the WCAG 1.4.10 reflow check: `sh scripts/a11y.sh` from Git Bash, Linux or macOS, `scripts\a11y.ps1` on Windows. It uses the same image and inputs as the a11y job in CI, so a page that passes here passes the pipeline.
+The site accessibility gate runs Preflight's own a11y checker (vendored in `tools/a11y/check.mjs` from the 0.6.0 tag CI pins, held there by `tests/A11yCheckerPinTest.php`) over every page under `site/` in Docker, in light and dark at 320 px and 1280 px with the WCAG 1.4.10 reflow check: `sh scripts/a11y.sh` from Git Bash, Linux or macOS, `scripts\a11y.ps1` on Windows. It uses the same image and inputs as the a11y job in CI, so a page that passes here passes the pipeline.
 
 ### Tests in the apps it bakes
 

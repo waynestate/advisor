@@ -65,8 +65,11 @@ Sources: [OWASP Top 10 CI/CD Security Risks, CICD-SEC-4 Poisoned Pipeline Execut
 the `PROCTOR_POLICY` environment variable, then the app's vendored copy (when at least as fresh as the bundled copy),
 then the bundled copy, and every report names the policy in use. Since 0.6.0, in CI `--policy` and `--today` are
 refused unless `PROCTOR_ALLOW_OVERRIDES` is exactly `1` (`src/Policy/CiGuard.php`), while `PROCTOR_POLICY` stays
-allowed. What remains: Preflight's `proctor_command` input is free text, and an app's own `.gitlab-ci.yml` can
-override included job keys, so an app can still change the command and the vendored policy. An app that sets
+allowed. Preflight's `proctor_command` input is free text, so `preflight-gates` (Unreleased) warns
+(`proctor/preflight-gates/proctor-command`) when it runs neither `proctor check` nor `proctor gate`, or pipes PROCTOR
+or follows it with `||` so a failing check passes; `preflight-pinned` warns when an app re-declares an included
+Preflight job's script, and `preflight-gates` when it sets `allow_failure` on a gate. What remains: an app can still
+change the vendored policy, and override other job keys (the image, the variables). An app that sets
 `PROCTOR_ALLOW_OVERRIDES` to `1` in its own pipeline is flagged: the `ci-pipelines` check warns
 (`proctor/ci-pipelines/allow-overrides`) when the GitLab or GitHub pipeline environment sets it. A warning, not a
 fail: PROCTOR's own pipeline sets it on purpose, and the right home for it (a protected or group-level variable) is
@@ -157,13 +160,15 @@ Why: declared and actual versions drift.
 
 Sources: [PHP supported versions](https://www.php.net/supported-versions.php); the stack's deploy-gate decision.
 
-**How the stack holds it: Partially.** `proctor gate` ships (registered in `bin/proctor`, implemented in
+**How the stack holds it: Checked.** `proctor gate` ships (registered in `bin/proctor`, implemented in
 `src/Console/GateCommand.php`): it runs the deploy-time checks, ratchets them against `--baseline`, and exits 0
 for go, 1 for no-go and 2 when it could not decide. Its `--php-runtime` names the PHP that will serve the app,
-which the `unpatched` check grades, and since Squire 0.9.0 Squire's release script passes it by default
-(`SQUIRE_PHP_RUNTIME`: `auto`, the PHP that runs the script, or `skip`, or an `X.Y.Z`). What keeps this Partially:
-the runtime is graded only for patch currency (a warning from `unpatched`), not for its support state, which
-`php-floor` judges from the declared constraint alone. The gate is
+and since Squire 0.9.0 Squire's release script passes it by default (`SQUIRE_PHP_RUNTIME`: `auto`, the PHP that
+runs the script, or `skip`, or an `X.Y.Z`). Two checks grade it: `unpatched` for patch currency, and `php-floor`
+(Unreleased) against `require.php` and the policy. A runtime below the constraint fails
+(`proctor/php-floor/runtime-mismatch`), one above it warns, and one inside it passes when active and warns when
+security-only or end of life (`proctor/php-floor/runtime`; end of life only warns because the floor already fails
+then). Test: `tests/PhpFloorRuntimeTest.php`. The gate is
 platform-neutral: on Citadel, Squire's release script (`scripts/release.sh`) calls it on every release (a report,
 not a stop, unless `SQUIRE_PROCTOR=enforce`), and other hosts run the same gate as a CI job.
 
@@ -287,8 +292,9 @@ Sources: [Packagist: an update on Composer and Packagist supply chain security, 
 
 **How the stack holds it: Partially.** The Preflight `proctor` component runs `composer install`, so it uses the lock.
 PROCTOR's `ci-pipelines` check warns (`proctor/ci-pipelines/composer-update`) when a command segment of a GitLab job
-script line or a GitHub step run starts with `composer update` or `composer require`. What remains: the finding is a
-warning, not a fail, and only `.gitlab-ci.yml` and `.github/workflows/ci.yml` are read.
+script line or a GitHub step run starts with `composer update` or `composer require`. It reads `.gitlab-ci.yml` with
+the local files it includes (Unreleased) and every workflow in `.github/workflows`. What remains: the finding is a
+warning, not a fail, and remote, project and component includes are not read.
 
 ### 3.8 Keep locked components on the latest patch
 A locked component that is behind the policy's `latest_patch` for its version line is a warning, not a failure: a
@@ -448,7 +454,7 @@ line, and the `composer-version` check (see 4.6) fails when the Composer on PATH
 CVE-2024-35241 and CVE-2024-35242 or is Composer 1. Since 0.7.0, the same check also fails when the
 Composer on PATH is below the CREED policy's `tools.composer.minimum` (2.8.0 in the bundled policy), naming the
 policy in the message; the CVE floors stay as absolute floors underneath it. Preflight's `php-test` and `proctor` jobs
-install the Composer release named by their `composer_version` input (default `2.11.1` in Preflight 0.5.0, the pin
+install the Composer release named by their `composer_version` input (default `2.11.1` in Preflight 0.8.0, the pin
 PROCTOR's own pipeline uses; 0.4.0 installed 2.10.3), which carries the 2026 Perforce fixes, and since Preflight 0.4.0 that input refuses a
 release older than 2.9.6. What remains: the policy minimum (2.8.0) sits below those fixes in 2.9.6 and 2.10.3, so the
 check passes a Composer that lacks them, and an app on an older Preflight pin can still set `composer_version` lower.
@@ -520,9 +526,9 @@ Composer 2.11 is stable: 2.11.0 shipped on 2026-10-29 and 2.11.1 on 2026-10-30
 `cooldown` policy (`config.policy.cooldown.period`, default `null`, so off). The move to 2.11 is done in the tools
 (read 2026-11-09): Squire's kit pins `composer:2.11.1` by digest in its base fallback image since 0.10.1, and so do
 the deploy layers already regenerated from it (HELMET, SESAME); Squire's own CI jobs use `composer:2.11.1`;
-Preflight 0.5.0 installs 2.11.1 by default in its `php-test` and `proctor` components (`composer_version`; 0.4.0
+Preflight 0.8.0 installs 2.11.1 by default in its `php-test` and `proctor` components (`composer_version`; 0.4.0
 installed 2.10.3); and PROCTOR's own CI jobs, phar build scripts and deploy layer (Squire 0.10.7) pin
-`composer:2.11.1` by digest. Apps on an older Preflight pin still get the older default until they move to `@0.5.0`. Decision (the stack maintainer, 2026-11-03): when 2.11 is in the base images, Sourdough apps set a 3-day
+`composer:2.11.1` by digest. Apps on an older Preflight pin still get the older default until they move to `@0.8.0`. Decision (the stack maintainer, 2026-11-03): when 2.11 is in the base images, Sourdough apps set a 3-day
 cooldown and PROCTOR warns when an app has none. That condition was met on 2026-11-10, and all three parts are built.
 
 ### 4.12 Decide whether dev dependencies count (second pass)
@@ -819,13 +825,15 @@ Sources: [OWASP CICD-SEC-4 Poisoned Pipeline Execution](https://owasp.org/www-pr
 [Composer CLI: `--no-plugins`, `--no-scripts`](https://getcomposer.org/doc/03-cli.md); the stack's deploy-gate decision.
 
 **How the stack holds it: Partially.** PROCTOR builds as a single-file PHAR: `scripts/build-phar.ps1` and
-`scripts/build-phar.sh` produce `build/proctor.phar`, and the README has a "Single-file download" section. The
+`scripts/build-phar.sh` produce `build/proctor.phar`, and the README's "Single-file download" section (and the
+install page) gives the download and checksum commands for Linux, macOS and Windows next to `composer require`. The
 pipeline's `release-phar` job (`.gitlab-ci.yml`) builds the PHAR on every tag, verifies it runs, writes
 `build/proctor.phar.sha256`, uploads both to the project's generic package registry and attaches them to the GitLab
 Release, refusing to overwrite a file the tag already published. Preflight's `proctor` component
-(`templates/proctor/template.yml`) runs `composer install --no-interaction --no-progress --no-plugins --no-scripts`
-on the app first, so the app's plugins and scripts no longer run in that job. What remains: the job still installs
-the app's dependencies, and the README still tells apps to `composer require waynestate/proctor --dev`.
+(`templates/proctor/template.yml`) runs `composer install --no-interaction --no-progress --no-plugins --no-scripts
+--ignore-platform-reqs` on the app first, so the app's plugins and scripts do not run in that job and an app on an old
+PHP still installs. What remains: that job still installs the app's dependencies and runs the app's own
+`vendor/bin/proctor`, not the PHAR; moving it to the PHAR is Preflight's change.
 
 ### 8.2 Start child processes without a shell
 Pass arguments as an array so a path or value cannot become a command.
@@ -869,7 +877,7 @@ Sources: [SLSA v1.0 build levels](https://slsa.dev/spec/v1.0/levels) (page marke
 [OpenSSF Scorecard: Signed-Releases](https://github.com/ossf/scorecard/blob/main/docs/checks.md);
 [CISA and NSA: Defending CI/CD environments](https://cisa.gov/news-events/alerts/2023/06/28/cisa-and-nsa-release-joint-guidance-defending-continuous-integrationcontinuous-delivery-cicd).
 
-**How the stack holds it: Partially.** Releases are tagged (0.1.0 through 0.12.0), and since 0.2.4 the reports read the
+**How the stack holds it: Partially.** Releases are tagged (0.1.0 through 0.15.1), and since 0.2.4 the reports read the
 installed `waynestate/proctor` version from Composer, with the in-code constant as the fallback. What remains: no
 release carries a signature or provenance that says where it was built.
 
@@ -917,21 +925,20 @@ see the server version.
 Practices tagged `Not yet`, `Documented` or `Partially`, each one line naming what is still open. Highest value first.
 A practice that is now `Checked` or `Enforced` leaves the list; CHANGELOG.md records when it closed.
 
-1. 1.2: Partly done: in CI `--policy` and `--today` are refused unless `PROCTOR_ALLOW_OVERRIDES` is exactly `1` (0.6.0); Preflight's `proctor_command` input is still free text, an app's `.gitlab-ci.yml` can override included job keys; the `ci-pipelines` check warns (`proctor/ci-pipelines/allow-overrides`) when an app's pipeline sets `PROCTOR_ALLOW_OVERRIDES` to `1` (see 1.2).
-2. 8.1: Partly done: the PHAR build exists and the Preflight job installs the app with `--no-plugins --no-scripts`; the PHAR is built and attached to each GitLab Release by the `release-phar` job, the job still installs the app's dependencies, and the README still says `composer require` (see 8.1).
+1. 1.2: Partly done: in CI `--policy` and `--today` are refused unless `PROCTOR_ALLOW_OVERRIDES` is exactly `1` (0.6.0); `preflight-gates` warns when Preflight's `proctor_command` input runs no PROCTOR or masks its exit code, but an app's `.gitlab-ci.yml` can still override other included job keys and the vendored policy; the `ci-pipelines` check warns (`proctor/ci-pipelines/allow-overrides`) when an app's pipeline sets `PROCTOR_ALLOW_OVERRIDES` to `1` (see 1.2).
+2. 8.1: Partly done: the PHAR build exists and the Preflight job installs the app with `--no-plugins --no-scripts`; the PHAR is built and attached to each GitLab Release by the `release-phar` job and the README documents it, but the Preflight job still installs the app's dependencies and runs its `vendor/bin/proctor`, not the PHAR (Preflight's change; see 8.1).
 3. 2.6: Partly done: PROCTOR's own pipeline runs the Preflight `proctor` component on `deploy/`, and the job blocks the pipeline; raise PROCTOR's floor from `^8.3` to `^8.4` before PHP 8.3 reaches end of life on 2027-12-31 (see 2.6).
 4. 5.7: Partly done: the `override-approver` check flags an approver who wrote the entry (git blame; rule ids `proctor/override-approver/self-approved`, `proctor/override-approver/could-not-run`), warn or fail per CREED `rules.override_self_approval`; that the approver really approved still rests on the merge request, since GitLab Community Edition has no Code Owner approval (see 5.7).
 5. 4.7: Documented: Preflight's README carries the weekly "Run it on a schedule" steps, but nothing fails when an app has no schedule (see 4.7).
-6. 8.5: Partly done: releases are tagged (0.1.0 through 0.13.0); sign them and publish provenance that says where each was built (see 8.5).
+6. 8.5: Partly done: releases are tagged (0.1.0 through 0.15.1); sign them and publish provenance that says where each was built (see 8.5).
 7. 7.2: Partly done: `proctor gate` (0.7.0) runs only the deploy-time checks with no app boot and a 60-second audit timeout; `composer-audit` still needs the network, so an offline gate only warns that advisory data is missing (see 7.2).
-8. 2.5: Partly done: `proctor gate --php-runtime` grades the PHP that will serve the app, and Squire's release script passes it by default since Squire 0.9.0 (`SQUIRE_PHP_RUNTIME` in `scripts/release.sh`), but only `unpatched` reads it, as a patch-level warning; an end-of-life runtime under a supported constraint is not flagged (see 2.5).
 
 Added in the second pass (2026-10-27):
 
-9. 4.8: Partly done: the `composer-version` check fails below the CVE-2024 floors and the policy's `tools.composer.minimum` (0.7.0), but that minimum is 2.8.0, below the 2026 Perforce fixes in 2.9.6 and 2.10.3 (see 4.8).
-10. 3.7: Partly done: the Preflight `proctor` component installs from the lock, and the `ci-pipelines` check warns (`proctor/ci-pipelines/composer-update`) when CI runs `composer update` or `composer require`; the finding is a warning, not a fail, and only `.gitlab-ci.yml` and `.github/workflows/ci.yml` are read (see 3.7).
-11. 4.12: Partly done: `composer-audit` (0.6.0) warns instead of failing for an advisory on a package that composer.lock lists only in packages-dev, marked ` [dev dependency]`, and a name in both lists still fails; the policy file carries no rule for it (see 4.12).
-12. 8.7: Documented: the floor is GitLab 18.7 (`spec:component`), named in the install page's requirements; patch status on 18.x is the owner's to check (see 8.7).
+8. 4.8: Partly done: the `composer-version` check fails below the CVE-2024 floors and the policy's `tools.composer.minimum` (0.7.0), but that minimum is 2.8.0, below the 2026 Perforce fixes in 2.9.6 and 2.10.3 (see 4.8).
+9. 3.7: Partly done: the Preflight `proctor` component installs from the lock, and the `ci-pipelines` check warns (`proctor/ci-pipelines/composer-update`) when CI runs `composer update` or `composer require`; the finding is a warning, not a fail; it reads `.gitlab-ci.yml` with its local includes and every GitHub workflow, but not remote, project or component includes (see 3.7).
+10. 4.12: Partly done: `composer-audit` (0.6.0) warns instead of failing for an advisory on a package that composer.lock lists only in packages-dev, marked ` [dev dependency]`, and a name in both lists still fails; the policy file carries no rule for it (see 4.12).
+11. 8.7: Documented: the floor is GitLab 18.7 (`spec:component`), named in the install page's requirements; patch status on 18.x is the owner's to check (see 8.7).
 
 ## Second pass (2026-10-27)
 

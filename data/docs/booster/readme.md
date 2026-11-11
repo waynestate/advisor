@@ -65,7 +65,7 @@ WELD is the Wayne State application stack. Booster is its upgrade layer.
 | HELMET | The baseline runtime |
 | Sourdough | The starters |
 | Squire | The Citadel deploy kit; the layer that serves this repo's front page is one |
-| Parity | Citadel on your computer: its PHP image, its proxy and MySQL 5.6, so an app that works here works on Citadel (0.1.0 coming) |
+| Parity | Citadel on your computer: its PHP image, its proxy and MySQL 5.6, so an app that works here works on Citadel. Try an upgraded app there before you deploy it |
 | Preflight | The CI templates |
 | Pinstripe | The coding standard |
 | Booster | This project: moves apps forward |
@@ -776,11 +776,14 @@ under `Pre-pass fixes:`.
 When the run raised the app's PHP floor, its report ends with a list of the other places that still name an older
 PHP, each with its file and line: PHP versions in the CI matrix (Preflight's `php_versions`, a GitHub workflow's
 `php:` matrix, a `PHP_VERSIONS` list) and PHP images (`php:8.3-cli` in a CI job, `citadel/php-apache:8.4r5` in the
-Squire kit's `.env.squire.example` or `docker-compose.squire.yml`). Booster never edits CI or deploy files, so it
-lists them instead: a matrix entry below the floor fails on the first push, because Composer refuses to install
-below it, and an image below it can no longer run the app. A Citadel tag also carries a build revision (`8.5r3`)
-that Booster cannot know. A dry run lists them too, from the floor its last PHP step would set. The JSON report
-carries them as `floor_follow_ups`.
+Squire kit's `.env.squire.example` or `docker-compose.squire.yml`, the `image` in Parity's `parity.json`, a `FROM`
+line in the app's own `Dockerfile`, an `image:` in its `docker-compose.yml` or `compose.yaml`), and Laravel Sail's
+runtime (`vendor/laravel/sail/runtimes/8.3` and `sail-8.3/app` in a Sail app's `docker-compose.yml`). Booster never
+edits CI or deploy files, so it lists them instead: a matrix entry below the floor fails on the first push, because
+Composer refuses to install below it, and an image below it can no longer run the app. A Citadel tag also carries a
+build revision (`8.5r3`) that Booster cannot know; for `parity.json`, `parity image list` shows the Citadel images
+Parity can run. A dry run lists them too, from the floor its last PHP step would set. The JSON report carries them
+as `floor_follow_ups`.
 
 Composer 2.10 refuses to load tagged releases Packagist has flagged with a security advisory, and hops that move
 onto Laravel 9 or 10 most often meet that block. The refusal has two faces. The loud one fails the install phase
@@ -1056,7 +1059,7 @@ agent-ready check, the Real output page check (`bin/build-proof.php --check`) an
 docker run --rm -v "${PWD}:/app" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && composer ci"
 ```
 
-The site's accessibility gate is Preflight's own checker, vendored into `tools/a11y/check.mjs` from Preflight 0.5.0
+The site's accessibility gate is Preflight's own checker, vendored into `tools/a11y/check.mjs` from Preflight 0.8.0
 and pinned by `tests/A11yCheckerPinTest.php`, so a local run checks exactly what CI checks: axe-core 4.14.0 in a
 real Chromium, every page under `site/` in light and dark at 320 and 1280 px, plus the WCAG 1.4.10 reflow check,
 all at WCAG 2.2 AA. It runs in Docker, with no host browser: `sh scripts/a11y.sh` on Linux, macOS and Git Bash, or
@@ -1081,7 +1084,7 @@ browser. The private proof site has the hop-by-hop table.
 
 ## Status
 
-Version 1.17. See [CHANGELOG.md](CHANGELOG.md) for what changed, [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) for what stays
+Version 1.18. See [CHANGELOG.md](CHANGELOG.md) for what changed, [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) for what stays
 open, and [BEST_PRACTICES.md](BEST_PRACTICES.md) for the rules Booster follows.
 
 ## License

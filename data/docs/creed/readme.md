@@ -84,13 +84,18 @@ The reader's public members, one line each:
 - `stateOf($component, $version, $on)`: the state, or an exception; `tryStateOf()` is the same answer as `null` when it cannot be answered.
 - `oldestSupported($component, $on)`: the lowest version still Active or Security; `supported()` lists all of them, oldest first.
 - `latestPatch($component, $version)`: the current patch in that line; `latestPatchChecked()` says when it was last checked.
+- `minimumPatch($component, $version)`: the oldest patch the stack accepts in that line, or null when the line sets none.
 - `line($component, $version)`: the raw line, with `active_until`, `security_until`, `latest_patch`, `latest_patch_checked` (each a string or null) and `current` (true or null).
+- `requires($component, $version)`: the line's `requires` object (`php` range, `mysql` and `mariadb` minimums), or null; `phpRange()` is its PHP range as `['min' => ..., 'max' => ...]`.
 - `activeUntil()`, `securityUntil()`: those dates as `DateTimeImmutable`, or null.
 - `daysToEol($component, $version, $on)`: whole days until `security_until`, signed; `isPastGrace()` says whether the grace period is over.
 - `resolveVersion($component, $version)`: the policy line a full version like `8.3.12` belongs to.
 - `isAheadOfPolicy($component, $version)`: whether a version sorts above every line the policy lists.
 - `belowOldestLineReason($component, $version)`: the reason a version is `Eol` for sorting below every listed line, or null.
 - `hasComponent()`, `components()`, `versions($component)`, `tools()`, `toolMinimum($tool)`, `toolCooldownPeriod($tool)`, `toolCooldownIgnore($tool)`, `rules()`: the shape of the policy itself.
+- `abandonedPackages()`, `overrideMaxDays()`, `overrideSelfApproval()`: one rule each, with the stack's default when the policy predates it (`fail`, 90, `warn`).
+- `fixWithinDays($severity)`: the days an app has to ship a fix for an advisory of that severity (`critical`, `high`, `medium` or `low`), or null while the policy states none.
+- `gateStage($checkId, $on)`: the deploy-gate stage (`report`, `warn` or `block`) of one PROCTOR check on a date.
 
 One last time: the reader answers, it does not guess.
 
@@ -239,7 +244,7 @@ PROCTOR, Booster and Rollcall each carry a generated copy of the reader
 under their own namespace, so two tools in one app never fight over a class
 name (the generator below keeps the copies in step). ADVISOR carries CREED's
 policy and handbook as a data bundle instead. The copies began
-because CREED was not on Packagist. It is now (`waynestate/creed`, 0.1.10 at this writing), so
+because CREED was not on Packagist. It is now (`waynestate/creed`, 0.1.11 at this writing), so
 each copy can become a real `require`, one consumer at a time; until a
 consumer switches, its copy stays. CREED owns the generator and the check:
 
@@ -255,6 +260,7 @@ Creed Bratton would have a form for this.
 ## Tests
 
 Maintainers: how to build, test and release this project, and where its data comes from, is in [MAINTAINING.md](MAINTAINING.md).
+What CREED does not know yet, and who can answer it, is in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md).
 
 No PHP on the machine? Fine. Docker runs the suite:
 

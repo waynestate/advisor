@@ -41,7 +41,7 @@ rules live in one place, and every consumer path agrees.
 composer require waynestate/helmet
 ```
 
-Composer picks the latest release, 1.4.0, and writes `^1.4` into `composer.json`. From 1.0 HELMET
+Composer picks the latest release, 1.4.1, and writes `^1.4` into `composer.json`. From 1.0 HELMET
 follows semantic versioning; [Upgrading](docs/upgrading.md) has what changed since 0.4, starting with the one that
 bites: an unknown quoted CSP source now throws at boot.
 
@@ -427,6 +427,28 @@ URIs by default. The default policy already allows `data:` in `font-src` and
 `img-src`, so inlined fonts and images pass; if you would rather not inline
 at all, set `build.assetsInlineLimit: 0`.
 
+And one rule Vue itself sets: **precompile your templates.** Single-file
+components (`.vue` files) are compiled at build time, so they need nothing.
+A string `template:` option or an in-DOM template needs Vue's full build,
+whose runtime compiler calls `eval`, and HELMET's policy never allows
+`'unsafe-eval'`: the browser refuses it and nothing renders.
+
+This recipe is proven in a real browser on every pipeline. `tools/vue-vite`
+is a small Vue app built exactly this way, and `tools/a11y/vue-check.mjs`
+serves its build in Chromium with HELMET's default headers and the swapped
+nonce. It checks that the app mounts with no CSP violation, its stylesheets
+and an inlined image load, a click updates the page, and a lazily imported
+chunk renders with its stylesheet carrying the response nonce. It also
+checks the two ways this goes wrong: the same build without the swap never
+mounts, and a runtime-compiled template is refused. To run it yourself,
+from the repository root:
+
+```sh
+php tools/a11y/corp-headers.php > build/helmet-headers.json
+npm --prefix tools/a11y ci && npm --prefix tools/vue-vite ci && npm --prefix tools/vue-vite run build
+node tools/a11y/vue-check.mjs --headers=build/helmet-headers.json
+```
+
 ### PSR-15 middleware
 
 The same core, mounted in a middleware pipeline:
@@ -647,8 +669,13 @@ terrible nonce.
 
 The middleware hands the per-request nonce to Laravel's Vite helper and
 injects a `csp-nonce` meta tag into `<head>`. `@vite` needs nothing. The meta
-tag lets Vite's dev runtime nonce the CSS and preload tags it adds after page
-load. When the request ends, HELMET resets the Vite nonce to a fresh random
+tag lets Vite nonce the CSS and preload tags it adds after page load: the
+dev runtime's, and in a production build the stylesheets of the chunks a
+dynamic `import()` loads. A real browser proves it on every pipeline:
+`tools/a11y/laravel-page.php` renders a small Vue app's page through Laravel
+and HELMET's service provider, and `tools/a11y/vue-check.mjs` runs it in
+Chromium with no CSP violation, a lazy chunk included (an Inertia root view
+is a Blade view with the same `@vite`). When the request ends, HELMET resets the Vite nonce to a fresh random
 one, so a long-lived worker (Octane, Swoole, FrankenPHP) does not carry one
 request's nonce into the next.
 
@@ -658,7 +685,9 @@ A few rules keep the CSP honest:
   scripts. Every `<script>` without a `src` needs
   `nonce="{{ Vite::cspNonce() }}"`.
 - **No `'unsafe-eval'`.** The CSP never allows it. If your bundle needs
-  `eval`, fix the bundle.
+  `eval`, fix the bundle. Vue's runtime template compiler is the usual
+  culprit: keep templates in `.vue` files (compiled at build time), not in
+  string `template:` options.
 - **No scripts in Inertia's `<Head>`.** Inertia's `<Head>` renders into the
   document head after the page loads. A `<script>` there would not carry the
   nonce, and the browser would block it. Put scripts in your layout, where
@@ -1146,7 +1175,7 @@ instead of a home-made one. HELMET's pipeline includes Preflight's
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/secret-detection@0.5.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/secret-detection@0.8.0
     inputs:
       image: "zricethezav/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f"
 ```

@@ -117,8 +117,10 @@ Colima, Docker Engine); Parity just stops suggesting them. Either way the bubble
   5.6 shipped with it off), else on slower QEMU emulation, which works. `parity check` gives the steps to turn Rosetta
   on (macOS 26 or later).
 
-The Podman path is proven end to end on Linux: rootful and rootless, through `podman compose` and through `docker
-compose` on Podman's socket. Windows and macOS runs are on the release checklist ([MAINTAINING.md](MAINTAINING.md)).
+The Podman path is proven end to end on Linux (rootful and rootless, through `podman compose` and through `docker
+compose` on Podman's socket) and on Windows (Podman Desktop's rootless machine and Docker Desktop, mount and bake,
+on Citadel's real 8.5r3 image, 2026-11-10). macOS is the run still owed on the release checklist
+([MAINTAINING.md](MAINTAINING.md), "Checklist runs").
 
 ## What Parity runs
 
@@ -380,7 +382,8 @@ The 1.0 command set: `check`, `init` (with `--from-squire`), `up`, `down`, `stat
 
 Before the tag:
 
-- One real `parity up` and `parity test` on a Windows PC and on an Apple Silicon Mac, each with Podman and Docker.
+- One real `parity up` and `parity test` on an Apple Silicon Mac, with Podman and with Docker. Windows is done
+  (2026-11-10, Podman and Docker Desktop); that run found three bugs, all fixed before 1.0 (see the CHANGELOG).
 - 1.0 ships unsigned, with checksums, like 0.1.0.
 - Citadel's 8.4r5 image is the one outside dependency: until its tar exists, 1.0 offers 8.5r3 only.
 

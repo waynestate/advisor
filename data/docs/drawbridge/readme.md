@@ -11,7 +11,7 @@ Checks: `composer ci` (the same command runs in the GitLab pipeline and in the G
 Drawbridge is the sign-in gateway for the apps on Citadel, Wayne State's container platform. It is Apache with
 mod_auth_openidc, set up as one OpenID Connect client for Microsoft Entra ID. It is not live yet: its home will be
 `auth.apps.wayne.edu`, in front of every app on the platform, once the Citadel routing for it exists.
-The latest release, 0.6.1, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
+The latest release, 0.6.2, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
 checks that the visitor has a session, drops any identity header the visitor sent, and passes the app a
 short-lived signed assertion that SESAME's `gateway` driver verifies. Which paths need a login, and which need an
 Entra authentication context on top, is declared per app in a config file. Nothing else decides it.
@@ -44,7 +44,7 @@ as a gate, and decisions written down. WELD is the Laravel starter app with the 
 | HELMET | security headers and CSP reporting |
 | Sourdough | the starter that keeps the stack fed |
 | Squire | the Citadel deploy kit; the layer that serves this repo's front page is one |
-| Parity | Citadel on your computer: its PHP image, its proxy and MySQL 5.6, so an app that works here works on Citadel (0.1.0 coming) |
+| Parity | Citadel on your computer: its PHP image, its proxy and MySQL 5.6, so an app that works here works on Citadel |
 | Preflight | the shared CI components |
 | Pinstripe | the coding standard presets (Pint, PHPStan, ESLint, Rector) |
 | Booster | upgrades an app's PHP, Laravel and front end, one hop at a time |
@@ -208,7 +208,7 @@ each real one comes from.
 The container rig is the local trial: the real gateway image, a mock OpenID Connect provider standing in for
 Entra, and a tiny echo app. It signs in synthetic users through the mock and checks protected and public paths,
 spoofed headers, forged callbacks, logout and step-up to an authentication context. Nothing in the rig reaches
-Entra.
+Entra. A plain run (and the keycloak run) ends with `drawbridge smoke` inside the gateway container, with no options, the way a deployment is checked.
 
 ```powershell
 rig\run.ps1          # Windows
@@ -288,6 +288,19 @@ rig\run.ps1 multi      # Windows
 sh rig/run.sh multi    # Linux, macOS
 ```
 
+The `trial` argument runs the trial kit in `trial/` (one gateway and the throwaway whoami app, the smallest real
+deployment, ready to copy onto a pre-production host) against the mock provider. It signs in through whoami, runs the
+smoke check, rolls the gateway back to a "previous" image while whoami keeps running, and checks again.
+[First deployment](docs/deploying/first-deployment.md) walks the same kit on a real host.
+
+```powershell
+rig\run.ps1 trial      # Windows
+```
+
+```sh
+sh rig/run.sh trial    # Linux, macOS
+```
+
 When the rig is green, the next step is the first real sign-in: [ENTRA_TEST.md](ENTRA_TEST.md).
 
 ### Register Drawbridge in Entra ID
@@ -322,17 +335,19 @@ each open question E-1 to E-8.
 
 ## Getting the image
 
-The pipeline builds the gateway image on every merge request and on the default branch, and publishes it to the stack's image registry (the group's `images` project) when a tag is pushed. The image is at `<registry>/enterprise-apps/images/drawbridge-gateway:<tag>` (for example `<registry>/enterprise-apps/images/drawbridge-gateway:0.6.1`).
+The pipeline builds the gateway image on every merge request and on the default branch, and publishes it to the stack's image registry (the group's `images` project) when a tag is pushed. The image is at `<registry>/enterprise-apps/images/drawbridge-gateway:<tag>` (for example `<registry>/enterprise-apps/images/drawbridge-gateway:0.6.2`).
 `<registry>` is the stack's container registry; Enterprise Applications has its address. There is no `latest` tag: pin a release.
+For a first run on a pre-production host (a throwaway app, the health and smoke checks, logs and a rollback), see
+[First deployment](docs/deploying/first-deployment.md) and the kit in `trial/`.
 
 ```sh
-docker pull <registry>/enterprise-apps/images/drawbridge-gateway:0.6.1
+docker pull <registry>/enterprise-apps/images/drawbridge-gateway:0.6.2
 ```
 
 The publish job prints the digest it pushed. Verify the image you pulled against it:
 
 ```sh
-docker inspect --format='{{index .RepoDigests 0}}' <registry>/enterprise-apps/images/drawbridge-gateway:0.6.1
+docker inspect --format='{{index .RepoDigests 0}}' <registry>/enterprise-apps/images/drawbridge-gateway:0.6.2
 ```
 
 The image carries OCI labels (`org.opencontainers.image.source`, `.revision`, `.version`, `.licenses`) set from the
@@ -523,6 +538,7 @@ Run as `php bin/drawbridge <command>` (or `vendor/bin/drawbridge` when installed
 | `config:validate` | checks the config and prints every problem at once, then the provider settings (never the secret, only whether its variable is set, and its expiry date with the days left when `DRAWBRIDGE_OIDC_CLIENT_SECRET_EXPIRES` is set); exit 1 if any |
 | `explain <host> <path>` | says which rule applies to a request, the authentication context and groups it needs, and whether it is denied |
 | `revoke <subject>... [--list]` | ends every gateway session those people hold now, on every app host (the revocation list the gateway rereads each second) |
+| `smoke [--url=URL] [--app=ID]... [--format=json]` | checks a running gateway without signing anyone in: `/_drawbridge/up`, an unknown host, each app's login, api, deny and public paths, the redirect URI and PKCE, a made-up callback and `/metrics`; read-only, exit 1 if a check fails. Inside the container: `docker exec <gateway-container> /opt/drawbridge/bin/drawbridge smoke` |
 | `render` | checks the two secrets in the environment, then writes `apps.conf` and `policy.lua` for Apache (the entrypoint runs this); warns on stderr when the client secret expires in 30 days or fewer |
 | `keys:generate` | makes an ES256 key pair; refuses to overwrite a file |
 | `keys:jwks --key=KID=FILE ... [--out=FILE]` | writes the key set file apps verify with: the public keys, current then next, as a JWKS; refuses a private key |
@@ -630,7 +646,7 @@ The endpoint serves only what it can see truthfully:
 
 | Metric | Type | Meaning |
 |---|---|---|
-| `drawbridge_build_info{version}` | gauge | the gateway is up, and which version |
+| `drawbridge_build_info{version}` | gauge | the gateway is up, and which release (`Version::CURRENT` in `src/Version.php`, the same value `drawbridge --version` prints) |
 | `drawbridge_signing_requests_total` | counter | signing requests the assertion signer received |
 | `drawbridge_assertions_signed_total` | counter | assertions the signer signed successfully |
 | `drawbridge_assertion_errors_total{reason}` | counter | signing requests the signer refused or failed, by reason |

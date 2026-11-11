@@ -56,7 +56,7 @@ composer require --dev waynestate/pinstripe:^0.3
 Pinstripe loads its PHPStan rules through `phpstan/extension-installer`, and Composer will not ask when it cannot prompt.
 If Composer stops because a package your app already locks (often an older PHPStan) does not fit, run the same `composer require` again with `-W`, as Composer suggests, so it may update that package too.
 
-`^0.3` gets you 0.3.1, the current release, with every [banned call](#banned-calls) below. Packagist reads the GitHub
+`^0.3` gets you 0.3.2, the current release, with every [banned call](#banned-calls) below. Packagist reads the GitHub
 mirror, which can trail a release by a while. If Composer says it cannot find a 0.3 version, point it at the
 canonical repository first (it asks for your git.wayne.edu sign-in), then run the `composer require` again:
 
@@ -156,7 +156,29 @@ Opt-in. Point `composer lint` and `composer fix` at the strict preset instead of
 }
 ```
 
-`composer fix` adds `declare(strict_types=1);` to every file it touches, so run your tests first and commit the change on its own. For a big app, Rector's `SafeDeclareStrictTypesRector` is the careful route. Strict types leave no loose threads.
+`composer fix` adds `declare(strict_types=1);` to every file it touches, so run your tests first and commit the change on its own. Strict types leave no loose threads.
+
+### The careful route on a big app
+
+A file that passes `'3'` to an `int` parameter works today and throws a `TypeError` the day it turns strict. On an old
+app, let Rector declare strict types only where nothing changes: `rector/strict-types.php` runs Rector's
+`SafeDeclareStrictTypesRector` and nothing else, so it skips every file whose calls, returns or property assignments
+lean on PHP's type juggling. Keep it in a config of its own, so the diff is only declarations:
+
+```php
+<?php
+
+// rector-strict-types.php
+$strict = require __DIR__ . '/vendor/waynestate/pinstripe/rector/strict-types.php';
+
+return $strict->withPaths([__DIR__ . '/src']);
+```
+
+`vendor/bin/rector process --dry-run -c rector-strict-types.php` lists the files that are ready, and the same command
+without `--dry-run` declares them. Run it again after other fixes add types, and the list grows. Switch `composer lint`
+to `per-strict.json` once every file is declared, so new files cannot slip in without it. Proven on fixtures: the
+preset must declare `tests/fixtures/rector-strict-types/src/Measure.php` and leave `Hem.php`, which passes a string to
+`str_repeat()`, alone. Measure twice, declare once.
 
 ## Use it in a Laravel app
 
@@ -347,6 +369,27 @@ sees no change.
 Proven on fixtures: `composer ci` runs the preset against a modern app (`tests/fixtures/rector-clean`) and an
 old-style one (`tests/fixtures/rector-old`) on every run, and fails if the clean one changes or the old one is left
 alone. Rector is the tailor's press: it smooths old code to the standard without changing the cut.
+
+### One level at a time, on a big old app
+
+On an app that has never met Rector, the base preset's four whole sets make one diff nobody can review. The opt-in
+`rector/levels.php` returns a function instead: name a rule family and how far up it goes, and Rector applies only
+that family's first rules, safest first.
+
+```php
+<?php
+
+$levels = require __DIR__ . '/vendor/waynestate/pinstripe/rector/levels.php';
+
+return $levels(deadCode: 0)->withPaths([__DIR__ . '/src']);
+```
+
+The families are `deadCode`, `typeCoverage`, `codeQuality` and `php` (the PHP-version rules, still capped at your
+`require.php`), and each one stays off until you name it. Level 0 is the first rule, not "off". Dry-run, review,
+apply, commit, then raise the number by one in the next merge request; when every family runs whole, switch to
+`rector/base.php`. Three fixture configs in `tests/fixtures/rector-levels` prove that level 0 makes only the first
+change, level 2 adds the next ones, and one family never applies another's rules. A suit is altered one fitting at a
+time.
 
 ## Banned calls
 

@@ -30,10 +30,12 @@ Both run in CI on GitLab and GitHub, so a preset that stops working fails the pi
 | `SQL joined from strings banned` | PHPStan (`literal-string`) + disallowed-calls | Enforced | `PresetsTest::testPhpStanReportsSqlJoinedFromStringsInRawPhp`, `PresetsTest::testPhpStanAcceptsLiteralSqlWithBoundValuesInRawPhp`, `PresetsTest::testPhpStanAcceptsSqlReadFromFilesThroughATypedWrapper`, `PresetsTest::testPhpStanReportsSqlJoinedThroughAWrapperAtTheCaller`, `PresetsTest::testLaravelPresetReportsSqlJoinedFromStrings`, `PresetsTest::testLaravelPresetAcceptsLiteralSqlWithBindings` |
 | `Banned call tips link to the CREED rule` | PHPStan | Enforced | `tests/BannedCallLinksTest.php` (`BannedCallLinksTest::testEveryBanCarriesAnIdentifierAndATip` makes sure no entry goes without) |
 | `rector/base.php` | Rector | Enforced | `PresetsTest::testRectorPresetAcceptsTheCleanFixture`, `PresetsTest::testRectorPresetReportsChangesOnTheOldFixture` |
+| `rector/strict-types.php` | Rector | Enforced | `PresetsTest::testRectorStrictTypesPresetDeclaresOnlyTheSafeFile`, `PresetsTest::testRectorStrictTypesPresetLeavesTheCoercingFileAlone` |
+| `rector/levels.php` | Rector | Enforced | `PresetsTest::testRectorLevelsPresetStartsWithTheFirstDeadCodeRuleOnly`, `PresetsTest::testRectorLevelsPresetRaisingTheLevelAddsTheNextRules`, `PresetsTest::testRectorLevelsPresetKeepsTheFamiliesApart`, `PresetsTest::testRectorLevelsPresetRefusesToRunWithNoFamilyNamed` |
 | `eslint/javascript.js` | ESLint | Enforced | `tests/js/presets.test.mjs` (`npm test`) |
 | `eslint/typescript.js` | ESLint | Enforced | `tests/js/presets.test.mjs` (`npm test`) |
 | `prettier/index.json` | Prettier | Enforced | `tests/js/prettier.test.mjs` (`npm test`) |
 | README "Tool floors" | composer.lock + package-lock.json | Enforced | `ToolFloorsTest::testToolFloorsMatchTheLockFiles` |
 | This page | PHPUnit | Enforced | `BestPracticesTest::testEveryTestNamedHereExists`, `BestPracticesTest::testEveryFileNamedHereExists`, `BestPracticesTest::testEveryRowHasAKnownStatusAndAnEnforcedRowNamesItsTests`, `BestPracticesTest::testTheDocsPageCarriesTheSameTable`, `BestPracticesTest::testTheTallyCountsTheTable` |
 
-Tally: 23 rows, 23 Enforced, 0 Checked.
+Tally: 25 rows, 25 Enforced, 0 Checked.
