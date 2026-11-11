@@ -4,12 +4,14 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
-- Fixed: CI no longer stops `composer ci` after 300 seconds (`config.process-timeout` is 0; the job's own timeout still applies).
-
 ### Added
 
 - Added: `advisor install --runner=docker|php`. A project with a compose file or `parity.json` defaults to `docker` (the MCP client starts ADVISOR inside the app container through `docker compose run`), anything else to `php`; switching runner needs `--force`.
 - Added: each file in `content/manifest.json` can carry a `source_commit`, read straight from the source repository's `.git` with no git call. `content:verify` ignores it, and `content:generate` prints one line per project with its short commit.
+
+### Fixed
+
+- Fixed: CI no longer stops `composer ci` after 300 seconds (`config.process-timeout` is 0; the job's own timeout still applies).
 
 ## [0.3.1] - 2026-11-11
 
