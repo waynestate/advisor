@@ -17,6 +17,10 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Added: `advisor install --runner=docker|php`. A project with a compose file or `parity.json` defaults to `docker` (the MCP client starts ADVISOR inside the app container through `docker compose run`), anything else to `php`; switching runner needs `--force`.
 - Added: each file in `content/manifest.json` can carry a `source_commit`, read straight from the source repository's `.git` with no git call. `content:verify` ignores it, and `content:generate` prints one line per project with its short commit.
 
+### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
+
+- Fixed: CI no longer stops `composer ci` after 300 seconds (`config.process-timeout` is 0; the job's own timeout still applies).
+
 ## \[0.3.1\] - 2026-11-11 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-3-1-2026-11-11)
 
 ### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added-1)
@@ -30,7 +34,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Docs: the Laravel guide says how Boost's project rules (`.ai/rules`, filed by Boost's `record-rule` tool) and CREED's rules live together: CREED rules stay in CREED and come through `list_stack_rules`, a project rule adds to them and never overrides one, and CREED wins a disagreement. Best-practices rule 5 points there instead of saying the two never overlap.
 - Added: the a11y gate (`scripts/a11y/check.mjs`) opens every disclosure before axe runs, so the field book and anything else behind a click is checked at both widths and in both themes.
 
-### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
+### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-1)
 
 - Fixed: the front page's routes for Booster, Drawbridge, HELMET, Parity, Preflight, ROLLCALL and Squire called `read_project_docs` without `doc`, which the tool refuses; they now ask for `doc: readme`. The new readouts test found it. The README route map (`docs/readme/route.svg`, redrawn by the readme-art kit from the page's own routes) and its alt text say `doc: readme` too.
 
@@ -105,7 +109,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: the a11y-extra job runs Playwright 1.65.0 and axe-core 4.14.0 on the image digest Preflight 0.4.0 pins (was Playwright 1.49.1 and axe-core 4.10), so ADVISOR's own page checks and the stack's a11y gate use one engine.
 - data: resyncs from 2026-11-08 03:40 through 2026-11-09 08:45 against each stack repo's main: Preflight 0.4.0 pins and its must-fail fixtures, PROCTOR 0.9.0 (the entrypoint-migrate, gitattributes, preflight-gates and mysql-minimum rules), Squire 0.9.0, SESAME 0.6.2 (strict-mode sessions, CAS 2.0, the Eloquent refresh fix), HELMET 1.0.1 and its ribbon list, Rollcall 1.0.0, Pinstripe 0.3.0, Booster 1.12.0, Drawbridge 0.4.0, CREED handbook tags and WELD's regen gate.
 
-### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-1)
+### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-2)
 
 - Fixed: a docs truth pass (2026-11-09). The install page lists `waynestate/creed` and the Symfony `^7.4 || ^8.0` range; "Where it sits" names all four Preflight components; the best-practices and contributing pages stop listing the threat model as not built; the commands page gives doctor's exit code 2; the threat pages cite the lines the code is on today; OPEN_QUESTIONS lists every optional setting. The front page's ask box says Drawbridge is an OpenID Connect client for Entra ID (it said SAML), names SESAME's OpenID Connect driver, carries Laravel 13's real active-support date and MySQL 5.6 from the policy, and writes Booster, Preflight, Squire, Rollcall and Drawbridge as words.
 - Fixed: the docs and the front page keep their Docs link in the header on a phone (it used to vanish below 900px with the section links), the docs sidebar opens scrolled to the page you are on with a thin scrollbar, Troubleshooting's symptoms are h2 headings under the h1 (they skipped to h3), and the Overview's tagline sits under its title.
@@ -156,7 +160,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: symfony/console and symfony/process accept ^8.0 as well as ^7.4, so apps on Pest 5 / PHPUnit 13 can install ADVISOR.
 - Changed: the docs builder and kit are resynced from Squire's unified builder (theme hook, callouts, code tabs, task lists, copy button fix).
 
-### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-2)
+### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-3)
 
 - Fixed: the proof runner keeps the tool binary paths out of the error text: each of the proctor, booster and advisor binary paths is shortened to its file name before the scratch and corpus folders are masked as /app.
 - Fixed: front-page scroll reveals start hidden from first paint (plain CSS under `html.motion`, set in `<head>` before the body parses) instead of fading out after load, so unscrolled below-the-fold content sits at opacity 0 rather than being caught mid-fade; the motion class is only set where IntersectionObserver exists, so a page that hides content can always bring it back.
@@ -208,7 +212,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - Changed: docs copies resynced; proof results now live on proof.apps.wayne.edu.
 - Changed: project names written as words except acronyms.
 
-### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-3)
+### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed-4)
 
 - Fixed: stale capability claims in the site and docs.
 
