@@ -43,7 +43,7 @@
 <p>This page shows how ADVISOR runs inside a Laravel app, beside Laravel Boost.</p>
 <h2 id="the-laravel-adapter">The Laravel <span class="docs-heading-tail"><span>adapter</span><a class="docs-heading-link" aria-label="Link to this section" href="#the-laravel-adapter">#</a></span></h2>
 <p>ADVISOR ships a Laravel adapter on <code>laravel/mcp</code>, auto-discovered by the service provider. With it, the same server runs as <code>php artisan mcp:start advisor</code>, beside Boost.</p>
-<aside class="docs-callout docs-callout--tip" role="note"><p class="docs-callout__label">Tip</p><p>Boost knows the framework, ADVISOR knows WSU. They do not overlap, so run both.</p></aside>
+<aside class="docs-callout docs-callout--tip" role="note"><p class="docs-callout__label">Tip</p><p>Boost knows the framework, ADVISOR knows WSU, so run both. The one place they could overlap is rules; see <a href="#boost-s-project-rules-and-creed-s-rules">Boost's project rules and CREED's rules</a>.</p></aside>
 <h2 id="publish-the-config">Publish the <span class="docs-heading-tail"><span>config</span><a class="docs-heading-link" aria-label="Link to this section" href="#publish-the-config">#</a></span></h2>
 <p>Publish the config if you want it in the app:</p>
 <pre tabindex="0"><code>php artisan vendor:publish --tag=advisor-config
@@ -53,6 +53,46 @@
 <aside class="docs-callout docs-callout--warning" role="note"><p class="docs-callout__label">Warning</p><p>The same rules apply: off unless <code>ADVISOR_ENABLED</code> is set, and never in production.</p></aside>
 <h2 id="registering-the-server">Registering the <span class="docs-heading-tail"><span>server</span><a class="docs-heading-link" aria-label="Link to this section" href="#registering-the-server">#</a></span></h2>
 <p><code>advisor install</code> always writes the plain PHP command, <code>php vendor/bin/advisor mcp</code>. The artisan route, <code>php artisan mcp:start advisor</code>, is available through the service provider.</p>
+<h2 id="boost-s-project-rules-and-creed-s-rules">Boost's project rules and CREED's <span class="docs-heading-tail"><span>rules</span><a class="docs-heading-link" aria-label="Link to this section" href="#boost-s-project-rules-and-creed-s-rules">#</a></span></h2>
+<p>Boost can keep project rules: Markdown files in <code>.ai/rules</code>, committed with the app, that an agent files through Boost's <code>record-rule</code> tool when you say &quot;remember that...&quot;. Boost writes the index, <code>.ai/rules/index.md</code>, and its docs say to record rules with the tool, not by hand. They are a good home for one app's own decisions. They are not a home for the stack's rules.</p>
+<div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
+<thead>
+<tr>
+<th></th>
+<th>CREED rules</th>
+<th>Boost project rules</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scope</td>
+<td>Every WSU app on the stack</td>
+<td>This one app</td>
+</tr>
+<tr>
+<td>Written by</td>
+<td>The stack's maintainers, in CREED's handbook</td>
+<td>This app's team and its agents</td>
+</tr>
+<tr>
+<td>Where an agent reads them</td>
+<td>ADVISOR's <code>list_stack_rules</code>, quoted with a citation such as <code>creed/handbook/ci.md:5</code></td>
+<td><code>.ai/rules</code>, through Boost's index</td>
+</tr>
+<tr>
+<td>Changes when</td>
+<td>A CREED release, picked up by <code>composer update</code></td>
+<td>Someone records a rule</td>
+</tr>
+</tbody>
+</table></div>
+<p>Three habits keep them from fighting:</p>
+<ul>
+<li><strong>Do not copy CREED rules into <code>.ai/rules</code>.</strong> Two copies drift, and an agent follows whichever one it read last. If your agent offers to &quot;remember&quot; a stack rule, tell it to cite the rule's id from <code>list_stack_rules</code> instead.</li>
+<li><strong>A project rule adds to CREED; it never overrides it.</strong> &quot;Controllers in this app extend <code>BaseController</code>&quot; is a project rule. &quot;This app may skip the session cookie flags&quot; is not: an exception to a CREED requirement is a question for CREED's maintainers, not a rule file.</li>
+<li><strong>When the two seem to disagree, CREED wins</strong> and the project rule is the one to fix. Ask your agent to check a project rule against <code>list_stack_rules</code> with a <code>query</code> before you rely on it.</li>
+</ul>
+<aside class="docs-callout docs-callout--note" role="note"><p class="docs-callout__label">Note</p><p>ADVISOR never writes to <code>.ai/rules</code> (all nine tools are read-only), and it does not read them either: they are your app's, and Boost already serves them. Boost's <code>BOOST_RULES_ENABLED=false</code> turns project rules off entirely; you do not need to for ADVISOR's sake.</p></aside>
 <h2 id="related"><span class="docs-heading-tail"><span>Related</span><a class="docs-heading-link" aria-label="Link to this section" href="#related">#</a></span></h2>
 <ul>
 <li><a href="what-it-offers.html">What it offers</a></li>
@@ -64,7 +104,7 @@
     </main>
     <nav class="docs-pager" aria-label="Pages"><a class="docs-pager__link" href="../../docs/guides/docker.html"><span class="docs-pager__dir">Previous</span><span class="docs-pager__title">No PHP? Use Docker</span></a><a class="docs-pager__link docs-pager__link--next" href="../../docs/guides/what-it-offers.html"><span class="docs-pager__dir">Next</span><span class="docs-pager__title">What it offers</span></a></nav>
   </div>
-  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#the-laravel-adapter">The Laravel adapter</a></li><li class="docs-toc__item"><a href="#publish-the-config">Publish the config</a></li><li class="docs-toc__item"><a href="#settings">Settings</a></li><li class="docs-toc__item"><a href="#registering-the-server">Registering the server</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
+  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#the-laravel-adapter">The Laravel adapter</a></li><li class="docs-toc__item"><a href="#publish-the-config">Publish the config</a></li><li class="docs-toc__item"><a href="#settings">Settings</a></li><li class="docs-toc__item"><a href="#registering-the-server">Registering the server</a></li><li class="docs-toc__item"><a href="#boost-s-project-rules-and-creed-s-rules">Boost&#039;s project rules and CREED&#039;s rules</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
 </div>
 <footer class="docs-footer">
   <span>Documents ADVISOR <span data-docs-version>0.3.0</span></span>

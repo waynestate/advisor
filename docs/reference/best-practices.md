@@ -27,7 +27,7 @@ Do not paste tokens into prompts. Audit logs hold hashes, never arguments, and P
 
 ## Run Boost beside it in Laravel apps
 
-Boost knows the framework, ADVISOR knows WSU. They do not overlap. Documented.
+Boost knows the framework and keeps your app's own project rules, ADVISOR knows WSU. Do not copy CREED rules into Boost's `.ai/rules`: a project rule adds to CREED and never overrides it (see [Boost's project rules and CREED's rules](../guides/laravel.md#boost-s-project-rules-and-creed-s-rules)). Documented.
 
 ## Read-only first
 

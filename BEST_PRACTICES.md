@@ -14,8 +14,9 @@ Documented (written down only), Not yet (a gap).
    Enforced.
 4. **Keep secrets out of what you ask.** Do not paste tokens into prompts. Audit logs hold hashes, never arguments,
    and PROCTOR output is redacted. Enforced.
-5. **Run Boost beside it in Laravel apps.** Boost knows the framework, ADVISOR knows WSU. They do not overlap.
-   Documented.
+5. **Run Boost beside it in Laravel apps.** Boost knows the framework and keeps your app's own project rules,
+   ADVISOR knows WSU. Do not copy CREED rules into Boost's `.ai/rules`: a project rule adds to CREED and never
+   overrides it (the Laravel guide, "Boost's project rules and CREED's rules"). Documented.
 
 ## Building on it
 

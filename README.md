@@ -177,6 +177,10 @@ php artisan vendor:publish --tag=advisor-config
 Settings come from the same `ADVISOR_*` variables, read through `config/advisor.php`. The same rules apply: off unless
 `ADVISOR_ENABLED` is set, and never in production.
 
+Boost's project rules (`.ai/rules`) are for your app's own decisions. Keep CREED's rules out of them: a project rule
+adds to CREED and never overrides it, and your agent reads CREED's through `list_stack_rules`. The Laravel guide has
+the details.
+
 ## What it offers
 
 Nine tools, all read-only. Each one says where its answer came from:

@@ -51,7 +51,7 @@
 <h2 id="keep-secrets-out-of-what-you-ask">Keep secrets out of what you <span class="docs-heading-tail"><span>ask</span><a class="docs-heading-link" aria-label="Link to this section" href="#keep-secrets-out-of-what-you-ask">#</a></span></h2>
 <p>Do not paste tokens into prompts. Audit logs hold hashes, never arguments, and PROCTOR output is redacted. Enforced.</p>
 <h2 id="run-boost-beside-it-in-laravel-apps">Run Boost beside it in Laravel <span class="docs-heading-tail"><span>apps</span><a class="docs-heading-link" aria-label="Link to this section" href="#run-boost-beside-it-in-laravel-apps">#</a></span></h2>
-<p>Boost knows the framework, ADVISOR knows WSU. They do not overlap. Documented.</p>
+<p>Boost knows the framework and keeps your app's own project rules, ADVISOR knows WSU. Do not copy CREED rules into Boost's <code>.ai/rules</code>: a project rule adds to CREED and never overrides it (see <a href="../guides/laravel.html#boost-s-project-rules-and-creed-s-rules">Boost's project rules and CREED's rules</a>). Documented.</p>
 <h2 id="read-only-first">Read-only <span class="docs-heading-tail"><span>first</span><a class="docs-heading-link" aria-label="Link to this section" href="#read-only-first">#</a></span></h2>
 <p>Every tool states all four hints (read-only, destructive, idempotent, open-world). A tool that writes is left out unless <code>ADVISOR_READ_ONLY</code> is turned off, and that switch beats tool groups. Enforced (contract test).</p>
 <h2 id="narrow-tools-closed-schemas">Narrow tools, closed <span class="docs-heading-tail"><span>schemas</span><a class="docs-heading-link" aria-label="Link to this section" href="#narrow-tools-closed-schemas">#</a></span></h2>
