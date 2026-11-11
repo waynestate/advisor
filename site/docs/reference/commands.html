@@ -113,7 +113,7 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 </table></div>
 <h3 id="bin-advisor-install"><span class="docs-heading-tail"><code>bin/advisor install</code><a class="docs-heading-link" aria-label="Link to this section" href="#bin-advisor-install">#</a></span></h3>
 <p>Print (or with --write, write) the MCP client config that starts ADVISOR.</p>
-<p>Usage: <code>bin/advisor install [-c|--client CLIENT] [--write] [--force] [--path PATH]</code></p>
+<p>Usage: <code>bin/advisor install [-c|--client CLIENT] [--write] [--force] [--path PATH] [--runner RUNNER]</code></p>
 <div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
 <thead>
 <tr>
@@ -142,6 +142,11 @@ php vendor/bin/advisor doctor [--json]              # check the install when the
 <td><code>--path=VALUE</code></td>
 <td>Project folder to write into.</td>
 <td><code>.</code></td>
+</tr>
+<tr>
+<td><code>--runner=VALUE</code></td>
+<td>How to start ADVISOR: docker (inside the app container) or php (on the host). Detected from the project when omitted.</td>
+<td></td>
 </tr>
 <tr>
 <td><code>--silent</code></td>

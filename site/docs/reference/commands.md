@@ -51,7 +51,7 @@ Usage: `bin/advisor doctor [--json]`
 
 Print (or with --write, write) the MCP client config that starts ADVISOR.
 
-Usage: `bin/advisor install [-c|--client CLIENT] [--write] [--force] [--path PATH]`
+Usage: `bin/advisor install [-c|--client CLIENT] [--write] [--force] [--path PATH] [--runner RUNNER]`
 
 | Option | Meaning | Default |
 | --- | --- | --- |
@@ -59,6 +59,7 @@ Usage: `bin/advisor install [-c|--client CLIENT] [--write] [--force] [--path PAT
 | `--write` | Write the file in the project instead of printing it. |  |
 | `--force` | Replace an existing, different "advisor" entry. |  |
 | `--path=VALUE` | Project folder to write into. | `.` |
+| `--runner=VALUE` | How to start ADVISOR: docker (inside the app container) or php (on the host). Detected from the project when omitted. |  |
 | `--silent` | Do not output any message |  |
 
 ### `bin/advisor mcp` [#](https://advisor.apps.wayne.edu/docs/reference/commands.html#bin-advisor-mcp)
