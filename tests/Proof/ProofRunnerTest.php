@@ -42,7 +42,7 @@ final class ProofRunnerTest extends TestCase
         $this->assertCount(1, $result['lines']);
         $line = $result['lines'][0];
         $this->assertSame('advisor', $line['project']);
-        $this->assertSame('0.3.0', $line['tool_version']);
+        $this->assertSame('0.3.1', $line['tool_version']);
         $this->assertNull($line['tool_commit']);
         $this->assertSame($unitId, $line['unit_id']);
         $this->assertSame('app', $line['unit_kind']);
