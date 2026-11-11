@@ -7,11 +7,14 @@ namespace Waynestate\Advisor\Tests\Tools;
 use PHPUnit\Framework\TestCase;
 use Waynestate\Advisor\Server\Booted;
 use Waynestate\Advisor\Server\ToolOutcome;
+use Waynestate\Advisor\Tests\Support\AssertsOutputSchema;
 use Waynestate\Advisor\Tests\Support\Boot;
 
 /** playbook_lookup against the Playbook stub (tests/Fixtures/playbook-stub.php). */
 final class PlaybookLookupTest extends TestCase
 {
+    use AssertsOutputSchema;
+
     /** @var string|false */
     private $savedCasUrl = false;
 
@@ -40,7 +43,11 @@ final class PlaybookLookupTest extends TestCase
      */
     private function call(Booted $booted, array $args = []): ToolOutcome
     {
-        return $booted->invoker->invoke($booted->catalog->tools()['playbook_lookup'], $args);
+        $tool = $booted->catalog->tools()['playbook_lookup'];
+        $outcome = $booted->invoker->invoke($tool, $args);
+        $this->assertConformsToOutputSchema($tool, $outcome);
+
+        return $outcome;
     }
 
     /**

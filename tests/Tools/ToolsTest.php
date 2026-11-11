@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Waynestate\Advisor\Security\ProcessOutput;
 use Waynestate\Advisor\Server\Booted;
 use Waynestate\Advisor\Server\ToolOutcome;
+use Waynestate\Advisor\Tests\Support\AssertsOutputSchema;
 use Waynestate\Advisor\Tests\Support\Boot;
 use Waynestate\Advisor\Tests\Support\FakeProcessRunner;
 use Waynestate\Advisor\Tests\Support\TempDir;
@@ -15,6 +16,7 @@ use Waynestate\Advisor\Tests\Support\TempDir;
 /** Each tool through the same ToolInvoker the adapters use, on the real bundled data. */
 final class ToolsTest extends TestCase
 {
+    use AssertsOutputSchema;
     use TempDir;
 
     /**
@@ -22,7 +24,11 @@ final class ToolsTest extends TestCase
      */
     private function call(Booted $booted, string $tool, array $args = []): ToolOutcome
     {
-        return $booted->invoker->invoke($booted->catalog->tools()[$tool], $args);
+        $definition = $booted->catalog->tools()[$tool];
+        $outcome = $booted->invoker->invoke($definition, $args);
+        $this->assertConformsToOutputSchema($definition, $outcome);
+
+        return $outcome;
     }
 
     /**
