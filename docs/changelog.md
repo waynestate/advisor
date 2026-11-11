@@ -13,10 +13,18 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Added
 
+- Added: every tool publishes a real output schema in `tools/list` (it was an open `{"type": "object"}`): closed, every field typed and described, with the fields always present marked required. A contract test checks each schema's shape and validates every answer the tool tests produce against it (opis/json-schema, already a dependency), the `playbook_lookup` and `run_proctor_check` paths included. Practice 2.8 (structured content with an output schema) is met.
 - Added: `advisor doctor` has a `stdio` check: it starts `php bin/advisor mcp` as a child process, the way a client does, asks it to initialize, list its tools and answer one `policy_lookup` call, and passes only when every stdout line is JSON-RPC and the child exits 0. The pass line names the OS and PHP version, so one run on a Windows PHP answers open question 1. A `php-path` check says which `php` on the PATH a client will start, and warns when there is none or it is not the PHP running doctor (open question 10). Doctor still changes nothing and runs nothing from a config file.
 - Added: a `native-os` GitHub workflow runs `advisor doctor` (with its new stdio check) and the stdio and doctor tests on Windows and macOS, PHP 8.3 and 8.5, on every push to main and every tag, and writes doctor's output to the run summary. It is separate from `ci.yml`, so the CI badge still means `composer ci`; the full suite stays Linux only.
 - Added: `list_stack_rules` takes an optional `query` ("session cookie", or the whole question "what does the stack say about sessions?"): only the rules whose heading or text holds every word come back, matched case-insensitively at word starts, with question words and a plural s ignored. It combines with `permutation` and `chapter`, keeps the handbook order and paging, and says so when nothing matches. Still nine tools.
 - Site: Directions gains a fourth turn, "Get a check-up": `php vendor/bin/advisor doctor` and a healthy readout (doctor's own wording, abridged) whose lines ink in one by one, the stdio stamp landing last; with reduced motion the readout is simply there. The intro says "Three steps and a check-up".
+- Site: the route card gains a field book, "What your agent gets back": open it and every tool step on the plotted route shows the structured content that call returns, as abridged JSON (long strings cut, lists shortened with "N more"). The readouts are `site/assets/readouts.json`, written by a test from the real tools (PROCTOR's report is a marked sample, since the page cannot run PROCTOR), and the test fails when a call on the map is missing, refused, or comes back in a different shape. Lines ink in one by one; with reduced motion they are simply there.
+- Docs: the Laravel guide says how Boost's project rules (`.ai/rules`, filed by Boost's `record-rule` tool) and CREED's rules live together: CREED rules stay in CREED and come through `list_stack_rules`, a project rule adds to them and never overrides one, and CREED wins a disagreement. Best-practices rule 5 points there instead of saying the two never overlap.
+- Added: the a11y gate (`scripts/a11y/check.mjs`) opens every disclosure before axe runs, so the field book and anything else behind a click is checked at both widths and in both themes.
+
+### Fixed
+
+- Fixed: the front page's routes for Booster, Drawbridge, HELMET, Parity, Preflight, ROLLCALL and Squire called `read_project_docs` without `doc`, which the tool refuses; they now ask for `doc: readme`. The new readouts test found it. The README route map (`docs/readme/route.svg`, redrawn by the readme-art kit from the page's own routes) and its alt text say `doc: readme` too.
 
 ### Changed
 
