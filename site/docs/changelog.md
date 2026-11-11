@@ -24,7 +24,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
 
-- Fixed: the front page's routes for Booster, Drawbridge, HELMET, Parity, Preflight, ROLLCALL and Squire called `read_project_docs` without `doc`, which the tool refuses; they now ask for `doc: readme`. The new readouts test found it.
+- Fixed: the front page's routes for Booster, Drawbridge, HELMET, Parity, Preflight, ROLLCALL and Squire called `read_project_docs` without `doc`, which the tool refuses; they now ask for `doc: readme`. The new readouts test found it. The README route map (`docs/readme/route.svg`, redrawn by the readme-art kit from the page's own routes) and its alt text say `doc: readme` too.
 
 ### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 

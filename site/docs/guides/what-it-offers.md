@@ -48,7 +48,7 @@ Prompts: `orient_me` and `plan_upgrade`.
 
 Here is what that looks like when you ask. Each numbered control point is one of the tools above, with the arguments the front page's own route table sends:
 
-![A topographic field map of the stack. Three questions are plotted from 'your app' through the ADVISOR advising office to the project that answers. 'Which PHP can I build on?' goes through policy_lookup (component: php) to CREED's policy.json. 'Which security headers do I need?' goes through list_stack_rules (chapter: runtime-and-headers) and read_project_docs (project: helmet) to HELMET. 'How do I get off PHP 8.2?' goes through the plan_upgrade prompt, policy_lookup, run_proctor_check and read_project_docs (project: booster) to Booster.](https://advisor.apps.wayne.edu/docs/readme/route.svg)
+![A topographic field map of the stack. Three questions are plotted from 'your app' through the ADVISOR advising office to the project that answers. 'Which PHP can I build on?' goes through policy_lookup (component: php) to CREED's policy.json. 'Which security headers do I need?' goes through list_stack_rules (chapter: runtime-and-headers) and read_project_docs (project: helmet, doc: readme) to HELMET. 'How do I get off PHP 8.2?' goes through the plan_upgrade prompt, policy_lookup, run_proctor_check and read_project_docs (project: booster, doc: readme) to Booster.](https://advisor.apps.wayne.edu/docs/readme/route.svg)
 
 ## Related [#](https://advisor.apps.wayne.edu/docs/guides/what-it-offers.html#related)
 

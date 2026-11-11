@@ -212,7 +212,7 @@ Prompts: `orient_me` and `plan_upgrade`.
 Here is what that looks like when you ask. Each numbered control point is one of the tools above, with the arguments the
 front page's own route table sends:
 
-<div align="center"><img src="docs/readme/route.svg" width="100%" alt="A topographic field map of the stack. Three questions are plotted from 'your app' through the ADVISOR advising office to the project that answers. 'Which PHP can I build on?' goes through policy_lookup (component: php) to CREED's policy.json. 'Which security headers do I need?' goes through list_stack_rules (chapter: runtime-and-headers) and read_project_docs (project: helmet) to HELMET. 'How do I get off PHP 8.2?' goes through the plan_upgrade prompt, policy_lookup, run_proctor_check and read_project_docs (project: booster) to Booster."></div>
+<div align="center"><img src="docs/readme/route.svg" width="100%" alt="A topographic field map of the stack. Three questions are plotted from 'your app' through the ADVISOR advising office to the project that answers. 'Which PHP can I build on?' goes through policy_lookup (component: php) to CREED's policy.json. 'Which security headers do I need?' goes through list_stack_rules (chapter: runtime-and-headers) and read_project_docs (project: helmet, doc: readme) to HELMET. 'How do I get off PHP 8.2?' goes through the plan_upgrade prompt, policy_lookup, run_proctor_check and read_project_docs (project: booster, doc: readme) to Booster."></div>
 <div align="center"><sub>Ask the map: three questions, three routes. Every control point is a real ADVISOR tool or prompt, and the whole trip is read-only.</sub></div>
 
 <details>
