@@ -151,4 +151,114 @@ final class InstallTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         ClientConfig::file('emacs');
     }
+
+    public function testDefaultsToDockerWhenTheProjectHasAComposeFile(): void
+    {
+        $dir = $this->tempDir();
+        file_put_contents($dir . '/compose.yaml', "services:\n  app:\n    image: php:8.4\n");
+        $tester = $this->tester();
+
+        $this->assertSame(0, $tester->execute(['--write' => true, '--path' => $dir]));
+
+        $data = json_decode((string) file_get_contents($dir . '/.mcp.json'), true, flags: JSON_THROW_ON_ERROR);
+        $entry = $data['mcpServers']['advisor'];
+        $this->assertSame('docker', $entry['command']);
+        $this->assertSame(['compose', 'run', '--rm', '-T', '-e', 'ADVISOR_ENABLED=1', 'app', 'php', 'vendor/bin/advisor', 'mcp'], $entry['args']);
+        $this->assertStringContainsString('Runs inside the app container: start it with `parity up` or `docker compose up -d` first.', $tester->getDisplay());
+    }
+
+    public function testDefaultsToDockerWhenTheProjectHasParityJson(): void
+    {
+        $dir = $this->tempDir();
+        file_put_contents($dir . '/parity.json', "{}\n");
+        $tester = $this->tester();
+
+        $this->assertSame(0, $tester->execute(['--write' => true, '--path' => $dir]));
+
+        $data = json_decode((string) file_get_contents($dir . '/.mcp.json'), true, flags: JSON_THROW_ON_ERROR);
+        $this->assertSame('docker', $data['mcpServers']['advisor']['command']);
+    }
+
+    public function testDefaultsToPhpWithoutEither(): void
+    {
+        $dir = $this->tempDir();
+
+        $this->assertSame(0, $this->tester()->execute(['--write' => true, '--path' => $dir]));
+
+        $data = json_decode((string) file_get_contents($dir . '/.mcp.json'), true, flags: JSON_THROW_ON_ERROR);
+        $entry = $data['mcpServers']['advisor'];
+        $this->assertSame('php', $entry['command']);
+        $this->assertSame(['vendor/bin/advisor', 'mcp'], $entry['args']);
+        $this->assertSame(['ADVISOR_ENABLED' => '1'], $entry['env']);
+    }
+
+    public function testRunnerOptionOverridesDetection(): void
+    {
+        $dir = $this->tempDir();
+        file_put_contents($dir . '/compose.yaml', "services:\n  app:\n    image: php:8.4\n");
+
+        $this->assertSame(0, $this->tester()->execute(['--runner' => 'php', '--write' => true, '--path' => $dir]));
+        $data = json_decode((string) file_get_contents($dir . '/.mcp.json'), true, flags: JSON_THROW_ON_ERROR);
+        $this->assertSame('php', $data['mcpServers']['advisor']['command']);
+
+        $empty = $this->tempDir();
+        $this->assertSame(0, $this->tester()->execute(['--runner' => 'docker', '--write' => true, '--path' => $empty]));
+        $data = json_decode((string) file_get_contents($empty . '/.mcp.json'), true, flags: JSON_THROW_ON_ERROR);
+        $this->assertSame('docker', $data['mcpServers']['advisor']['command']);
+    }
+
+    public function testUnknownRunnerIsRefused(): void
+    {
+        $dir = $this->tempDir();
+        $tester = $this->tester();
+
+        $this->assertSame(2, $tester->execute(['--runner' => 'podman', '--path' => $dir]));
+        $this->assertStringContainsString('The runner must be docker or php.', $tester->getDisplay());
+        $this->assertFileDoesNotExist($dir . '/.mcp.json');
+    }
+
+    public function testDockerEntryHasNoEnvKey(): void
+    {
+        $this->assertArrayNotHasKey('env', ClientConfig::entry(false, 'docker'));
+        $this->assertArrayNotHasKey('env', ClientConfig::entry(true, 'docker'));
+
+        $dir = $this->tempDir();
+        file_put_contents($dir . '/compose.yaml', "services:\n  app:\n    image: php:8.4\n");
+        $this->assertSame(0, $this->tester()->execute(['--write' => true, '--path' => $dir]));
+        $data = json_decode((string) file_get_contents($dir . '/.mcp.json'), true, flags: JSON_THROW_ON_ERROR);
+        $this->assertArrayNotHasKey('env', $data['mcpServers']['advisor']);
+    }
+
+    public function testSwitchingRunnerNeedsForce(): void
+    {
+        $dir = $this->tempDir();
+        file_put_contents($dir . '/.mcp.json', '{"mcpServers":{"advisor":{"command":"php","args":["vendor/bin/advisor","mcp"],"env":{"ADVISOR_ENABLED":"1"}}}}');
+        file_put_contents($dir . '/compose.yaml', "services:\n  app:\n    image: php:8.4\n");
+        $tester = $this->tester();
+
+        $this->assertSame(2, $tester->execute(['--write' => true, '--path' => $dir]));
+        $this->assertStringContainsString('--force', $tester->getDisplay());
+        $data = json_decode((string) file_get_contents($dir . '/.mcp.json'), true, flags: JSON_THROW_ON_ERROR);
+        $this->assertSame('php', $data['mcpServers']['advisor']['command']);
+
+        $this->assertSame(0, $this->tester()->execute(['--write' => true, '--force' => true, '--path' => $dir]));
+        $data = json_decode((string) file_get_contents($dir . '/.mcp.json'), true, flags: JSON_THROW_ON_ERROR);
+        $this->assertSame('docker', $data['mcpServers']['advisor']['command']);
+    }
+
+    public function testCodexPrintsDockerTomlWhenTheProjectRunsInDocker(): void
+    {
+        $dir = $this->tempDir();
+        file_put_contents($dir . '/compose.yaml', "services:\n  app:\n    image: php:8.4\n");
+        $tester = $this->tester();
+
+        $this->assertSame(0, $tester->execute(['--client' => 'codex', '--path' => $dir]));
+        $display = $tester->getDisplay();
+        $this->assertStringContainsString('command = "docker"', $display);
+        $this->assertStringContainsString('args = ["compose", "run", "--rm", "-T", "-e", "ADVISOR_ENABLED=1", "app", "php", "vendor/bin/advisor", "mcp"]', $display);
+        $this->assertStringNotContainsString('env', $display);
+
+        $this->assertSame(0, $tester->execute(['--client' => 'codex', '--runner' => 'docker', '--path' => $dir]));
+        $this->assertStringContainsString('command = "docker"', $tester->getDisplay());
+    }
 }
