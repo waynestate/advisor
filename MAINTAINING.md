@@ -35,7 +35,9 @@ Development happens on git.wayne.edu, the canonical repository: [enterprise-apps
 | Diagnose a client setup | `php vendor/bin/advisor doctor` (in an app) |
 
 `--sources` can also come from `ADVISOR_STACK_DIR`. Snapshot tests are updated with `ADVISOR_UPDATE_SNAPSHOTS=1`
-(`$env:ADVISOR_UPDATE_SNAPSHOTS = "1"` in PowerShell) before `vendor/bin/phpunit`.
+(`$env:ADVISOR_UPDATE_SNAPSHOTS = "1"` in PowerShell) before `vendor/bin/phpunit`. The same run rewrites the front
+page's field book readouts (`site/assets/readouts.json`) from the real tools; the readouts test fails only when a call
+on the map is missing, refused, or changes shape, so a content resync does not need it.
 
 With only Docker:
 

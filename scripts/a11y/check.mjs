@@ -145,6 +145,14 @@ async function main() {
         const page = await context.newPage();
         await page.goto(url, { waitUntil: "load" });
         await page.waitForTimeout(300);
+        // Open every disclosure (the route card's field book loads its readouts on open), so what
+        // hides behind a click is checked too, at both widths and in both themes.
+        const disclosures = await page.evaluate(() => {
+          const all = document.querySelectorAll("details:not([hidden])");
+          all.forEach((d) => { d.open = true; });
+          return all.length;
+        });
+        if (disclosures > 0) await page.waitForTimeout(700);
         checks++;
 
         const problems = [];

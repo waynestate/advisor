@@ -34,7 +34,7 @@ With only Docker:
 docker run --rm -v "${PWD}:/app" -v stack-composer-cache:/tmp/cache -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && composer ci"
 ```
 
-Snapshot tests are updated with `ADVISOR_UPDATE_SNAPSHOTS=1` (`$env:ADVISOR_UPDATE_SNAPSHOTS = "1"` in PowerShell) before `vendor/bin/phpunit`.
+Snapshot tests are updated with `ADVISOR_UPDATE_SNAPSHOTS=1` (`$env:ADVISOR_UPDATE_SNAPSHOTS = "1"` in PowerShell) before `vendor/bin/phpunit`. The same run rewrites the front page's field book readouts (`site/assets/readouts.json`) from the real tools; the readouts test fails only when a call on the map is missing, refused, or changes shape, so a content resync does not need it.
 
 ## Rules a change must keep [#](https://advisor.apps.wayne.edu/docs/contributing.html#rules-a-change-must-keep)
 

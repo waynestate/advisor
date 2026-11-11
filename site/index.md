@@ -51,6 +51,8 @@ PHP 8.4 and 8.5 are in active support, 8.2 and 8.3 get security fixes only, and 
 
 Source: CREED `policy.json`, worked out for today.
 
+**Field book What your agent gets back**
+
 Climb: 0 m. Everything on this route is read-only.
 
 Read this before you set off

@@ -239,7 +239,7 @@
     },
     upgrade: {
       keys: ["upgrade", "8.1", "8.2", "off php", "old php", "migrate", "outdated", "booster", "get off", "move to"],
-      steps: function () { return [{ prompt: "plan_upgrade" }, { tool: "policy_lookup", args: "component: php" }, { tool: "run_proctor_check", args: "checks: php-floor, unbounded-constraints" }, { tool: "read_project_docs", args: "project: booster" }]; },
+      steps: function () { return [{ prompt: "plan_upgrade" }, { tool: "policy_lookup", args: "component: php" }, { tool: "run_proctor_check", args: "checks: php-floor, unbounded-constraints" }, { tool: "read_project_docs", args: "project: booster, doc: readme" }]; },
       dest: "booster", detail: "the upgrade tool, one hop at a time",
       answer: function () { return policyAnswer("php", "plan_upgrade reads the policy, runs PROCTOR's php-floor and unbounded-constraints checks, then reads Booster's README and proposes one hop at a time. Booster does the hop: Rector rewrites the code, Booster raises the constraints, and your tests must pass on the target PHP."); }
     },
@@ -263,13 +263,13 @@
     },
     headers: {
       keys: ["header", "headers", "csp", "hsts", "security", "hardening", "health", "proxy", "proxies", "cookie", "session"],
-      steps: function () { return [{ tool: "list_stack_rules", args: "chapter: runtime-and-headers" }, { tool: "read_project_docs", args: "project: helmet" }]; },
+      steps: function () { return [{ tool: "list_stack_rules", args: "chapter: runtime-and-headers" }, { tool: "read_project_docs", args: "project: helmet, doc: readme" }]; },
       dest: "helmet", detail: "its README and presets",
       answer: function () { return { text: "The CREED rules on runtime and headers, each with its file and line, then HELMET: security headers, CSP, session hardening, trusted proxies, a health check and a version warning. Start from its presets.", src: "Source: CREED handbook and HELMET's README." }; }
     },
     ci: {
       keys: ["ci", "pipeline", "pipelines", "gitlab", "github", "actions", "workflow"],
-      steps: function () { return [{ tool: "list_stack_rules", args: "chapter: ci" }, { tool: "read_project_docs", args: "project: preflight" }]; },
+      steps: function () { return [{ tool: "list_stack_rules", args: "chapter: ci" }, { tool: "read_project_docs", args: "project: preflight, doc: readme" }]; },
       dest: "preflight", detail: "its CI templates",
       answer: function () { return { text: "The CREED chapter on CI, rule by rule with citations, then Preflight's shared templates for GitLab and GitHub, which run the same checks on both.", src: "Source: CREED handbook and Preflight's README." }; }
     },
@@ -281,25 +281,25 @@
     },
     deploy: {
       keys: ["deploy", "deploying", "release", "ship", "hosting", "server"],
-      steps: function () { return [{ tool: "get_project_status", args: "project: squire" }, { tool: "read_project_docs", args: "project: squire" }]; },
+      steps: function () { return [{ tool: "get_project_status", args: "project: squire" }, { tool: "read_project_docs", args: "project: squire, doc: readme" }]; },
       dest: "squire", detail: "the deploy kit",
       answer: function () { return { text: "Squire, the deploy kit: the build script, the deployments folder, the release script and the health check, everything that goes onto Citadel. A knight never suits up alone. To run the app like Citadel before it ships, ask about running it locally.", src: "Source: Squire's README, as bundled." }; }
     },
     local: {
       keys: ["locally", "local", "laptop", "my computer", "my machine", "podman", "docker", "parity", "run my app", "run it", "twin"],
-      steps: function () { return [{ tool: "get_project_status", args: "project: parity" }, { tool: "read_project_docs", args: "project: parity" }]; },
+      steps: function () { return [{ tool: "get_project_status", args: "project: parity" }, { tool: "read_project_docs", args: "project: parity, doc: readme" }]; },
       dest: "parity", detail: "Citadel on your computer",
       answer: function () { return { text: "Parity runs Citadel on your own computer: Citadel's own PHP image, its proxy and MySQL 5.6, for any app, with or without Squire. One command line on every OS, on Docker or Podman (Podman recommended): parity check, parity init, parity up. Coming from Squire's parity kit, parity init --from-squire carries it over. Works on your machine now means works on Citadel.", src: "Source: Parity's README, as bundled." }; }
     },
     census: {
       keys: ["fleet", "census", "inventory", "rollcall", "which apps"],
-      steps: function () { return [{ tool: "read_project_docs", args: "project: rollcall" }]; },
+      steps: function () { return [{ tool: "read_project_docs", args: "project: rollcall, doc: readme" }]; },
       dest: "rollcall", detail: "the fleet scanner",
       answer: function () { return { text: "Rollcall scans the fleet: for every app, the PHP image, the declared PHP floor, the Laravel version, the auth package and the PROCTOR result, each checked against CREED's policy by date. Every app answers “present”.", src: "Source: Rollcall's README, as bundled." }; }
     },
     gateway: {
       keys: ["gateway", "drawbridge"],
-      steps: function () { return [{ tool: "read_project_docs", args: "project: drawbridge" }]; },
+      steps: function () { return [{ tool: "read_project_docs", args: "project: drawbridge, doc: readme" }]; },
       dest: "drawbridge", detail: "the auth gateway",
       answer: function () { return { text: "Drawbridge is the auth gateway: Apache with mod_auth_openidc, one OpenID Connect client for Microsoft Entra ID, in front of the apps. It makes sure the visitor has a session, drops any identity header they tried to bring, and hands the app a short-lived signed assertion that SESAME's gateway driver verifies.", src: "Source: Drawbridge's README, as bundled." }; }
     },
@@ -475,6 +475,123 @@
     });
   }
 
+  /* The field book: under the card, what each tool call on the route hands
+     back, as JSON. A surveyor copies the readings fair; so does ADVISOR's test
+     suite, which records assets/readouts.json from the real tools and fails
+     when a tool answers in a new shape, so the page cannot teach a field the
+     server does not send. Loaded only when someone opens the book. The lines
+     ink in one by one, the same beat as the check-up; with reduced motion they
+     are simply there. Text only: every value goes in through textContent. */
+  var fieldbook = (function () {
+    var book = document.getElementById("fieldbook");
+    var pages = document.getElementById("fieldbook-pages");
+    // Until a route is plotted, the card shows the PHP question the page is served with.
+    var current = [{ tool: "policy_lookup", args: "component: php", n: 2 }];
+    var data = null, loading = null;
+    if (!book || !pages || !window.fetch) return { show: function () {} };
+
+    function load() {
+      if (!loading) {
+        loading = fetch("assets/readouts.json", { credentials: "same-origin" })
+          .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+          .then(function (j) { data = j; return j; });
+      }
+      return loading;
+    }
+
+    // One JSON value as lines of spans: keys, strings, numbers, and the
+    // "(12 more)" the recorder leaves where it cut a list.
+    function lines(value, indent, key, last, out) {
+      var pad = new Array(indent + 1).join("  ");
+      function line(parts) {
+        var li = el("span", "fb-line");
+        li.style.setProperty("--i", String(Math.min(out.length, 40)));
+        li.appendChild(document.createTextNode(pad));
+        if (key !== null) { li.appendChild(el("span", "fb-key", JSON.stringify(key))); li.appendChild(document.createTextNode(": ")); }
+        parts.forEach(function (p) { li.appendChild(p); });
+        out.push(li);
+        return li;
+      }
+      var comma = last ? "" : ",";
+      if (Array.isArray(value) || (value && typeof value === "object")) {
+        var isList = Array.isArray(value);
+        var keys = isList ? value.map(function (_, i) { return i; }) : Object.keys(value);
+        if (!keys.length) { line([document.createTextNode((isList ? "[]" : "{}") + comma)]); return; }
+        line([document.createTextNode(isList ? "[" : "{")]);
+        keys.forEach(function (k, i) {
+          var v = value[k];
+          if (isList && typeof v === "string" && /^\(\d+ more\)$/.test(v)) {
+            var more = el("span", "fb-line fb-line--more", new Array(indent + 2).join("  ") + "… " + v.slice(1, -1));
+            more.style.setProperty("--i", String(Math.min(out.length, 40)));
+            out.push(more);
+            return;
+          }
+          lines(v, indent + 1, isList ? null : k, i === keys.length - 1, out);
+        });
+        var close = el("span", "fb-line");
+        close.style.setProperty("--i", String(Math.min(out.length, 40)));
+        close.textContent = pad + (isList ? "]" : "}") + comma;
+        out.push(close);
+        return;
+      }
+      var cls = typeof value === "string" ? "fb-str" : value === null ? "fb-null" : "fb-num";
+      line([el("span", cls, JSON.stringify(value)), document.createTextNode(comma)]);
+    }
+
+    function render() {
+      pages.textContent = "";
+      if (!data) return;
+      var shown = 0;
+      current.forEach(function (st) {
+        if (!st.tool) return;
+        var rec = data.calls[st.tool + (st.args ? " " + st.args : "")];
+        if (!rec) return;
+        shown++;
+        var entry = el("section", "fb-entry");
+        var head = el("p", "fb-entry__head");
+        var num = el("span", "fb-entry__num", String(st.n));
+        num.setAttribute("aria-label", "Control " + st.n + ":");
+        head.appendChild(num);
+        head.appendChild(el("code", "fb-entry__tool", st.tool));
+        if (st.args) head.appendChild(el("span", "fb-entry__args", st.args));
+        if (rec.sample) head.appendChild(el("span", "fb-entry__tag", "sample report"));
+        entry.appendChild(head);
+        var out = [];
+        lines(rec.result, 0, null, true, out);
+        var pre = el("pre", "fb-json");
+        pre.setAttribute("tabindex", "0");
+        pre.setAttribute("aria-label", st.tool + " result, as JSON");
+        var codeEl = el("code");
+        out.forEach(function (n) { codeEl.appendChild(n); });
+        pre.appendChild(codeEl);
+        entry.appendChild(pre);
+        pages.appendChild(entry);
+      });
+      if (!shown) pages.appendChild(el("p", "fieldbook__empty", "This route only uses a prompt, so there is nothing to copy down yet."));
+      var note = el("p", "fieldbook__note", "Copied fair from the real tools by ADVISOR's test suite on " + data.as_of + ", then abridged: long text is cut and lists stop at three. Your agent gets the whole thing.");
+      pages.appendChild(note);
+      book.classList.remove("is-inked");
+      void book.offsetWidth;
+      book.classList.add("is-inked");
+    }
+
+    book.addEventListener("toggle", function () {
+      if (!book.open) return;
+      load().then(render, function () {
+        pages.textContent = "";
+        pages.appendChild(el("p", "fieldbook__empty", "The field book didn't load. It lives at assets/readouts.json."));
+      });
+    });
+    book.hidden = false;
+
+    return {
+      show: function (steps) {
+        current = steps.map(function (st, i) { return { tool: st.tool, args: st.args, n: i + 2 }; });
+        if (book.open && data) render();
+      }
+    };
+  })();
+
   function renderCard(question, chosen, route, steps, destP) {
     var body = document.getElementById("card-body");
     if (!body) return;
@@ -517,6 +634,7 @@
 
     body.textContent = "";
     body.appendChild(frag);
+    fieldbook.show(steps);
     var foot = document.querySelector(".card__foot");
     if (foot) foot.textContent = "Distance: " + steps.length + " tool call" + (steps.length > 1 ? "s" : "") + ". Climb: 0 m. Everything on this route is read-only.";
   }

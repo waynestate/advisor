@@ -226,6 +226,12 @@
               <p class="answer__src">Source: CREED <code>policy.json</code>, worked out for today.</p>
             </div>
           </div>
+          <!-- The field book: each call's answer as JSON, recorded from the real tools by
+               tests/Site/ReadoutsTest.php. advisor.js shows it; without script it stays hidden. -->
+          <details class="fieldbook" id="fieldbook" hidden>
+            <summary class="fieldbook__sum"><span class="fieldbook__label">Field book</span> <span class="fieldbook__title">What your agent gets back</span></summary>
+            <div class="fieldbook__pages" id="fieldbook-pages"></div>
+          </details>
           <p class="card__foot">Climb: 0 m. Everything on this route is read-only.</p>
         </aside>
       </div>

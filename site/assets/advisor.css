@@ -532,6 +532,83 @@ code, pre { font-family: var(--wsu-font-family-mono); }
 .v--eol, .v--eol_grace_expired { color: var(--adv-maroon); text-decoration: line-through; }
 .card__foot { margin: var(--wsu-space-4) 0 0; font-family: var(--adv-display); font-style: italic; font-size: 0.9375rem; color: var(--adv-ink-muted); }
 
+/* The field book: what each call hands back, copied fair. A maroon stamp for
+   its name, a chevron that turns, and inside, the readings on the dark code
+   ground with faint ruled lines that scroll with the text, the way a surveyor's
+   book is ruled. Keys in mint, strings in rose, numbers in gold: each reads
+   above 9:1 on the ground. */
+.fieldbook { margin-top: var(--wsu-space-4); border-top: 1.5px solid var(--adv-green-deep); }
+.fieldbook__sum {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.75rem 0 0.15rem;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--adv-display); font-weight: 600; font-size: 1.0625rem; color: var(--adv-green-deep);
+}
+.fieldbook__sum::-webkit-details-marker { display: none; }
+.fieldbook__sum::after {
+  content: ""; margin-left: auto; margin-right: 0.3rem;
+  width: 0.55rem; height: 0.55rem;
+  border-right: 2.5px solid var(--adv-maroon); border-bottom: 2.5px solid var(--adv-maroon);
+  rotate: 45deg; translate: 0 -0.15rem;
+  transition: rotate 0.3s var(--adv-ease-spring), translate 0.3s var(--adv-ease-spring);
+}
+.fieldbook[open] > .fieldbook__sum::after { rotate: 225deg; translate: 0 0.15rem; }
+.fieldbook__sum:hover .fieldbook__title { text-decoration: underline; text-decoration-color: var(--adv-maroon); text-underline-offset: 0.2em; }
+.fieldbook__sum:focus-visible { outline: 3px solid var(--adv-maroon); outline-offset: 3px; border-radius: 4px; }
+.fieldbook__label {
+  padding: 0.18rem 0.5rem 0.14rem;
+  border-radius: 3px;
+  background: var(--adv-maroon); color: var(--adv-paper-hi);
+  font: 700 0.6875rem var(--wsu-font-family-mono); letter-spacing: 0.12em; text-transform: uppercase;
+  rotate: -2deg;
+}
+.fieldbook__pages { display: grid; gap: var(--wsu-space-4); padding-top: var(--wsu-space-3); }
+.fb-entry { min-width: 0; }
+.fb-entry__head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.5rem; margin: 0 0 0.4rem; font-size: 0.875rem; }
+.fb-entry__num {
+  display: grid; place-items: center;
+  width: 1.5rem; height: 1.5rem;
+  border: 2px solid var(--adv-maroon); border-radius: 50%;
+  font-weight: 900; font-size: 0.75rem; color: var(--adv-maroon);
+}
+.fb-entry__tool { padding: 0 !important; background: none !important; font-weight: 700; color: var(--adv-green-deep); }
+.fb-entry__args { font: 0.8125rem var(--wsu-font-family-mono); color: var(--adv-ink-muted); overflow-wrap: anywhere; }
+.fb-entry__tag { padding: 0.05rem 0.45rem; border-radius: 999px; background: rgba(255, 204, 51, 0.3); color: #6b4a00; font: 700 0.6875rem var(--wsu-font-family-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.fb-json {
+  --fb-lh: 1.6em;
+  margin: 0;
+  max-height: 19rem;
+  overflow: auto;
+  padding: 0.7rem 0.95rem;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 calc(var(--fb-lh) - 1px), rgba(255, 255, 255, 0.045) calc(var(--fb-lh) - 1px) var(--fb-lh)) 0 0.7rem / 100% var(--fb-lh) local,
+    var(--adv-code-bg);
+  color: var(--adv-code-text);
+  font: 0.78125rem / var(--fb-lh) var(--wsu-font-family-mono);
+  white-space: pre;
+  tab-size: 2;
+}
+.fb-json:focus-visible { outline: 3px solid var(--adv-gold); outline-offset: 2px; }
+.fb-json code { display: block; padding: 0; background: none; color: inherit; font: inherit; }
+.fb-line { display: block; }
+.fb-key { color: #9be8bd; }
+.fb-str { color: #f6d3df; }
+.fb-num { color: var(--adv-gold); }
+.fb-null { color: var(--adv-code-dim); font-style: italic; }
+.fb-line--more { color: var(--adv-code-dim); font-style: italic; }
+.fieldbook__note, .fieldbook__empty { margin: 0; font-family: var(--adv-display); font-style: italic; font-size: 0.875rem; line-height: 1.5; color: var(--adv-ink-muted); }
+
+/* The book inks in when opened, and again for each new route: the entries
+   settle, then the lines arrive on the check-up's beat, quicker. Only with
+   motion allowed; otherwise the readings are simply there. */
+@media (prefers-reduced-motion: no-preference) {
+  .motion .fieldbook.is-inked .fb-entry { animation: adv-fb-page 0.45s var(--adv-ease-out) both; }
+  .motion .fieldbook.is-inked .fb-line { animation: adv-ck-in 0.32s var(--adv-ease-out) both; animation-delay: calc(0.12s + var(--i, 0) * 16ms); }
+}
+@keyframes adv-fb-page { from { opacity: 0; translate: 0 6px; } to { opacity: 1; translate: 0 0; } }
+
 /* -------------------------------------------------------------- 5. legend */
 
 .section--legend { padding-top: 0; }
