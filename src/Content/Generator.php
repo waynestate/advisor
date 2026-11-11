@@ -15,9 +15,10 @@ use Waynestate\Advisor\Support\Json;
  * ADVISOR depends on those repositories' content and does not copy by hand:
  * `content:generate` rewrites the folder, and `content:generate --check`
  * fails when the folder differs from what the sources would produce today.
- * The manifest holds a SHA-256 per file, a source path, and the day the
- * content last changed (not the day the generator last ran, so a re-run with
- * no changes is byte-identical).
+ * The manifest holds a SHA-256 per file, a source path, the commit of the
+ * source repository when one can be read without running git, and the day
+ * the content last changed (not the day the generator last ran, so a re-run
+ * with no changes is byte-identical).
  */
 final class Generator
 {
@@ -55,6 +56,9 @@ final class Generator
     ];
 
     private readonly Denylist $denylist;
+
+    /** @var array<string, ?string> project folder => HEAD commit or null */
+    private array $headCache = [];
 
     public function __construct(
         private readonly string $sourcesDir,
@@ -149,6 +153,135 @@ final class Generator
     }
 
     /**
+     * The HEAD commit of every project folder that supplied bundled files,
+     * for the summary `content:generate` prints. Null means the folder has no
+     * readable repository, so the caller skips it.
+     *
+     * @return array<string, ?string> project folder => commit or null
+     */
+    public function sourceCommits(): array
+    {
+        $commits = [];
+        foreach ($this->build() as $file) {
+            $project = $this->projectOf($file['source']);
+            if ($project !== null && !array_key_exists($project, $commits)) {
+                $commits[$project] = $this->headCommit($project);
+            }
+        }
+        ksort($commits);
+
+        return $commits;
+    }
+
+    /**
+     * The full HEAD commit of the repository a source path comes from, or
+     * null when the source is not under a project folder (a generator file,
+     * policy.json alone, a comma list) or its repository cannot be read.
+     * Read straight from .git; git itself never runs.
+     */
+    public function sourceCommit(string $source): ?string
+    {
+        $project = $this->projectOf($source);
+        if ($project === null || !is_dir($this->sourcesDir . '/' . $project)) {
+            return null;
+        }
+
+        return $this->headCommit($project);
+    }
+
+    /**
+     * The first path segment of a source when it names a file inside a
+     * project folder; null for sources the generator writes itself.
+     */
+    private function projectOf(string $source): ?string
+    {
+        if (str_contains($source, ',') || str_contains($source, ' ')) {
+            return null;
+        }
+        $parts = explode('/', $source);
+        if (count($parts) < 2 || $parts[0] === '') {
+            return null;
+        }
+
+        return $parts[0];
+    }
+
+    /**
+     * The HEAD commit of <sourcesDir>/<project>, read without running git:
+     * .git/HEAD may hold a 40-hex commit (detached) or a ref pointer that is
+     * followed through refs/heads/... or packed-refs. A worktree .git file
+     * ("gitdir: <path>") is followed to the main repository. Anything else
+     * is null.
+     */
+    private function headCommit(string $project): ?string
+    {
+        if (array_key_exists($project, $this->headCache)) {
+            return $this->headCache[$project];
+        }
+
+        $dotGit = $this->sourcesDir . '/' . $project . '/.git';
+        if (is_file($dotGit)) {
+            // A worktree: the .git file points at <main repo>/.git/worktrees/<name>.
+            $line = trim((string) file_get_contents($dotGit));
+            if (!str_starts_with($line, 'gitdir:')) {
+                return $this->headCache[$project] = null;
+            }
+            $target = trim(substr($line, strlen('gitdir:')));
+            $candidate = $target !== '' && is_dir($target) ? $target : $this->sourcesDir . '/' . $project . '/' . $target;
+            if (!is_dir($candidate)) {
+                return $this->headCache[$project] = null;
+            }
+            $dotGit = $candidate;
+        } elseif (!is_dir($dotGit)) {
+            return $this->headCache[$project] = null;
+        }
+
+        $headPath = $dotGit . '/HEAD';
+        if (!is_file($headPath)) {
+            return $this->headCache[$project] = null;
+        }
+        $head = trim((string) file_get_contents($headPath));
+        if (preg_match('/^[0-9a-f]{40}$/', $head) === 1) {
+            return $this->headCache[$project] = $head; // detached HEAD
+        }
+        if (preg_match('/^ref:\s*([^\s]+)$/', $head, $match) === 1) {
+            $commit = $this->refCommit($dotGit, $match[1]);
+            if ($commit !== null) {
+                return $this->headCache[$project] = $commit;
+            }
+        }
+
+        return $this->headCache[$project] = null;
+    }
+
+    /** The commit a ref points at: the loose ref file first, then packed-refs. */
+    private function refCommit(string $dotGit, string $ref): ?string
+    {
+        $loose = $dotGit . '/' . str_replace('\\', '/', $ref);
+        if (is_file($loose)) {
+            $sha = trim((string) file_get_contents($loose));
+            return preg_match('/^[0-9a-f]{40}$/', $sha) === 1 ? $sha : null;
+        }
+        $packed = $dotGit . '/packed-refs';
+        if (is_file($packed)) {
+            foreach (file($packed, FILE_IGNORE_NEW_LINES) ?: [] as $line) {
+                $line = trim($line);
+                if ($line === '' || str_starts_with($line, '#') || str_starts_with($line, '^')) {
+                    continue;
+                }
+                $parts = explode(' ', $line, 2);
+                $sha = $parts[0];
+                $name = $parts[1] ?? '';
+                if ($name === $ref && preg_match('/^[0-9a-f]{40}$/', $sha) === 1) {
+                    return $sha;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @return list<string> what differs from the bundle on disk; empty means up to date
      */
     public function check(): array
@@ -199,7 +332,11 @@ final class Generator
                 throw new RuntimeException("Cannot create the folder for {$relative}.");
             }
             file_put_contents($path, $file['content']);
-            $manifestFiles[$relative] = ['sha256' => hash('sha256', $file['content']), 'source' => $file['source']];
+            $manifestFiles[$relative] = [
+                'sha256' => hash('sha256', $file['content']),
+                'source' => $file['source'],
+                'source_commit' => $this->sourceCommit($file['source']),
+            ];
         }
         file_put_contents($manifestPath, Json::encode([
             'schema_version' => 1,

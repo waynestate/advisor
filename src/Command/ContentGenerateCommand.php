@@ -63,6 +63,11 @@ final class ContentGenerateCommand extends Command
 
             $diff = $generator->generate();
             $output->writeln($diff === [] ? 'data/ was already up to date.' : 'Updated data/ (' . count($diff) . ' files changed). Review the diff before committing.');
+            foreach ($generator->sourceCommits() as $project => $commit) {
+                if ($commit !== null) {
+                    $output->writeln($project . ' ' . substr($commit, 0, 7));
+                }
+            }
         } catch (RuntimeException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
 
