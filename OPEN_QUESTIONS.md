@@ -36,7 +36,7 @@ Nothing in ADVISOR needs a secret, key, certificate, token or host. All of these
 | `ADVISOR_STACK_DIR` | Maintainers running `content:generate` | `/path/to/stack` |
 | `ADVISOR_MODULES_FILE` | Maintainers adding modules | `/path/to/modules.json` |
 | `ADVISOR_PRIVATE_DENYLIST` | Maintainers regenerating the bundle for a release (a file kept outside the repo) | `/path/to/private-denylist.txt` |
-| GitHub workflow pin | A newer Preflight tag on the GitHub mirror | Answered: the workflow calls Preflight 0.5.0 (commit `60314791565a264e97cb210813ef4f3e76512402`) since 2026-11-10, now that GitHub's copy of Preflight carries the tag; it sat on 0.1.4 while the GitHub mirror had no newer tag. |
+| GitHub workflow pin | A newer Preflight tag on the GitHub mirror | Answered: the workflow calls Preflight 0.8.0 (commit `28d9c5994d06c633850d431dcf6ca56c48a96055`) since 2026-11-10, now that GitHub's copy of Preflight carries the tag; it sat on 0.1.4 while the GitHub mirror had no newer tag. |
 
 See `.env.example`.
 
