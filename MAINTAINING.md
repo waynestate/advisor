@@ -105,7 +105,7 @@ CI, a masked file-type variable). See "Releasing" in the README.
 
 ## Things that trip people up
 
-- Native Windows and macOS are covered by the GitHub `native-os` workflow (doctor's stdio check and the stdio tests); the full `composer ci` runs on Linux only. Until that workflow's first green run on main is recorded, native Windows stays unproven.
+- Native Windows and macOS are covered by the GitHub `native-os` workflow (doctor's stdio check and the stdio tests); the full `composer ci` runs on Linux only. Its first green run on main was 43577372340 (2026-11-14, Windows and macOS, PHP 8.3 and 8.5); a red run there means native Windows or macOS broke.
 - A client's `.mcp.json` starts a program on the developer's machine, so it is never committed.
 
 ## The front page

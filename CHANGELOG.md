@@ -12,6 +12,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 ### Changed
 
 - CI pins Preflight 0.9.0 (components and the a11y checker copy).
+- Docs: native Windows and macOS are proven: the first green native-os run (43577372340) is recorded, and open question 1 is answered.
 
 ### Fixed
 

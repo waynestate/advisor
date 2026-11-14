@@ -70,8 +70,10 @@ listener, no sign-in and no network calls of its own.
 
 Rule 5 (run Boost beside it) is a usage note and answers no threat.
 
+The first green native-os run is 43577372340 (2026-11-14, head 4c57819): `advisor doctor` and the stdio tests passed on Windows and macOS, PHP 8.3 and 8.5.
+
 ## Not yet
 
-- A recorded green run on a native Windows PHP. The GitHub `native-os` workflow runs `advisor doctor` and the stdio tests on Windows and macOS on every push to main; this line goes when its first green run is recorded. The MCP Inspector in CI is not added (open question 7).
+- The MCP Inspector in CI (open question 7).
 - Signing of any state handed back to a client (no tool needs it yet).
 - A full-capture audit mode.
