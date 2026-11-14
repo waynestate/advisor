@@ -1163,8 +1163,8 @@ These are places where a source disagrees with the repository or with an earlier
 Added in the second pass (2026-10-27):
 
 19. Partly done: `policy.json` carries an optional `minimum_patch` per PHP line, read by `Policy::minimumPatch()` and
-    checked by `bin/validate-policy.php`; no values are set yet, and the PROCTOR check that compares the value with
-    the image or runtime waits (practice 37).
+    checked by `bin/validate-policy.php`; every PHP line sets one since 2026-11-13 (the lowest patch a Citadel image
+    ships), and the PROCTOR check that compares the value with the image or runtime waits (practice 37).
 20. Partly done: `rules.fix_within_days` holds a window in days per severity (`critical`, `high`, `medium`, `low`), in
     the schema and read by `Policy::fixWithinDays()`; no value is set yet (the maintainers choose N), and the check that
     applies it to `composer audit` output waits for the numbers (practice 38).

@@ -16,7 +16,7 @@ suit is to a job interview: nobody notices it, everybody notices when it's missi
 Pinstripe's Rector set modernises code within the app's current PHP version, while Booster upgrades the app to a newer
 PHP version.
 
-Checks: `composer ci` (the same command runs on GitLab and GitHub).
+Checks: `composer ci` (the same command CI runs on git.wayne.edu).
 
 Documentation: the docs site is at [`site/docs/index.html`](site/docs/index.html), built from `docs/` by Squire's shared builder and kept current by `composer ci`. The pages wear the front page's look through `docs/_header.html` and `docs/theme/pinstripe.css`: edit those two files, never the vendored kit.
 

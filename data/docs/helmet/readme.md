@@ -12,8 +12,7 @@
 **Put it on before you ship.** Security headers, a hardened session and an honest proxy check, snapped on before
 the first page is served.
 
-Checks: `composer ci` (the same command runs on GitLab and GitHub).
-Two mirrors, one command: the only thing in this repo that plays both sides is the CI.
+Checks: `composer ci` (the same command CI runs on git.wayne.edu).
 Front page: [`site/index.html`](site/index.html), the playbook, as static files ([`site/README.md`](site/README.md)).
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 Documentation: [helmet.apps.wayne.edu/docs/](https://helmet.apps.wayne.edu/docs/) carries the overview, the install and quick start, a guide per topic (headers, CSP, HSTS, session, proxies, the request-forgery guard, readiness, metrics, platforms), the API and environment variable reference, troubleshooting and upgrading.
@@ -1244,6 +1243,22 @@ Every answer names its source. HELMET reports; PROCTOR decides. The
 ## Proof
 
 Proof runs against real Wayne State applications are on a private site, [proof.apps.wayne.edu/helmet](https://proof.apps.wayne.edu/helmet/), behind a Wayne State employee sign-in.
+
+## Run it locally
+
+HELMET is a library, so the app you can run is its front page: the raw-PHP layer in `deploy/`,
+served the way Citadel serves it. Use [Parity](https://git.wayne.edu/enterprise-apps/parity)
+(a separate install):
+
+```sh
+cd deploy
+parity init --from-squire   # once: reads the Squire kit and writes parity.json
+parity up                   # Citadel's PHP image, proxy and MySQL 5.6, on the printed address
+parity check                # the same checks, against the running copy
+parity down
+```
+
+The library's own tests are under Tests below.
 
 ## Tests
 
