@@ -50,6 +50,7 @@
 </ul>
 <h3 id="changed"><span class="docs-heading-tail"><span>Changed</span><a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></span></h3>
 <ul>
+<li>Changed: the deploy kit is Squire 0.11.1 (was 0.10.7): the release script fetches PROCTOR when <code>--no-dev</code> left it out and installs the frontend from a <code>yarn.lock</code>, the HAProxy pin is current, the fallback base follows the app's PHP line, and the parity scripts carry the deprecation note.</li>
 <li>CI pins Preflight 0.9.0 (components and the a11y checker copy).</li>
 <li>CI: the GitHub workflow calls Preflight 0.9.0's reusable workflow (commit fb73b53), the release the GitLab pipeline pins.</li>
 <li>Docs: native Windows and macOS are proven: the first green native-os run (43577372340) is recorded, and open question 1 is answered.</li>
