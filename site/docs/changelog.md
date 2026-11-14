@@ -20,6 +20,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 ### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
 - CI pins Preflight 0.9.0 (components and the a11y checker copy).
+- CI: the GitHub workflow calls Preflight 0.9.0's reusable workflow (commit fb73b53), the release the GitLab pipeline pins.
 - Docs: native Windows and macOS are proven: the first green native-os run (43577372340) is recorded, and open question 1 is answered.
 
 ### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
