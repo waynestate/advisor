@@ -5,7 +5,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 ## Where models are called
 
 - Model calls MUST be made server-side only, never from browser code. No check exists yet.
-- API tokens MUST live in server configuration or the environment and MUST NOT appear in `VITE_*` variables or any client-side code (anything that ships in the bundle is public). Held by: the general secret scan, Preflight's `secret-detection` component (Preflight 0.8.0), for committed tokens only; a token in a `VITE_*` variable is not checked yet.
+- API tokens MUST live in server configuration or the environment and MUST NOT appear in `VITE_*` variables or any client-side code (anything that ships in the bundle is public). Held by: the general secret scan, Preflight's `secret-detection` component (Preflight 0.9.0), for committed tokens only; a token in a `VITE_*` variable is not checked yet.
 - Rate limits MUST apply per signed-in user, so one person cannot spend the whole app's budget. No check exists yet.
 
 ## Which service

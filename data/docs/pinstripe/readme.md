@@ -18,6 +18,12 @@ PHP version.
 
 Checks: `composer ci` (the same command CI runs on git.wayne.edu).
 
+No local PHP? This runs the same checks in Docker, on Windows (PowerShell), macOS and Linux alike: the suit arrives pre-pressed.
+
+```sh
+docker run --rm -v "${PWD}:/app" -w /app composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0030b6b8b7839a22a2bcb6722ac87d0 sh -c "composer install --no-interaction && composer ci"
+```
+
 Documentation: the docs site is at [`site/docs/index.html`](site/docs/index.html), built from `docs/` by Squire's shared builder and kept current by `composer ci`. The pages wear the front page's look through `docs/_header.html` and `docs/theme/pinstripe.css`: edit those two files, never the vendored kit.
 
 ## Where the code lives

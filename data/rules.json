@@ -88,7 +88,7 @@
             "id": "accessibility-7",
             "chapter": "accessibility",
             "heading": "Checks",
-            "text": "Preflight's `a11y` component (since 0.2.0; the pin is 0.8.0) is the stack's CI check: it opens the app's pages in Chromium, runs axe-core in light and dark at 320 and 1280 px, and fails the pipeline on any violation. An app SHOULD add `wcag22aa` to its tags for the WCAG 2.2 AA target above. Held by: Preflight's a11y component (templates/a11y/template.yml).",
+            "text": "Preflight's `a11y` component (since 0.2.0; the pin is 0.9.0) is the stack's CI check: it opens the app's pages in Chromium, runs axe-core in light and dark at 320 and 1280 px, and fails the pipeline on any violation. An app SHOULD add `wcag22aa` to its tags for the WCAG 2.2 AA target above. Held by: Preflight's a11y component (templates/a11y/template.yml).",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -144,7 +144,7 @@
             "id": "ai-2",
             "chapter": "ai",
             "heading": "Where models are called",
-            "text": "API tokens MUST live in server configuration or the environment and MUST NOT appear in `VITE_*` variables or any client-side code (anything that ships in the bundle is public). Held by: the general secret scan, Preflight's `secret-detection` component (Preflight 0.8.0), for committed tokens only; a token in a `VITE_*` variable is not checked yet.",
+            "text": "API tokens MUST live in server configuration or the environment and MUST NOT appear in `VITE_*` variables or any client-side code (anything that ships in the bundle is public). Held by: the general secret scan, Preflight's `secret-detection` component (Preflight 0.9.0), for committed tokens only; a token in a `VITE_*` variable is not checked yet.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -1094,7 +1094,7 @@
             "id": "code-36",
             "chapter": "code",
             "heading": "How it is enforced",
-            "text": "Pint, PHPStan, Rector dry-runs and ESLint run in CI through Preflight components, not in the deploy gate (the stack's coding standard). Preflight 0.8.0 ships the `pint`, `phpstan` and `eslint` components; a Rector dry-run component is Planned.",
+            "text": "Pint, PHPStan, Rector dry-runs and ESLint run in CI through Preflight components, not in the deploy gate (the stack's coding standard). Preflight 0.9.0 ships the `pint`, `phpstan` and `eslint` components; a Rector dry-run component is Planned.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -3140,7 +3140,7 @@
             "id": "secrets-1",
             "chapter": "secrets",
             "heading": "Credentials",
-            "text": "Credentials (database and service passwords, API keys, tokens) MUST NOT be committed to version control, because history keeps them forever. Commit `.env.example` with placeholders instead. A credential that was ever committed is treated as exposed and rotated (WSU developer standards, 2024). PROCTOR checks: `app-key` (a committed `.env` or `APP_KEY`) and `repo-url-credentials` (a token in a package source URL). The general secret scan is Preflight's `secret-detection` component (Preflight 0.8.0), which runs Gitleaks over the tree and fails the pipeline on a match.",
+            "text": "Credentials (database and service passwords, API keys, tokens) MUST NOT be committed to version control, because history keeps them forever. Commit `.env.example` with placeholders instead. A credential that was ever committed is treated as exposed and rotated (WSU developer standards, 2024). PROCTOR checks: `app-key` (a committed `.env` or `APP_KEY`) and `repo-url-credentials` (a token in a package source URL). The general secret scan is Preflight's `secret-detection` component (Preflight 0.9.0), which runs Gitleaks over the tree and fails the pipeline on a match.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",

@@ -2,7 +2,7 @@
 
 Status: draft, checked against sources on 2026-10-27, with a second research pass the same day (see "Second pass
 (2026-10-27)" near the end). Applies to the Preflight components at the state of the repo today: the latest tag is
-0.8.0, and CHANGELOG.md names the release that added each component.
+0.9.0, and CHANGELOG.md names the release that added each component.
 
 ## What this covers
 
@@ -104,7 +104,7 @@ Why: the catalog gives typed discovery and lets consumers pin an exact or partia
 Sources: [GitLab: components, publishing](https://docs.gitlab.com/ci/components/).
 
 **How the stack holds it: Documented.** The layout is right (`templates/<name>/template.yml`, a README), and the tag-triggered `release` job now exists in this repository's own pipeline: pushing a protected tag creates the GitLab Release with the commit SHA in its notes, after the test and audit stages. The Catalog entry still depends on the first tag run, because the release job has not run for a tag yet.
-The README examples pin the latest release (0.8.0) for every component and the GitHub workflow.
+The README examples pin the latest release (0.9.0) for every component and the GitHub workflow.
 
 ### 1.4 Keep inputs and job names stable inside a major version
 Do not rename an input, change its type, or rename a job in a minor release.
@@ -150,7 +150,7 @@ Sources: [StepSecurity: tj-actions breach](https://www.stepsecurity.io/blog/when
 The tj-actions details above come from search summaries of these pages and the NVD record could not be read in this
 pass, so treat the exact counts and dates as unverified.
 
-**How the stack holds it: Documented.** Thirteen tags, `0.1.0` through `0.8.0`, exist, and MAINTAINING.md documents the release process,
+**How the stack holds it: Documented.** Fourteen tags, `0.1.0` through `0.9.0`, exist, and MAINTAINING.md documents the release process,
 including recording the tag's commit SHA in the CHANGELOG when a tag is cut. The tag-triggered `release` job now puts the
 commit SHA in the GitLab Release notes on every tag (the first run is still to come), so new releases carry the SHA from
 the start. Apps still pin the tag in their component includes, and nothing checks an app's includes.
@@ -371,7 +371,7 @@ Sources: [GitLab: components, `spec:component`](https://docs.gitlab.com/ci/compo
 every job (for example `templates/proctor/template.yml:75`), and `tests/check-component-version.sh` (and its `.ps1` twin)
 fails the `contract` job if a template drops the declaration or stops printing the line first. The line needs GitLab
 18.7 or later; the version on git.wayne.edu is still unconfirmed (see 5.5), but PROCTOR's and CREED's pipelines include
-`preflight/proctor@0.8.0`, which carries the declaration, and run on it.
+`preflight/proctor@0.9.0`, which carries the declaration, and run on it.
 
 ---
 
@@ -1141,7 +1141,7 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 
 1. Done: 6.1: The `proctor` default command works without `--policy` since PROCTOR 0.2.1 (`PROCTOR_POLICY`, then the
    app's installed CREED policy, then the copy bundled with PROCTOR), and both PROCTOR's and CREED's pipelines include
-   `preflight/proctor@0.8.0`. 6.1 is `Checked`: this repository's pipeline runs the component on `tests/fixture-app`,
+   `preflight/proctor@0.9.0`. 6.1 is `Checked`: this repository's pipeline runs the component on `tests/fixture-app`,
    and the `contract` job runs `tests/check-proctor-fails`.
 2. Done: 7.2: `package-publish`'s moved-version path has its failing fixture: a fake registry in
    `tests/check-package-publish-fails.sh` (no live registry needed). Every component that runs as a job now has one.
@@ -1170,7 +1170,7 @@ Practices tagged `Not yet` or `Documented`, each one line. Highest value first.
 12. Done: 4.2: Every Docker Hub image goes through the Dependency Proxy: each component takes an `image_prefix` input
     (default `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}`), kept in place by `tests/check-dependency-cache.sh`.
 13. Done: 3.2: Branch and CI-file protection for app repos is recommended in the README's "Protection checklist"
-    (README.md:755): a protected default branch with a required merge request, protected release tags, merge request
+    (README.md:834): a protected default branch with a required merge request, protected release tags, merge request
     approvals of at least one, `no_one_allowed` pipeline variables, and no protected variables in fork pipelines.
 14. Done: 3.4: The `workflow:rules` example is in the README's "When the components run" (README.md:709).
 15. Done: 2.5: Build job names from an input so one project can include a component twice.
@@ -1229,8 +1229,9 @@ Added in the second pass (2026-10-27):
     README's PowerShell commands and all thirty twins passed on Windows on 2026-11-11. Still open: nothing runs the
     twins on a schedule.
 38. Done: 6.4: `php-test` takes `php_advisory_version`, which adds a `<job_name>-advisory` job, advisory-only
-    (`allow_failure: true`, `templates/php-test/template.yml:27,104`), and Preflight's own pipeline runs it on `8.6-rc`.
-39. Done: 6.5: WCAG 2.2 AA is named as the floor on the front page (site/index.html:841), the same floor Preflight's
+    (`allow_failure: true`, `templates/php-test/template.yml:27, 101-106`), and Preflight's own pipeline runs it on
+    `8.6-rc`.
+39. Done: 6.5: WCAG 2.2 AA is named as the floor on the front page (site/index.html:867), the same floor Preflight's
     own `a11y` job passes as `wcag_tags` (.gitlab-ci.yml:44).
 40. 1.8: Write a retirement policy for components, and test whether SHA pins survive a Catalog unpublish.
 41. Done: 4.12: The install-scripts rule is recorded in the README's "Shared conventions": JavaScript components
