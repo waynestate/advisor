@@ -17,7 +17,7 @@ Squire is the Citadel kit: build.sh, the release script, the health check, and l
 Front page: [`site/index.html`](site/index.html), a static page you can serve from anywhere.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Status: 0.10.8, tagged and on Packagist.
+Status: 0.11.1, tagged and on Packagist.
 
 ## Where the code lives
 
@@ -52,6 +52,10 @@ The pages under `docs/` build into the committed site at `site/docs/`: rebuild w
   It never overwrites your edits, and it runs the same in CI and on a laptop.
 - `squire doctor` checks an app against the best practices a machine can decide ([BEST_PRACTICES.md](BEST_PRACTICES.md)).
   The lock file, composer audit and MySQL 5.6 checks are owned by PROCTOR; `doctor` hands off to it (S50) instead of repeating them.
+- `squire facts` fills the marked `squire-facts:` regions in your files from the committed `.squire/facts.json`
+  snapshot; `squire facts --check` writes nothing and exits `1` when a region has drifted, so CI can gate on it.
+  `squire facts --snapshot` rebuilds the snapshot itself from the CREED policy and the ADVISOR project data in
+  vendor, so a scheduled bot can keep it honest while CI only checks.
 - A local setup that runs your app on the Citadel PHP image, behind a proxy like Citadel's, with the same MySQL 5.6.
   Deprecated as of 0.10.5: [Parity](https://git.wayne.edu/enterprise-apps/parity) does this job now.
 - Squire's maintainers send platform improvement proposals to the platform team privately. Squire never touches a server.

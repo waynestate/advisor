@@ -8,7 +8,7 @@ A preset is **Enforced** when a test asserts both directions: a clean fixture pa
 one is caught. It is **Checked** when a test runs the real tool in one direction only: the clean side passes, or the
 broken side is caught, but not both yet. The PHP presets run under `composer ci` (PHPUnit); the JavaScript presets
 run under `npm test`.
-Both run in CI on GitLab and GitHub, so a preset that stops working fails the pipeline before it reaches an app.
+Both run in CI on git.wayne.edu, so a preset that stops working fails the pipeline before it reaches an app.
 
 | Preset | Tool | Status | Enforced by |
 | --- | --- | --- | --- |

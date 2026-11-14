@@ -7,7 +7,7 @@ inspector who stamps what he finds.
 
 **Not to be confused with:** CREED is the rules; PROCTOR checks an app against them.
 
-Checks: `composer ci` (the same command runs on GitLab and GitHub).
+Checks: `composer ci` (the same command CI runs on git.wayne.edu).
 
 Front page: [`site/index.html`](site/index.html), a static page you can open in a browser or serve from `site/`.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.

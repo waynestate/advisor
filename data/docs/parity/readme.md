@@ -127,7 +127,7 @@ on Citadel's real 8.5r3 image, 2026-11-10). macOS is the run still owed on the r
 | Piece | What it is | Like Citadel because |
 |---|---|---|
 | app | Citadel's own PHP image (for example `citadel/php-apache:8.5r3`), Citadel's `vhost.conf` and `php.ini`, your `build.sh` run the way Citadel runs it, your `deployments/` run once each by Citadel's entrypoint, your health check on Citadel's timing, your cron entries run in the app container as `prisoner` | It is Citadel's image and Citadel's files, not a lookalike |
-| proxy | HAProxy in front, adding `X-Forwarded-For` and `X-Forwarded-Proto` and stripping nothing | Citadel's proxy does the same, so an app that trusts the wrong hop is caught here |
+| proxy | HAProxy in front, adding `X-Forwarded-For` and `X-Forwarded-Proto` and stripping nothing; with `"https": true` it also serves https for `server_name` (and `localhost`) on 127.0.0.1:8443 | Citadel's proxy does the same, so an app that trusts the wrong hop is caught here |
 | mysql | MySQL 5.6.51, on a loopback port only | It is the version of Citadel's shared database server (no JSON columns, indexed strings stop at 191 characters) |
 
 Two ways to put your code in the app container, set by `mode` in `parity.json`:
@@ -154,6 +154,7 @@ no config). `--json` on the read commands is the stable contract.
 | `parity image get [tag] [--file x.tar] [--git] [--https] [--keep] [--force]` | works: downloads Citadel's image with your own git.wayne.edu access, checks its sha256 and image id, loads it |
 | `parity image verify [tag] [--file x.tar]` | works: the image here (or a tar) against Citadel's. Exit 1 when it differs |
 | `parity test [--json]` | works: the front page through the proxy, the app's health check, the requests in `parity.json`, and no PHP fatal error in Apache's log while it ran. Exit 1 when any fails |
+| `parity trust [--remove]` | works: puts the app's local https certificate authority in this computer's certificate stores, so the browser stops warning about the app's https address on 127.0.0.1:8443; Windows and macOS work on your user store, Linux prints the sudo commands and updates Chrome's NSS database when it can; `--remove` takes it out again |
 | `parity run [--user citadel] [--] command [args...]` | works: runs a tool (`composer ci`, `php artisan test`, `npm run build`) in the app container as user citadel and returns its exit code; in bake mode it says the files it writes vanish on the next `parity up` |
 | `parity engine [podman\|docker\|auto] [--json]` | works: says which engine Parity uses and why, or saves the choice for this computer (the desktop app reads the same setting); `PARITY_ENGINE` still wins where it is set |
 | `parity version [--json]` | works |
@@ -318,11 +319,12 @@ never writes to it.
 |---|---|---|
 | `none` | nothing; the app's own settings decide | nothing |
 | `fake` | `SESAME_DRIVER=fake`, `SESAME_FAKE_USERNAME` (`fake_user`, default `jdoe`) | `environment` of `local`, `development`, `dev`, `testing` or `test`, because SESAME's fake driver refuses to boot anywhere else |
-| `cas` | `SESAME_DRIVER=cas`, `SESAME_CAS_SERVICE_URL=https://<server_name>/login` (SESAME's Laravel `/login` route) | `server_name` on wayne.edu, pointed at 127.0.0.1 in your hosts file, and HTTPS in front of Parity's port: CAS sends its ticket back only to an https address on a name it knows |
+| `cas` | `SESAME_DRIVER=cas`, `SESAME_CAS_SERVICE_URL=https://<server_name>/login` (SESAME's Laravel `/login` route) | `server_name` on wayne.edu, pointed at 127.0.0.1 in your hosts file, and `"https": true`, so Parity serves https for `server_name` on 127.0.0.1:8443: CAS sends its ticket back only to an https address on a name it knows |
 
-`SESAME_CAS_BASE_URL` is left to the app's settings or the playbook, which carry the university's CAS server. Parity
-serves plain HTTP; its own HTTPS (a local, name-constrained certificate authority) comes after 1.0, so `cas` today
-needs a TLS proxy of your own in front of `http_port`. `fake` is the everyday local choice.
+`SESAME_CAS_BASE_URL` is left to the app's settings or the playbook, which carry the university's CAS server. For
+`cas`, set `"https": true` in `parity.json`: Parity then serves https for `server_name` on 127.0.0.1:8443, and one run
+of `parity trust` makes your browser trust the app's local CA. The hosts-file step stays, because CAS must see a name
+it knows. `fake` is still the everyday local choice.
 
 ### Cron entries
 
@@ -381,7 +383,7 @@ reload are not part of Citadel, so run `npm run dev` on your own computer if you
 ### Road to 1.0
 
 The 1.0 command set: `check`, `init` (with `--from-squire`), `up`, `down`, `status`, `logs`, `shell`, `test`,
-`image list|get|verify`, `engine` and `version`.
+`trust`, `image list|get|verify`, `engine` and `version`.
 
 Before the tag:
 
@@ -392,10 +394,18 @@ Before the tag:
 - 1.0 ships unsigned, with checksums, like 0.1.0.
 - Citadel's 8.4r5 image is the one outside dependency: until its tar exists, 1.0 offers 8.5r3 only.
 
+### Local HTTPS
+
+With `"https": true` in `parity.json`, Parity serves https for `server_name` (and `localhost`) on 127.0.0.1:8443, a
+fixed port, with a leaf from the app's own local CA: one CA per app, name-constrained to the app's names, kept in
+your config folder, its key never leaving it. Run `parity trust` once per computer and the browser stops warning;
+`parity trust --remove` takes it out again. In CI nobody has run `parity trust`, and that is fine: `parity test`
+loads the home page over https pinned to the app's CA, and `parity check`'s `https.trust` finding warns but never
+fails, so an untrusted CA keeps CI green.
+
 ### After 1.0
 
 - **Commands:** `reset`, `eject`, `image pin` and `image build`.
-- **Local HTTPS:** a local, name-constrained certificate authority in front of the app.
 - **The desktop app**, one window over the same Go code. Signing (Authenticode, Apple Developer ID) comes before it.
 - **Packages:** winget, Homebrew and deb/rpm.
 

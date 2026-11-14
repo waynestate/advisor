@@ -41,7 +41,7 @@
             "role": "One command that measures a PHP app against policy.json and prints a JSON, text or Code Quality report. It reports; CI decides.",
             "state": "built",
             "package": "waynestate/proctor",
-            "version": "0.15.1",
+            "version": "0.16.0",
             "php": "^8.3",
             "next_step": "Run run_proctor_check on the app, fix the failing checks, and keep `proctor check` in CI.",
             "docs": [
@@ -57,7 +57,7 @@
             "role": "Protocol-neutral sign-in: drivers for CAS, a signed gateway assertion, OpenID Connect (Entra sign-in) and OAuth2 bearer tokens (SAML is planned). It returns a verified identity and leaves the session to the app.",
             "state": "built",
             "package": "waynestate/sesame",
-            "version": "0.7.4",
+            "version": "0.7.5",
             "php": "^8.3",
             "next_step": "Pick the driver your platform supports and read its README before wiring routes.",
             "docs": [
@@ -105,7 +105,7 @@
             "role": "CI templates for GitLab (components) and GitHub (reusable workflows): tests, PROCTOR, audit and accessibility, with `composer ci` as the one contract.",
             "state": "built",
             "package": "waynestate/preflight",
-            "version": "0.8.0",
+            "version": "0.9.0",
             "php": "^8.3",
             "next_step": "Include its components pinned to a tag; never track the latest.",
             "docs": [
@@ -185,7 +185,7 @@
             "role": "The Citadel kit: build.sh, deployments/, the app-side release script, the health check, the portable image and upstream merge requests. Platform-specific deploy code lives here and nowhere else. Its old local parity kit gives way to Parity.",
             "state": "built",
             "package": "waynestate/squire",
-            "version": "0.10.8",
+            "version": "0.11.1",
             "php": "^8.3",
             "next_step": "Use its release script for Citadel deploys; other platforms use their own targets. To run the app like Citadel on your own computer, use Parity.",
             "docs": [
