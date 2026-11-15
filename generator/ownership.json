@@ -320,7 +320,7 @@
             "owner": "Rolodex",
             "role": "people lookup",
             "also": [],
-            "decision": "Rolodex's role in the parts list (paused)"
+            "decision": "Rolodex's role in the parts list"
         },
         {
             "topic": "Banner read access",
@@ -328,7 +328,7 @@
             "owner": "TELLER",
             "role": "read-only Banner and Oracle data access",
             "also": [],
-            "decision": "TELLER's role in the parts list (paused)"
+            "decision": "TELLER's role in the parts list"
         },
         {
             "topic": "interface components",
