@@ -50,6 +50,7 @@
 </ul>
 <h3 id="changed"><span class="docs-heading-tail"><span>Changed</span><a class="docs-heading-link" aria-label="Link to this section" href="#changed">#</a></span></h3>
 <ul>
+<li>Changed: the ownership table no longer marks TELLER and Rolodex as paused (both released 0.1.0); they stay out of the bundled projects for now.</li>
 <li>Changed: <code>deploy/</code> requires PROCTOR <code>^0.16</code> (was <code>^0.15</code>, which does not allow 0.16), whose <code>ci-pipelines</code> check no longer asks for a GitHub workflow (D-069).</li>
 <li>Changed: the dev dependency Pinstripe is <code>^0.4</code> (was <code>^0.3</code>, which does not allow 0.4.0); 0.4.0 adds two opt-in Rector presets and changes no rule this repo uses.</li>
 <li>Changed: the deploy kit is Squire 0.11.1 (was 0.10.7): the release script fetches PROCTOR when <code>--no-dev</code> left it out and installs the frontend from a <code>yarn.lock</code>, the HAProxy pin is current, the fallback base follows the app's PHP line, and the parity scripts carry the deprecation note.</li>

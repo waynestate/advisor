@@ -19,6 +19,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Changed [#](https://advisor.apps.wayne.edu/docs/changelog.html#changed)
 
+- Changed: the ownership table no longer marks TELLER and Rolodex as paused (both released 0.1.0); they stay out of the bundled projects for now.
 - Changed: `deploy/` requires PROCTOR `^0.16` (was `^0.15`, which does not allow 0.16), whose `ci-pipelines` check no longer asks for a GitHub workflow (D-069).
 - Changed: the dev dependency Pinstripe is `^0.4` (was `^0.3`, which does not allow 0.4.0); 0.4.0 adds two opt-in Rector presets and changes no rule this repo uses.
 - Changed: the deploy kit is Squire 0.11.1 (was 0.10.7): the release script fetches PROCTOR when `--no-dev` left it out and installs the frontend from a `yarn.lock`, the HAProxy pin is current, the fallback base follows the app's PHP line, and the parity scripts carry the deprecation note.
