@@ -18,6 +18,7 @@ Every rule that uses MUST, SHOULD or MAY names what holds it, with one of three 
 - [Code](code.md)
 - [Auth](auth.md)
 - [Databases](databases.md)
+- [Oracle, Banner and people](oracle-and-people.md)
 - [Runtime and headers](runtime-and-headers.md)
 - [Deploy gate](deploy-gate.md)
 - [CI](ci.md)

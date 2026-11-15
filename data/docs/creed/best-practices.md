@@ -577,8 +577,9 @@ reads `.gitattributes` the way Git applies it and warns when the app's `*.sh`, `
 `*.Dockerfile` files are not pinned to `eol=lf` (`proctor/gitattributes-eol/not-pinned`), and when a Dockerfile or
 `.conf` under `deploy/` or `.squire/` has Windows line endings (`proctor/gitattributes-eol/crlf`). PROCTOR 0.14.0's
 `script-pair` warns when a script under `scripts/` has no twin (`proctor/script-pair/missing-ps1`,
-`proctor/script-pair/missing-sh`). No check asks for the whole `* text=auto eol=lf` line yet, and scripts outside
-`scripts/` are not paired.
+`proctor/script-pair/missing-sh`). PROCTOR 0.16.1's `gitattributes-eol` also warns when the root `.gitattributes`
+lacks the whole `* text=auto eol=lf` line (`proctor/gitattributes-eol/no-default`). Scripts outside `scripts/` are not
+paired.
 
 ### 35. Run the test suite on every supported PHP version
 
@@ -1123,7 +1124,8 @@ These are places where a source disagrees with the repository or with an earlier
 ## Gaps for the backlog
 
 1. Done in the repository after the first pass: Laravel 13, Node 26 and MySQL 9.7 are in `policy.json` (practice 7). The
-   process gap remains (items 19 and 22).
+   process half closed when items 19 and 22 did (PROCTOR 0.16.1's `proctor/unpatched/below-minimum`, and the Composer
+   cooldown of item 22).
 2. Done: a scheduled job checks the latest patch levels against the upstream feeds and fails when they are stale;
    the policy robot runs the full refresher every Monday, pushes to `main` when `composer ci` is green and opens a
    merge request when it is red; its first refresh landed on 2026-11-08 (practice 8).
@@ -1149,12 +1151,13 @@ These are places where a source disagrees with the repository or with an earlier
     known line still answers the same (practice 10).
 15. Done: the policy's `gate` block carries per-check stages (`report`, `warn`, `block`) with `from` dates, in the
     schema and the reader, and `proctor gate` (PROCTOR 0.9.0) applies them; no rule is staged yet (practice 28).
-16. Partly done: PROCTOR's `crlf-deploy-script` fails on CRLF in deploy scripts and warns when `.gitattributes` does
+16. Done: PROCTOR's `crlf-deploy-script` fails on CRLF in deploy scripts and warns when `.gitattributes` does
     not pin them to LF, PROCTOR 0.9.0's `case-clash` fails on file-name case collisions, and PROCTOR 0.11.0's
     `gitattributes-eol` warns when shell scripts, `.conf` files and Dockerfiles are not pinned to
     LF and on a CRLF Dockerfile or `.conf` under `deploy/` or `.squire/`; done in PROCTOR 0.14.0: `script-pair` warns
-    when a script under `scripts/` has no `.ps1` or `.sh` twin. Only a check for the whole `* text=auto eol=lf` line in
-    `.gitattributes` is still to add (practice 34).
+    when a script under `scripts/` has no `.ps1` or `.sh` twin; done in PROCTOR 0.16.1: `gitattributes-eol` warns
+    (`proctor/gitattributes-eol/no-default`) when the root `.gitattributes` lacks the whole `* text=auto eol=lf` line
+    (practice 34).
 17. Done in PROCTOR 0.12.0: `preflight-pinned` warns when any CI component include, Preflight's or another
     project's, is not pinned to a full release tag (such as `@0.4.0`) or a 40-hex commit SHA (practice 23).
 18. Partly done: the accessibility chapter is written, with the WCAG 2.2 AA target (practices 30 and 54); the Title
@@ -1162,9 +1165,10 @@ These are places where a source disagrees with the repository or with an earlier
 
 Added in the second pass (2026-10-27):
 
-19. Partly done: `policy.json` carries an optional `minimum_patch` per PHP line, read by `Policy::minimumPatch()` and
+19. Done: `policy.json` carries an optional `minimum_patch` per PHP line, read by `Policy::minimumPatch()` and
     checked by `bin/validate-policy.php`; every PHP line sets one since 2026-11-13 (the lowest patch a Citadel image
-    ships), and the PROCTOR check that compares the value with the image or runtime waits (practice 37).
+    ships), and PROCTOR 0.16.1's `unpatched` warns (`proctor/unpatched/below-minimum`) when a version is below its
+    line's `minimum_patch` (practice 37).
 20. Partly done: `rules.fix_within_days` holds a window in days per severity (`critical`, `high`, `medium`, `low`), in
     the schema and read by `Policy::fixWithinDays()`; no value is set yet (the maintainers choose N), and the check that
     applies it to `composer audit` output waits for the numbers (practice 38).

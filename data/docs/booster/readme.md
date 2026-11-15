@@ -882,7 +882,7 @@ PHPUnit hops then take over from 9. Then the recipes: `cas-to-sesame` (writes `c
 SESAME's published defaults when the app has none, uses `ModelUserResolver`, moves the CAS middleware from the web group onto the app's web
 routes under `auth.sesame`, removes any `wayne.cas` alias registration, points the web guard at the `sesame` driver and the users provider at `eloquent` (adding a model key when it
 has none), drops `WayneCasable` from user models, and moves a model's `ReadOnlyAttributes` trait to `app/Models/Concerns` (writing the trait file when it is absent),
-swaps the Composer requirement for `waynestate/sesame ^0.7.5` and drops any `wayne-cas` path or VCS repository entries, removes `config/wayne-cas.php`
+swaps the Composer requirement for `waynestate/sesame ^0.8` and drops any `wayne-cas` path or VCS repository entries, removes `config/wayne-cas.php`
 when nothing in the app reads its config keys any more (a manual step names the readers while anything still does),
 and flags dead `DUO_*` settings in example env files; planned with `--sesame`, and left out with a warning when the
 plan ends below PHP 8.3, which SESAME needs; it lands just before the hop from Laravel 10 to 11, and while PHP is
@@ -1085,7 +1085,7 @@ browser. The private proof site has the hop-by-hop table.
 
 ## Status
 
-Version 1.18. See [CHANGELOG.md](CHANGELOG.md) for what changed, [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) for what stays
+Version 1.19. See [CHANGELOG.md](CHANGELOG.md) for what changed, [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) for what stays
 open, and [BEST_PRACTICES.md](BEST_PRACTICES.md) for the rules Booster follows.
 
 ## License

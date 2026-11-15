@@ -259,6 +259,7 @@
                         "dependencies",
                         "deploy-gate",
                         "every-os",
+                        "oracle-and-people",
                         "overrides",
                         "production",
                         "runtime-and-headers",

@@ -306,7 +306,7 @@ How the stack holds it: `Enforced`. `sesame_logout()` sends `Cache-Control: no-s
 Do not set `session.sid_length` or `session.sid_bits_per_character`. On PHP 8.4 and later they are deprecated, and the default ID is 32 hexadecimal characters (128 bits).
 Why: a low setting weakens the ID, and the settings now raise deprecation notices. OWASP asks for at least 64 bits of entropy in an ID.
 Sources: [PHP RFC, Deprecations for PHP 8.4](https://wiki.php.net/rfc/deprecations_php_8_4) (confirmed through search results, not read in full), [OWASP Session Management](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html).
-How the stack holds it: `Checked`. The README ("The session cookie") tells apps to leave both settings alone, and SESAME and HELMET's hardening step never set them. Squire's kit (0.10.5 in this repo's `deploy/`) does not write them into `.squire/php.ini`, and Squire's CI fails if it ever does again (`ImageHardeningTest::testPhpIniLeavesTheSessionIdLengthAtPhpsDefaults`); in an app, `squire init --check` reports a kit `php.ini` that was edited. An ini file an app adds outside the kit is not checked.
+How the stack holds it: `Checked`. The README ("The session cookie") tells apps to leave both settings alone, and SESAME and HELMET's hardening step never set them. Squire's kit (0.11.1 in this repo's `deploy/`) does not write them into `.squire/php.ini`, and Squire's CI fails if it ever does again (`ImageHardeningTest::testPhpIniLeavesTheSessionIdLengthAtPhpsDefaults`); in an app, `squire init --check` reports a kit `php.ini` that was edited. An ini file an app adds outside the kit is not checked.
 
 ### S46. Take login time from the IdP, and read time through a clock
 Prefer the IdP's `authenticationDate` over the time SESAME received the response, and give the library a PSR-20 clock instead of calling `new DateTimeImmutable()`.
@@ -318,7 +318,7 @@ How the stack holds it: `Enforced`. `CasDriver` reads `authenticationDate` from 
 Include pipeline components by a full release tag, never a branch, a partial version or `~latest`.
 Why: a moving component can change what your pipeline runs, or what it skips, with no change in your repo. GitLab says components are used at your own risk.
 Sources: [GitLab CI/CD components](https://docs.gitlab.com/ci/components/) (it prefers a commit SHA pin and says "Avoid using `latest`"). The stack pins a release tag instead, because published stack tags are never moved or deleted.
-How the stack holds it: `Checked`. `.gitlab-ci.yml` includes its four Preflight components at one release tag, `@0.5.0`, and says never to use `~latest`. A full release tag counts as a pin because published stack tags are never moved or deleted (a rule across the stack), so a pin bump is one readable version across every repo. PROCTOR's `preflight-pinned` check, which the `proctor` job runs on every pipeline, warns on a branch, `~latest` or a partial version such as `0.3`.
+How the stack holds it: `Checked`. `.gitlab-ci.yml` includes its five Preflight components at one release tag, `@0.9.0` (php-test, composer-audit, proctor, a11y and secret-detection), and says never to use `~latest`. A full release tag counts as a pin because published stack tags are never moved or deleted (a rule across the stack), so a pin bump is one readable version across every repo. PROCTOR's `preflight-pinned` check, which the `proctor` job runs on every pipeline, warns on a branch, `~latest` or a partial version such as `0.3`.
 
 ## 8. MFA
 

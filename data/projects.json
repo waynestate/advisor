@@ -41,7 +41,7 @@
             "role": "One command that measures a PHP app against policy.json and prints a JSON, text or Code Quality report. It reports; CI decides.",
             "state": "built",
             "package": "waynestate/proctor",
-            "version": "0.16.0",
+            "version": "0.16.1",
             "php": "^8.3",
             "next_step": "Run run_proctor_check on the app, fix the failing checks, and keep `proctor check` in CI.",
             "docs": [
@@ -137,7 +137,7 @@
             "role": "The upgrade tool: Rector recipes and checks that move an app one PHP or Laravel version at a time.",
             "state": "built",
             "package": "waynestate/booster",
-            "version": "1.18.0",
+            "version": "1.19.0",
             "php": "^8.3",
             "next_step": "Plan one hop at a time with `upgrade_path`, and read its README for the Rector recipes.",
             "docs": [
