@@ -78,7 +78,7 @@ composer require --dev waynestate/advisor
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP
 command and not a shell script.
 
-ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.3`. No extra repository needed.
+ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.4`. No extra repository needed.
 
 ### Quick start
 
@@ -397,7 +397,7 @@ An MCP server for the stack, a bit like Laravel Boost but for Wayne State. Your 
 
 `$ composer require --dev waynestate/advisor`
 
-PHP 8.3 or newer. ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.3`.
+PHP 8.3 or newer. ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.4`.
 
 **Works alongside [WELD](https://weld.apps.wayne.edu/).** You can add ADVISOR to a WELD app or to any other Wayne State PHP app.
 
@@ -674,6 +674,8 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### \[Unreleased\] [#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
 
+### \[0.4.0\] - 2026-11-19 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-4-0-2026-11-19)
+
 #### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
 
 - Added: `advisor install --runner=docker|php`. A project with a compose file or `parity.json` defaults to `docker` (the MCP client starts ADVISOR inside the app container through `docker compose run`), anything else to `php`; switching runner needs `--force`.
@@ -688,7 +690,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - CI pins Preflight 0.9.0 (components and the a11y checker copy).
 - CI: the GitHub workflow calls Preflight 0.9.0's reusable workflow (commit fb73b53), the release the GitLab pipeline pins.
 - Docs: native Windows and macOS are proven: the first green native-os run (43577372340) is recorded, and open question 1 is answered.
-- Docs: the docs home page says the current release is 0.3.1 (it said 0.3.0). Content only.
+- Docs: the docs home page says the current release is 0.4.0. Content only.
 
 #### Fixed [#](https://advisor.apps.wayne.edu/docs/changelog.html#fixed)
 
@@ -1713,7 +1715,7 @@ The command is `php vendor/bin/advisor`. This works the same on Windows, macOS a
 
 ### Status [#](https://advisor.apps.wayne.edu/docs/#status)
 
-Current release 0.3.1. PHP ^8.3, license MIT, MCP SDK 0.9.0. New in 0.3.0: Parity, Citadel on your own computer, is the fifteenth part of the stack, so `list_projects`, `get_project_status`, `read_project_docs` and `owner_of` ("local development") know it; the bundle is resynced with the stack's 2026-11-09 night main branches; and CI runs on Composer 2.11.1 and Preflight 0.8.0. The [changelog](https://advisor.apps.wayne.edu/docs/changelog.html) has the full list, and [Upgrading](https://advisor.apps.wayne.edu/docs/upgrading.html) the one step it needs. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
+Current release 0.4.0. PHP ^8.3, license MIT, MCP SDK 0.9.0. New in 0.4.0: `advisor install --runner=docker|php` (a project with a compose file or `parity.json` defaults to Docker), a `source_commit` per bundled file in the manifest, the Squire 0.11.1 deploy kit, CI on Preflight 0.9.0, and native Windows and macOS proven by the `native-os` workflow. The [changelog](https://advisor.apps.wayne.edu/docs/changelog.html) has the full list, and [Upgrading](https://advisor.apps.wayne.edu/docs/upgrading.html) the one step it needs. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
 
 ### Related [#](https://advisor.apps.wayne.edu/docs/#related)
 
@@ -1756,7 +1758,7 @@ composer require --dev waynestate/advisor
 
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.
 
-ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.3`. No extra repository needed.
+ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.4`. No extra repository needed.
 
 Note
 
@@ -2400,6 +2402,15 @@ Source: https://advisor.apps.wayne.edu/docs/upgrading.html
 ## Upgrading [#](https://advisor.apps.wayne.edu/docs/upgrading.html#upgrading)
 
 This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
+
+### \[0.4.0\] - 2026-11-19 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-4-0-2026-11-19)
+
+A new minor line, so a `^0.3` constraint does not pick it up: move to `composer require --dev waynestate/advisor:^0.4`. No code in your app changes; the MCP server reports version 0.4.0.
+
+- `advisor install --runner=docker|php` chooses how the client starts ADVISOR. A project with a compose file or `parity.json` now defaults to `docker` (the client runs ADVISOR inside the app container through `docker compose run`); anything else stays on `php`. Switching runner on an existing config needs `--force`.
+- `advisor doctor` has a `stdio` check and a `php-path` check, and the `native-os` workflow proves the stdio path on Windows and macOS.
+- Every tool publishes a closed output schema in `tools/list`; an agent that validates answers can now rely on it.
+- The deploy kit is Squire 0.11.1 and the deploy layer requires PROCTOR ^0.16.
 
 ### \[0.3.0\] - 2026-11-09 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-3-0-2026-11-09)
 
