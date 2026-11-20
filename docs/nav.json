@@ -99,6 +99,10 @@
         {
           "title": "Proof",
           "path": "reference/proof"
+        },
+        {
+          "title": "Compatibility",
+          "path": "reference/compatibility"
         }
       ]
     },

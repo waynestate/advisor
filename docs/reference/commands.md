@@ -129,3 +129,4 @@ Usage: `bin/advisor content:verify`
 - [When it does not show up](../guides/doctor.md)
 - [Refreshing the content](../deploying/refreshing-the-content.md)
 - [Configuration](configuration.md)
+- [Compatibility](compatibility.md)
