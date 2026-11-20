@@ -52,7 +52,7 @@ only in a release whose [Upgrading](docs/upgrading.md) section lists it under Br
 and before 1.0 that is a new minor, never a patch. Before you move a pin, see what moved:
 
 ```
-git diff 0.8.0 0.9.0 -- contract/inputs.json
+git diff 0.9.0 0.10.0 -- contract/inputs.json
 ```
 
 [The inputs contract](docs/guides/inputs-contract.md) explains what counts as breaking
@@ -68,7 +68,7 @@ older PHP or needing an extension the image lacks still gets its report.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       proctor_command: vendor/bin/proctor check --format=codequality
 ```
@@ -77,7 +77,7 @@ include:
 |-------|------|---------|--------------|
 | `stage` | string | `test` | Pipeline stage for the job. |
 | `job_name` | string | `proctor` | Name of the job. Set it when you include this component more than once. |
-| `image` | string | `php:8.4-cli-trixie@sha256:9cf851bc2c1b37c3e59dfd677a3c3e56d485af5a47c93f629424bb039eafcb69` | Docker image for the job. |
+| `image` | string | `php:8.5-cli-trixie@sha256:50956f094e90a716d43bea28087d447555ad80510e386ab8c9c10d8c70d781a9` | Docker image for the job. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
 | `composer_version` | string | `2.11.1` | Composer version to install. |
 | `allow_failure` | boolean | `false` | Whether the job can fail without failing the pipeline. |
@@ -102,11 +102,11 @@ job.
 
 ### php-test
 
-Runs the test command on each supported PHP version through `parallel:matrix`.
+Runs the test command on each supported PHP version through `parallel:matrix`. PHP 8.6 runs as an advisory job that may fail; the required matrix is 8.3, 8.4, 8.5.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       test_command: vendor/bin/phpunit
 ```
@@ -118,7 +118,7 @@ include:
 | `image` | string | `php:${PHP_VERSION}-cli-trixie` | Docker image for the jobs. The default carries the literal `${PHP_VERSION}`, which GitLab expands in the image at job time. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
 | `php_versions` | array | `["8.3", "8.4", "8.5"]` | PHP versions to test against. |
-| `php_advisory_version` | string | `""` | One more PHP version tested in a separate `<job_name>-advisory` job that may fail (`allow_failure: true`), for a release candidate. Empty: no advisory job. Never add a release candidate to `php_versions`. |
+| `php_advisory_version` | string | `"8.6"` | One more PHP version tested in a separate `<job_name>-advisory` job that may fail (`allow_failure: true`). Default `8.6` (the newest line, not yet required); set it to `""` for no advisory job. A release candidate still works (for example `8.7-rc`). Never add a release candidate to `php_versions`. |
 | `composer_version` | string | `2.11.1` | Composer version to install. |
 | `test_command` | string | `vendor/bin/phpunit` | The test command to run. |
 | `working_dir` | string | `.` | Directory to run the command in, relative to the project root. |
@@ -132,7 +132,9 @@ that changed and each PHP version gets its own cache.
 
 #### Try the next PHP release without breaking the pipeline
 
-Include `php-test` a second time for the release that is not supported yet, name that job, and let it fail. The name
+By default the component already runs 8.6 in the `<job_name>-advisory` job that may fail, so this second include is
+only needed when you want to pin a release candidate tag or run the trial under your own job name. Include `php-test`
+a second time for the release that is not supported yet, name that job, and let it fail. The name
 is what lets your own `.gitlab-ci.yml` loosen only that job:
 
 ```yaml
@@ -157,7 +159,7 @@ Runs `composer audit --locked` and fails on advisories.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       working_dir: .
 ```
@@ -194,7 +196,7 @@ repos that hand-write this job can replace their copies with one include.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-ci@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-ci@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       working_dir: .
 ```
@@ -223,7 +225,7 @@ New in 0.5.0; 0.4.0 does not include it.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/npm-audit@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/npm-audit@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       audit_level: high
 ```
@@ -250,7 +252,7 @@ Generates a CycloneDX SBOM with `cyclonedx/cyclonedx-php-composer`, validates it
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       output: sbom.cdx.json
 ```
@@ -272,7 +274,7 @@ Runs the app's own [Laravel Pint](https://laravel.com/docs/12.x/pint) in test mo
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       config: pint.json
 ```
@@ -294,7 +296,7 @@ Runs the app's own [PHPStan](https://phpstan.org/) and fails the pipeline on sta
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       config: phpstan.neon
       memory_limit: 1G
@@ -318,7 +320,7 @@ Runs the app's own [ESLint](https://eslint.org/) (and [Prettier](https://prettie
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       eslint_args: .
 ```
@@ -341,7 +343,7 @@ Runs [Gitleaks](https://github.com/gitleaks/gitleaks) over the checked-out tree 
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/secret-detection@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/secret-detection@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
 ```
 
 | Input | Type | Default | What it does |
@@ -366,7 +368,7 @@ curl and PHP, which the job uses for the registry round trip.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/package-publish@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/package-publish@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       group_id: "<your group id>"
 ```
@@ -393,7 +395,7 @@ auto-merges and what waits.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       git_author: "Preflight Bot <preflight-bot@example.com>"
 ```
@@ -401,7 +403,7 @@ include:
 | Input | Type | Default | What it does |
 |-------|------|---------|--------------|
 | `job_name` | string | `renovate` | Name of the job. Set it when you include this component more than once. |
-| `image` | string | `renovate/renovate:44.229.0@sha256:3cbb11917cc72ad4caf0ad96ade546447656310f2057e33e24a4398779d9330c` | Docker image for the job. |
+| `image` | string | `renovate/renovate:44.251.0@sha256:64adaabe8ee3e34820c2b044b5f87e281aa278bf53e5d76df2ce800f9cc9407a` | Docker image for the job. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path in front of `image`: the job pulls `image_prefix/image`. The default is the group's GitLab Dependency Proxy, so Docker Hub is asked once and GitLab serves the cached copy. Outside a group with the proxy, set `docker.io`. No trailing slash. |
 | `autodiscover_filter` | string | `$CI_PROJECT_NAMESPACE/*` | Glob limiting which projects Renovate discovers, relative to the runner project's namespace. |
 | `dry_run` | string | `"null"` | Dry run mode: `null` (disabled), `lookup` or `full`. |
@@ -436,7 +438,7 @@ No takeoff without a clean pre-flight.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/portability@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/portability@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       env: ["APP_KEY=${PORTABILITY_APP_KEY}", "APP_URL=https://myapp.example.edu"]
       session_login_path: /_portability/login
@@ -496,7 +498,7 @@ person to review. Every page gets a walk-round, in daylight and at night.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/a11y@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/a11y@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       pages: ["index.html", "docs/**/*.html"]
       wcag_tags: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]
@@ -509,7 +511,7 @@ a11y ships in 0.2.0 (0.1.4 does not include it). While a site fixes its first fi
 |-------|------|---------|--------------|
 | `stage` | string | `test` | Pipeline stage for the job. |
 | `job_name` | string | `a11y` | Name of the job. Set it when you include this component more than once. |
-| `image` | string | `mcr.microsoft.com/playwright:v1.65.0-noble@sha256:6e3fb709361521eb27161606e6da6d2674e5e89fa16516cb37d6fdd91372273d` | Playwright image the job runs in (amd64 and arm64). Its `vX.Y.Z` tag sets the playwright npm version. |
+| `image` | string | `mcr.microsoft.com/playwright:v1.65.0-noble@sha256:9beb546099e11f52d62e505537914870e01a67e0e6b00ae41da4775324e73dbe` | Playwright image the job runs in (amd64 and arm64). Its `vX.Y.Z` tag sets the playwright npm version. |
 | `allow_failure` | boolean | `false` | Whether the job can fail without failing the pipeline, for a site fixing its first findings. |
 | `site_dir` | string | `site` | Static folder to serve, relative to the project root. Page globs expand in it. |
 | `pages` | array | `["**/*.html"]` | Pages to check, relative to the site root: paths (`index.html`, `docs/`) or globs (`docs/**/*.html`). A glob must match at least one file. |
@@ -537,7 +539,7 @@ recorded version, so a new Squire never turns main red by itself: Renovate's Squ
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/squire-kit@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/squire-kit@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
     inputs:
       working_dir: deploy
 ```
@@ -568,7 +570,7 @@ database rule asks for exactly this. Old airframes still fly; you just check the
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/mysql56-migrate@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/mysql56-migrate@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
 ```
 
 A raw PHP app sets `migrate_command` to its own script (`php database/migrate.php`), which reads the same `DB_*`
@@ -581,7 +583,7 @@ never runs on schedules.
 |-------|------|---------|--------------|
 | `stage` | string | `test` | Pipeline stage for the mysql56-migrate job. |
 | `job_name` | string | `mysql56-migrate` | Name of the job. Set it when you include this component more than once. |
-| `image` | string | `php:8.3-cli-trixie@sha256:628102249d93494233b54490b785f12db9cd60f4dc89416dfca15973f2125f10` | Container image for the job. It needs PHP 8.3 or later; the job installs any missing `php_extensions` itself. |
+| `image` | string | `php:8.5-cli-trixie@sha256:50956f094e90a716d43bea28087d447555ad80510e386ab8c9c10d8c70d781a9` | Container image for the job. It needs PHP 8.3 or later; the job installs any missing `php_extensions` itself. |
 | `image_prefix` | string | `${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}` | Registry path put in front of the image and service_image values. The default is this group's GitLab Dependency Proxy, so Docker Hub images are pulled once and then served from GitLab's cache. On a GitLab or group without the proxy, set it to `docker.io`. No trailing slash. |
 | `service_image` | string | `mysql:5.6.51@sha256:20575ecebe6216036d25dab5903808211f1e9ba63dc7825ac20cb975e34cfcae` | MySQL 5.6.51 service image, the same pin Squire runs locally. |
 | `db_name` | string | `app` | Database name created by the service. |
@@ -625,7 +627,7 @@ on:
 
 jobs:
   ci:
-    uses: waynestate/preflight/.github/workflows/php-package.yml@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+    uses: waynestate/preflight/.github/workflows/php-package.yml@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
 ```
 
 This workflow ships in the `0.1.1` tag, so pin the full commit SHA of the
@@ -782,13 +784,13 @@ workflow:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@fb73b538f3980292119b5b306ff64383d760a214 # 0.9.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@44e683f6dc1a24913af50959827f1f50da2be23d # 0.10.0
 ```
 
 The `workflow:rules` block must live in the app's own file. A component
@@ -1059,5 +1061,5 @@ pwsh -File tests/check-npm-audit-fails.ps1
 
 ## The cast
 
-<div align="center"><sub>Fifteen on the manifest, every one checked in. The README art is cut from the front page by
+<div align="center"><sub>Sixteen on the manifest, every one checked in. The README art is cut from the front page by
 <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>; no runways were painted in its making.</sub></div>

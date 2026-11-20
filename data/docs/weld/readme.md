@@ -29,7 +29,7 @@ Megazord, except it comes with a deploy script and nobody has to shout to make i
 - Rollcall: https://rollcall.apps.wayne.edu/llms.txt
 - Drawbridge: https://drawbridge.apps.wayne.edu/llms.txt
 
-**Current versions** (checked 2026-11-14): CREED 0.1.11, PROCTOR 0.16.1, Preflight 0.9.0, SESAME 0.8.0, HELMET 1.4.1, Squire 0.11.1, Pinstripe 0.4.0, ADVISOR 0.3.1, WayneUI 2.0.8. These are the latest releases, not what this repo pins: CI and `deploy/.squire.json` hold those.
+**Current versions** (checked 2026-11-19): CREED 0.1.13, PROCTOR 0.17.0, Preflight 0.10.0, SESAME 0.8.0, HELMET 1.4.1, Squire 0.11.1, Pinstripe 0.4.0, ADVISOR 0.4.0, Parity 0.2.0, WayneUI 2.0.8. These are the latest releases, not what this repo pins: CI and `deploy/.squire.json` hold those.
 
 ADVISOR's `policy_lookup` answers what is current at any time; the list above is a snapshot for agents that cannot reach it.
 

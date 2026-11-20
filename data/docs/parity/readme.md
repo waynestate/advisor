@@ -62,8 +62,8 @@ A version, a folder, or no PATH change (`-NoPath` on Windows; `PARITY_NO_PATH=1`
 drops the hint):
 
 ```text
-& ([scriptblock]::Create((irm https://parity.apps.wayne.edu/install.ps1))) -Version 0.1.0 -InstallDir C:\tools\parity -NoPath
-curl -fsSL https://parity.apps.wayne.edu/install.sh | sh -s -- --version 0.1.0 --dir ~/bin
+& ([scriptblock]::Create((irm https://parity.apps.wayne.edu/install.ps1))) -Version 0.2.0 -InstallDir C:\tools\parity -NoPath
+curl -fsSL https://parity.apps.wayne.edu/install.sh | sh -s -- --version 0.2.0 --dir ~/bin
 curl -fsSL https://parity.apps.wayne.edu/install.sh | PARITY_NO_PATH=1 sh
 ```
 
@@ -71,7 +71,7 @@ The files are `parity_<version>_<os>_<arch>.tar.gz` (`.zip` on Windows) for `win
 `amd64` and `arm64`, on Parity's site under `downloads/<version>/` (and `downloads/latest/` for the newest). Or build
 it from this repository (below), or take a binary from a pipeline's `build` job.
 
-0.1.0 ships unsigned, with checksums. Signed binaries come before the desktop app, which follows 1.0. Until then, a zip
+0.2.0 ships unsigned, with checksums. Signed binaries come before the desktop app, which follows 1.0. Until then, a zip
 downloaded in a browser may meet SmartScreen ("More info", then "Run anyway", or `Unblock-File parity.exe`), and on a
 Mac an archive downloaded in a browser needs `xattr -d com.apple.quarantine parity`. The installers avoid both.
 

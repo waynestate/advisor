@@ -570,6 +570,8 @@
                     "enum": [
                         "php",
                         "laravel",
+                        "cakephp",
+                        "slim",
                         "node",
                         "mysql",
                         "vue",

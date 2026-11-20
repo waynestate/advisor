@@ -15,6 +15,17 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in this chapter are to 
 - Files MUST be UTF-8 without a BOM, with LF line endings (the stack's
   every-OS design). PROCTOR check: `gitattributes-eol` (the LF pins; nothing checks for a BOM yet).
 
+## Frameworks
+
+- New apps SHOULD be raw PHP or Laravel (the department's framework direction). Sourdough starts both shapes, and
+  WELD is the Laravel one, ready-made. Held by: advice only, never a check.
+- CakePHP and Slim apps are legacy. They stay supported: CREED keeps their `cakephp` and `slim` policy lines, and
+  Booster upgrades them to PHP 8.5 on CakePHP 5 or Slim 4. When one of them needs a larger change, the team SHOULD
+  plan its move to Laravel (Booster's Laravel hops are coming next) or to raw PHP. Held by: advice only, never a
+  check.
+- This is advice, not a gate. No PROCTOR check fails an app for its framework; PROCTOR and ADVISOR only
+  mention it.
+
 ## Reading the code
 
 - Comment where it helps: complex logic, areas that could improve, business rules that would otherwise be a mystery (SHOULD). Version history MUST NOT live in comments; git is the change log (WSU developer standards, 2024). No check exists yet.

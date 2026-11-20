@@ -39,6 +39,13 @@ with a warning, and a php.net / endoflife.date disagreement is reported but
 never fails the run. Run it with `--dry-run` to preview, or `--offline <dir>`
 to test against saved feeds.
 
+For the picture between refreshes, CREED's site has a [live view](https://creed.apps.wayne.edu/php/):
+every PHP branch with its latest patch, the support timeline, the next release
+php.net has announced or php-src has tagged, and which PHP lines Laravel,
+CakePHP and Slim allow. It reads php.net, php-src, the php.net wiki,
+endoflife.date and Packagist itself, at most 30 minutes behind. It is a view,
+not a gate: the gates read `policy.json`.
+
 ## Base images
 
 A base image MUST be rebuilt when the policy's `latest_patch` for its branch
