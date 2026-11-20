@@ -130,3 +130,4 @@ Usage: `bin/advisor content:verify`
 - [When it does not show up](https://advisor.apps.wayne.edu/docs/guides/doctor.html)
 - [Refreshing the content](https://advisor.apps.wayne.edu/docs/deploying/refreshing-the-content.html)
 - [Configuration](https://advisor.apps.wayne.edu/docs/reference/configuration.html)
+- [Compatibility](https://advisor.apps.wayne.edu/docs/reference/compatibility.html)

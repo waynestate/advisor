@@ -33,6 +33,7 @@ Every page below is Markdown. The HTML pages send the same Markdown to a client 
 - [Install | ADVISOR docs](https://advisor.apps.wayne.edu/docs/install.md): How to install ADVISOR in a project and what it needs.
 - [Best practices | ADVISOR docs](https://advisor.apps.wayne.edu/docs/reference/best-practices.md): The rules ADVISOR holds itself to, and the tests that prove them.
 - [Commands | ADVISOR docs](https://advisor.apps.wayne.edu/docs/reference/commands.md): Every advisor command and what it does.
+- [Compatibility | ADVISOR docs](https://advisor.apps.wayne.edu/docs/reference/compatibility.md): What ADVISOR promises not to break between releases, and when the promise starts.
 - [Configuration | ADVISOR docs](https://advisor.apps.wayne.edu/docs/reference/configuration.md): Every ADVISOR environment variable, its default and its meaning.
 - [Proof | ADVISOR docs](https://advisor.apps.wayne.edu/docs/reference/proof.md): How ADVISOR is checked: composer ci and what each check proves.
 - [Command injection | ADVISOR docs](https://advisor.apps.wayne.edu/docs/threats/command-injection.md): A tool argument running a program nobody approved, and the allowlist that prevents it.
