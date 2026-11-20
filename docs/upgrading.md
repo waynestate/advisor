@@ -7,6 +7,15 @@ description: How to upgrade ADVISOR, version by version.
 
 This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
 
+## [0.4.0] - 2026-11-19
+
+A new minor line, so a `^0.3` constraint does not pick it up: move to `composer require --dev waynestate/advisor:^0.4`. No code in your app changes; the MCP server reports version 0.4.0.
+
+- `advisor install --runner=docker|php` chooses how the client starts ADVISOR. A project with a compose file or `parity.json` now defaults to `docker` (the client runs ADVISOR inside the app container through `docker compose run`); anything else stays on `php`. Switching runner on an existing config needs `--force`.
+- `advisor doctor` has a `stdio` check and a `php-path` check, and the `native-os` workflow proves the stdio path on Windows and macOS.
+- Every tool publishes a closed output schema in `tools/list`; an agent that validates answers can now rely on it.
+- The deploy kit is Squire 0.11.1 and the deploy layer requires PROCTOR ^0.16.
+
 ## [0.3.0] - 2026-11-09
 
 A new minor line, so a `^0.2` constraint does not pick it up: move to `composer require --dev waynestate/advisor:^0.3`. No code in your app changes; the MCP server reports version 0.3.0.

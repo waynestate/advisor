@@ -4,6 +4,8 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-19
+
 ### Added
 
 - Added: `advisor install --runner=docker|php`. A project with a compose file or `parity.json` defaults to `docker` (the MCP client starts ADVISOR inside the app container through `docker compose run`), anything else to `php`; switching runner needs `--force`.
@@ -18,7 +20,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 - CI pins Preflight 0.9.0 (components and the a11y checker copy).
 - CI: the GitHub workflow calls Preflight 0.9.0's reusable workflow (commit fb73b53), the release the GitLab pipeline pins.
 - Docs: native Windows and macOS are proven: the first green native-os run (43577372340) is recorded, and open question 1 is answered.
-- Docs: the docs home page says the current release is 0.3.1 (it said 0.3.0). Content only.
+- Docs: the docs home page says the current release is 0.4.0. Content only.
 
 ### Fixed
 
