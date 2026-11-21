@@ -15,6 +15,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 ### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
 
 - Docs: a Compatibility page (`docs/reference/compatibility.md`) states what ADVISOR promises not to break from 1.0: the nine tools and their input and output field names, the `ADVISOR_*` variables, the commands, and the SemVer and deprecation rule. Until 1.0 it is the intent and the 0.x rule governs.
+- Docs: current pages no longer name the stack's internal GitLab host.
 
 ## \[0.4.0\] - 2026-11-19 [#](https://advisor.apps.wayne.edu/docs/changelog.html#0-4-0-2026-11-19)
 
