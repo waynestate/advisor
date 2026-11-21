@@ -28,6 +28,14 @@ ADVISOR reads the process environment only, never a file. This page lists every 
 | ADVISOR_STACK_DIR | Folder holding the sibling stack repos; used only by `content:generate`. | none | src/Command/ContentGenerateCommand.php |
 <!-- /generated -->
 
+## Shared variables
+
+The CLI honours one shared variable from the stack, which is not an `ADVISOR_*` setting and is not read by the server:
+
+| Variable | Meaning | Default | Read in |
+| --- | --- | --- | --- |
+| WAYNE_NO_UPDATE_CHECK | Set to `1` to switch off the once-a-day update check and its stderr line (see [Install](../install.md)). | off | src/Update/UpdateNotice.php |
+
 ## Example
 
 A short example, with placeholder values:
