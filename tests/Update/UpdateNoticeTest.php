@@ -21,9 +21,9 @@ use Waynestate\Advisor\Update\UpdateNoticeListener;
 
 /**
  * The update notice: one stderr line when a newer stable release exists,
- * with the command that updates this install. Every test uses an injected
- * fetcher and clock and a temp cache dir, so nothing here touches the
- * network or the real cache.
+ * with the command that updates this install. Every test uses a temp cache
+ * dir and, except the real-binary test, an injected fetcher and clock, so
+ * nothing here touches the network or the real cache.
  */
 final class UpdateNoticeTest extends TestCase
 {
@@ -33,6 +33,9 @@ final class UpdateNoticeTest extends TestCase
 
     /** The running version, as Advisor::VERSION. */
     private const RUNNING = '0.4.0';
+
+    /** A release well above the running one, for the seeded cache. */
+    private const NEWER = '0.9.0';
 
     public function testLineForPhar(): void
     {
@@ -326,12 +329,11 @@ final class UpdateNoticeTest extends TestCase
     {
         // ADVISOR has no --format=json (doctor has --json), so the
         // contract's requirement is that stdout is byte-identical with the
-        // check on and off. This repo has no proc_open-based bin tests, so
-        // the real TERMINATE listener is fired with the command's output as
-        // a buffer holding doctor's JSON: the buffer must come out
-        // unchanged, and the line must land on the stderr sink alone. The
-        // cache is seeded and the fetcher would answer differently, so
-        // nothing touches the network.
+        // check on and off. The real TERMINATE listener is fired with the
+        // command's output as a buffer holding doctor's JSON: the buffer
+        // must come out unchanged, and the line must land on the stderr
+        // sink alone. The cache is seeded and the fetcher would answer
+        // differently, so nothing touches the network.
         $env = $this->env();
         $this->seedCache($env, self::NOW, '0.4.1');
 
@@ -500,6 +502,39 @@ final class UpdateNoticeTest extends TestCase
         self::assertSame('', $sink['text']);
     }
 
+    public function testRealBinaryPrintsTheLine(): void
+    {
+        // The wiring proof: the real entry point, run as a child process,
+        // must print the line on stderr after a one-shot command and keep
+        // stdout byte-identical when the check is opted out. The cache is
+        // seeded fresh with a newer release, so nothing touches the
+        // network.
+        $env = array_merge(getenv(), [
+            'CI' => '',
+            'WAYNE_NO_UPDATE_CHECK' => '',
+            'XDG_CACHE_HOME' => $this->cacheDir(),
+        ]);
+        $this->seedCache($env, time(), self::NEWER);
+
+        [$stdout, $stderr, $exit] = $this->runBinary($env, ['list']);
+        self::assertSame(0, $exit, 'the binary failed: ' . $stderr);
+
+        $lines = array_values(array_filter(
+            explode("\n", $stderr),
+            static fn(string $line): bool => trim($line) !== '',
+        ));
+        self::assertCount(1, $lines, 'expected exactly one stderr line, got: ' . $stderr);
+        self::assertStringContainsString('out of date', $lines[0]);
+        self::assertStringContainsString(self::NEWER, $lines[0]);
+
+        $offEnv = $env;
+        $offEnv['WAYNE_NO_UPDATE_CHECK'] = '1';
+        [$offStdout, $offStderr] = $this->runBinary($offEnv, ['list']);
+
+        self::assertSame($stdout, $offStdout, 'stdout changed with the check off');
+        self::assertStringNotContainsString('out of date', $offStderr);
+    }
+
     /**
      * @param array<string, string> $extra
      * @return array<string, string>
@@ -524,6 +559,37 @@ final class UpdateNoticeTest extends TestCase
         self::assertTrue($cache->write($path, $checkedAt, $latest));
 
         return $path;
+    }
+
+    /**
+     * Runs the real entry point as a child process and waits for it to
+     * finish.
+     *
+     * @param array<string, string> $env
+     * @param list<string>          $args
+     * @return array{0: string, 1: string, 2: int} stdout, stderr and exit code
+     */
+    private function runBinary(array $env, array $args): array
+    {
+        $pipes = [];
+        $process = proc_open(
+            array_merge([PHP_BINARY, __DIR__ . '/../../bin/advisor'], $args),
+            [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
+            $pipes,
+            null,
+            $env,
+        );
+        if (!is_resource($process)) {
+            self::fail('Could not start the advisor binary.');
+        }
+
+        $stdout = (string) stream_get_contents($pipes[1]);
+        $stderr = (string) stream_get_contents($pipes[2]);
+        foreach ($pipes as $pipe) {
+            fclose($pipe);
+        }
+
+        return [$stdout, $stderr, proc_close($process)];
     }
 
     /**
