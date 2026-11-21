@@ -18,7 +18,7 @@
             "source_commit": null
         },
         "docs/booster/readme.md": {
-            "sha256": "dc254bcd1bb677a990c9b1bc0b55f3c68aa15dfabf7e6b01e8988d034365884d",
+            "sha256": "b3b48b87ea944b3d5aedc4880e8c76e9f3cd6e344714a0f8b17bb7b2079cd88d",
             "source": "booster/README.md",
             "source_commit": null
         },
@@ -38,7 +38,7 @@
             "source_commit": null
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "a4f4c921c5327e287a893a66ff01c35d438150f2efd8cca50f46a93d64f04fdf",
+            "sha256": "03c1bab838ab61e5d1405a909671e07ab9b3fb8e9c412739ae06d191ea4b07fe",
             "source": "drawbridge/README.md",
             "source_commit": null
         },
