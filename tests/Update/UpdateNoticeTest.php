@@ -41,7 +41,8 @@ final class UpdateNoticeTest extends TestCase
         $env = $this->env();
 
         [$notice, $fetcher] = $this->notice(InstallKind::Phar, [['version' => '0.5.0']], self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -65,7 +66,8 @@ final class UpdateNoticeTest extends TestCase
         self::assertSame(InstallKind::SourceCheckout, InstallKind::detect($root, $env));
 
         [$notice] = $this->notice(InstallKind::SourceCheckout, [['version' => '0.5.0']], self::NOW, $root);
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -84,7 +86,8 @@ final class UpdateNoticeTest extends TestCase
         self::assertSame(InstallKind::ComposerGlobal, InstallKind::detect($root, $env));
 
         [$notice] = $this->notice(InstallKind::ComposerGlobal, [['version' => '0.5.0']], self::NOW, $root);
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -110,7 +113,8 @@ final class UpdateNoticeTest extends TestCase
         self::assertSame(InstallKind::ProjectDependency, InstallKind::detect($root, $env));
 
         [$notice] = $this->notice(InstallKind::ProjectDependency, [['version' => '0.4.1']], self::NOW, $root);
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -134,7 +138,8 @@ final class UpdateNoticeTest extends TestCase
         $env = $this->env();
 
         [$notice] = $this->notice(InstallKind::ProjectDependency, [['version' => '0.5.0']], self::NOW, $root);
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -150,7 +155,8 @@ final class UpdateNoticeTest extends TestCase
         $env = $this->env();
 
         [$notice] = $this->notice(InstallKind::ProjectDependency, [['version' => '0.5.0']], self::NOW, $root);
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -171,7 +177,8 @@ final class UpdateNoticeTest extends TestCase
         self::assertSame(InstallKind::Unknown, InstallKind::detect($root, $env));
 
         [$notice] = $this->notice(InstallKind::Unknown, [['version' => '0.5.0']], self::NOW, $root);
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -189,7 +196,8 @@ final class UpdateNoticeTest extends TestCase
         $this->seedCache($env, self::NOW, '0.5.0');
 
         [$notice, $fetcher] = $this->notice(InstallKind::SourceCheckout, [['version' => '9.9.9']], self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -204,7 +212,8 @@ final class UpdateNoticeTest extends TestCase
         $path = $this->seedCache($env, self::NOW - 86401, '0.4.0');
 
         [$notice, $fetcher] = $this->notice(InstallKind::SourceCheckout, [['version' => '0.5.0']], self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -222,7 +231,8 @@ final class UpdateNoticeTest extends TestCase
         $path = (new UpdateCache('advisor'))->path($env);
 
         [$notice, $fetcher] = $this->notice(InstallKind::SourceCheckout, null, self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -247,7 +257,8 @@ final class UpdateNoticeTest extends TestCase
         $path = (new UpdateCache('advisor'))->path($env);
 
         [$notice, $fetcher] = $this->notice(InstallKind::SourceCheckout, null, self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -264,7 +275,8 @@ final class UpdateNoticeTest extends TestCase
         $this->seedCache($env, self::NOW, '0.5.0');
 
         [$notice, $fetcher] = $this->notice(InstallKind::SourceCheckout, [['version' => '9.9.9']], self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -278,7 +290,8 @@ final class UpdateNoticeTest extends TestCase
         $this->seedCache($env, self::NOW, '0.5.0');
 
         [$notice, $fetcher] = $this->notice(InstallKind::SourceCheckout, [['version' => '9.9.9']], self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -292,7 +305,8 @@ final class UpdateNoticeTest extends TestCase
         $this->seedCache($env, self::NOW, '0.5.0');
 
         [$notice, $fetcher] = $this->notice(InstallKind::SourceCheckout, [['version' => '9.9.9']], self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list', '--quiet'], self::RUNNING, $write);
 
@@ -300,7 +314,8 @@ final class UpdateNoticeTest extends TestCase
         self::assertSame(0, $fetcher->calls);
 
         // The short form is quiet too.
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list', '-q'], self::RUNNING, $write);
 
@@ -321,14 +336,15 @@ final class UpdateNoticeTest extends TestCase
         $this->seedCache($env, self::NOW, '0.4.1');
 
         [$notice, $fetcher] = $this->notice(InstallKind::ProjectDependency, [['version' => '9.9.9']], self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
         $listener = $this->listener($notice, $write, ['advisor', 'doctor', '--json'], $env);
 
         $output = new BufferedOutput();
         $json = '{"findings": [], "ok": true}';
         $output->write($json);
 
-        $listener(new ConsoleTerminateEvent(new ArrayInput([]), $output, 0, new DoctorCommand()));
+        $listener(new ConsoleTerminateEvent(new DoctorCommand(), new ArrayInput([]), $output, 0));
 
         self::assertSame($json, $output->fetch(), 'stdout changed');
         self::assertSame(0, $fetcher->calls);
@@ -348,17 +364,19 @@ final class UpdateNoticeTest extends TestCase
         $this->seedCache($env, self::NOW, '0.4.1');
 
         [$notice, $fetcher] = $this->notice(InstallKind::ProjectDependency, [['version' => '9.9.9']], self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
         $listener = $this->listener($notice, $write, ['advisor', 'mcp'], $env);
 
-        $listener(new ConsoleTerminateEvent(new ArrayInput([]), new BufferedOutput(), 0, new McpCommand()));
+        $listener(new ConsoleTerminateEvent(new McpCommand(), new ArrayInput([]), new BufferedOutput(), 0));
 
         self::assertSame('', $sink['text']);
         self::assertSame(0, $fetcher->calls);
 
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
-        $listener(new ConsoleTerminateEvent(new ArrayInput([]), new BufferedOutput(), 0, new DoctorCommand()));
+        $listener(new ConsoleTerminateEvent(new DoctorCommand(), new ArrayInput([]), new BufferedOutput(), 0));
 
         self::assertSame(
             "advisor 0.4.0 is out of date: 0.4.1 is the newest release. Update: composer update waynestate/advisor\n",
@@ -374,11 +392,12 @@ final class UpdateNoticeTest extends TestCase
         $this->seedCache($env, self::NOW, '0.4.1');
 
         [$notice, $fetcher] = $this->notice(InstallKind::ProjectDependency, [['version' => '9.9.9']], self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
         $listener = $this->listener($notice, $write, ['advisor', 'doctor'], $env);
 
         $quiet = new BufferedOutput(OutputInterface::VERBOSITY_QUIET);
-        $listener(new ConsoleTerminateEvent(new ArrayInput([]), $quiet, 0, new DoctorCommand()));
+        $listener(new ConsoleTerminateEvent(new DoctorCommand(), new ArrayInput([]), $quiet, 0));
 
         self::assertSame('', $sink['text']);
         self::assertSame(0, $fetcher->calls);
@@ -396,7 +415,8 @@ final class UpdateNoticeTest extends TestCase
         ];
 
         [$notice] = $this->notice(InstallKind::SourceCheckout, $entries, self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -418,7 +438,8 @@ final class UpdateNoticeTest extends TestCase
         ];
 
         [$notice] = $this->notice(InstallKind::SourceCheckout, $entries, self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -430,7 +451,8 @@ final class UpdateNoticeTest extends TestCase
         $env = $this->env();
 
         [$notice] = $this->notice(InstallKind::SourceCheckout, [['version' => '1.0.0']], self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -443,7 +465,8 @@ final class UpdateNoticeTest extends TestCase
         $env = $this->env();
 
         [$notice] = $this->notice(InstallKind::SourceCheckout, [['version' => '0.9.0']], self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -458,7 +481,8 @@ final class UpdateNoticeTest extends TestCase
         $this->seedCache($env, self::NOW, '0.4.0');
 
         [$notice] = $this->notice(InstallKind::SourceCheckout, null, self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -468,7 +492,8 @@ final class UpdateNoticeTest extends TestCase
         $this->seedCache($env, self::NOW, '0.3.9');
 
         [$notice] = $this->notice(InstallKind::SourceCheckout, null, self::NOW, '');
-        [$write, $sink] = $this->stderr();
+        $sink = [];
+        $write = $this->stderr($sink);
 
         $notice->run($env, ['advisor', 'list'], self::RUNNING, $write);
 
@@ -502,16 +527,20 @@ final class UpdateNoticeTest extends TestCase
     }
 
     /**
-     * @return array{0: callable(string): void, 1: array{text: string}}
+     * The stderr sink: a writer closure that fills the sink. The sink is
+     * passed by reference because a returned array would be a copy the
+     * closure could never see.
+     *
+     * @param array{text: string} $sink filled with the written text
+     * @return callable(string): void
      */
-    private function stderr(): array
+    private function stderr(array &$sink): callable
     {
         $sink = ['text' => ''];
-        $write = static function (string $message) use (&$sink): void {
+
+        return static function (string $message) use (&$sink): void {
             $sink['text'] .= $message;
         };
-
-        return [$write, $sink];
     }
 
     /**
@@ -527,7 +556,7 @@ final class UpdateNoticeTest extends TestCase
             $kind,
             new UpdateCache('advisor'),
             $fetcher,
-            static fn (): int => $now,
+            static fn(): int => $now,
         );
 
         return [$notice, $fetcher];

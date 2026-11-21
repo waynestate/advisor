@@ -30,7 +30,7 @@ final class UpdateNoticeListener
         private readonly string $version,
         private readonly array $argv,
         private readonly array $env,
-        private readonly callable|resource $stderr,
+        private readonly mixed $stderr,
     ) {}
 
     public function __invoke(ConsoleTerminateEvent $event): void

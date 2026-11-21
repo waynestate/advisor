@@ -30,7 +30,7 @@ final class UpdateNotice
     /**
      * @param string          $tool        the tool's name, as printed in the line
      * @param string          $packageRoot the folder holding bin/ and src/
-     * @param callable(): int $clock       current unix time, injected so tests need no real clock
+     * @param \Closure(): int $clock       current unix time, injected so tests need no real clock
      */
     public function __construct(
         private readonly string $tool,
@@ -38,7 +38,7 @@ final class UpdateNotice
         private readonly InstallKind $kind,
         private readonly UpdateCache $cache,
         private readonly LatestReleaseFetcher $fetcher,
-        private readonly callable $clock,
+        private readonly \Closure $clock,
     ) {}
 
     /**
@@ -50,7 +50,7 @@ final class UpdateNotice
      * @param string                           $version the running version
      * @param callable(string): void|resource  $stderr  where the line goes
      */
-    public function run(array $env, array $argv, string $version, callable|resource $stderr): void
+    public function run(array $env, array $argv, string $version, mixed $stderr): void
     {
         try {
             $this->check($env, $argv, $version, $stderr);
@@ -64,7 +64,7 @@ final class UpdateNotice
      * @param list<string>                  $argv
      * @param callable(string): void|resource $stderr
      */
-    private function check(array $env, array $argv, string $version, callable|resource $stderr): void
+    private function check(array $env, array $argv, string $version, mixed $stderr): void
     {
         if (self::ciEnabled($env) || self::optedOut($env) || self::quiet($argv) || !self::plainVersion($version)) {
             return;
@@ -203,13 +203,13 @@ final class UpdateNotice
     /**
      * @param callable(string): void|resource $stderr
      */
-    private function writeLine(callable|resource $stderr, string $message): void
+    private function writeLine(mixed $stderr, string $message): void
     {
-        $previous = set_error_handler(static fn (): bool => true);
+        $previous = set_error_handler(static fn(): bool => true);
         try {
             if (is_resource($stderr)) {
                 fwrite($stderr, $message);
-            } else {
+            } elseif (is_callable($stderr)) {
                 $stderr($message);
             }
         } finally {

@@ -2,7 +2,8 @@
 <?php
 
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Event\ConsoleEvents;
+use Symfony\Component\Console\ConsoleEvents;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Waynestate\Advisor\Advisor;
 use Waynestate\Advisor\Command\ContentGenerateCommand;
 use Waynestate\Advisor\Command\ContentVerifyCommand;
@@ -55,7 +56,11 @@ $notice = new UpdateNotice(
 );
 /** @var list<string> $argv */
 $argv = $GLOBALS['argv'] ?? [];
-$application->getDispatcher()->addListener(ConsoleEvents::TERMINATE, new UpdateNoticeListener(
+// The application dispatches nothing unless a dispatcher is attached, so
+// the TERMINATE listener gets its own.
+$dispatcher = new EventDispatcher();
+$application->setDispatcher($dispatcher);
+$dispatcher->addListener(ConsoleEvents::TERMINATE, new UpdateNoticeListener(
     $notice,
     Advisor::VERSION,
     $argv,
