@@ -18,7 +18,7 @@
             "source_commit": null
         },
         "docs/booster/readme.md": {
-            "sha256": "b3b48b87ea944b3d5aedc4880e8c76e9f3cd6e344714a0f8b17bb7b2079cd88d",
+            "sha256": "6bce0e988573c6ac7fce0194fb4a34298361a348e192e51948d6387ab73ec41f",
             "source": "booster/README.md",
             "source_commit": null
         },
@@ -248,7 +248,7 @@
             "source_commit": null
         },
         "projects.json": {
-            "sha256": "9acf4b71ea5be64914ba57c2abae79079cabfa2222be587d2edc7fad53e8067f",
+            "sha256": "2ab863727fe6fbf839cf1f1fd381c2ba05368d6a0086b778ba4962fa433374de",
             "source": "generator/projects.seed.json plus each project repository",
             "source_commit": null
         },
