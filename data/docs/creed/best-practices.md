@@ -29,7 +29,7 @@ Tags describe the repository and design documents as they stand on 2026-10-29. P
 HELMET main and Rollcall main, and five tags moved (practices 8, 17, 23, 34 and 53). Later that day the pin moved to
 Preflight 0.3.0, and the practices that name it (23 and 42) were re-read against 0.3.0. PROCTOR v0.1 is specified in
 `first-repos.md` and its checks are named below as specified. CREED's own pipeline includes the `php-test`,
-`composer-audit`, `proctor`, `a11y` and `mysql56-migrate` components, pinned to Preflight 0.9.0; the `proctor` job checks `deploy/` and, since
+`composer-audit`, `proctor`, `a11y` and `mysql56-migrate` components, pinned to Preflight 0.12.0; the `proctor` job checks `deploy/` and, since
 2026-11-10, blocks: a failing check fails the pipeline, and a warning never does. Later on 2026-11-08, after a re-read of PROCTOR main and HELMET
 main, two more tags moved: practice 26 to `Checked` and practice 28 to `Partially`. On 2026-11-10 practice 40 moved
 to `Checked` after PROCTOR 0.13.0. On 2026-11-11 practice 23 moved to `Checked`: PROCTOR 0.12.0's `preflight-pinned`
@@ -406,7 +406,7 @@ commit SHA, which it calls preferred, or to a release tag; it says to avoid `~la
 stack's own, from the first-repos design.
 
 How the stack holds it: `Checked`. `ci.md` states it, and CREED's `.gitlab-ci.yml` pins its six Preflight
-components (`php-test`, `composer-audit`, `secret-detection`, `proctor`, `a11y` and `mysql56-migrate`) to the 0.9.0 tag. PROCTOR 0.12.0's
+components (`php-test`, `composer-audit`, `secret-detection`, `proctor`, `a11y` and `mysql56-migrate`) to the 0.12.0 tag. PROCTOR 0.12.0's
 `proctor/preflight-pinned` warns when an app includes any CI component (Preflight's or anyone else's) at a branch, `~latest`, a partial version
 such as `0.3` or no ref; a full release tag (such as `@0.3.0`) or a full commit SHA passes.
 
@@ -758,7 +758,7 @@ How the stack holds it: `Documented`. The rule is written in `handbook/code.md`:
 Free tier, so nothing relies on GitLab SAST. git.wayne.edu runs GitLab 19.5.1 Community Edition (the Free tier). The
 six components CREED uses run PHPUnit (`php-test`), `composer audit` (`composer-audit`), Gitleaks
 (`secret-detection`), PROCTOR (`proctor`), axe-core in Playwright (`a11y`) and a MySQL 5.6.51 service
-(`mysql56-migrate`), not a GitLab scanner (Preflight 0.9.0, the pin in `.gitlab-ci.yml`), so they fit it.
+(`mysql56-migrate`), not a GitLab scanner (Preflight 0.12.0, the pin in `.gitlab-ci.yml`), so they fit it.
 
 ### 43. Treat `APP_KEY` as a code-execution key
 
@@ -1136,7 +1136,7 @@ These are places where a source disagrees with the repository or with an earlier
 8. Partly done: PROCTOR 0.8.0's `mysql-eol` grades the MySQL an app names, warning only; a platform report waits for the
    platform timeline (practice 17).
 9. Done: `rules.abandoned_packages` is `fail`, and PROCTOR 0.7.0's `composer-audit` applies it (practice 21).
-10. Done: Preflight's `secret-detection` component (since 0.2.0; the pin is 0.9.0) runs Gitleaks and fails on a match (practice 24).
+10. Done: Preflight's `secret-detection` component (since 0.2.0; the pin is 0.12.0) runs Gitleaks and fails on a match (practice 24).
 11. Done: PROCTOR 0.7.0's `env-outside-config` warns on `env()` outside `config/` (practice 25). Larastan's own rule in
     Pinstripe would catch it earlier, in the editor.
 12. Done: the runtime and headers chapter is written (practice 26), PROCTOR's `app-debug` warns on a committed
@@ -1195,7 +1195,7 @@ Added in the second pass (2026-10-27):
 33. Done: decided 2026-11-03: strict where the file is published, tolerant where it is read. The schema forbids unknown keys, so CREED's own CI fails on a stray key; readers ignore unknown keys, so an older reader keeps working on a newer file (`tests/OlderReaderContractTest.php`; practice 51, extends item 14).
 34. Ask WSU's accessibility office and counsel which Title II dates apply, then write the chapter's target level
     (practices 52 and 54).
-35. Done: Preflight's `a11y` component (since 0.2.0; the pin is 0.9.0) runs axe-core in Playwright and fails on a violation (practice 53).
+35. Done: Preflight's `a11y` component (since 0.2.0; the pin is 0.12.0) runs axe-core in Playwright and fails on a violation (practice 53).
 36. Done: the Laravel 13 `active_until` date (2027-09-30) carries its source, endoflife.date, in `policy/sources.json` (Checks against the web).
 37. Done: the schema requires `security_until` on every line that is not `"current": true` (`policy/policy.schema.json`),
     and `tests/PolicySchemaTest.php` rejects a line with neither (practice 2).

@@ -8,7 +8,7 @@
             "source_commit": null
         },
         "docs/advisor/readme.md": {
-            "sha256": "ab68ab0ea163396d9d3c97caf7544da1c99786b64210ae0964cd0c7e12e912e6",
+            "sha256": "5d9b082148e2d51fdbf2bce725bb951e45a68eb4bd3020fb278f8810033b6a6f",
             "source": "advisor/README.md",
             "source_commit": null
         },
@@ -18,12 +18,12 @@
             "source_commit": null
         },
         "docs/booster/readme.md": {
-            "sha256": "87d184fe5159544bec77cc18ad860ccc9606f031c26af4d01da2170e68cf999c",
+            "sha256": "dc254bcd1bb677a990c9b1bc0b55f3c68aa15dfabf7e6b01e8988d034365884d",
             "source": "booster/README.md",
             "source_commit": null
         },
         "docs/creed/best-practices.md": {
-            "sha256": "3b49b01ac4373051619675175c53aaf659eae3ed57f0ff7c5d20de5120a03baf",
+            "sha256": "48233a60d2fe000c7470322d5491caecfb7f4f4b79592237445612668f2973c0",
             "source": "creed/BEST_PRACTICES.md",
             "source_commit": null
         },
@@ -43,17 +43,17 @@
             "source_commit": null
         },
         "docs/helmet/best-practices.md": {
-            "sha256": "8f005d8af599240ee8d6590684ffd3c25b91b86b783689da47cef6c353827429",
+            "sha256": "813fb04c6827d5873efe8e1c2b6bedf436fcdaabea4b77865754f754582d6b47",
             "source": "helmet/BEST_PRACTICES.md",
             "source_commit": null
         },
         "docs/helmet/readme.md": {
-            "sha256": "9a982cbc4984042d5d6a3527cf3ccb7e8b47b9e86479e036ee002b148132aaa2",
+            "sha256": "099cd2c447eb935739d7212db63ad58e6ed99293e232e2cafa47c488426ac46e",
             "source": "helmet/README.md",
             "source_commit": null
         },
         "docs/parity/readme.md": {
-            "sha256": "06fde8ea8025119c78e5970f18732bf309e5faba1ea3b673434e83f8650daf32",
+            "sha256": "fd6a801180d39a48012de197389ef83a22f09a0d66eb6e0ffa0df5dad5b764a3",
             "source": "parity/README.md",
             "source_commit": null
         },
@@ -93,17 +93,17 @@
             "source_commit": null
         },
         "docs/rollcall/readme.md": {
-            "sha256": "4d2bb7bfb8f3c5fd2d22a3f040dd49455c5bcdb76e0aabec6450a18e1f7b05cb",
+            "sha256": "dfd9ee4ef851a94edd6e99bdba2a08d4836208918b300eff34aa8acf94ba1769",
             "source": "rollcall/README.md",
             "source_commit": null
         },
         "docs/sesame/best-practices.md": {
-            "sha256": "83d4bd8a1dc40ac0bf6027f4840ececc8dfe880fb0fa0f452e08723259c21700",
+            "sha256": "7406675b2d69eabaca249f2d68d67dfa5cae60bb45a59ee09464f336cf670881",
             "source": "sesame/BEST_PRACTICES.md",
             "source_commit": null
         },
         "docs/sesame/readme.md": {
-            "sha256": "661b3b735c0e0cafb0f29a8c13892229e077f38422e544e5e81fdec2b2d7afa0",
+            "sha256": "7246628e24f897fdef67e7a8f8d62e54a984a48d3fe02970d327d97a04535630",
             "source": "sesame/README.md",
             "source_commit": null
         },
@@ -123,7 +123,7 @@
             "source_commit": null
         },
         "docs/squire/readme.md": {
-            "sha256": "469d24e6e96007588a3f6130cc15175256da48ac60b3b12958507e9a12c39805",
+            "sha256": "d6e46fccb4ebb8980ca03907a1b9d3568f9be56d67168b1dc7d8c6184c64c5c9",
             "source": "squire/README.md",
             "source_commit": null
         },
@@ -163,7 +163,7 @@
             "source_commit": null
         },
         "handbook/accessibility.md": {
-            "sha256": "14f1557effff2fb4df4b36ba4bc95cd20004b4b8304c57672eaf566df5960d84",
+            "sha256": "a86e3af5d697693104ca2d9c7481e552b08d5b3253346d997116a190d88bf6e6",
             "source": "creed/handbook/accessibility.md",
             "source_commit": null
         },
@@ -253,7 +253,7 @@
             "source_commit": null
         },
         "rules.json": {
-            "sha256": "3b88c55ceda9da8be54893b7d41c460fd528c15c5d4fd2def04e7e4a414b5269",
+            "sha256": "28b39d44d7e8f1549fd0f7b1c985a60a9a3db625bd6a774f692db1279c51d512",
             "source": "creed/handbook, creed/policy/policy.json",
             "source_commit": null
         }

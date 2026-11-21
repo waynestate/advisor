@@ -741,3 +741,5 @@ PROCTOR's `proctor gate` for a go or no-go, and installs the PROCTOR version the
 ## License
 
 MIT, copyright Wayne State University. A squire carries the armor; the knight still has to show up.
+
+Found a security problem? See [SECURITY.md](SECURITY.md); please do not open a public issue.

@@ -407,6 +407,8 @@ allowed to be on. A little Creed energy too: it will tell you who you are, in `c
 
 MIT. Copyright Wayne State University.
 
+Found a security problem? See [SECURITY.md](SECURITY.md); please do not open a public issue.
+
 <div align="center"><b>Everyone on the sheet</b><br><sub>WayneUI and the stack. ADVISOR is the one with office hours.</sub></div>
 
 <div align="center"><sub>Images are regenerated from the front page by <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>. No appointment necessary.</sub></div>

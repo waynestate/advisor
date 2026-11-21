@@ -510,4 +510,6 @@ The website and docs, https://parity.apps.wayne.edu/, are built from `site/` and
 Maintaining, releasing and the release checklist: [MAINTAINING.md](MAINTAINING.md). Changes: [CHANGELOG.md](CHANGELOG.md).
 License: MIT.
 
+Found a security problem? See [SECURITY.md](SECURITY.md); please do not open a public issue.
+
 <sub>Parity: because "it worked locally" should be a promise, not an alibi.</sub>
