@@ -9,6 +9,13 @@ include:
       php_versions: ["8.3", "8.4", "8.5"]
       image: "php:${PHP_VERSION}-cli-trixie"
   - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@0.9.0
+  # Secret detection: gitleaks runs its default rules plus this repo's .gitleaks.toml over the whole
+  # tree. Any finding fails the pipeline; the config's allowlists cover the documented test fixtures
+  # and the sample logoutToken line in the mirrored SESAME README.
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/secret-detection@0.9.0
+    inputs:
+      image: zricethezav/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+      config_path: .gitleaks.toml
   # The front page deploy layer (ADR-0017): PROCTOR checks deploy/ against CREED's policy. A failed check
   # fails the pipeline; warnings are reported and pass.
   - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@0.9.0
