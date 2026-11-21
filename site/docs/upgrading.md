@@ -61,7 +61,7 @@ No breaking changes are marked for this release.
 - The bundled data is resynced with the 2026-11-03 releases: Booster 1.8.0, Preflight 0.1.4, PROCTOR 0.4.0, Pinstripe 0.1.2, CREED 0.1.6, Rollcall 0.1.9, HELMET 0.3.0, SESAME 0.4.0, Drawbridge 0.1.1, Sourdough 0.1.5, Squire 0.5.0 and WELD 0.1.2, and with each project's main since the last pass.
 - One Playbook settings resolver (`Waynestate\Advisor\Playbook\Settings`, ADR-0018) is added. `playbook_lookup` now answers from `.env.playbook` when the package is not installed (same output shape).
 - `.env.playbook` is git-ignored; the agent-ready files (`site/llms.txt`, `site/llms-full.txt`) are regenerated.
-- Docs and package metadata name nougat as the canonical repository, with git.wayne.edu and GitHub as read-only mirrors, until git.wayne.edu has CI runners.
+- Docs and package metadata named the stack's earlier GitLab instance as the canonical repository, with git.wayne.edu and GitHub as read-only mirrors, until git.wayne.edu had CI runners.
 
 ## \[0.1.4\] - 2026-11-03 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-1-4-2026-11-03)
 
