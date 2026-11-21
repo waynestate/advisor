@@ -22,6 +22,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 ### Removed
 
 - Removed: Squire's local-running kit files (docker-compose.squire.yml, haproxy.cfg, parity scripts, env example; D-095). Parity runs the app locally: `parity up` in `deploy/`.
+- Docs: SECURITY.md says how to report a vulnerability privately.
 
 ## [0.4.0] - 2026-11-19
 
