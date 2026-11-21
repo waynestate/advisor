@@ -338,7 +338,7 @@ each open question E-1 to E-8.
 The pipeline builds the gateway image on every merge request and on the default branch, and publishes it to the stack's image registry (the group's `images` project) when a tag is pushed. The image is at `<registry>/enterprise-apps/images/drawbridge-gateway:<tag>` (for example `<registry>/enterprise-apps/images/drawbridge-gateway:0.7.0`).
 `<registry>` is the stack's container registry; Enterprise Applications has its address. There is no `latest` tag: pin a release.
 For a first run on a pre-production host (a throwaway app, the health and smoke checks, logs and a rollback), see
-[First deployment](docs/deploying/first-deployment.md) and the kit in `trial/`.
+[First deployment](docs/deploying/first-deployment.md) and the kit in `trial/`. The 0.6.2 and 0.7.0 images are not published yet, so pulling those tags fails until they are; [Getting the image](docs/deploying/getting-the-image.md) carries the known issue and the local build command.
 
 ```sh
 docker pull <registry>/enterprise-apps/images/drawbridge-gateway:0.7.0

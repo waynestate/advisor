@@ -308,3 +308,5 @@ README lists the GitLab settings a file cannot hold. See [CI](docs/guides/ci.md#
 <summary>The recipe card: Sourdough's brand board</summary>
 
 </details>
+
+Found a security problem? See [SECURITY.md](SECURITY.md); please do not open a public issue.

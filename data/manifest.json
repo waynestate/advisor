@@ -38,7 +38,7 @@
             "source_commit": null
         },
         "docs/drawbridge/readme.md": {
-            "sha256": "7f8bebe0e7dc1cc50868605fd6512a2991ccb2c404eec20234b2f4ed1c509f26",
+            "sha256": "a4f4c921c5327e287a893a66ff01c35d438150f2efd8cca50f46a93d64f04fdf",
             "source": "drawbridge/README.md",
             "source_commit": null
         },
@@ -113,7 +113,7 @@
             "source_commit": null
         },
         "docs/sourdough/readme.md": {
-            "sha256": "e520837fc8805ec01e503019e536899d70af1751544e77ed07c6c51c50d24f6f",
+            "sha256": "0d7a85facd3e25fe7a2038864ef7a0cce972a6d18dc62812e325ef407c2b85f0",
             "source": "sourdough/README.md",
             "source_commit": null
         },
