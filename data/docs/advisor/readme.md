@@ -78,6 +78,19 @@ command and not a shell script.
 
 ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.4`. No extra repository needed.
 
+### Update notice
+
+After a one-shot command finishes, ADVISOR checks Packagist at most once a day and prints one line on stderr when a newer
+stable release exists, with the command that updates this install:
+
+```
+advisor 0.4.0 is out of date: 0.5.0 is the newest release. Update: composer update waynestate/advisor
+```
+
+The check never writes to stdout, never changes an exit code, and stays silent in CI, with `--quiet`/`-q`, for the `mcp`
+server command (its stderr is the protocol log), and when the running version is not a plain release number. Set
+`WAYNE_NO_UPDATE_CHECK=1` to turn it off.
+
 ## Quick start
 
 1. Print the config your MCP client needs, and read it:

@@ -43,6 +43,9 @@
 <h1 id="changelog"><span class="docs-heading-tail"><span>Changelog</span><a class="docs-heading-link" aria-label="Link to this section" href="#changelog">#</a></span></h1>
 <p>All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.</p>
 <h2 id="unreleased"><span class="docs-heading-tail"><span>[Unreleased]</span><a class="docs-heading-link" aria-label="Link to this section" href="#unreleased">#</a></span></h2>
+<ul>
+<li>Changed: the bundled stack content in <code>data/</code> is regenerated from every project's main (resync from 2026-11-15): advisor 052e164, booster 44446d6, creed 22ab650, drawbridge 959c566, helmet e6a32ce, parity 157230f, pinstripe 9f76834, preflight 8aedeed, proctor 41238b6, rollcall 31d7290, sesame be1e892, sourdough e7f165d, squire 0b9ef45, wayne-ui d3ac4a7, weld 7256273.</li>
+</ul>
 <h3 id="added"><span class="docs-heading-tail"><span>Added</span><a class="docs-heading-link" aria-label="Link to this section" href="#added">#</a></span></h3>
 <ul>
 <li>Added: the CLI tells you when it is out of date: after a one-shot command, one line on stderr when a newer stable release exists, with the command that updates this install (Packagist, checked at most once a day, cached in the user cache dir). Silent in CI, with <code>--quiet</code>/<code>-q</code>, for the <code>mcp</code> server command, and when the running version is not a plain release number; <code>WAYNE_NO_UPDATE_CHECK=1</code> turns it off.</li>

@@ -600,6 +600,21 @@ In GitLab CI the merge request's base SHA is already in the environment:
 vendor/bin/pinstripe-baseline check --against=$CI_MERGE_REQUEST_DIFF_BASE_SHA phpstan-baseline.neon
 ```
 
+After `count` and `check` finish, the command prints one line on stderr when a newer stable release of Pinstripe
+exists:
+
+```
+pinstripe 0.4.0 is out of date: 0.5.0 is the newest release. Update: composer update waynestate/pinstripe
+```
+
+The update command matches the install: `git pull` in a source checkout, `composer global update
+waynestate/pinstripe` for a Composer global install, or `composer require waynestate/pinstripe:^X.Y` (with `--dev`
+when the pin is in require-dev) when the project's constraint excludes the newest release. When the newest release
+has a higher major version, the line adds a link to [the upgrading guide](docs/upgrading.md).
+
+The check asks Packagist at most once a day and caches the answer in your user cache dir. It never writes to stdout
+and never changes an exit code. It stays silent in CI (when `CI` is set) and when `WAYNE_NO_UPDATE_CHECK=1` is set.
+
 A baseline is a tailor's chalk line, and this command is the tape measure: it fails the build the moment the line
 gets longer. The policy behind this section is recorded in [docs/adr/0001-phpstan-level-and-baseline-policy.md](docs/adr/0001-phpstan-level-and-baseline-policy.md).
 
@@ -673,3 +688,5 @@ Nothing on the cutting table right now: the banned calls link to their CREED rul
 
 <div align="center"><sub>Fifteen parts, one fitting room. The README art is cut from the front page by
 <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>; no suit was harmed, and every hem was pinned first.</sub></div>
+
+Found a security problem? See [SECURITY.md](SECURITY.md); please do not open a public issue.

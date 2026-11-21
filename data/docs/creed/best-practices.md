@@ -405,8 +405,8 @@ Sources: [Composer basic usage](https://getcomposer.org/doc/01-basic-usage.md) (
 commit SHA, which it calls preferred, or to a release tag; it says to avoid `~latest`). The pinning rule itself is the
 stack's own, from the first-repos design.
 
-How the stack holds it: `Checked`. `ci.md` states it, and CREED's `.gitlab-ci.yml` pins its five Preflight
-components (`php-test`, `composer-audit`, `proctor`, `a11y` and `mysql56-migrate`) to the 0.9.0 tag. PROCTOR 0.12.0's
+How the stack holds it: `Checked`. `ci.md` states it, and CREED's `.gitlab-ci.yml` pins its six Preflight
+components (`php-test`, `composer-audit`, `secret-detection`, `proctor`, `a11y` and `mysql56-migrate`) to the 0.9.0 tag. PROCTOR 0.12.0's
 `proctor/preflight-pinned` warns when an app includes any CI component (Preflight's or anyone else's) at a branch, `~latest`, a partial version
 such as `0.3` or no ref; a full release tag (such as `@0.3.0`) or a full commit SHA passes.
 
@@ -744,8 +744,7 @@ merge request approval, pipeline execution, vulnerability management, dependency
 not depend on them. Pipeline secret detection is listed for
 Free, Premium and Ultimate, but its findings in merge request reports and the vulnerability report are Ultimate only. GitLab
 accessibility testing (Pa11y) is listed for Free, Premium and Ultimate. git.wayne.edu, the home of every stack repo, runs
-GitLab 19.5.1 Community Edition, which is the Free tier; nougat, which keeps the stack's container registry, runs the same
-version.
+GitLab 19.5.1 Community Edition, which is the Free tier.
 
 Why: a gate that needs a license the instance may not have is a gate that never runs.
 
@@ -756,11 +755,10 @@ Sources: [GitLab dependency scanning](https://docs.gitlab.com/user/application_s
 [secret push protection](https://docs.gitlab.com/user/application_security/secret_detection/secret_push_protection/).
 
 How the stack holds it: `Documented`. The rule is written in `handbook/code.md`: the stack's GitLab instances run the
-Free tier, so nothing relies on GitLab SAST. git.wayne.edu (and nougat, which keeps the container registry) runs GitLab
-19.5.1 Community Edition (the Free tier). The five components CREED uses run PHPUnit (`php-test`), `composer audit`
-(`composer-audit`), PROCTOR (`proctor`), axe-core in Playwright (`a11y`) and a MySQL 5.6.51 service
-(`mysql56-migrate`), not a GitLab scanner (Preflight 0.9.0,
-the pin in `.gitlab-ci.yml`), so they fit it.
+Free tier, so nothing relies on GitLab SAST. git.wayne.edu runs GitLab 19.5.1 Community Edition (the Free tier). The
+six components CREED uses run PHPUnit (`php-test`), `composer audit` (`composer-audit`), Gitleaks
+(`secret-detection`), PROCTOR (`proctor`), axe-core in Playwright (`a11y`) and a MySQL 5.6.51 service
+(`mysql56-migrate`), not a GitLab scanner (Preflight 0.9.0, the pin in `.gitlab-ci.yml`), so they fit it.
 
 ### 43. Treat `APP_KEY` as a code-execution key
 
@@ -794,7 +792,7 @@ Why: pinning without rebuilding freezes the bugs; rebuilding without pinning cha
 
 Sources: [Docker build best practices](https://docs.docker.com/build/building/best-practices/).
 
-How the stack holds it: `Partially`. `policy.json` fills `images.docker` for PHP 8.3 to 8.5 with the official images,
+How the stack holds it: `Partially`. `policy.json` fills `images.docker` for PHP 8.3 to 8.6 with the official images,
 and the rebuild rule is written in `handbook/versions.md`; `tests/PolicyImagesTest.php` keeps the entries valid. The
 `citadel` names wait for Citadel to publish its image names.
 
@@ -1183,7 +1181,7 @@ Added in the second pass (2026-10-27):
     written in `handbook/code.md`; practice 42).
 25. Partly done: PROCTOR 0.7.0's `app-key` warns on a committed `.env` or `APP_KEY` and the cookie session driver, on
     every OS (practice 43). The secrets chapter names the check; the general secret scan is item 10.
-26. Partly done: `images.docker` is filled for PHP 8.3 to 8.5 and the rebuild rule is in `handbook/versions.md`;
+26. Partly done: `images.docker` is filled for PHP 8.3 to 8.6 and the rebuild rule is in `handbook/versions.md`;
     `citadel` waits for Citadel's image names.
 27. Ask the owners of git.wayne.edu to publish its GitLab patch level and a patch routine (practice 45).
 28. Done: policy.json records each Laravel release's minimum database (practice 46), and PROCTOR's `mysql-minimum`

@@ -29,7 +29,7 @@ Megazord, except it comes with a deploy script and nobody has to shout to make i
 - Rollcall: https://rollcall.apps.wayne.edu/llms.txt
 - Drawbridge: https://drawbridge.apps.wayne.edu/llms.txt
 
-**Current versions** (checked 2026-11-19): CREED 0.1.13, PROCTOR 0.17.0, Preflight 0.10.0, SESAME 0.8.0, HELMET 1.4.1, Squire 0.11.1, Pinstripe 0.4.0, ADVISOR 0.4.0, Parity 0.2.0, WayneUI 2.0.8. These are the latest releases, not what this repo pins: CI and `deploy/.squire.json` hold those.
+**Current versions** (checked 2026-11-19): CREED 0.1.14, PROCTOR 0.17.0, Preflight 0.12.0, SESAME 0.11.0, HELMET 1.5.0, Squire 0.12.0, Pinstripe 0.4.0, ADVISOR 0.4.0, Parity 0.2.0, WayneUI 2.0.8. These are the latest releases, not what this repo pins: CI and `deploy/.squire.json` hold those.
 
 ADVISOR's `policy_lookup` answers what is current at any time; the list above is a snapshot for agents that cannot reach it.
 
@@ -80,6 +80,12 @@ npm ci
 Copy-Item .env.example .env
 # Linux/macOS:
 cp .env.example .env
+# Set the local values in the .env you just copied (it ships safe for a server):
+# APP_ENV=local
+# APP_DEBUG=true
+# SESAME_DRIVER=fake
+# SESAME_FAKE_ALLOWED=true
+# SESAME_FAKE_USERNAME=jdoe
 php artisan key:generate
 ```
 
@@ -113,6 +119,12 @@ Then give the copy its own key and remote. Skip the copy if `up` already made `.
 
 ```powershell
 Copy-Item .env.example .env
+# Set the local values in the .env you just copied (it ships safe for a server):
+# APP_ENV=local
+# APP_DEBUG=true
+# SESAME_DRIVER=fake
+# SESAME_FAKE_ALLOWED=true
+# SESAME_FAKE_USERNAME=jdoe
 php artisan key:generate
 git remote set-url origin https://git.example.com/you/my-app.git
 ```
@@ -121,6 +133,12 @@ macOS and Linux (sh):
 
 ```sh
 cp .env.example .env
+# Set the local values in the .env you just copied (it ships safe for a server):
+# APP_ENV=local
+# APP_DEBUG=true
+# SESAME_DRIVER=fake
+# SESAME_FAKE_ALLOWED=true
+# SESAME_FAKE_USERNAME=jdoe
 php artisan key:generate
 git remote set-url origin https://git.example.com/you/my-app.git
 ```
@@ -141,7 +159,7 @@ Want a smaller starting point than a full Laravel app? Sourdough is the starter 
 | SESAME | Sign-in: CAS, Entra ID (OpenID Connect) and the auth gateway driver, and app-native sessions |
 | HELMET | The baseline runtime: security headers and CSP, sessions, trusted proxies, `/up` and the `/ready` readiness route |
 | ADVISOR | Dev only: the stack's read-only MCP server, so your coding agent knows the stack's rules and versions |
-| Squire | The deploy kit in `deploy/`, at 0.11.1: the Citadel image, an idempotent release script and one portable image for other hosts |
+| Squire | The deploy kit in `deploy/`, at 0.12.0: the Citadel image, an idempotent release script and one portable image for other hosts |
 | Laravel Boost | Dev only: the MCP server, guidelines and skills that teach your coding agent Laravel, with WELD's conventions in `.ai/` |
 | Ziggy | Route names as URLs: the route list ships inside the Vite bundle, so `route()` works in Vue templates and scripts without an inline script |
 
@@ -157,13 +175,13 @@ Want a smaller starting point than a full Laravel app? Sourdough is the starter 
 ## Status
 
 Every part is welded in: HELMET and SESAME are in `require`; CREED, Pinstripe, PROCTOR and ADVISOR are in
-`require-dev`; WayneUI 2.0.8 comes from npm; CI pins Preflight 0.9.0; the deploy layer runs Squire's kit 0.11.1.
+`require-dev`; WayneUI 2.0.8 comes from npm; CI pins Preflight 0.9.0; the deploy layer runs Squire's kit 0.12.0.
 Pinstripe's PHP and JavaScript presets are both installed: ESLint and Prettier run on `@waynestate/pinstripe` `^0.4`
 from npm (the [status page](docs/reference/status.md#pinstripe-s-npm-half) has the details).
 What is on the bench today:
 
 - `composer.json` is `waynestate/weld`, requires PHP `^8.3`, and the lock file resolves for 8.3.0
-- `.env.example` sets `APP_NAME=WELD`, `LOG_CHANNEL=stderr` and `SESSION_DRIVER=database`
+- `.env.example` is safe for a server as it stands: it sets `APP_NAME=WELD`, `APP_ENV=production`, `APP_DEBUG=false`, `LOG_CHANNEL=stderr` and `SESSION_DRIVER=database`, and leaves sign-in to SESAME's `cas` driver (no fake driver); [Run it locally](#run-it-locally) lists the local values to set in your own `.env`
 - `Schema::defaultStringLength(191)` keeps index keys under Citadel's MySQL 5.6 767-byte cap
 - `.gitattributes` sets `* text=auto eol=lf`
 - `composer ci` is the CI contract: it runs validate, the tests with Pest, Pint, PHPStan level 8, the agent-ready check, the
@@ -255,6 +273,12 @@ PowerShell:
 
 ```powershell
 Copy-Item .env.example .env
+# Set the local values in the .env you just copied (it ships safe for a server):
+# APP_ENV=local
+# APP_DEBUG=true
+# SESAME_DRIVER=fake
+# SESAME_FAKE_ALLOWED=true
+# SESAME_FAKE_USERNAME=jdoe
 docker compose run --rm app composer install
 docker compose run --rm app php artisan key:generate
 docker compose run --rm vite sh -c 'npm ci && npm run build'
@@ -264,6 +288,12 @@ macOS and Linux:
 
 ```sh
 cp .env.example .env
+# Set the local values in the .env you just copied (it ships safe for a server):
+# APP_ENV=local
+# APP_DEBUG=true
+# SESAME_DRIVER=fake
+# SESAME_FAKE_ALLOWED=true
+# SESAME_FAKE_USERNAME=jdoe
 docker compose run --rm app composer install
 docker compose run --rm app php artisan key:generate
 docker compose run --rm vite sh -c 'npm ci && npm run build'
@@ -298,7 +328,9 @@ parity test
 app's Citadel settings (`--mysql` is Citadel's "MySQL: yes"). `parity up` builds and starts the app behind the proxy and
 prints its address, http://localhost:8080 unless you pick a port. Your folder is mounted where Citadel mounts it, so an
 edit shows on the next request, and the app gets Laravel's `DB_*` settings for the local MySQL from Parity, so `.env`
-keeps its own database settings. The migration runs as the `citadel` user, the way Citadel runs a release.
+keeps its own database settings. Parity sets the local values above itself for
+`sign_in: fake`, so they hold whether or not you wrote them into `.env`. The
+migration runs as the `citadel` user, the way Citadel runs a release.
 `parity test` asks the running app what Citadel's users would. After a change, run `parity up` again; `parity logs -f`
 follows the logs, `parity down` stops the app with the data kept, and `parity down --volumes` empties the database.
 

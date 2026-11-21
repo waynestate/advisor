@@ -199,6 +199,11 @@ copies Rector, its `config/rector.php` and `docker/` out of the phar into a temp
 `docker build` are child processes that cannot be pointed at a `phar://` path; the temp directory is removed when the
 command exits.
 
+Booster checks once a day whether a newer stable release exists and, if so, prints one line to standard error after
+the command finishes, with the command that updates however you installed it (PHAR, source checkout, Composer global
+or project dependency). Set `WAYNE_NO_UPDATE_CHECK=1` to turn the check off; it is also skipped on CI and with
+`--quiet`.
+
 ## Quick start
 
 ```
@@ -368,13 +373,14 @@ Options shared by `plan` and `run`:
 | `--today` | Override today's date (`YYYY-MM-DD`) so runs are repeatable |
 | `--goal` | Shorthand such as `php-74-to-84` (sets `--from-php` and `--to-php`) |
 | `--from-php`, `--from-laravel` | Say what the app runs on when the manifest does not |
-| `--to-php`, `--to-laravel`, `--to-phpunit` | The target. Default: the newest version the policy supports today (PHPUnit: the newest that runs on the target PHP) |
+| `--to-php`, `--to-laravel`, `--to-phpunit` | The target. Default: the newest version the policy supports today (PHPUnit: the newest that runs on the target PHP). A bare `--to-laravel` on a CakePHP 5 or Slim 4 app opts in to the move onto Laravel ([the guide](docs/guides/cakephp-and-slim-to-laravel.md)) |
+| `--to-cakephp`, `--to-slim` | The framework line for a CakePHP or Slim app (default: the newest Booster supports, CakePHP 5.4 or Slim 4.15; `--to-cakephp 4` stops on 4.6). [The guide](docs/guides/cakephp-and-slim.md) |
 | `--sesame` | Include the `wayne-cas` to SESAME swap |
 | `--wayneui` | Include the WayneUI 1.x to 2.x move |
 | `--vendored` | Include the move of hand-copied Doctrine 2, Smarty 3 and Slim 1 out of `vendor/` and onto Composer ([the guide](docs/guides/framework-hops.md)) |
 | `--strict-session` | Include the hop that turns on `session.use_strict_mode` and `session.use_only_cookies` before each `session_start()` in a raw PHP app ([the guide](docs/guides/strict-sessions.md)) |
 | `--skip` | A hop id to leave out (repeat it) |
-| `--no-package-check` | Skip the Packagist dependency check (for offline use) |
+| `--no-package-check` | Skip the Packagist checks: the plan's dependency check and a run's dependency raise (for offline use) |
 | `--until` | Cut the plan after this hop id: that step and everything before it stay, and the plan's targets move to where it lands |
 | `--only` | Plan and run just this one hop id. The app must sit on the hop's starting versions, and `--until` and `--only` are never combined |
 | `--with-node` | include the Node front-end hops (Node pin, Mix to Vite, Vite major, Tailwind, TypeScript, Vue) even when you passed a target version. Without it, any of `--goal`, `--to-php`, `--to-laravel`, `--to-phpunit`, `--from-php` or `--from-laravel` leaves those hops out, and the plan prints: "Node front-end hops were left out because you passed a target version: <hop ids>. Add --with-node to include them." |
@@ -414,6 +420,7 @@ Options for `run`:
 | `--proctor-command` | An extra command run in the image after the tests, for example a PROCTOR check |
 | `--replay[=FILE]` | Record how the app answers the requests in `booster-replay.json` (or FILE) before the first hop, replay them after every hop's tests, and fail the hop on a changed answer. Off by default |
 | `--replay-out` | Where the replay transcripts go (default: a new `booster-replay-<app>-<time>` folder in the temp folder) |
+| `--moves`, `--route`, `--hand`, `--finish` | Strangler runs after the mount: move the next N units (default 1), one unit by id, flip a unit a person ported (with `--route`), or finish once no unit is left in legacy ([the guide](docs/guides/cakephp-and-slim-to-laravel.md)) |
 | `--proctor-advisory` | Report the PROCTOR result but do not fail the run on it. Applied automatically when the run stops before the final target (`--until`, `--only`, or a target past security support) |
 
 Exit codes: `0` pass, `1` the baseline failed, a hop was capped, errored or failed its gate, or the PROCTOR check
@@ -463,7 +470,7 @@ to reinstall Booster's dependencies (`composer install` in Booster's folder) or 
 The scan ignores `vendor/`, `node_modules/` and `storage/`, because those hold third-party code and generated files,
 not the app's. It reads the app only and changes nothing. `booster scan --path=../my-app --php=<target>` runs the same scan
 on its own, for any PHP version Booster knows, and exits 0 even when it finds a wall of removed functions.
-If the app's `composer.json` declares `ext-oci8` (in `require`, `require-dev` or `config.platform`), the scan leaves out the "`oci_*()` is removed since PHP 8.4" findings: PHP 8.4 moved oci8 out of the PHP download and into PECL, and an app that declares the extension installs the PECL one on purpose, so those lines would be false alarms. An app that deploys on Citadel gets the same treatment: when its Squire kit (`.env.squire.example`, `.env.squire` or `docker-compose.squire.yml`) names `citadel/php-apache`, the scan leaves those findings out too, because every Citadel PHP image installs oci8 from PECL, and the report says how many it left out and why. With neither, the findings stay, with a hint that they mean "install the PECL extension", not "Oracle support is gone". An `oci_*()` function removed before 8.4 (such as `oci_internal_debug()`, dropped in PHP 8.0) is gone from the PECL extension too, so that finding always stays, as does every other one.
+If the app's `composer.json` declares `ext-oci8` (in `require`, `require-dev` or `config.platform`), the scan leaves out the "`oci_*()` is removed since PHP 8.4" findings: PHP 8.4 moved oci8 out of the PHP download and into PECL, and an app that declares the extension installs the PECL one on purpose, so those lines would be false alarms. An app that deploys on Citadel gets the same treatment: when its Squire kit names `citadel/php-apache`, the scan leaves those findings out too, because every Citadel PHP image installs oci8 from PECL, and the report says how many it left out and why. With neither, the findings stay, with a hint that they mean "install the PECL extension", not "Oracle support is gone". An `oci_*()` function removed before 8.4 (such as `oci_internal_debug()`, dropped in PHP 8.0) is gone from the PECL extension too, so that finding always stays, as does every other one.
 In an app that requires Pest (`pestphp/pest`), the scan also leaves out the "Closures / anonymous functions only have access to `$this` if used within a class" warning for files under `tests/`: Pest binds every test closure to a test case, so `$this` in `it()` and `test()` is the test case, and the warning fired on every test. In a Laravel app it is left out for `routes/console.php` too, whose closures Laravel binds to their command. The same warning anywhere else stays.
 
 ### The PHPStan scan
@@ -522,7 +529,7 @@ abandoned (use acme/new instead).`). Packages the check cannot reach are reporte
 `package_checks`, with the fields `package`, `newest`, `blocks`, `abandoned` and `checked`.
 
 The check fetches from `repo.packagist.org` and from any composer-type repository the app declares in
-`composer.json`; VCS repositories are never fetched. `--no-package-check` skips the whole check, for offline use.
+`composer.json`; VCS repositories are never fetched. `--no-package-check` skips the whole check, for offline use. In `run` it also turns off the dependency raise a PHP hop tries when its gate fails inside a package that needs its next major ([Hops](docs/reference/hops.md)).
 
 ### Behavior changes
 
@@ -705,8 +712,13 @@ current PHP before the first hop (PHP's built-in server in the gate image, no ne
 command), replays them after every hop, and fails the hop on a changed answer, showing the first difference. A PHP 8
 hop that turns `0 == "abc"` from true to false fails there even when no test visits that page. `booster replay init`
 drafts the request file from the app's routes, with `todo` items for what only a person knows; normalizers hide CSRF
-tokens, session ids, timestamps and asset hashes. The file format, the design and the honest limits (no real
-Oracle, SSO or JavaScript-driven pages) are in [the replay gate guide](docs/guides/replay-gate.md).
+tokens, session ids, timestamps and asset hashes. A baseline where every answer is an error (a PHP fatal, an
+unexpected 5xx, or one error page for every path) stops the run before the first hop, since replaying it would only
+prove the app fails the same way; `--allow-failing-baseline` records it anyway. A write drafted with `"csrf": true`
+takes its CSRF field from the form page before it, whichever framework printed it. For the Laravel strangler the file
+can ignore the frameworks' session cookies, compare cookie flags and security headers (`"preset": "strangler"`), and
+the replay reports which half of the mounted app answered each request. The file format, the design and the
+honest limits (no real Oracle, SSO or JavaScript-driven pages) are in [the replay gate guide](docs/guides/replay-gate.md).
 
 ### Hand-copied libraries to Composer
 
@@ -719,6 +731,35 @@ hop writes), and the `require` lines load Composer's autoloader. Hooks, cookies 
 the copies and puts `--vendored` on its Next line. Run it with `--replay`; the replay and the test gate wait for this
 hop (the PHP hops before it run the syntax check), then check every step. The recipes, the stop signs and the bridge
 are in [the guide](docs/guides/framework-hops.md).
+
+### CakePHP and Slim apps
+
+CakePHP and Slim are being phased out at WSU: these hops keep existing apps supported; new apps start on raw PHP or Laravel (Sourdough or WELD).
+
+A CakePHP 4 or Slim 3 app gets framework hops between its PHP hops, and `--to-cakephp` and `--to-slim` pick the line
+(the newest by default). `cakephp-4-to-4.6` is planned first, once the app is on PHP 7.4 or newer; it runs CakePHP's own
+upgrade rules in a container and requires CakePHP 4.6, and leaves the deprecations to fix with `E_ALL` as MANUAL.
+`cakephp-4.6-to-5` is planned at PHP 8.2; it runs the 5.x rules, renames `.ctp` templates, moves AuthComponent to
+the Authentication plugin like for like and swaps the Oracle driver, and leaves `isAuthorized()`, custom
+authenticators, RequestHandler and the mutable date classes as MANUAL. `slim-3-to-4` is planned at PHP 7.4; it moves
+the app to Slim 4.15 over its own Pimple container with generated glue, keeps double-pass middleware through an
+adapter and route group prefixes through the group callable, moves code typed with Slim 3's `Slim\Http\Request` and
+`Response` onto slim/http's decorators, and leaves the old error handlers, `pathFor()`, Twig `path_for` and
+`Slim\Http\Environment` as MANUAL. Run them with `--replay` and `--to-php 8.5`; the commands and the full MANUAL lists are in
+[the guide](docs/guides/cakephp-and-slim.md).
+
+### CakePHP and Slim apps onto Laravel
+
+Once a CakePHP app is on 5 or a Slim app on 4, a bare `--to-laravel` plans `cakephp-to-laravel` or `slim-to-laravel`
+last: the strangler, which moves the app onto Laravel 13 one unit (a route, or a form's GET and POST) at a time instead
+of a rewrite. Run 1 moves the old sign-in onto SESAME (Step 0), then mounts Laravel at the root with the old app
+unchanged in `legacy/` and a dispatcher in `public/index.php`, and stops. Each later run moves `--moves N` units (or
+one `--route`), gated by the replay with the moved units answering from Laravel; a unit Booster cannot move is refused
+with file and line, ported by hand and flipped with `--hand --route`. `--finish` deletes `legacy/` and puts back the
+stock front controller. The ledger, `booster-strangler.json`, is the only state between runs, and the replay is
+required. Details in [the guide](docs/guides/cakephp-and-slim-to-laravel.md).
+
+> A strangler fig takes years to swallow its host tree. Booster asks for one unit per run.
 
 ### Strict session IDs for raw PHP apps
 
@@ -756,7 +797,7 @@ under `Pre-pass fixes:`.
    ldap, soap, zip, gd, pdo_mysql, mysqli, bcmath, pcntl, exif, redis, imagick and oci8. The first build downloads
     Oracle Instant Client for oci8, so it takes a few minutes; later hops reuse the image. Pass `--image` to run the
     gate in your own image instead (below). A red gate stops the run and leaves the changes in place so you can read
-    them (`git checkout .` undoes them). To check the image itself,
+    them (`git checkout .` in the app folder undoes them, with every earlier step of the run). To check the image itself,
     `scripts/check-target-image.sh` (or its Windows twin `check-target-image.ps1`, PowerShell 7.3 or later) builds it for each PHP version and
     verifies its extension list, that Composer runs and, on the archived Debian releases, that apt can verify the
     archive; it needs Docker and a few minutes per version, so it is not part of `composer ci` (a unit test reads
@@ -777,7 +818,7 @@ under `Pre-pass fixes:`.
 When the run raised the app's PHP floor, its report ends with a list of the other places that still name an older
 PHP, each with its file and line: PHP versions in the CI matrix (Preflight's `php_versions`, a GitHub workflow's
 `php:` matrix, a `PHP_VERSIONS` list) and PHP images (`php:8.3-cli` in a CI job, `citadel/php-apache:8.4r5` in the
-Squire kit's `.env.squire.example` or `docker-compose.squire.yml`, the `image` in Parity's `parity.json`, a `FROM`
+app's Squire kit, the `image` in Parity's `parity.json`, a `FROM`
 line in the app's own `Dockerfile`, an `image:` in its `docker-compose.yml` or `compose.yaml`), and Laravel Sail's
 runtime (`vendor/laravel/sail/runtimes/8.3` and `sail-8.3/app` in a Sail app's `docker-compose.yml`). Booster never
 edits CI or deploy files, so it lists them instead: a matrix entry below the floor fails on the first push, because
@@ -799,9 +840,13 @@ report, and the entry stays in `composer.json`.
 The unblock is temporary by name, and Booster enforces that. When a gated step passes, Booster re-reads
 `config.policy.advisories.ignore` and reports every entry whose reason carries its own prefix (`Booster temporary
 unblock`; older runs wrote `BOOSTER temporary unblock`, which it still recognizes). A step that is not the plan's
-last one applies with a warning; the plan's last step fails until the entry is out of `composer.json`, so the
-final target never ships with the unblock still in place. Removing the entry is the app's job once it is off the
-blocked versions.
+last one applies with a warning. On the plan's last step, an unblock an earlier step needed is tried once more:
+Booster drops it and runs the step's gate (and the replay) again with `composer update -W` for those packages, which
+on the new PHP can often move past the blocked releases (Twig, unblocked on PHP 7.4, moves to a fixed 3.x on 8.5).
+If that passes and nothing had to be unblocked again, the entry is gone and the step applies; otherwise
+`composer.json` and `composer.lock` go back and the step fails until the entry is out, so the final target never
+ships with the unblock still in place. An unblock the last step itself needed is not retried. The refusal can be the
+root's own requirement or one a locked package carries (`slim/twig-view 2.4.0 requires twig/twig ...`).
 
 The `--image` value names the image the baseline and every gate run in, and it takes three shapes:
 
@@ -926,11 +971,20 @@ Doctrine 2, Smarty 3 or Slim 1 into its root `vendor/`, at the first PHP every C
 Slim, 7.1 without): deletes the hand copies, writes `composer.json` for `doctrine/orm ^2.20`, `smarty/smarty ^4.5` and
 `slim/slim ^4.15`, points the app's `require` lines at `vendor/autoload.php`, and keeps a Slim 1 app's routes running on
 Slim 4 through `slim1-bridge.php`; anything it cannot rewrite exactly is a stop sign that leaves it out, and the
-replay waits for it ([the guide](docs/guides/framework-hops.md)). `session-strict-mode` (planned with
+replay waits for it ([the guide](docs/guides/framework-hops.md)). `cakephp-4-to-4.6` (planned for a CakePHP 4.0 to 4.5
+app, first once the app is on PHP 7.4 or newer): runs CakePHP's own 4.x upgrade rules in a container and requires
+`cakephp/cakephp ^4.6`; deprecations stay MANUAL. `cakephp-4.6-to-5` (planned at PHP 8.2): runs the 5.x rules, renames
+`.ctp` templates, moves AuthComponent to the Authentication plugin and swaps the Oracle driver; `isAuthorized()` and
+custom authenticators stay MANUAL. `slim-3-to-4` (planned at PHP 7.4): moves a Slim 3 app to Slim 4.15 over its own
+Pimple container; the old error handlers and `pathFor()` stay MANUAL ([the guide](docs/guides/cakephp-and-slim.md)).
+`session-strict-mode` (planned with
 `--strict-session` for a raw PHP app that calls `session_start()` without strict session IDs, first, on the PHP the
 app runs today; never for Laravel): adds one guarded `ini_set()` line for `session.use_strict_mode` and
 `session.use_only_cookies` before each call, skips what is already covered, and refuses on a stop sign
-([the guide](docs/guides/strict-sessions.md)). `booster hops` prints them all.
+([the guide](docs/guides/strict-sessions.md)). `cakephp-to-laravel` and `slim-to-laravel` (planned last, with a bare
+`--to-laravel`, for a CakePHP 5 or Slim 4 app on PHP 8.3 or newer): the strangler; run 1 moves sign-in onto SESAME and
+mounts Laravel 13 with the old app in `legacy/`, later runs move units one at a time behind the replay, and
+`--finish` removes `legacy/` ([the guide](docs/guides/cakephp-and-slim-to-laravel.md)). `booster hops` prints them all.
 
 > Every other hop lifts the engine; `wayneui-1-to-2` is the one that repaints the bodywork.
 
@@ -1085,7 +1139,7 @@ browser. The private proof site has the hop-by-hop table.
 
 ## Status
 
-Version 1.19. See [CHANGELOG.md](CHANGELOG.md) for what changed, [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) for what stays
+Version 1.21. See [CHANGELOG.md](CHANGELOG.md) for what changed, [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) for what stays
 open, and [BEST_PRACTICES.md](BEST_PRACTICES.md) for the rules Booster follows.
 
 ## License

@@ -16,7 +16,7 @@ A starter you feed: `sourdough new` makes a Wayne State app with the stack alrea
 
 Checks: `composer ci` (the same command runs on GitLab and GitHub).
 
-Status: 0.5.0 (2026-11-19), MIT license: Pinstripe 0.4 in every shape (an app that joins SQL from strings fails PHPStan until it binds values instead), Pint's findings in the merge request widget on the Laravel shapes, a "Run it like Citadel" README section in every shape for [Parity](https://git.wayne.edu/enterprise-apps/parity), and `sourdough adopt` for apps Sourdough did not make. What changed is in the [changelog](CHANGELOG.md); what a feed brings is in [Upgrading](docs/upgrading.md).
+Status: 0.5.1 (2026-11-21), MIT license: Pinstripe 0.4 in every shape (an app that joins SQL from strings fails PHPStan until it binds values instead), Pint's findings in the merge request widget on the Laravel shapes, a "Run it like Citadel" README section in every shape for [Parity](https://git.wayne.edu/enterprise-apps/parity), and `sourdough adopt` for apps Sourdough did not make. What changed is in the [changelog](CHANGELOG.md); what a feed brings is in [Upgrading](docs/upgrading.md).
 
 Every loaf gets proofed before it ships.
 
@@ -47,6 +47,8 @@ composer global require waynestate/sourdough
 After `composer global require`, the `sourdough` command lives in `composer global config bin-dir --absolute`; put that directory on your PATH.
 
 Or scaffold without installing, with `composer create-project waynestate/sourdough`.
+
+After a command finishes, Sourdough checks Packagist at most once a day for a newer stable release and, when there is one, prints one line on stderr with the command that updates this install. The check never writes to stdout, never changes the exit code, and stays silent under CI, with `WAYNE_NO_UPDATE_CHECK=1`, or with `--quiet`.
 
 ## Usage
 
@@ -209,7 +211,7 @@ Exit codes: `0` fed cleanly (or nothing to feed), `1` fed with conflicts to reso
 
 Feed needs git and nothing else: git is the merge engine and the undo button (`git restore . && git clean -fd`). The Laravel shapes bake on a fresh `laravel/laravel` skeleton, so feeding one needs Composer and the network, the same as `sourdough new`; skeleton updates arrive as template updates. The full story is in [Keeping apps current](docs/guides/keeping-current.md). A fed starter is a happy starter.
 
-The deploy files in your app (`build.sh`, `scripts/release.sh`, the `.squire/` config, and their friends) come from Squire's exported copy, checked into this repository at `templates/squire/`. The copy is Squire 0.11.1's kit, so it ships a `.gitattributes` that pins line endings, and a Laravel release first refuses to run with no `APP_KEY` or with `APP_DEBUG` on in production (and warns when `APP_ENV` is not production), then `scripts/release.sh` asks PROCTOR's deploy gate (`proctor gate`, graded on the PHP that runs the release; `SQUIRE_PHP_RUNTIME` names another or `skip`) for a go or no-go before the frontend build and the migrations, keeps the verdict in `storage/squire/` (`SQUIRE_PROCTOR_RECORD_DIR`) as the next release's baseline, and after the optimize step restarts Laravel's long-lived processes (`php artisan reload`, or `queue:restart` and `schedule:interrupt` on an older Laravel; report only, `SQUIRE_ARTISAN_RESTART=0` turns it off). The image hardens too: the web's PHP loses its shell functions (`SQUIRE_PHP_DISABLE_FUNCTIONS` sets the list), opcache runs with production settings (`SQUIRE_OPCACHE_VALIDATE`), Apache answers `ServerTokens Prod`, and secrets can be read from `/run/secrets`. Session cookies are `SameSite=Lax` (`.squire/php.ini`), every image the kit builds from is named in full (`docker.io/library/...`) so Buildah and Podman take it, and the portable image ships the built assets without `node_modules/`. Squire owns them; Sourdough installs them as-is and records them in the manifest, so you never edit them by hand. To refresh them, run `composer squire-copy:sync`, which rewrites the copy from the installed `waynestate/squire` package, then verify it with `composer squire-copy:check` (part of `composer ci`).
+The deploy files in your app (`build.sh`, `scripts/release.sh`, the `.squire/` config, and their friends) come from Squire's exported copy, checked into this repository at `templates/squire/`. The copy is Squire 0.12.0's kit, so it ships a `.gitattributes` that pins line endings, and a Laravel release first refuses to run with no `APP_KEY` or with `APP_DEBUG` on in production (and warns when `APP_ENV` is not production), then `scripts/release.sh` asks PROCTOR's deploy gate (`proctor gate`, graded on the PHP that runs the release; `SQUIRE_PHP_RUNTIME` names another or `skip`) for a go or no-go before the frontend build and the migrations, keeps the verdict in `storage/squire/` (`SQUIRE_PROCTOR_RECORD_DIR`) as the next release's baseline, and after the optimize step restarts Laravel's long-lived processes (`php artisan reload`, or `queue:restart` and `schedule:interrupt` on an older Laravel; report only, `SQUIRE_ARTISAN_RESTART=0` turns it off). The image hardens too: the web's PHP loses its shell functions (`SQUIRE_PHP_DISABLE_FUNCTIONS` sets the list), opcache runs with production settings (`SQUIRE_OPCACHE_VALIDATE`), Apache answers `ServerTokens Prod`, and secrets can be read from `/run/secrets`. Session cookies are `SameSite=Lax` (`.squire/php.ini`), every image the kit builds from is named in full (`docker.io/library/...`) so Buildah and Podman take it, and the portable image ships the built assets without `node_modules/`. Squire owns them; Sourdough installs them as-is and records them in the manifest, so you never edit them by hand. To refresh them, run `composer squire-copy:sync`, which rewrites the copy from the installed `waynestate/squire` package, then verify it with `composer squire-copy:check` (part of `composer ci`).
 
 ## Adopting an app
 
@@ -218,7 +220,7 @@ The deploy files in your app (`build.sh`, `scripts/release.sh`, the `.squire/` c
 ```
 sourdough adopt --shape raw --dry-run
 sourdough adopt --shape raw
-git add .sourdough && git commit -m "Adopt with Sourdough 0.5.0"
+git add .sourdough && git commit -m "Adopt with Sourdough 0.5.1"
 sourdough feed --dry-run
 ```
 

@@ -40,7 +40,7 @@ rules live in one place, and every consumer path agrees.
 composer require waynestate/helmet
 ```
 
-Composer picks the latest release, 1.4.1, and writes `^1.4` into `composer.json`. From 1.0 HELMET
+Composer picks the latest release, 1.5.0, and writes `^1.5` into `composer.json`. From 1.0 HELMET
 follows semantic versioning; [Upgrading](docs/upgrading.md) has what changed since 0.4, starting with the one that
 bites: an unknown quoted CSP source now throws at boot.
 
@@ -1329,3 +1329,5 @@ Matters too, which is why the core stays small enough to read in an afternoon.
 <div align="center"><b>Same team, every snap</b><br><sub>WayneUI and the stack. HELMET plays the line, and reads its playbook to ADVISOR's booth through two read-only tools.</sub></div>
 
 <div align="center"><sub>Images are regenerated from the front page by <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>. Chalk dust included.</sub></div>
+
+Found a security problem? See [SECURITY.md](SECURITY.md); please do not open a public issue.

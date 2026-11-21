@@ -12,7 +12,7 @@ Checks: `composer ci` (the same command CI runs on git.wayne.edu).
 Front page: [`site/index.html`](site/index.html), a static page you can open in a browser or serve from `site/`.
 On Citadel it is served by the raw-PHP deploy layer in [`deploy/`](deploy/): a Squire kit whose front controller serves `site/` behind HELMET's security headers. For local development, keep serving `site/` directly.
 
-Live PHP: [`/php`](https://creed.apps.wayne.edu/php/) (`site/php/index.html`) shows the whole PHP lifecycle as of now, read from php.net, php-src, the php.net wiki, endoflife.date and Packagist by `deploy/public/php-feed.php` and at most 30 minutes behind; served from `site/` alone it reads endoflife.date and php-src from the browser and says so. See [The live PHP page](docs/guides/live-php.md).
+Live PHP: [`/php`](https://creed.apps.wayne.edu/php/) (`site/php/index.html`) shows the whole PHP lifecycle as of now, with every release's timeline from first alpha to last security fix, and, per framework major, which PHP lines Composer allows, which Laravel's support table announces (CakePHP and Slim publish none a server can read, so they show as unknown) and which passed our own test (green needs both), read from php.net, php-src, the php.net wiki, endoflife.date, Packagist, Laravel's releases.md and `data/framework-php-tests.json` by `deploy/public/php-feed.php` and at most 30 minutes behind; served from `site/` alone it reads endoflife.date and php-src from the browser and says so. See [The live PHP page](docs/guides/live-php.md).
 
 One command, two clouds, zero excuses. Higher.
 
@@ -288,6 +288,12 @@ starts the server in Docker and runs `bin/mysql56-probe.php`, 32 probes written 
 `8.4` (`-Server 8.4` in PowerShell) and the same probes ask MySQL 8.4.13 instead, which is how the chapter's "Moving to
 8.4" section is proven. Creed Bratton tells stories about 1966 that nobody can check; 5.6 gets no such courtesy.
 
+The frameworks are tested here too, not taken at their `require.php`: `scripts/framework-matrix.ps1` (or `.sh`)
+creates the official Laravel 13 and 12, CakePHP 5 and 4, and Slim 4 and 3 skeletons on every PHP line from 8.0 to 8.6
+that each major's newest release allows, runs their own tests, serves them and counts every deprecation PHP prints.
+The results are `data/framework-php-tests.json`, summed up in
+[Our framework tests](docs/guides/framework-php-tests.md).
+
 ## Strongly recommended: a git.wayne.edu instance runner
 
 git.wayne.edu now has an instance runner, and the stack's CI runs on it.
@@ -306,3 +312,5 @@ mystery. Ours is in `policy/policy.json`, where it belongs.
 <div align="center"><b>Authorities having jurisdiction</b><br><sub>WayneUI and the stack. Every one of them reads its dates from here.</sub></div>
 
 <div align="center"><sub>Images are regenerated from the front page and the policy by <a href="scripts/readme-art/README.md"><code>scripts/readme-art</code></a>. Inspected, stamped, and filed one version ahead.</sub></div>
+
+Found a security problem? See [SECURITY.md](SECURITY.md); please do not open a public issue.

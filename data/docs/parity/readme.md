@@ -282,6 +282,22 @@ file or a CI log (plain `[ OK ]`, `[WARN]`, `[FAIL]` tags), when `NO_COLOR` is s
 anywhere on the line (or `PARITY_PLAIN=1`). `PARITY_STYLE=fancy` keeps symbols and color in a log. In the classic
 Windows console Parity turns on its color mode and uses symbols the console's fonts have.
 
+### Update notice
+
+After a command, Parity may print one line on stderr (never on stdout, and never when the command prints `--json`)
+telling you a newer release is out and how to get it:
+
+```text
+parity 0.2.0 is out of date: 0.3.0 is the newest release. Update: curl -fsSL https://parity.apps.wayne.edu/install.sh | sh
+```
+
+On Windows the command is `irm https://parity.apps.wayne.edu/install.ps1 | iex`; from a source checkout it is
+`git pull`; a major bump adds ` Upgrading: https://parity.apps.wayne.edu/docs/changelog/`. Parity asks its docs site
+at most once a day and keeps the answer in your user cache folder, so an offline machine stays quiet and tries again
+tomorrow. It stays silent in CI (`CI` set to anything but empty, `0` or `false`), with `WAYNE_NO_UPDATE_CHECK=1`,
+with `-q` or `--quiet`, on a dev build, and whenever it cannot reach the site. The command's output and exit code
+never change.
+
 ## parity.json
 
 The one file Parity adds to your app. Its fields mirror Citadel's app settings page, so filling it in is copying
@@ -318,7 +334,7 @@ never writes to it.
 | `sign_in` | The app gets | Needs |
 |---|---|---|
 | `none` | nothing; the app's own settings decide | nothing |
-| `fake` | `SESAME_DRIVER=fake`, `SESAME_FAKE_USERNAME` (`fake_user`, default `jdoe`) | `environment` of `local`, `development`, `dev`, `testing` or `test`, because SESAME's fake driver refuses to boot anywhere else |
+| `fake` | `APP_ENV` (your `environment`), `SESAME_DRIVER=fake`, `SESAME_FAKE_ALLOWED=true` and `SESAME_FAKE_USERNAME` (`fake_user`, default `jdoe`) | `environment` of `local` or `testing`, because SESAME's fake driver refuses to boot anywhere else |
 | `cas` | `SESAME_DRIVER=cas`, `SESAME_CAS_SERVICE_URL=https://<server_name>/login` (SESAME's Laravel `/login` route) | `server_name` on wayne.edu, pointed at 127.0.0.1 in your hosts file, and `"https": true`, so Parity serves https for `server_name` on 127.0.0.1:8443: CAS sends its ticket back only to an https address on a name it knows |
 
 `SESAME_CAS_BASE_URL` is left to the app's settings or the playbook, which carry the university's CAS server. For

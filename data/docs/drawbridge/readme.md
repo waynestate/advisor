@@ -11,7 +11,7 @@ Checks: `composer ci` (the same command runs in the GitLab pipeline and in the G
 Drawbridge is the sign-in gateway for the apps on Citadel, Wayne State's container platform. It is Apache with
 mod_auth_openidc, set up as one OpenID Connect client for Microsoft Entra ID. It is not live yet: its home will be
 `auth.apps.wayne.edu`, in front of every app on the platform, once the Citadel routing for it exists.
-The latest release, 0.6.2, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
+The latest release, 0.7.0, is tagged. It builds the gateway image, which will run as a service on Citadel. As a reverse proxy it
 checks that the visitor has a session, drops any identity header the visitor sent, and passes the app a
 short-lived signed assertion that SESAME's `gateway` driver verifies. Which paths need a login, and which need an
 Entra authentication context on top, is declared per app in a config file. Nothing else decides it.
@@ -335,19 +335,19 @@ each open question E-1 to E-8.
 
 ## Getting the image
 
-The pipeline builds the gateway image on every merge request and on the default branch, and publishes it to the stack's image registry (the group's `images` project) when a tag is pushed. The image is at `<registry>/enterprise-apps/images/drawbridge-gateway:<tag>` (for example `<registry>/enterprise-apps/images/drawbridge-gateway:0.6.2`).
+The pipeline builds the gateway image on every merge request and on the default branch, and publishes it to the stack's image registry (the group's `images` project) when a tag is pushed. The image is at `<registry>/enterprise-apps/images/drawbridge-gateway:<tag>` (for example `<registry>/enterprise-apps/images/drawbridge-gateway:0.7.0`).
 `<registry>` is the stack's container registry; Enterprise Applications has its address. There is no `latest` tag: pin a release.
 For a first run on a pre-production host (a throwaway app, the health and smoke checks, logs and a rollback), see
 [First deployment](docs/deploying/first-deployment.md) and the kit in `trial/`.
 
 ```sh
-docker pull <registry>/enterprise-apps/images/drawbridge-gateway:0.6.2
+docker pull <registry>/enterprise-apps/images/drawbridge-gateway:0.7.0
 ```
 
 The publish job prints the digest it pushed. Verify the image you pulled against it:
 
 ```sh
-docker inspect --format='{{index .RepoDigests 0}}' <registry>/enterprise-apps/images/drawbridge-gateway:0.6.2
+docker inspect --format='{{index .RepoDigests 0}}' <registry>/enterprise-apps/images/drawbridge-gateway:0.7.0
 ```
 
 The image carries OCI labels (`org.opencontainers.image.source`, `.revision`, `.version`, `.licenses`) set from the
@@ -543,6 +543,8 @@ Run as `php bin/drawbridge <command>` (or `vendor/bin/drawbridge` when installed
 | `keys:generate` | makes an ES256 key pair; refuses to overwrite a file |
 | `keys:jwks --key=KID=FILE ... [--out=FILE]` | writes the key set file apps verify with: the public keys, current then next, as a JWKS; refuses a private key |
 | `signer:map` | the long-running process behind Apache's `prg:` map (not for people) |
+
+After any command, the CLI checks for a newer stable release at most once a day (`git ls-remote --tags` against the release remote, cached in `$XDG_CACHE_HOME/waynestate/drawbridge/update-check.json`) and, when one exists, prints one line to stderr with the update command for this install: `git pull` for a source checkout, `composer global update waynestate/drawbridge` for a Composer global install, or `composer update waynestate/drawbridge` for a project dependency. It never touches stdout or exit codes, and it stays silent in CI, with `--quiet`/`-q`, or when `WAYNE_NO_UPDATE_CHECK=1` is set.
 
 ## Run the checks
 

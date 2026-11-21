@@ -150,6 +150,8 @@ $config = Config::fromArray([
     'environment' => 'local',
     'fake' => [
         'username' => 'jdoe',
+        // The fake driver boots only in local or testing, and only when opted in.
+        'allowed' => true,
         'attributes' => ['cn' => ['John Doe']],
     ],
 ]);
@@ -411,13 +413,15 @@ authentication event through it:
 | `sesame.login_failed` | `warning` | The driver's login threw `AuthenticationFailed`. |
 | `sesame.login_refused` | `warning` | The resolver refused the identity and returned null. |
 | `sesame.logout` | `info` | The session was signed out (a logout, a timeout, or a deleted user). |
-| `sesame.session_anomaly` | `warning` | The session state looks wrong or tampered with: `reason` is `missing_timestamps`, `bad_session_ref`, `destroyed_session_reused` (an old session ID used after its grace) or `logged_out_session_reused` (a logged-out session ID presented again inside the reuse window; see [Session timeouts](docs/guides/session-timeouts.md)). |
+| `sesame.session_anomaly` | `warning` | The session state looks wrong or tampered with: `reason` is `missing_timestamps`, `bad_identity` (a stored identity that is not the shape login writes; the session is signed out), `bad_session_ref`, `destroyed_session_reused` (an old session ID used after its grace) or `logged_out_session_reused` (a logged-out session ID presented again inside the reuse window; see [Session timeouts](docs/guides/session-timeouts.md)). |
 
 Each record carries `event`, `driver`, `username` and `at` (the time in UTC)
 in its context, and `sesame.logout` adds `reason` (`logout`, `idle_timeout`,
-`absolute_timeout`, `no_timestamps` or `user_gone`). `sesame.session_anomaly`
-adds `reason` (`missing_timestamps`, a user stored without the session's
-timestamps, or `bad_session_ref`, a stored reference that is not the
+`absolute_timeout`, `no_timestamps`, `user_gone`, `revoked` or
+`bad_identity`). `sesame.session_anomaly` adds `reason` (`missing_timestamps`,
+a user stored without the session's timestamps; `bad_identity`, a stored
+identity that is not exactly the plain data login writes, which signs the
+session out; or `bad_session_ref`, a stored reference that is not the
 16-character lowercase hex value login created) and carries `session_ref`
 when the stored value is still a valid 16-character lowercase hex string;
 when you see one, look at the `session_ref` and the user around it in the
@@ -478,7 +482,7 @@ ships in [`docs/grafana/sesame.json`](docs/grafana/sesame.json). More in
 
 | Driver | Status |
 |---|---|
-| `fake` | Now. Local development and tests only. Refuses to boot in production. |
+| `fake` | Now. Local development and tests only: it boots only when the environment is `local` or `testing` and `SESAME_FAKE_ALLOWED` is `true`. |
 | `cas` | Now. CAS 2.0 against Academica by default. |
 | `gateway` | Now (built and tested). The recommended driver for apps on Citadel once Drawbridge is live: a signed JWT assertion from the auth gateway (on Citadel, that is `auth.apps.wayne.edu`, the first planned one), never a bare header. No Entra registration per app: Drawbridge holds it once. Drawbridge is released but has no production gateway yet, so a Citadel app uses `cas` today. |
 | `saml` | Now, opt-in. A SAML 2.0 service provider for a Shibboleth-style IdP; signed assertions required. No default IdP: the app names the IdP's metadata. Needs `onelogin/php-saml` 4.3.2 or later. |
@@ -560,11 +564,10 @@ request's Host or X-Forwarded-* headers to build it.
 
 Both addresses must be https, with one exception for a developer's own machine:
 when the app environment is local (`local`, `development`, `dev`, `testing` or
-`test`, the same list the fake driver checks), plain `http://localhost` and
-`http://127.0.0.1` are accepted too. In any other environment, production
-included, they are refused with the same `must be an absolute https:// URL`
-error as before. In Laravel the environment is `APP_ENV`; in raw PHP it is the
-`environment` config key.
+`test`), plain `http://localhost` and `http://127.0.0.1` are accepted too. In
+any other environment, production included, they are refused with the same
+`must be an absolute https:// URL` error as before. In Laravel the environment
+is `APP_ENV`; in raw PHP it is the `environment` config key.
 
 Protocol 2.0 is the default because Academica is believed to redirect
 cookieless `/p3/serviceValidate` calls to the login page. Set `cas.protocol`
@@ -653,7 +656,7 @@ $config = Config::fromArray([
         'public_key' => file_get_contents('/etc/sesame/gateway.pub'),
         'issuer' => 'https://drawbridge.wayne.edu',
         'audience' => 'sesame',
-        'trusted_proxies' => ['10.0.0.0/8'],
+        'trusted_proxies' => ['192.0.2.10'], // only the proxy in front of this app, never a whole network
     ],
 ]);
 
@@ -679,7 +682,7 @@ Config keys:
 | `gateway.issuer` | Yes | none | The `iss` claim the assertion must carry. |
 | `gateway.audience` | Yes | none | The `aud` claim the assertion must carry. |
 | `gateway.leeway_seconds` | No | `30` | Clock skew allowed on the `iat`, `nbf` and `exp` checks, in seconds. |
-| `gateway.trusted_proxies` | Yes | none | A non-empty array of CIDR ranges (or single IPs) the gateway proxy sits behind. |
+| `gateway.trusted_proxies` | Yes | none | A non-empty array of CIDR ranges (or single IPs) the gateway proxy sits behind. List only that proxy's address (or its smallest range); every address listed can claim to be the gateway. |
 | `gateway.max_lifetime` | No | `300` | The longest an assertion may live (`exp` minus `iat`), in seconds. Longer assertions are refused, so a stolen long-lived token is useless. |
 | `gateway.replay_store` | No | the app's default cache store | The cache store the used `jti`s are kept in (Laravel only; raw PHP passes its own PSR-16 cache to the guard). |
 | `gateway.allow_without_replay_guard` | No | `false` | Skip the replay guard entirely. Local development only: a production app must keep replay protection on. |
@@ -1310,13 +1313,14 @@ Config keys (in `config/sesame.php`):
 | `cas.protocol` | `SESAME_CAS_PROTOCOL` | `2.0` | `3.0` or `2.0`. |
 | `cas.assume_mfa` | `SESAME_CAS_ASSUME_MFA` | `false` | A successful validation counts as an MFA sign-in. On only when the CAS server enforces MFA for every sign-in. |
 | `fake.username` | `SESAME_FAKE_USERNAME` | none | The fake driver's username. |
+| `fake.allowed` | `SESAME_FAKE_ALLOWED` | `false` | Turns the fake driver on; honoured only when the environment is local or testing. |
 | `gateway.header` | `SESAME_GATEWAY_HEADER` | `X-Sesame-Assertion` | The one header that holds the signed assertion. |
 | `gateway.algorithm` | `SESAME_GATEWAY_ALGORITHM` | `ES256` | `ES256`, `RS256` or `EdDSA`. |
 | `gateway.public_key` | `SESAME_GATEWAY_PUBLIC_KEY` | none | The gateway's public key. Required for the gateway driver. |
 | `gateway.issuer` | `SESAME_GATEWAY_ISSUER` | none | The `iss` claim the assertion must carry. Required for the gateway driver. |
 | `gateway.audience` | `SESAME_GATEWAY_AUDIENCE` | none | The `aud` claim the assertion must carry. Required for the gateway driver. |
 | `gateway.leeway_seconds` | `SESAME_GATEWAY_LEEWAY_SECONDS` | `30` | Clock skew allowed on the time-claim checks, in seconds. |
-| `gateway.trusted_proxies` | `SESAME_GATEWAY_TRUSTED_PROXIES` | none | Comma-separated CIDR ranges (or single IPs) the gateway proxy sits behind. Required for the gateway driver. |
+| `gateway.trusted_proxies` | `SESAME_GATEWAY_TRUSTED_PROXIES` | none | Comma-separated addresses of the one proxy in front of this app, never a whole network: each address listed can claim to be the gateway. Required for the gateway driver. |
 | `gateway.max_lifetime` | `SESAME_GATEWAY_MAX_LIFETIME` | `300` | The longest an assertion may live, in seconds. |
 | `gateway.replay_store` | `SESAME_GATEWAY_REPLAY_STORE` | the app's default cache store | The cache store the used `jti`s are kept in (Laravel only). |
 | `gateway.allow_without_replay_guard` | `SESAME_GATEWAY_ALLOW_WITHOUT_REPLAY_GUARD` | `false` | Skip the replay guard. Local development only. |
@@ -1337,7 +1341,9 @@ Config keys (in `config/sesame.php`):
 | `mfa.max_age` | `SESAME_MFA_MAX_AGE` | `28800` | The longest a user's last MFA sign-in may be, in seconds. |
 | `mfa.on_failure` | `SESAME_MFA_ON_FAILURE` | `deny` | `deny` answers a 403; `reauth` redirects to the login route. |
 | `routes` | `SESAME_ROUTES` | `true` | Register the login, logout and status routes. |
-| `log` | `SESAME_LOG` | `true` | Log the sign-in and sign-out events through the app's PSR-3 logger. Set to `false` to turn them off. |
+| `route_prefix` | `SESAME_ROUTE_PREFIX` | empty | A path prefix for those routes, such as `_laravel` (`/_laravel/login`), for an app whose other half still owns `/login` (Booster's Laravel strangler). The route names stay the same, and the cas `service_url`, the oidc `redirect_uri` and the saml URLs default to the prefixed routes. |
+| `revocation.path` | `SESAME_REVOCATION_PATH` | empty | A directory this app shares with another app on the same disk. A logout in either one writes a cutoff there, and both sign out any session made at or before it (`FileRevocationStore`). An app that binds its own `Waynestate\Sesame\RevocationStore` uses that instead. |
+| `revocation.ttl_seconds` | `SESAME_REVOCATION_TTL` | `2592000` | How long a cutoff is kept, in seconds: at least the absolute session lifetime. || `log` | `SESAME_LOG` | `true` | Log the sign-in and sign-out events through the app's PSR-3 logger. Set to `false` to turn them off. |
 | `user_resolver` | `SESAME_USER_RESOLVER` | none | The class that resolves a verified identity to the app's user. Required. |
 
 **Check before a deploy.** SESAME rides on the app's own session in Laravel,
@@ -1705,6 +1711,8 @@ scripts/a11y.ps1     # Windows
 CI for this repo runs on git.wayne.edu, on the instance runner. Every product
 in the stack strongly recommends the same for apps on git.wayne.edu: one
 shared runner, one less surprise per pipeline.
+
+Found a security problem? See [SECURITY.md](SECURITY.md); please do not open a public issue.
 
 <details>
 <summary><b>The brand board</b>: the mark, lockups, palette and type</summary>

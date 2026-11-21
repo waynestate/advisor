@@ -57,7 +57,7 @@
             "role": "Protocol-neutral sign-in: drivers for CAS, a signed gateway assertion, OpenID Connect (Entra sign-in) and OAuth2 bearer tokens (SAML is planned). It returns a verified identity and leaves the session to the app.",
             "state": "built",
             "package": "waynestate/sesame",
-            "version": "0.9.0",
+            "version": "0.11.0",
             "php": "^8.3",
             "next_step": "Pick the driver your platform supports and read its README before wiring routes.",
             "docs": [
@@ -73,7 +73,7 @@
             "role": "The runtime baseline: security headers, CSP, session hardening, trusted proxies, a health check and a version warning.",
             "state": "built",
             "package": "waynestate/helmet",
-            "version": "1.4.1",
+            "version": "1.5.0",
             "php": "^8.3",
             "next_step": "Add it as a dependency and start from its presets; it reads the same policy as PROCTOR.",
             "docs": [
@@ -89,7 +89,7 @@
             "role": "The starters: one command generates a new app in the shape you pick: raw PHP (`sourdough new --raw`), raw PHP with a Vue SPA (`--raw --vue`), Laravel with Blade (`--laravel`), Laravel with Blade and Vue islands (`--laravel --vue`) or Laravel with Inertia and Vue (`--inertia`). `--sail` or `--docker` adds a local runtime to the Laravel shapes.",
             "state": "built",
             "package": "waynestate/sourdough",
-            "version": "0.5.0",
+            "version": "0.5.1",
             "php": "^8.3",
             "next_step": "Start a new app with `sourdough new` and the shape flag you need; keep an app honest with `sourdough manifest --check`, and bring template updates in with `sourdough feed`.",
             "docs": [
@@ -105,7 +105,7 @@
             "role": "CI templates for GitLab (components) and GitHub (reusable workflows): tests, PROCTOR, audit and accessibility, with `composer ci` as the one contract.",
             "state": "built",
             "package": "waynestate/preflight",
-            "version": "0.11.0",
+            "version": "0.12.0",
             "php": "^8.3",
             "next_step": "Include its components pinned to a tag; never track the latest.",
             "docs": [
@@ -137,7 +137,7 @@
             "role": "The upgrade tool: Rector recipes and checks that move an app one PHP or Laravel version at a time.",
             "state": "built",
             "package": "waynestate/booster",
-            "version": "1.19.0",
+            "version": "1.21.0",
             "php": "^8.3",
             "next_step": "Plan one hop at a time with `upgrade_path`, and read its README for the Rector recipes.",
             "docs": [
@@ -169,7 +169,7 @@
             "role": "The Citadel auth gateway: one OpenID Connect client through Entra ID that hands each app a signed assertion for SESAME's gateway driver.",
             "state": "built",
             "package": "waynestate/drawbridge",
-            "version": "0.6.2",
+            "version": "0.7.0",
             "php": "^8.3",
             "next_step": "Apps on Citadel use SESAME's gateway driver; plan against the Drawbridge README.",
             "docs": [
@@ -185,7 +185,7 @@
             "role": "The Citadel kit: build.sh, deployments/, the app-side release script, the health check, the portable image and upstream merge requests. Platform-specific deploy code lives here and nowhere else. Its old local parity kit gives way to Parity.",
             "state": "built",
             "package": "waynestate/squire",
-            "version": "0.11.2",
+            "version": "0.12.0",
             "php": "^8.3",
             "next_step": "Use its release script for Citadel deploys; other platforms use their own targets. To run the app like Citadel on your own computer, use Parity.",
             "docs": [
