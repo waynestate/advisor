@@ -13,6 +13,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ### Added
 
+- Added: the CLI tells you when it is out of date: after a one-shot command, one line on stderr when a newer stable release exists, with the command that updates this install (Packagist, checked at most once a day, cached in the user cache dir). Silent in CI, with `--quiet`/`-q`, for the `mcp` server command, and when the running version is not a plain release number; `WAYNE_NO_UPDATE_CHECK=1` turns it off.
 - Docs: a Compatibility page (`docs/reference/compatibility.md`) states what ADVISOR promises not to break from 1.0: the nine tools and their input and output field names, the `ADVISOR_*` variables, the commands, and the SemVer and deprecation rule. Until 1.0 it is the intent and the 0.x rule governs.
 
 ### Removed

@@ -61,6 +61,16 @@ It checks the six things that keep a server from appearing, in plain words, and 
 
 A `fail` is something to fix; a `warn` is something you may not care about. The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
 
+## Update notice [#](https://advisor.apps.wayne.edu/docs/install.html#update-notice)
+
+After a one-shot command finishes, ADVISOR checks Packagist at most once a day and prints one line on stderr when a newer stable release exists, with the command that updates this install:
+
+```bash
+advisor 0.4.0 is out of date: 0.5.0 is the newest release. Update: composer update waynestate/advisor
+```
+
+The check never writes to stdout, never changes an exit code, and stays silent in CI, with `--quiet`/`-q`, for the `mcp` server command (its stderr is the protocol log), and when the running version is not a plain release number. Set `WAYNE_NO_UPDATE_CHECK=1` to turn it off.
+
 ## Next steps [#](https://advisor.apps.wayne.edu/docs/install.html#next-steps)
 
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html): register the `advisor` server with a client.

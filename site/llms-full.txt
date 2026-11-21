@@ -80,6 +80,19 @@ command and not a shell script.
 
 ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.4`. No extra repository needed.
 
+#### Update notice
+
+After a one-shot command finishes, ADVISOR checks Packagist at most once a day and prints one line on stderr when a newer
+stable release exists, with the command that updates this install:
+
+```
+advisor 0.4.0 is out of date: 0.5.0 is the newest release. Update: composer update waynestate/advisor
+```
+
+The check never writes to stdout, never changes an exit code, and stays silent in CI, with `--quiet`/`-q`, for the `mcp`
+server command (its stderr is the protocol log), and when the running version is not a plain release number. Set
+`WAYNE_NO_UPDATE_CHECK=1` to turn it off.
+
 ### Quick start
 
 1. Print the config your MCP client needs, and read it:
@@ -676,6 +689,7 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 #### Added [#](https://advisor.apps.wayne.edu/docs/changelog.html#added)
 
+- Added: the CLI tells you when it is out of date: after a one-shot command, one line on stderr when a newer stable release exists, with the command that updates this install (Packagist, checked at most once a day, cached in the user cache dir). Silent in CI, with `--quiet`/`-q`, for the `mcp` server command, and when the running version is not a plain release number; `WAYNE_NO_UPDATE_CHECK=1` turns it off.
 - Docs: a Compatibility page (`docs/reference/compatibility.md`) states what ADVISOR promises not to break from 1.0: the nine tools and their input and output field names, the `ADVISOR_*` variables, the commands, and the SemVer and deprecation rule. Until 1.0 it is the intent and the 0.x rule governs.
 
 #### Removed [#](https://advisor.apps.wayne.edu/docs/changelog.html#removed)
@@ -1791,6 +1805,16 @@ It checks the six things that keep a server from appearing, in plain words, and 
 
 A `fail` is something to fix; a `warn` is something you may not care about. The exit code is `0` when nothing failed and `1` when something did; `--json` prints the findings as JSON.
 
+### Update notice [#](https://advisor.apps.wayne.edu/docs/install.html#update-notice)
+
+After a one-shot command finishes, ADVISOR checks Packagist at most once a day and prints one line on stderr when a newer stable release exists, with the command that updates this install:
+
+```bash
+advisor 0.4.0 is out of date: 0.5.0 is the newest release. Update: composer update waynestate/advisor
+```
+
+The check never writes to stdout, never changes an exit code, and stays silent in CI, with `--quiet`/`-q`, for the `mcp` server command (its stderr is the protocol log), and when the running version is not a plain release number. Set `WAYNE_NO_UPDATE_CHECK=1` to turn it off.
+
 ### Next steps [#](https://advisor.apps.wayne.edu/docs/install.html#next-steps)
 
 - [Quick start](https://advisor.apps.wayne.edu/docs/guides/quick-start.html): register the `advisor` server with a client.
@@ -2135,6 +2159,14 @@ ADVISOR reads the process environment only, never a file. This page lists every 
 | ADVISOR_PROJECT_ROOT | The folder `run_proctor_check` may look inside. Paths outside it are refused. | the working directory | src/Command/DoctorCommand.php |
 | ADVISOR_READ_ONLY | Set to `0` or `false` to allow tools that write. None exist yet. Read-only wins over `ADVISOR_GROUPS`. | on | src/Config.php |
 | ADVISOR_STACK_DIR | Folder holding the sibling stack repos; used only by `content:generate`. | none | src/Command/ContentGenerateCommand.php |
+
+### Shared variables [#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#shared-variables)
+
+The CLI honours one shared variable from the stack, which is not an `ADVISOR_*` setting and is not read by the server:
+
+| Variable | Meaning | Default | Read in |
+| --- | --- | --- | --- |
+| WAYNE_NO_UPDATE_CHECK | Set to `1` to switch off the once-a-day update check and its stderr line (see [Install](https://advisor.apps.wayne.edu/docs/install.html)). | off | src/Update/UpdateNotice.php |
 
 ### Example [#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#example)
 

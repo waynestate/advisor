@@ -29,6 +29,14 @@ ADVISOR reads the process environment only, never a file. This page lists every 
 | ADVISOR_READ_ONLY | Set to `0` or `false` to allow tools that write. None exist yet. Read-only wins over `ADVISOR_GROUPS`. | on | src/Config.php |
 | ADVISOR_STACK_DIR | Folder holding the sibling stack repos; used only by `content:generate`. | none | src/Command/ContentGenerateCommand.php |
 
+## Shared variables [#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#shared-variables)
+
+The CLI honours one shared variable from the stack, which is not an `ADVISOR_*` setting and is not read by the server:
+
+| Variable | Meaning | Default | Read in |
+| --- | --- | --- | --- |
+| WAYNE_NO_UPDATE_CHECK | Set to `1` to switch off the once-a-day update check and its stderr line (see [Install](https://advisor.apps.wayne.edu/docs/install.html)). | off | src/Update/UpdateNotice.php |
+
 ## Example [#](https://advisor.apps.wayne.edu/docs/reference/configuration.html#example)
 
 A short example, with placeholder values:

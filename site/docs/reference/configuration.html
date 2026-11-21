@@ -140,6 +140,26 @@
 </tbody>
 </table></div>
 <!-- /generated -->
+<h2 id="shared-variables">Shared <span class="docs-heading-tail"><span>variables</span><a class="docs-heading-link" aria-label="Link to this section" href="#shared-variables">#</a></span></h2>
+<p>The CLI honours one shared variable from the stack, which is not an <code>ADVISOR_*</code> setting and is not read by the server:</p>
+<div class="docs-table" role="region" aria-label="Table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Meaning</th>
+<th>Default</th>
+<th>Read in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WAYNE_NO_UPDATE_CHECK</td>
+<td>Set to <code>1</code> to switch off the once-a-day update check and its stderr line (see <a href="../install.html">Install</a>).</td>
+<td>off</td>
+<td>src/Update/UpdateNotice.php</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="example"><span class="docs-heading-tail"><span>Example</span><a class="docs-heading-link" aria-label="Link to this section" href="#example">#</a></span></h2>
 <p>A short example, with placeholder values:</p>
 <pre tabindex="0"><code class="language-bash">ADVISOR_ENABLED=1
@@ -160,7 +180,7 @@ ADVISOR_AUDIT_LOG=/path/to/advisor-audit.log
     </main>
     <nav class="docs-pager" aria-label="Pages"><a class="docs-pager__link" href="../../docs/threats/data-exfiltration.html"><span class="docs-pager__dir">Previous</span><span class="docs-pager__title">Data exfiltration</span></a><a class="docs-pager__link docs-pager__link--next" href="../../docs/reference/commands.html"><span class="docs-pager__dir">Next</span><span class="docs-pager__title">Commands</span></a></nav>
   </div>
-  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#environment-variables">Environment variables</a></li><li class="docs-toc__item"><a href="#example">Example</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
+  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#environment-variables">Environment variables</a></li><li class="docs-toc__item"><a href="#shared-variables">Shared variables</a></li><li class="docs-toc__item"><a href="#example">Example</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
 </div>
 <footer class="docs-footer">
   <span>Documents ADVISOR <span data-docs-version>0.4.0</span></span>

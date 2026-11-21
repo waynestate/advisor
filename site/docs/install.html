@@ -76,6 +76,11 @@
 <li><strong>stdio</strong>: the real thing. Doctor starts <code>php vendor/bin/advisor mcp</code> as a child process, the way your client does, and asks it to initialize, list its tools and answer one <code>policy_lookup</code> call. Every stdout line must be protocol, and the child must exit 0 when its input closes. The pass line names your OS and PHP version, so on Windows it is the proof that stdio works there.</li>
 </ul>
 <p>A <code>fail</code> is something to fix; a <code>warn</code> is something you may not care about. The exit code is <code>0</code> when nothing failed and <code>1</code> when something did; <code>--json</code> prints the findings as JSON.</p>
+<h2 id="update-notice">Update <span class="docs-heading-tail"><span>notice</span><a class="docs-heading-link" aria-label="Link to this section" href="#update-notice">#</a></span></h2>
+<p>After a one-shot command finishes, ADVISOR checks Packagist at most once a day and prints one line on stderr when a newer stable release exists, with the command that updates this install:</p>
+<pre tabindex="0"><code class="language-bash">advisor 0.4.0 is out of date: 0.5.0 is the newest release. Update: composer update waynestate/advisor
+</code></pre>
+<p>The check never writes to stdout, never changes an exit code, and stays silent in CI, with <code>--quiet</code>/<code>-q</code>, for the <code>mcp</code> server command (its stderr is the protocol log), and when the running version is not a plain release number. Set <code>WAYNE_NO_UPDATE_CHECK=1</code> to turn it off.</p>
 <h2 id="next-steps">Next <span class="docs-heading-tail"><span>steps</span><a class="docs-heading-link" aria-label="Link to this section" href="#next-steps">#</a></span></h2>
 <ul>
 <li><a href="guides/quick-start.html">Quick start</a>: register the <code>advisor</code> server with a client.</li>
@@ -93,7 +98,7 @@
     </main>
     <nav class="docs-pager" aria-label="Pages"><a class="docs-pager__link" href="../docs/index.html"><span class="docs-pager__dir">Previous</span><span class="docs-pager__title">Overview</span></a><a class="docs-pager__link docs-pager__link--next" href="../docs/guides/quick-start.html"><span class="docs-pager__dir">Next</span><span class="docs-pager__title">Quick start</span></a></nav>
   </div>
-  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#requirements">Requirements</a></li><li class="docs-toc__item"><a href="#install-1">Install</a></li><li class="docs-toc__item"><a href="#verify">Verify</a></li><li class="docs-toc__item"><a href="#next-steps">Next steps</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
+  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#requirements">Requirements</a></li><li class="docs-toc__item"><a href="#install-1">Install</a></li><li class="docs-toc__item"><a href="#verify">Verify</a></li><li class="docs-toc__item"><a href="#update-notice">Update notice</a></li><li class="docs-toc__item"><a href="#next-steps">Next steps</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
 </div>
 <footer class="docs-footer">
   <span>Documents ADVISOR <span data-docs-version>0.4.0</span></span>
