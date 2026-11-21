@@ -2,6 +2,8 @@
 <?php
 
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\ConsoleEvents;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Waynestate\Advisor\Advisor;
 use Waynestate\Advisor\Command\ContentGenerateCommand;
 use Waynestate\Advisor\Command\ContentVerifyCommand;
@@ -9,6 +11,11 @@ use Waynestate\Advisor\Command\DoctorCommand;
 use Waynestate\Advisor\Command\InstallCommand;
 use Waynestate\Advisor\Command\McpCommand;
 use Waynestate\Advisor\Command\StackPartsCommand;
+use Waynestate\Advisor\Update\InstallKind;
+use Waynestate\Advisor\Update\PackagistFetcher;
+use Waynestate\Advisor\Update\UpdateCache;
+use Waynestate\Advisor\Update\UpdateNotice;
+use Waynestate\Advisor\Update\UpdateNoticeListener;
 
 // Installed as a dependency this file lives in vendor/waynestate/advisor/bin; on its own it is bin/.
 $autoloads = [__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../../autoload.php'];
@@ -32,5 +39,33 @@ $application->addCommands([
     new DoctorCommand(),
     new StackPartsCommand(),
 ]);
+
+// After any one-shot command finishes, one line on stderr when a newer
+// stable release exists (Packagist, checked at most once a day). The
+// listener never throws, never writes to stdout, never changes the exit
+// code, and stays silent for the mcp server command, whose stderr is the
+// protocol log.
+$packageRoot = dirname(__DIR__);
+$notice = new UpdateNotice(
+    Advisor::NAME,
+    $packageRoot,
+    InstallKind::detect($packageRoot, getenv() ?: []),
+    new UpdateCache(Advisor::NAME),
+    new PackagistFetcher(),
+    static fn (): int => time(),
+);
+/** @var list<string> $argv */
+$argv = $GLOBALS['argv'] ?? [];
+// The application dispatches nothing unless a dispatcher is attached, so
+// the TERMINATE listener gets its own.
+$dispatcher = new EventDispatcher();
+$application->setDispatcher($dispatcher);
+$dispatcher->addListener(ConsoleEvents::TERMINATE, new UpdateNoticeListener(
+    $notice,
+    Advisor::VERSION,
+    $argv,
+    getenv() ?: [],
+    STDERR,
+));
 
 exit($application->run());
