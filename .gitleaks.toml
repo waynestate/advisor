@@ -7,10 +7,21 @@ useDefault = true
 # These test files hold deliberate fake secrets (an AWS-shaped key id and a
 # token=... value) so the redaction tests can prove they get blanked. They are
 # not real credentials. Allowlisted by path, and nothing else is.
-[allowlist]
+[[allowlists]]
 description = "Fake secrets used as redaction test fixtures"
 paths = [
   '''tests/Security/EnvAndRedactionTest\.php''',
   '''tests/Security/ProctorRunnerTest\.php''',
   '''tests/Security/BoosterRunnerTest\.php''',
 ]
+
+# Sample logoutToken value in the mirrored SESAME README (a docs example). condition = AND means the exact file
+# path and a logoutToken JSON line must both match; any other line in this file, and any logoutToken line
+# anywhere else, still fails the pipeline. Same entry as SESAME's own .gitleaks.toml.
+[[allowlists]]
+description = "Sample logoutToken JSON line in the mirrored SESAME README. Both the exact file path and the logoutToken line must match."
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "line"
+regexes = ['''"logoutToken"\s*:''']
+paths = ['''^data/docs/sesame/readme\.md$''']
