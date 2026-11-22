@@ -1,6 +1,6 @@
 {
     "schema_version": 1,
-    "generated_on": "2026-11-21",
+    "generated_on": "2026-11-22",
     "files": {
         "docs/advisor/best-practices.md": {
             "sha256": "3cfc8726ab58a98e91f7910c98a6c61c5d8330eb0b4d78552f883c6b25c0c087",
@@ -78,12 +78,12 @@
             "source_commit": null
         },
         "docs/proctor/best-practices.md": {
-            "sha256": "0f6e03ecdccdc7cf2640e42f31dd6aca0dce3c54598192e84feef14ba87b6567",
+            "sha256": "b372749e51bbd52a0e7b6e22271a685cf631af569ff351dbfdb5e6a5c9c85009",
             "source": "proctor/BEST_PRACTICES.md",
             "source_commit": null
         },
         "docs/proctor/readme.md": {
-            "sha256": "5a0df9523e97abb2ab983dc787b97cb81c592b312c6593b41b890c32827faf94",
+            "sha256": "8d0f75f62fcb7c8b04a1c9d0de7e9c634b2523259ca1d073fb5a1d4fd2f425db",
             "source": "proctor/README.md",
             "source_commit": null
         },
@@ -108,12 +108,12 @@
             "source_commit": null
         },
         "docs/sourdough/best-practices.md": {
-            "sha256": "7a3df9f02a62e86fef742aa859ded7673f8e29205535f9b514d2048f1a8b2a01",
+            "sha256": "b465744447bd5b5b7899fc92ba1cef7ed8ef26f3e354a2a0e284b28aa9f79686",
             "source": "sourdough/BEST_PRACTICES.md",
             "source_commit": null
         },
         "docs/sourdough/readme.md": {
-            "sha256": "0d7a85facd3e25fe7a2038864ef7a0cce972a6d18dc62812e325ef407c2b85f0",
+            "sha256": "5a0827a2cc9d9fd36c7d49c26da803d71b4932b4a482989b718f3c5b1c1db207",
             "source": "sourdough/README.md",
             "source_commit": null
         },
@@ -123,7 +123,7 @@
             "source_commit": null
         },
         "docs/squire/readme.md": {
-            "sha256": "d6e46fccb4ebb8980ca03907a1b9d3568f9be56d67168b1dc7d8c6184c64c5c9",
+            "sha256": "116ac28785742ae8fa381771eb9325aba4a34a4ad20a021a5d1868df264c64b2",
             "source": "squire/README.md",
             "source_commit": null
         },
@@ -143,12 +143,12 @@
             "source_commit": null
         },
         "docs/weld/best-practices.md": {
-            "sha256": "5e1137b42585701b77b0a0b08997cd72e6e6adf086146c860aa85ae1820885dc",
+            "sha256": "1babc5d88cb2b72d31280247f1e80519faa0819d4f3b06f0476166941f507418",
             "source": "weld/BEST_PRACTICES.md",
             "source_commit": null
         },
         "docs/weld/readme.md": {
-            "sha256": "388fe3d02d48abe475c8acc68705503347588c51b0ff9909b4a57b33848b9fa9",
+            "sha256": "5c6c5c78d5a2162a64004a0cee091f4240cb3bf1d6425879e127f3d8925e5c91",
             "source": "weld/README.md",
             "source_commit": null
         },
@@ -248,7 +248,7 @@
             "source_commit": null
         },
         "projects.json": {
-            "sha256": "2ab863727fe6fbf839cf1f1fd381c2ba05368d6a0086b778ba4962fa433374de",
+            "sha256": "3fd345346c133cfae35cacb76edf763a0c3476eb0af0f443996cd1ea8470a295",
             "source": "generator/projects.seed.json plus each project repository",
             "source_commit": null
         },
