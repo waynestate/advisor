@@ -10,6 +10,10 @@ generator: Squire agent-ready
 
 This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
 
+## \[0.4.1\] - 2026-11-21 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-4-1-2026-11-21)
+
+A patch release, so a `^0.4` constraint picks it up with `composer update waynestate/advisor`. No tool changes and nothing in your app changes; the MCP server reports version 0.4.1. After a one-shot command the CLI may print one line on stderr when a newer release exists (never on stdout), with the command that updates your copy.
+
 ## \[0.4.0\] - 2026-11-19 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-4-0-2026-11-19)
 
 A new minor line, so a `^0.3` constraint does not pick it up: move to `composer require --dev waynestate/advisor:^0.4`. No code in your app changes; the MCP server reports version 0.4.0.

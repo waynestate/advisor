@@ -11,6 +11,8 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-11-21
+
 - Changed: CI pins Preflight 0.12.0 (components and the a11y checker copy). The php-test component now also runs an advisory PHP 8.6 job that may fail and never gates the pipeline.
 - Changed: the bundled stack content in `data/` is regenerated from every project's main (resync from 2026-11-15): advisor 0992d11, booster 44446d6, creed 22ab650, drawbridge 7cf38dc, helmet e6a32ce, parity a961474, pinstripe 9f76834, preflight 8aedeed, proctor 41238b6, rollcall 31d7290, sesame be1e892, sourdough b36d298, squire 0b9ef45, wayne-ui d3ac4a7, weld 7256273.
 
