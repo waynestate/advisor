@@ -35,7 +35,7 @@ The command is `php vendor/bin/advisor`. This works the same on Windows, macOS a
 
 ## Status
 
-Current release 0.4.0. PHP ^8.3, license MIT, MCP SDK 0.9.0. New in 0.4.0: `advisor install --runner=docker|php` (a project with a compose file or `parity.json` defaults to Docker), a `source_commit` per bundled file in the manifest, the Squire 0.11.1 deploy kit, CI on Preflight 0.9.0, and native Windows and macOS proven by the `native-os` workflow. The [changelog](changelog.md) has the full list, and [Upgrading](upgrading.md) the one step it needs. Agent-ready index: [llms.txt](../llms.txt).
+Current release 0.4.1. PHP ^8.3, license MIT, MCP SDK 0.9.0. New in 0.4.1: the CLI prints one line on stderr when a newer release exists, a Compatibility page says what ADVISOR will not break from 1.0, and SECURITY.md says how to report a vulnerability. New in 0.4.0: `advisor install --runner=docker|php` (a project with a compose file or `parity.json` defaults to Docker), a `source_commit` per bundled file in the manifest, the Squire 0.11.1 deploy kit, CI on Preflight 0.9.0, and native Windows and macOS proven by the `native-os` workflow. The [changelog](changelog.md) has the full list, and [Upgrading](upgrading.md) the one step it needs. Agent-ready index: [llms.txt](../llms.txt).
 
 ## Related
 
