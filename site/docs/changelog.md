@@ -12,6 +12,8 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[Unreleased\] [#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
 
+## \[1.0.0\] - 2026-11-24 [#](https://advisor.apps.wayne.edu/docs/changelog.html#1-0-0-2026-11-24)
+
 - Docs: the compatibility page states the deprecation rule from 1.0.
 - Docs: OPEN_QUESTIONS.md lists the questions only an outside owner can answer under "Known open at 1.0", each with its default.
 

@@ -10,6 +10,10 @@ generator: Squire agent-ready
 
 This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
 
+## \[1.0.0\] - 2026-11-24 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#1-0-0-2026-11-24)
+
+The first stable release. The tools, the MCP server and the CLI are unchanged from 0.4.1; from here the Compatibility page is the promise, so a `^1.0` constraint picks up every 1.x release with `composer update waynestate/advisor`. The questions only an outside owner can answer are listed in OPEN_QUESTIONS.md under "Known open at 1.0", each with the default ADVISOR ships. The bundled content is resynced from every stack repo's main branch.
+
 ## \[0.4.1\] - 2026-11-21 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-4-1-2026-11-21)
 
 A patch release, so a `^0.4` constraint picks it up with `composer update waynestate/advisor`. No tool changes and nothing in your app changes; the MCP server reports version 0.4.1. After a one-shot command the CLI may print one line on stderr when a newer release exists (never on stdout), with the command that updates your copy.

@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Upgrading | ADVISOR docs</title>
 <meta name="description" content="How to upgrade ADVISOR, version by version.">
-<meta name="docs-version" content="0.4.1">
+<meta name="docs-version" content="1.0.0">
 <link rel="stylesheet" href="../assets/wayne-ui/wayne-ui.css">
 <link rel="stylesheet" href="../assets/docs.css">
 <link rel="stylesheet" href="../docs/theme/advisor.css">
@@ -29,7 +29,7 @@
       <a href="../index.html#neighbors">Neighbors</a>
       <a class="sheet-nav__docs" href="../docs/index.html" aria-current="page">Docs</a>
     </nav>
-    <p class="sheet-head__meta"><span class="sheet-head__label">Sheet</span> 0.4.1</p>
+    <p class="sheet-head__meta"><span class="sheet-head__label">Sheet</span> 1.0.0</p>
   </div>
 </header><div class="docs-layout docs-layout--toc">
   <details class="docs-menu">
@@ -41,6 +41,8 @@
     <main id="main">
       <article class="docs-article"><h1 id="upgrading"><span class="docs-heading-tail"><span>Upgrading</span><a class="docs-heading-link" aria-label="Link to this section" href="#upgrading">#</a></span></h1>
 <p>This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.</p>
+<h2 id="1-0-0-2026-11-24">[1.0.0] - <span class="docs-heading-tail"><span>2026-11-24</span><a class="docs-heading-link" aria-label="Link to this section" href="#1-0-0-2026-11-24">#</a></span></h2>
+<p>The first stable release. The tools, the MCP server and the CLI are unchanged from 0.4.1; from here the Compatibility page is the promise, so a <code>^1.0</code> constraint picks up every 1.x release with <code>composer update waynestate/advisor</code>. The questions only an outside owner can answer are listed in OPEN_QUESTIONS.md under &quot;Known open at 1.0&quot;, each with the default ADVISOR ships. The bundled content is resynced from every stack repo's main branch.</p>
 <h2 id="0-4-1-2026-11-21">[0.4.1] - <span class="docs-heading-tail"><span>2026-11-21</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-4-1-2026-11-21">#</a></span></h2>
 <p>A patch release, so a <code>^0.4</code> constraint picks it up with <code>composer update waynestate/advisor</code>. No tool changes and nothing in your app changes; the MCP server reports version 0.4.1. After a one-shot command the CLI may print one line on stderr when a newer release exists (never on stdout), with the command that updates your copy.</p>
 <h2 id="0-4-0-2026-11-19">[0.4.0] - <span class="docs-heading-tail"><span>2026-11-19</span><a class="docs-heading-link" aria-label="Link to this section" href="#0-4-0-2026-11-19">#</a></span></h2>
@@ -147,10 +149,10 @@
     </main>
     <nav class="docs-pager" aria-label="Pages"><a class="docs-pager__link" href="../docs/troubleshooting.html"><span class="docs-pager__dir">Previous</span><span class="docs-pager__title">Troubleshooting</span></a><a class="docs-pager__link docs-pager__link--next" href="../docs/contributing.html"><span class="docs-pager__dir">Next</span><span class="docs-pager__title">Contributing</span></a></nav>
   </div>
-  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#0-4-1-2026-11-21">[0.4.1] - 2026-11-21</a></li><li class="docs-toc__item"><a href="#0-4-0-2026-11-19">[0.4.0] - 2026-11-19</a></li><li class="docs-toc__item"><a href="#0-3-0-2026-11-09">[0.3.0] - 2026-11-09</a></li><li class="docs-toc__item"><a href="#0-2-0-2026-11-09">[0.2.0] - 2026-11-09</a></li><li class="docs-toc__item"><a href="#0-1-7-2026-11-07">[0.1.7] - 2026-11-07</a></li><li class="docs-toc__item"><a href="#0-1-6-2026-11-06">[0.1.6] - 2026-11-06</a></li><li class="docs-toc__item"><a href="#0-1-5-2026-11-03">[0.1.5] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-4-2026-11-03">[0.1.4] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-3-2026-11-02">[0.1.3] - 2026-11-02</a></li><li class="docs-toc__item"><a href="#0-1-2-2026-10-29">[0.1.2] - 2026-10-29</a></li><li class="docs-toc__item"><a href="#0-1-1-2026-10-29">[0.1.1] - 2026-10-29</a></li><li class="docs-toc__item"><a href="#0-1-0-2026-10-29">[0.1.0] - 2026-10-29</a></li><li class="docs-toc__item"><a href="#taking-a-new-version">Taking a new version</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
+  <nav class="docs-toc" aria-label="On this page"><h2 class="docs-toc__title">On this page</h2><ul class="docs-toc__list"><li class="docs-toc__item"><a href="#1-0-0-2026-11-24">[1.0.0] - 2026-11-24</a></li><li class="docs-toc__item"><a href="#0-4-1-2026-11-21">[0.4.1] - 2026-11-21</a></li><li class="docs-toc__item"><a href="#0-4-0-2026-11-19">[0.4.0] - 2026-11-19</a></li><li class="docs-toc__item"><a href="#0-3-0-2026-11-09">[0.3.0] - 2026-11-09</a></li><li class="docs-toc__item"><a href="#0-2-0-2026-11-09">[0.2.0] - 2026-11-09</a></li><li class="docs-toc__item"><a href="#0-1-7-2026-11-07">[0.1.7] - 2026-11-07</a></li><li class="docs-toc__item"><a href="#0-1-6-2026-11-06">[0.1.6] - 2026-11-06</a></li><li class="docs-toc__item"><a href="#0-1-5-2026-11-03">[0.1.5] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-4-2026-11-03">[0.1.4] - 2026-11-03</a></li><li class="docs-toc__item"><a href="#0-1-3-2026-11-02">[0.1.3] - 2026-11-02</a></li><li class="docs-toc__item"><a href="#0-1-2-2026-10-29">[0.1.2] - 2026-10-29</a></li><li class="docs-toc__item"><a href="#0-1-1-2026-10-29">[0.1.1] - 2026-10-29</a></li><li class="docs-toc__item"><a href="#0-1-0-2026-10-29">[0.1.0] - 2026-10-29</a></li><li class="docs-toc__item"><a href="#taking-a-new-version">Taking a new version</a></li><li class="docs-toc__item"><a href="#related">Related</a></li></ul></nav>
 </div>
 <footer class="docs-footer">
-  <span>Documents ADVISOR <span data-docs-version>0.4.1</span></span>
+  <span>Documents ADVISOR <span data-docs-version>1.0.0</span></span>
   <span><a rel="noopener" href="https://github.com/waynestate/advisor">Source</a> <a href="upgrading.md">Markdown</a></span>
 </footer>
 </body>

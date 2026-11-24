@@ -78,7 +78,7 @@ composer require --dev waynestate/advisor
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP
 command and not a shell script.
 
-ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.4`. No extra repository needed.
+ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^1.0`. No extra repository needed.
 
 #### Update notice
 
@@ -412,7 +412,7 @@ An MCP server for the stack, a bit like Laravel Boost but for Wayne State. Your 
 
 `$ composer require --dev waynestate/advisor`
 
-PHP 8.3 or newer. ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.4`.
+PHP 8.3 or newer. ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^1.0`.
 
 **Works alongside [WELD](https://weld.apps.wayne.edu/).** You can add ADVISOR to a WELD app or to any other Wayne State PHP app.
 
@@ -688,6 +688,8 @@ Source: https://advisor.apps.wayne.edu/docs/changelog.html
 All notable changes are listed here. The format follows Keep a Changelog; versions follow Semantic Versioning.
 
 ### \[Unreleased\] [#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
+
+### \[1.0.0\] - 2026-11-24 [#](https://advisor.apps.wayne.edu/docs/changelog.html#1-0-0-2026-11-24)
 
 - Docs: the compatibility page states the deprecation rule from 1.0.
 - Docs: OPEN_QUESTIONS.md lists the questions only an outside owner can answer under "Known open at 1.0", each with its default.
@@ -1749,7 +1751,7 @@ The command is `php vendor/bin/advisor`. This works the same on Windows, macOS a
 
 ### Status [#](https://advisor.apps.wayne.edu/docs/#status)
 
-Current release 0.4.1. PHP ^8.3, license MIT, MCP SDK 0.9.0. New in 0.4.1: the CLI prints one line on stderr when a newer release exists, a Compatibility page says what ADVISOR will not break from 1.0, and SECURITY.md says how to report a vulnerability. New in 0.4.0: `advisor install --runner=docker|php` (a project with a compose file or `parity.json` defaults to Docker), a `source_commit` per bundled file in the manifest, the Squire 0.11.1 deploy kit, CI on Preflight 0.9.0, and native Windows and macOS proven by the `native-os` workflow. The [changelog](https://advisor.apps.wayne.edu/docs/changelog.html) has the full list, and [Upgrading](https://advisor.apps.wayne.edu/docs/upgrading.html) the one step it needs. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
+Current release 1.0.0. PHP ^8.3, license MIT, MCP SDK 0.9.0. New in 1.0.0: the first stable release; what ADVISOR will not break is written on the Compatibility page, and OPEN_QUESTIONS.md lists what only an outside owner can answer. New in 0.4.1: the CLI prints one line on stderr when a newer release exists, a Compatibility page says what ADVISOR will not break from 1.0, and SECURITY.md says how to report a vulnerability. New in 0.4.0: `advisor install --runner=docker|php` (a project with a compose file or `parity.json` defaults to Docker), a `source_commit` per bundled file in the manifest, the Squire 0.11.1 deploy kit, CI on Preflight 0.9.0, and native Windows and macOS proven by the `native-os` workflow. The [changelog](https://advisor.apps.wayne.edu/docs/changelog.html) has the full list, and [Upgrading](https://advisor.apps.wayne.edu/docs/upgrading.html) the one step it needs. Agent-ready index: [llms.txt](https://advisor.apps.wayne.edu/llms.txt).
 
 ### Related [#](https://advisor.apps.wayne.edu/docs/#related)
 
@@ -1792,7 +1794,7 @@ composer require --dev waynestate/advisor
 
 The command is then `php vendor/bin/advisor`. This works the same on Windows, macOS and Linux, because it is one PHP command and not a shell script.
 
-ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^0.4`. No extra repository needed.
+ADVISOR is on Packagist: `composer require --dev waynestate/advisor:^1.0`. No extra repository needed.
 
 Note
 
@@ -2551,6 +2553,10 @@ Source: https://advisor.apps.wayne.edu/docs/upgrading.html
 ## Upgrading [#](https://advisor.apps.wayne.edu/docs/upgrading.html#upgrading)
 
 This page walks through each released version of ADVISOR and what changed, so you can see whether a new version affects your app.
+
+### \[1.0.0\] - 2026-11-24 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#1-0-0-2026-11-24)
+
+The first stable release. The tools, the MCP server and the CLI are unchanged from 0.4.1; from here the Compatibility page is the promise, so a `^1.0` constraint picks up every 1.x release with `composer update waynestate/advisor`. The questions only an outside owner can answer are listed in OPEN_QUESTIONS.md under "Known open at 1.0", each with the default ADVISOR ships. The bundled content is resynced from every stack repo's main branch.
 
 ### \[0.4.1\] - 2026-11-21 [#](https://advisor.apps.wayne.edu/docs/upgrading.html#0-4-1-2026-11-21)
 
