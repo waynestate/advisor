@@ -22,6 +22,21 @@ could continue.
 | 13 | Should `ADVISOR_ENABLED=1` live in the committed-or-ignored client config, or only in the developer's shell? | Lead / security | `install` output | `install` puts it in the client config's `env` block and warns when the file is not git-ignored. |
 | 14 | Is there a `.ps1` smoke test wanted for Windows, per the one-path-per-OS rule? | Lead | Nothing | Not provided: the single PHP command is the cross-OS path the rule prefers. |
 
+## Known open at 1.0
+
+These are not 1.0 gates. ADVISOR 1.0 ships with the default below until the owner answers; an answer changes a default in a minor release.
+
+| # | Owner | Default kept at 1.0 |
+|---|---|---|
+| 3 | CREED owner | `policy_lookup` stays runtimes, frameworks and tools. Package guidance stays in `list_stack_rules`; a later tool is a minor release. |
+| 4 | Lead | The default already built is kept: `get_project_status` stays the stack-project status, and `run_proctor_check` serves the user's own app. |
+| 5 | Lead | The default already built is kept: `install` always writes the plain PHP command. |
+| 7 | Lead | The default already built is kept: no MCP Inspector in CI. |
+| 9 | CREED owner | The keyword heuristic for `applies_to`, stated in the tool description; CREED tagging would be additive. |
+| 11 | Lead and security | ADVISOR makes no model call and no network call, stated as a 1.0 promise; WarriorGPT-backed features are out of 1.0. |
+| 13 | Lead | The default already built is kept: `install` puts `ADVISOR_ENABLED=1` in the client config's `env` block. |
+| 14 | Lead | The default already built is kept: no `.ps1` smoke test; the single PHP command is the cross-OS path the rule prefers. |
+
 ## Missing configuration
 
 Nothing in ADVISOR needs a secret, key, certificate, token or host. All of these are optional.
@@ -40,7 +55,7 @@ Nothing in ADVISOR needs a secret, key, certificate, token or host. All of these
 
 See `.env.example`.
 
-## Not built yet
+## Not built yet (after 1.0)
 
 | Item | Why not yet |
 |---|---|
