@@ -35,7 +35,7 @@ final class UpdateNoticeTest extends TestCase
     private const RUNNING = '0.4.0';
 
     /** A release well above the running one, for the seeded cache. */
-    private const NEWER = '0.9.0';
+    private const NEWER = '9.0.0';
 
     public function testLineForPhar(): void
     {
