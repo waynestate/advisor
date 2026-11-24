@@ -81,6 +81,10 @@ From 1.0, these changes are a major release:
 
 Adding a tool, an input field, an output field, an environment variable or a command is a minor release.
 
+### Deprecation [#](https://advisor.apps.wayne.edu/docs/reference/compatibility.html#deprecation)
+
+From 1.0, a tool, an input field, an output field, an environment variable or a command is first marked deprecated in a minor release. The changelog entry says so, and the tool or field description starts with "Deprecated:". It keeps working for at least one more minor release, and is removed only in the next major release. A security fix may remove it sooner; the changelog says so.
+
 A deprecation is announced one minor release before removal.
 
 The promise on this page applies from 1.0. Until then it is the intent, and the 0.x rule above governs.
