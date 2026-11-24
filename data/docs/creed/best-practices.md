@@ -29,7 +29,7 @@ Tags describe the repository and design documents as they stand on 2026-10-29. P
 HELMET main and Rollcall main, and five tags moved (practices 8, 17, 23, 34 and 53). Later that day the pin moved to
 Preflight 0.3.0, and the practices that name it (23 and 42) were re-read against 0.3.0. PROCTOR v0.1 is specified in
 `first-repos.md` and its checks are named below as specified. CREED's own pipeline includes the `php-test`,
-`composer-audit`, `proctor`, `a11y` and `mysql56-migrate` components, pinned to Preflight 0.12.0; the `proctor` job checks `deploy/` and, since
+`composer-audit`, `secret-detection`, `proctor`, `a11y` and `mysql56-migrate` components, pinned to Preflight 0.12.0; the `proctor` job checks `deploy/` and, since
 2026-11-10, blocks: a failing check fails the pipeline, and a warning never does. Later on 2026-11-08, after a re-read of PROCTOR main and HELMET
 main, two more tags moved: practice 26 to `Checked` and practice 28 to `Partially`. On 2026-11-10 practice 40 moved
 to `Checked` after PROCTOR 0.13.0. On 2026-11-11 practice 23 moved to `Checked`: PROCTOR 0.12.0's `preflight-pinned`

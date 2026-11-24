@@ -48,7 +48,7 @@ The recommended path on Citadel is the `gateway` driver behind Drawbridge. Drawb
 
 ## WSU values (Playbook)
 
-Open sesame, minus the incantation. Four settings carry Wayne State's shared
+Open sesame, minus the incantation. Five settings carry Wayne State's shared
 values: where the CAS server lives, and who signs the gateway and oauth2
 assertions.
 
@@ -56,6 +56,7 @@ assertions.
 |---|---|---|
 | `SESAME_CAS_BASE_URL` | `cas.base_url` | The CAS server, an absolute https:// URL (`http://localhost` or `http://127.0.0.1` only in a local environment). |
 | `SESAME_GATEWAY_ISSUER` | `gateway.issuer` | The `iss` claim the gateway assertion must carry. |
+| `SESAME_GATEWAY_JWKS_FILE` | `gateway.jwks_file` | The path to the gateway's key set file (JWKS), read at boot. |
 | `SESAME_OAUTH2_ISSUER` | `oauth2.issuer` | The `iss` claim the bearer token must carry. |
 | `SESAME_OAUTH2_JWKS_URL` | `oauth2.jwks_url` | The URL of the issuer's key set. |
 
@@ -67,7 +68,7 @@ a `.env` full of addresses. The environment always wins: a set variable
 beats the playbook, and an empty one counts as unset.
 
 The playbook is never required. It sits in `suggest`, not `require`, and
-SESAME runs fine without it, reading these four from the environment alone.
+SESAME runs fine without it, reading these five from the environment alone.
 Get it through Composer, fetch the values into a `.env.playbook` file, or
 clone the repository:
 
@@ -637,7 +638,13 @@ Every assertion is single-use. The driver requires a `jti` claim, refuses an
 assertion that lives longer than `gateway.max_lifetime` seconds, and remembers
 each `jti` it has seen in a replay guard, so a captured assertion cannot be
 played back a second time. The guard is a PSR-16 cache: the Laravel adapter
-wires one up for you, and a raw PHP app passes its own (below).
+wires one up for you, and a raw PHP app passes its own (below). When the
+cache implements `Waynestate\Sesame\Drivers\AtomicAddCache` (the Laravel
+adapter's cache does, through `Cache::add`), the guard records a first-seen
+`jti` with one atomic add, so two simultaneous requests carrying the same
+`jti` cannot both pass. A plain PSR-16 cache keeps a small check-then-set
+window in which a burst of identical concurrent requests could let a few
+through, though a replayed assertion is sequential and unaffected.
 
 ```php
 <?php

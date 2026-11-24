@@ -57,7 +57,7 @@
             "role": "Protocol-neutral sign-in: drivers for CAS, a signed gateway assertion, OpenID Connect (Entra sign-in) and OAuth2 bearer tokens (SAML is planned). It returns a verified identity and leaves the session to the app.",
             "state": "built",
             "package": "waynestate/sesame",
-            "version": "0.11.0",
+            "version": "0.11.1",
             "php": "^8.3",
             "next_step": "Pick the driver your platform supports and read its README before wiring routes.",
             "docs": [
@@ -121,7 +121,7 @@
             "role": "The coding standard: shared Pint and PHPStan presets, plus ESLint and Prettier configuration.",
             "state": "built",
             "package": "waynestate/pinstripe",
-            "version": "0.4.0",
+            "version": "1.0.0",
             "php": "^8.3",
             "next_step": "Point Pint and PHPStan at its presets; one formatter per repository.",
             "docs": [
@@ -201,7 +201,7 @@
             "role": "Runs Citadel on your own computer: Citadel's own PHP image, Citadel's proxy and MySQL 5.6, for any app, with or without Squire. One Go command line for Windows, macOS and Linux (an optional desktop app follows), on Docker or Podman, with Podman recommended. Commands: check, init, up, down, status, logs, shell, image and test. It is the stack's local-development answer and replaces Squire's parity group.",
             "state": "built",
             "package": null,
-            "version": "0.2.0",
+            "version": "1.0.0",
             "php": null,
             "next_step": "Install the 0.1.0 release (Windows, macOS and Linux archives) from https://parity.apps.wayne.edu/, then run `parity check`, `parity init` and `parity up` in the app's folder. Coming from Squire's parity kit: `parity init --from-squire`.",
             "docs": [

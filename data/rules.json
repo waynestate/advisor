@@ -3336,7 +3336,7 @@
             "id": "runtime-and-headers-13",
             "chapter": "runtime-and-headers",
             "heading": "Metrics",
-            "text": "On Citadel, request counts use the `sqlite` store for now (`HELMET_METRICS_STORAGE=sqlite`, with `HELMET_METRICS_SQLITE_PATH` on a file in the app's writable storage); the final store is picked when the stack's Prometheus server exists (the stack's metrics decision). Documented only.",
+            "text": "On Citadel, request counts use the `sqlite` store for now (`HELMET_METRICS_STORAGE=sqlite`, with `HELMET_METRICS_SQLITE_PATH` on a file in the app's writable storage); the stack's Prometheus server runs (since 2026-11-23), so the final store can be picked now; sqlite stays the interim store until it is picked (the stack's metrics decision). Documented only.",
             "applies_to": [
                 "raw-php",
                 "raw-php-vue",
@@ -3358,7 +3358,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:65"
+            "source": "handbook/runtime-and-headers.md:66"
         },
         {
             "id": "runtime-and-headers-15",
@@ -3370,7 +3370,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:68"
+            "source": "handbook/runtime-and-headers.md:69"
         },
         {
             "id": "runtime-and-headers-16",
@@ -3384,7 +3384,7 @@
                 "laravel-blade-vue",
                 "laravel-inertia-vue"
             ],
-            "source": "handbook/runtime-and-headers.md:75"
+            "source": "handbook/runtime-and-headers.md:76"
         },
         {
             "id": "secrets-1",

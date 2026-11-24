@@ -45,6 +45,23 @@ anything, and need no administrator. That check catches a corrupted or partial d
 download is genuine: `checksums.txt` comes from the same site as the archive, so a site serving a bad archive could
 serve a matching sum too. Signing comes before the desktop app, which follows 1.0.
 
+**Verifying a download by hand.** Took an archive from the downloads page yourself? Put the release's
+`checksums.txt` in the same folder as the archive and run, in that folder:
+
+```text
+Linux:  sha256sum --ignore-missing -c checksums.txt
+macOS:  shasum -a 256 --ignore-missing -c checksums.txt
+```
+
+On Windows PowerShell, the two lines below should show the same hash (swap in your version and arch):
+
+```powershell
+(Get-FileHash .\parity_<version>_windows_amd64.zip -Algorithm SHA256).Hash
+Select-String -Path .\checksums.txt -Pattern "parity_<version>_windows_amd64\.zip"
+```
+
+As with the installers, this catches a corrupted or partial download, not a hostile site.
+
 - **Windows** puts `parity.exe` in `%LOCALAPPDATA%\Programs\parity` and adds that folder to your own (user) PATH,
   once: a second run updates `parity.exe` and says it is already on your PATH.
 - **macOS and Linux** put `parity` in `~/.local/bin`. The script never edits your shell's profile. If `~/.local/bin`
@@ -407,7 +424,7 @@ Before the tag:
   (2026-11-10, Podman and Docker Desktop); that run found three bugs, all fixed before 1.0 (see the CHANGELOG).
   `go run ./tools/checklist -engine podman` (then `-engine docker`) runs the whole check on that Mac and prints the
   row for MAINTAINING's table.
-- 1.0 ships unsigned, with checksums, like 0.1.0.
+- 1.0 ships unsigned, with `checksums.txt` for every release (the release job publishes it and the installers check it; how to check one by hand is under Install).
 - Citadel's 8.4r5 image is the one outside dependency: until its tar exists, 1.0 offers 8.5r3 only.
 
 ### Local HTTPS
@@ -432,8 +449,9 @@ owner approves, in its own settings.
 ### Coming from Squire's parity kit
 
 `parity init --from-squire`, in the folder with `docker-compose.squire.yml`, carries the kit's settings over (base
-image, public folder, ports, database name, time zone, deployments) from the compose file, `.env.squire.example`
-and `.env.squire`. Passwords and every other variable are left behind by name: Parity makes its own local passwords.
+image, public folder, ports, database name, time zone, deployments) from the compose file and the kit's env files
+(`.env.squire`, and the example file kits before Squire 0.12 carried). Passwords and every other variable are left
+behind by name: Parity makes its own local passwords.
 It lists the kit's files and deletes none of them. Two differences to expect: Parity runs Citadel's own `php.ini`,
 not the kit's hardened one, because that is what Citadel runs; and the kit's portable `scheduler` and `worker`
 services become one cron entry, `php artisan schedule:run` every minute, because Citadel has cron and no services.

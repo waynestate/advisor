@@ -65,7 +65,7 @@ npm ci
 ```
 
 `create-project` installs the newest tagged release, and `main` can be ahead of it (the [CHANGELOG](CHANGELOG.md)
-lists what is unreleased). The newest tag is 0.2.1; 0.1.3 (2026-11-06) was the first where WayneUI draws the app.
+lists what is unreleased). The newest tag is 0.4.0; 0.1.3 (2026-11-06) was the first where WayneUI draws the app.
 Clone when you want `main`.
 
 Or clone it, if you want the history too, and it is yours to rename:

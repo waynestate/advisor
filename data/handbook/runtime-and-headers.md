@@ -57,8 +57,9 @@ HTTPS.
   step, which writes the file at deploy time (the stack's metrics decision). PROCTOR check: `app-key`
   (`proctor/app-key/committed-env` flags a committed `.env`).
 - On Citadel, request counts use the `sqlite` store for now (`HELMET_METRICS_STORAGE=sqlite`, with
-  `HELMET_METRICS_SQLITE_PATH` on a file in the app's writable storage); the final store is picked when the stack's
-  Prometheus server exists (the stack's metrics decision). Documented only.
+  `HELMET_METRICS_SQLITE_PATH` on a file in the app's writable storage); the stack's Prometheus server runs
+  (since 2026-11-23), so the final store can be picked now; sqlite stays the interim store until it is
+  picked (the stack's metrics decision). Documented only.
 
 ## Errors in production
 

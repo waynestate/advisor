@@ -68,7 +68,7 @@ older PHP or needing an extension the image lacks still gets its report.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       proctor_command: vendor/bin/proctor check --format=codequality
 ```
@@ -107,7 +107,7 @@ Runs the test command on each supported PHP version through `parallel:matrix`. P
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       test_command: vendor/bin/phpunit
 ```
@@ -161,7 +161,7 @@ Runs `composer audit --locked` and fails on advisories.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       working_dir: .
 ```
@@ -199,7 +199,7 @@ repos that hand-write this job can replace their copies with one include.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-ci@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-ci@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       working_dir: .
 ```
@@ -229,7 +229,7 @@ New in 0.5.0; 0.4.0 does not include it.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/npm-audit@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/npm-audit@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       audit_level: high
 ```
@@ -257,7 +257,7 @@ Generates a CycloneDX SBOM with `cyclonedx/cyclonedx-php-composer`, validates it
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       output: sbom.cdx.json
 ```
@@ -280,7 +280,7 @@ Runs the app's own [Laravel Pint](https://laravel.com/docs/12.x/pint) in test mo
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       config: pint.json
 ```
@@ -303,7 +303,7 @@ Runs the app's own [PHPStan](https://phpstan.org/) and fails the pipeline on sta
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       config: phpstan.neon
       memory_limit: 1G
@@ -328,7 +328,7 @@ Runs the app's own [ESLint](https://eslint.org/) (and [Prettier](https://prettie
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       eslint_args: .
 ```
@@ -352,7 +352,7 @@ Runs [Gitleaks](https://github.com/gitleaks/gitleaks) over the checked-out tree 
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/secret-detection@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/secret-detection@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
 ```
 
 | Input | Type | Default | What it does |
@@ -378,7 +378,7 @@ curl and PHP, which the job uses for the registry round trip.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/package-publish@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/package-publish@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       group_id: "<your group id>"
 ```
@@ -411,7 +411,7 @@ still gets a tag pipeline of just the gate.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/release-gate@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/release-gate@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
 ```
 
 | Input | Type | Default | What it does |
@@ -434,7 +434,7 @@ auto-merges and what waits.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/renovate@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       git_author: "Preflight Bot <preflight-bot@example.com>"
 ```
@@ -477,7 +477,7 @@ No takeoff without a clean pre-flight.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/portability@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/portability@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       env: ["APP_KEY=${PORTABILITY_APP_KEY}", "APP_URL=https://myapp.example.edu"]
       session_login_path: /_portability/login
@@ -538,7 +538,7 @@ person to review. Every page gets a walk-round, in daylight and at night.
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/a11y@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/a11y@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       pages: ["index.html", "docs/**/*.html"]
       wcag_tags: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]
@@ -580,7 +580,7 @@ recorded version, so a new Squire never turns main red by itself: Renovate's Squ
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/squire-kit@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/squire-kit@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
     inputs:
       working_dir: deploy
 ```
@@ -612,7 +612,7 @@ database rule asks for exactly this. Old airframes still fly; you just check the
 
 ```yaml
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/mysql56-migrate@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/mysql56-migrate@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
 ```
 
 A raw PHP app sets `migrate_command` to its own script (`php database/migrate.php`), which reads the same `DB_*`
@@ -670,7 +670,7 @@ on:
 
 jobs:
   ci:
-    uses: waynestate/preflight/.github/workflows/php-package.yml@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+    uses: waynestate/preflight/.github/workflows/php-package.yml@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
 ```
 
 This workflow ships in the `0.1.1` tag, so pin the full commit SHA of the
@@ -827,13 +827,13 @@ workflow:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 include:
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
-  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@33f371ca3c8f022d2e2605be85d278519ccad96a # 0.11.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/proctor@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/php-test@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/composer-audit@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/sbom@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/pint@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/phpstan@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
+  - component: $CI_SERVER_FQDN/enterprise-apps/preflight/eslint@b1fa3809495794e98475e9d2c20877a331cd6975 # 0.12.0
 ```
 
 The `workflow:rules` block must live in the app's own file. A component

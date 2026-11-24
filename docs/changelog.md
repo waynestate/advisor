@@ -11,6 +11,9 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## [Unreleased]
 
+- Docs: the compatibility page states the deprecation rule from 1.0.
+- Docs: OPEN_QUESTIONS.md lists the questions only an outside owner can answer under "Known open at 1.0", each with its default.
+
 ## [0.4.1] - 2026-11-21
 
 - Changed: CI pins Preflight 0.12.0 (components and the a11y checker copy). The php-test component now also runs an advisory PHP 8.6 job that may fail and never gates the pipeline.
