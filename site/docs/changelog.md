@@ -12,6 +12,8 @@ All notable changes are listed here. The format follows Keep a Changelog; versio
 
 ## \[Unreleased\] [#](https://advisor.apps.wayne.edu/docs/changelog.html#unreleased)
 
+- Changed: CI follows D-176 and pins Preflight 0.13.0. A push runs the fast tier (the repo's checks, audits, PROCTOR, secret detection); the full tier (PHP matrix and advisory PHP, browser a11y and the other heavy jobs) runs nightly, on tags and on manual runs. Branch pipelines only, so an open MR no longer doubles a push, and a new commit cancels the pipeline it replaces.
+
 ## \[1.0.0\] - 2026-11-24 [#](https://advisor.apps.wayne.edu/docs/changelog.html#1-0-0-2026-11-24)
 
 - Docs: the compatibility page states the deprecation rule from 1.0.
